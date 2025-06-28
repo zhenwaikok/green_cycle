@@ -1,7 +1,10 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 
 class OnBoard {
@@ -14,6 +17,7 @@ class OnBoard {
   });
 }
 
+@RoutePage()
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -107,6 +111,10 @@ extension _Actions on _OnboardingScreenState {
       curve: Curves.ease,
     );
   }
+
+  void onStartButtonPressed() {
+    context.router.push(LoginRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -179,9 +187,7 @@ extension _WidgetFactories on _OnboardingScreenState {
       height: _Styles.bottomStartButtonHeight,
       width: _Styles.bottomStartButtonWidth,
       child: ElevatedButton(
-        onPressed: () {
-          //TODO: navigate to login screen
-        },
+        onPressed: onStartButtonPressed,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(_Styles.borderRadius),
