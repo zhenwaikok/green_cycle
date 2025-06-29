@@ -79,7 +79,7 @@ extension _WidgetFactories on _CustomTextFieldState {
       name: name,
       onTap: widget.onTap,
       onChanged: widget.onChanged,
-      keyboardType: widget.keyboardType,
+      keyboardType: widget.keyboardType ?? TextInputType.text,
       validator: widget.validator,
       inputFormatters: widget.inputFormatters,
       controller: widget.controller,

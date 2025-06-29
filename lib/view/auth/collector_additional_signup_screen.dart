@@ -24,6 +24,7 @@ class CollectorAdditionalSignupScreen extends StatefulWidget {
 class _CollectorAdditionalSignupScreenState
     extends State<CollectorAdditionalSignupScreen> {
   File? selectedImage;
+  List<String> vehicleTypes = ['Car', 'Truck', 'Van'];
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -95,7 +96,7 @@ extension _WidgetFactories on _CollectorAdditionalSignupScreenState {
   Widget getVehicleTypeDropdown() {
     return CustomDropdown(
       formName: SignUpFormFieldsEnum.vehicleType.name,
-      items: [],
+      items: vehicleTypes,
       title: 'Vehicle Type',
       fontSize: _Styles.fontSize,
       color: ColorManager.primary,
