@@ -10,5 +10,14 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: LoginRoute.page),
     AutoRoute(page: CollectorAdditionalSignupRoute.page),
     AutoRoute(page: SignUpRoute.page),
+    AutoRoute(
+      page: CustomBottomNavBar.page,
+      children: [
+        AutoRoute(page: CustomerHomeRoute.page, initial: true),
+        AutoRoute(page: RequestRoute.page),
+        AutoRoute(page: MarketplaceRoute.page),
+        AutoRoute(page: ProfileRoute.page),
+      ],
+    ),
   ];
 }
