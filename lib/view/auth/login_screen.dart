@@ -44,7 +44,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _LoginScreenState {
-  void onSignInButtonPressed() {}
+  void onSignInButtonPressed() {
+    //TODO: Implement sign-in logic
+
+    context.router.pushAndPopUntil(
+      CustomBottomNavBar(),
+      predicate: (route) => false,
+    );
+  }
 
   void onCreateAccountButtonPressed() {
     context.router.push(SignUpRoute());
@@ -140,7 +147,7 @@ extension _WidgetFactories on _LoginScreenState {
         CustomButton(
           text: 'Sign In',
           textColor: ColorManager.whiteColor,
-          onPressed: () {},
+          onPressed: onSignInButtonPressed,
         ),
         SizedBox(height: 12),
         CustomButton(

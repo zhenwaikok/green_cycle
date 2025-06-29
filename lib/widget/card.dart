@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({super.key, required this.children});
+  const CustomCard({super.key, required this.children, this.padding});
 
   final List<Widget> children;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,7 @@ class CustomCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: _Styles.cardPadding,
+        padding: padding ?? _Styles.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,

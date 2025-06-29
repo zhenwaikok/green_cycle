@@ -38,6 +38,7 @@ class _CollectorAdditionalSignupScreenState
       appBar: CustomAppBar(
         title: 'Collector Additional Info',
         onPressed: backButtononPressed,
+        isBackButtonVisible: true,
       ),
       bottomNavigationBar: Padding(
         padding: _Styles.screenPadding,
