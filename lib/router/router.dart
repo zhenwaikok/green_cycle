@@ -19,5 +19,7 @@ class AppRouter extends $AppRouter {
         AutoRoute(page: ProfileRoute.page),
       ],
     ),
+    AutoRoute(page: AwarenessRoute.page),
+    AutoRoute(page: AwarenessDetailsRoute.page),
   ];
 }
