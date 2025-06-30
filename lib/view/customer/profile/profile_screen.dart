@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
@@ -42,7 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 // * ---------------------------- Actions ----------------------------
-extension _Actions on _ProfileScreenState {}
+extension _Actions on _ProfileScreenState {
+  void onChangePasswordPressed() {
+    context.router.push(ChangePasswordRoute());
+  }
+}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ProfileScreenState {
@@ -117,7 +122,11 @@ extension _WidgetFactories on _ProfileScreenState {
     return Column(
       children: [
         CustomProfileRowElement(icon: Icons.person, text: 'Edit Profile'),
-        CustomProfileRowElement(icon: Icons.lock, text: 'Change Password'),
+        CustomProfileRowElement(
+          icon: Icons.lock,
+          text: 'Change Password',
+          onTap: onChangePasswordPressed,
+        ),
         CustomProfileRowElement(icon: Icons.history, text: 'Completed Recycle'),
         CustomProfileRowElement(icon: Icons.shopping_bag, text: 'My Purchases'),
         CustomProfileRowElement(
