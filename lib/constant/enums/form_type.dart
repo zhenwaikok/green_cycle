@@ -19,3 +19,13 @@ enum ChangePassowrdFormFieldsEnum {
   newPassword,
   confirmNewPassword,
 }
+
+enum EditProfileFormFieldsEnum {
+  role,
+  name,
+  email,
+  gender,
+  phoneNum,
+  password,
+  address,
+}
