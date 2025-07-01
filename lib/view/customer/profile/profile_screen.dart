@@ -56,6 +56,10 @@ extension _Actions on _ProfileScreenState {
     //TODO: Pass correct role ltr
     context.router.push(EditProfileRoute(selectedRole: 'Customer'));
   }
+
+  void onPointsPressed() {
+    context.router.push(PointsRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -109,7 +113,11 @@ extension _WidgetFactories on _ProfileScreenState {
           text: 'Rewards',
           onTap: onRewardsPressed,
         ),
-        getProfileElement(icon: FontAwesomeIcons.coins, text: 'Points'),
+        getProfileElement(
+          icon: FontAwesomeIcons.coins,
+          text: 'Points',
+          onTap: onPointsPressed,
+        ),
         getProfileElement(icon: Icons.archive_rounded, text: 'My Listing'),
       ],
     );
