@@ -44,6 +44,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ProfileScreenState {
+  void onRewardsPressed() {
+    context.router.push(RewardRoute());
+  }
+
   void onChangePasswordPressed() {
     context.router.push(ChangePasswordRoute());
   }
@@ -100,16 +104,24 @@ extension _WidgetFactories on _ProfileScreenState {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        getProfileElement(icon: Icons.card_giftcard_outlined, text: 'Rewards'),
+        getProfileElement(
+          icon: Icons.card_giftcard_outlined,
+          text: 'Rewards',
+          onTap: onRewardsPressed,
+        ),
         getProfileElement(icon: FontAwesomeIcons.coins, text: 'Points'),
         getProfileElement(icon: Icons.archive_rounded, text: 'My Listing'),
       ],
     );
   }
 
-  Widget getProfileElement({required IconData icon, required String text}) {
+  Widget getProfileElement({
+    required IconData icon,
+    required String text,
+    void Function()? onTap,
+  }) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         children: [
           Icon(icon, color: ColorManager.primary, size: _Styles.iconSize),
