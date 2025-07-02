@@ -143,19 +143,27 @@ extension _WidgetFactories on _CompletedRequestScreenState {
   }
 
   Widget getItemDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Item Descriptionsasdsadasssssssssssssssssssssssssssssssssssss',
-          maxLines: _Styles.maxTextLines,
-          overflow: TextOverflow.ellipsis,
-          style: _Styles.itemDescriptionTextStyle,
-        ),
-        Text('Category', style: _Styles.itemDescriptionTextStyle),
-        SizedBox(height: 20),
-        Text('Quantity: 1', style: _Styles.quantityTextStyle),
-      ],
+    return SizedBox(
+      height: _Styles.imageSize,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Item Descriptionsas0',
+                maxLines: _Styles.maxTextLines,
+                overflow: TextOverflow.ellipsis,
+                style: _Styles.itemDescriptionTextStyle,
+              ),
+              Text('Category', style: _Styles.itemDescriptionTextStyle),
+            ],
+          ),
+          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+        ],
+      ),
     );
   }
 }

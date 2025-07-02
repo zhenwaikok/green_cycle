@@ -64,6 +64,10 @@ extension _Actions on _ProfileScreenState {
   void onCompletedRequestPressed() {
     context.router.push(CompletedRequestRoute());
   }
+
+  void onMyPurchasesPressed() {
+    context.router.push(MyPurchasesRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -166,7 +170,11 @@ extension _WidgetFactories on _ProfileScreenState {
           text: 'Completed Recycle',
           onTap: onCompletedRequestPressed,
         ),
-        CustomProfileRowElement(icon: Icons.shopping_bag, text: 'My Purchases'),
+        CustomProfileRowElement(
+          icon: Icons.shopping_bag,
+          text: 'My Purchases',
+          onTap: onMyPurchasesPressed,
+        ),
         CustomProfileRowElement(
           icon: Icons.logout,
           text: 'Sign Out',
