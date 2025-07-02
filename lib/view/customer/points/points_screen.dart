@@ -6,7 +6,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/view/customer/points/earned_points_tab.dart';
 import 'package:green_cycle_fyp/view/customer/points/used_points_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
-import 'package:green_cycle_fyp/widget/card.dart';
+import 'package:green_cycle_fyp/widget/custom_card.dart';
 
 @RoutePage()
 class PointsScreen extends StatefulWidget {

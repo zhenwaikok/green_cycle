@@ -6,7 +6,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/view/customer/reward/my_rewards_tab.dart';
 import 'package:green_cycle_fyp/view/customer/reward/toredeem_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
-import 'package:green_cycle_fyp/widget/card.dart';
+import 'package:green_cycle_fyp/widget/custom_card.dart';
 
 @RoutePage()
 class RewardScreen extends StatefulWidget {

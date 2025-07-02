@@ -5,7 +5,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
-import 'package:green_cycle_fyp/widget/card.dart';
+import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
 
@@ -59,6 +59,10 @@ extension _Actions on _ProfileScreenState {
 
   void onPointsPressed() {
     context.router.push(PointsRoute());
+  }
+
+  void onCompletedRequestPressed() {
+    context.router.push(CompletedRequestRoute());
   }
 }
 
@@ -157,7 +161,11 @@ extension _WidgetFactories on _ProfileScreenState {
           text: 'Change Password',
           onTap: onChangePasswordPressed,
         ),
-        CustomProfileRowElement(icon: Icons.history, text: 'Completed Recycle'),
+        CustomProfileRowElement(
+          icon: Icons.history,
+          text: 'Completed Recycle',
+          onTap: onCompletedRequestPressed,
+        ),
         CustomProfileRowElement(icon: Icons.shopping_bag, text: 'My Purchases'),
         CustomProfileRowElement(
           icon: Icons.logout,
