@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/widget/card.dart';
+import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 
 @RoutePage()
@@ -189,7 +189,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                       children: [
                         Image.network(
                           width: double.infinity,
-                          'https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg',
+                          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
                         ),
                         SizedBox(height: 10),
                         Padding(
@@ -266,7 +266,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                         child: Image.network(
                           height: MediaQuery.of(context).size.height * 0.15,
                           width: double.infinity,
-                          'https://images.pexels.com/photos/335257/pexels-photo-335257.jpeg',
+                          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
                           fit: BoxFit.cover,
                         ),
                       ),
