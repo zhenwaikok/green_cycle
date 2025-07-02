@@ -30,6 +30,23 @@ extension _Actions on _CustomDateRangeFilterState {
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorManager.primary,
+              onPrimary: Colors.white,
+              onSurface: ColorManager.blackColor,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: ColorManager.primary,
+              ),
+            ),
+          ),
+          child: child ?? SizedBox(),
+        );
+      },
     );
 
     if (result != null && widget.onDateRangeChanged != null) {
