@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class CustomSearchBar extends StatelessWidget {
-  const CustomSearchBar({super.key, this.onChanged, this.controller});
+  const CustomSearchBar({
+    super.key,
+    this.onChanged,
+    this.controller,
+    required this.hintText,
+  });
 
   final void Function(String? value)? onChanged;
   final TextEditingController? controller;
+  final String hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +44,7 @@ extension _WidgetFactories on CustomSearchBar {
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
-          hintText: 'Search request here',
+          hintText: hintText,
           contentPadding: _Styles.contentPadding,
           prefixIcon: Icon(
             Icons.search,

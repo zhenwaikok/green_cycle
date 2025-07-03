@@ -77,7 +77,7 @@ extension _WidgetFactories on _CustomBottomNavBarState {
     return [
       getBottomNavBarIcon(icon: Icons.home, label: 'Home'),
       getBottomNavBarIcon(icon: Icons.local_shipping, label: 'Request'),
-      getBottomNavBarIcon(icon: Icons.shopping_bag, label: 'Market'),
+      getBottomNavBarIcon(icon: Icons.shopping_bag, label: 'Marketplace'),
       getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
     ];
   }
