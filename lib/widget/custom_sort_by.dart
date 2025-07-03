@@ -8,11 +8,13 @@ class CustomSortBy extends StatefulWidget {
     required this.sortByItems,
     this.onChanged,
     required this.selectedValue,
+    this.isExpanded = true,
   });
 
   final List<String> sortByItems;
   final String? selectedValue;
   final void Function(String?)? onChanged;
+  final bool? isExpanded;
 
   @override
   State<CustomSortBy> createState() => _CustomSortByState();
@@ -37,7 +39,7 @@ extension _WidgetFactories on _CustomSortByState {
         borderRadius: BorderRadius.circular(_Styles.dropdownBorderRadius),
       ),
       child: DropdownButton<String>(
-        isExpanded: true,
+        isExpanded: widget.isExpanded ?? true,
         dropdownColor: ColorManager.whiteColor,
         underline: SizedBox(),
         value: widget.selectedValue,

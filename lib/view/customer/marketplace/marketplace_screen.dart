@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
@@ -51,7 +52,11 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
 }
 
 // * ---------------------------- Actions ----------------------------
-extension _Actions on _MarketplaceScreenState {}
+extension _Actions on _MarketplaceScreenState {
+  void onCategoryCardPressed() {
+    context.router.push(MarketplaceCategoryRoute(category: 'category'));
+  }
+}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MarketplaceScreenState {
@@ -92,6 +97,7 @@ extension _WidgetFactories on _MarketplaceScreenState {
     return Padding(
       padding: _Styles.categoryCardPadding,
       child: GestureDetector(
+        onTap: onCategoryCardPressed,
         child: Container(
           padding: _Styles.categoriesPadding,
           decoration: BoxDecoration(
