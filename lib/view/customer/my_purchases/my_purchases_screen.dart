@@ -97,7 +97,7 @@ class _Styles {
 
   static const tabLabelTextStyle = TextStyle(
     fontSize: 18,
-    fontWeight: FontWeightManager.bold,
+    fontWeight: FontWeightManager.regular,
   );
 
   static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);

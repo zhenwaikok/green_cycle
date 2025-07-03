@@ -83,6 +83,7 @@ extension _WidgetFactories on _CompletedRequestScreenState {
     return Padding(
       padding: _Styles.cardPadding,
       child: CustomCard(
+        padding: _Styles.customCardPadding,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,6 +184,10 @@ class _Styles {
   static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
 
   static const cardPadding = EdgeInsets.symmetric(vertical: 15, horizontal: 5);
+  static const customCardPadding = EdgeInsets.symmetric(
+    vertical: 10,
+    horizontal: 10,
+  );
 
   static const requestIDTitleTextStyle = TextStyle(
     fontSize: 13,
