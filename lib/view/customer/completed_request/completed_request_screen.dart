@@ -39,7 +39,7 @@ class _CompletedRequestScreenState extends State<CompletedRequestScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomSearchBar(),
+              CustomSearchBar(hintText: 'Search request here'),
               SizedBox(height: 20),
               CustomDateRangeFilter(
                 selectedRange: selectedRange,

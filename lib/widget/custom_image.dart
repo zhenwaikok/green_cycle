@@ -7,13 +7,13 @@ class CustomImage extends StatelessWidget {
     super.key,
     required this.imageURL,
     this.imageSize,
-    required this.borderRadius,
+    this.borderRadius,
     this.imageWidth,
   });
 
   final String imageURL;
   final double? imageSize;
-  final double borderRadius;
+  final double? borderRadius;
   final double? imageWidth;
 
   @override
@@ -22,7 +22,7 @@ class CustomImage extends StatelessWidget {
       height: imageSize,
       width: imageWidth ?? imageSize,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(borderRadius ?? 0),
         child: CachedNetworkImage(
           imageUrl: imageURL,
           placeholder: (context, url) => BlurHash(

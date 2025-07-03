@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
+import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 
 @RoutePage()
 class CustomerHomeScreen extends StatefulWidget {
@@ -170,7 +171,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
 
   Widget getMarketplaceItems() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: MediaQuery.of(context).size.height * 0.28,
       child: ListView.builder(
         itemCount: 5,
         scrollDirection: Axis.horizontal,
@@ -181,36 +182,12 @@ extension _WidgetFactories on _CustomerHomeScreenState {
               width: MediaQuery.of(context).size.width * 0.4,
               child: GestureDetector(
                 onTap: () {},
-                child: CustomCard(
-                  padding: _Styles.customCardPadding,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.network(
-                          width: double.infinity,
-                          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-                        ),
-                        SizedBox(height: 10),
-                        Padding(
-                          padding: _Styles.productDetailsPadding,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Product Name',
-                                style: _Styles.productNameTextStyle,
-                              ),
-                              Text(
-                                'RM xx.xx',
-                                style: _Styles.productPriceTextStyle,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: SecondHandItem(
+                  imageURL:
+                      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+                  productName: 'Product Nameasdasdsad',
+                  productPrice: 'RM xx.xx',
+                  text: 'Like New',
                 ),
               ),
             ),
