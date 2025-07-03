@@ -43,6 +43,18 @@ extension _WidgetFactories on MyPurchasesTab {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          children: [
+            Icon(
+              Icons.person_outlined,
+              color: ColorManager.greyColor,
+              size: _Styles.iconSize,
+            ),
+            SizedBox(width: 8),
+            Text('Seller Name', style: _Styles.sellerTextStyle),
+          ],
+        ),
+        SizedBox(height: 10),
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -172,7 +184,7 @@ class _Styles {
   static const maxTextLines = 2;
   static const itemImageBorderRadius = 5.0;
   static const itemImageSize = 80.0;
-  static const orderReceivedButtonHeight = 25.0;
+  static const iconSize = 20.0;
 
   static const cardPadding = EdgeInsets.symmetric(horizontal: 5, vertical: 10);
   static const customCardPadding = EdgeInsets.symmetric(
@@ -181,6 +193,12 @@ class _Styles {
   );
   static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
   static const itemListPadding = EdgeInsets.symmetric(vertical: 10);
+
+  static const sellerTextStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.blackColor,
+  );
 
   static const greyTextStyle = TextStyle(
     fontSize: 15,

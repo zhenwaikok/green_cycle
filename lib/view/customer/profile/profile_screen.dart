@@ -68,6 +68,10 @@ extension _Actions on _ProfileScreenState {
   void onMyPurchasesPressed() {
     context.router.push(MyPurchasesRoute());
   }
+
+  void onMyListingPressed() {
+    context.router.push(MyListingRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -126,7 +130,11 @@ extension _WidgetFactories on _ProfileScreenState {
           text: 'Points',
           onTap: onPointsPressed,
         ),
-        getProfileElement(icon: Icons.archive_rounded, text: 'My Listing'),
+        getProfileElement(
+          icon: Icons.archive_rounded,
+          text: 'My Listing',
+          onTap: onMyListingPressed,
+        ),
       ],
     );
   }
