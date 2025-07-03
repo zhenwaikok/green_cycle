@@ -30,7 +30,7 @@ class _Styles {
 
   static const borderRadius = 20.0;
 
-  static const textPadding = EdgeInsets.symmetric(horizontal: 20, vertical: 3);
+  static const textPadding = EdgeInsets.symmetric(horizontal: 15, vertical: 3);
 
   static const textStyle = TextStyle(
     fontSize: 12,

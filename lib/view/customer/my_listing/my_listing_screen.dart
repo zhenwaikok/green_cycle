@@ -253,7 +253,7 @@ class _Styles {
   );
 
   static const sortByTextStyle = TextStyle(
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
   );
