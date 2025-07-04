@@ -29,3 +29,11 @@ enum EditProfileFormFieldsEnum {
   password,
   address,
 }
+
+enum CreateListingFormFieldsEnum {
+  name,
+  description,
+  price,
+  condition,
+  category,
+}

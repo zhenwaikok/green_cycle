@@ -56,6 +56,10 @@ extension _Actions on _MarketplaceScreenState {
   void onCategoryCardPressed() {
     context.router.push(MarketplaceCategoryRoute(category: 'category'));
   }
+
+  void onStartSellingPressed() {
+    context.router.push(CreateListingRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -66,7 +70,7 @@ extension _WidgetFactories on _MarketplaceScreenState {
       children: [
         TextButton(
           style: _Styles.startSellingButtonStyle,
-          onPressed: () {},
+          onPressed: onStartSellingPressed,
           child: Text('Start Selling', style: _Styles.startSellingTextStyle),
         ),
       ],
