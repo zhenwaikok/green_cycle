@@ -64,6 +64,10 @@ extension _Actions on _MarketplaceScreenState {
   void onCartPressed() {
     context.router.push(CartRoute());
   }
+
+  void onItemPressed() {
+    context.router.push(ItemDetailsRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -147,12 +151,15 @@ extension _WidgetFactories on _MarketplaceScreenState {
           ),
           itemCount: 7,
           itemBuilder: (context, index) {
-            return SecondHandItem(
-              imageURL:
-                  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-              productName: 'Product Nameasdasdsad',
-              productPrice: 'RM xx.xx',
-              text: 'Like New',
+            return GestureDetector(
+              onTap: onItemPressed,
+              child: SecondHandItem(
+                imageURL:
+                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+                productName: 'Product Nameasdasdsad',
+                productPrice: 'RM xx.xx',
+                text: 'Like New',
+              ),
             );
           },
         ),

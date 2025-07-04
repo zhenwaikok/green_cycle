@@ -31,5 +31,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: MarketplaceCategoryRoute.page),
     AutoRoute(page: CreateListingRoute.page),
     AutoRoute(page: CartRoute.page),
+    AutoRoute(page: ItemDetailsRoute.page),
   ];
 }
