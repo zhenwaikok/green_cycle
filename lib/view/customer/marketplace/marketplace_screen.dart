@@ -22,7 +22,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     return Scaffold(
       floatingActionButton: CustomFloatingActionButton(
         icon: Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
-        onPressed: () {},
+        onPressed: onCartPressed,
       ),
       appBar: CustomAppBar(
         title: 'Secondhand Marketplace',
@@ -59,6 +59,10 @@ extension _Actions on _MarketplaceScreenState {
 
   void onStartSellingPressed() {
     context.router.push(CreateListingRoute());
+  }
+
+  void onCartPressed() {
+    context.router.push(CartRoute());
   }
 }
 

@@ -33,7 +33,7 @@ class _Styles {
   static const textPadding = EdgeInsets.symmetric(horizontal: 15, vertical: 3);
 
   static const textStyle = TextStyle(
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.whiteColor,
   );

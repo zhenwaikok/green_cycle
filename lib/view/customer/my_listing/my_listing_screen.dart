@@ -271,7 +271,7 @@ class _Styles {
 
   static const textButtonTextStyle = TextStyle(
     fontSize: 13,
-    fontWeight: FontWeightManager.regular,
+    fontWeight: FontWeightManager.bold,
     color: ColorManager.primary,
   );
 }
