@@ -280,17 +280,11 @@ class _Styles {
     vertical: 15,
   );
 
-  static const customCardPadding = EdgeInsetsGeometry.all(0);
-
   static const productCardPadding = EdgeInsetsGeometry.only(
     right: 20,
     left: 10,
     top: 10,
     bottom: 10,
-  );
-
-  static const productDetailsPadding = EdgeInsetsGeometry.symmetric(
-    horizontal: 10,
   );
 
   static const requestContainerPadding = EdgeInsets.symmetric(horizontal: 20);
@@ -341,18 +335,6 @@ class _Styles {
     color: ColorManager.primary,
     decoration: TextDecoration.underline,
     decorationColor: ColorManager.primary,
-  );
-
-  static const productNameTextStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeightManager.bold,
-    color: ColorManager.blackColor,
-  );
-
-  static const productPriceTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.bold,
-    color: ColorManager.redColor,
   );
 
   static const whatNewTextStyle = TextStyle(
