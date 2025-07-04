@@ -2,26 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class CustomCard extends StatelessWidget {
-  const CustomCard({super.key, required this.children, this.padding});
+  const CustomCard({
+    super.key,
+    required this.children,
+    this.padding,
+    this.needBoxShadow = true,
+    this.backgroundColor,
+  });
 
   final List<Widget> children;
   final EdgeInsetsGeometry? padding;
+  final bool? needBoxShadow;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: ColorManager.whiteColor,
+        color: backgroundColor ?? ColorManager.whiteColor,
         borderRadius: BorderRadius.circular(_Styles.cardBorderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 8,
-            spreadRadius: 0.5,
-            offset: Offset(0, 0),
-          ),
-        ],
+        boxShadow: (needBoxShadow ?? true)
+            ? [
+                BoxShadow(
+                  color: ColorManager.blackColor.withValues(alpha: 0.15),
+                  blurRadius: 8,
+                  spreadRadius: 0.5,
+                  offset: Offset(0, 0),
+                ),
+              ]
+            : null,
       ),
       child: Padding(
         padding: padding ?? _Styles.cardPadding,
