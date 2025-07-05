@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -50,6 +51,10 @@ extension _Actions on _CartScreenState {
         getAlertDialogTextButton(onPressed: () {}, text: 'Yes'),
       ],
     );
+  }
+
+  void onCheckoutButtonPressed() {
+    context.router.push(CheckoutRoute());
   }
 }
 
@@ -178,7 +183,7 @@ extension _WidgetFactories on _CartScreenState {
     return CustomButton(
       text: 'Checkout',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: onCheckoutButtonPressed,
       backgroundColor: ColorManager.primary,
     );
   }
