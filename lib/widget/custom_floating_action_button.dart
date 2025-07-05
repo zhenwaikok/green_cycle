@@ -6,10 +6,12 @@ class CustomFloatingActionButton extends StatelessWidget {
     super.key,
     this.onPressed,
     required this.icon,
+    this.heroTag,
   });
 
   final Icon icon;
   final void Function()? onPressed;
+  final Object? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class CustomFloatingActionButton extends StatelessWidget {
       shape: CircleBorder(),
       onPressed: onPressed,
       backgroundColor: ColorManager.primary,
+      heroTag: heroTag,
       child: icon,
     );
   }

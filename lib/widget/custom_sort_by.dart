@@ -9,12 +9,14 @@ class CustomSortBy extends StatefulWidget {
     this.onChanged,
     required this.selectedValue,
     this.isExpanded = true,
+    this.needBorder = true,
   });
 
   final List<String> sortByItems;
   final String? selectedValue;
   final void Function(String?)? onChanged;
   final bool? isExpanded;
+  final bool? needBorder;
 
   @override
   State<CustomSortBy> createState() => _CustomSortByState();
@@ -35,7 +37,9 @@ extension _WidgetFactories on _CustomSortByState {
   Widget getSortByButton() {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: ColorManager.greyColor, width: 1),
+        border: widget.needBorder == true
+            ? Border.all(color: ColorManager.lightGreyColor, width: 1)
+            : null,
         borderRadius: BorderRadius.circular(_Styles.dropdownBorderRadius),
       ),
       child: DropdownButton<String>(
@@ -49,6 +53,10 @@ extension _WidgetFactories on _CustomSortByState {
         onChanged: widget.onChanged,
         style: _Styles.dropdownTextStyle,
         padding: _Styles.dropdownPadding,
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: ColorManager.blackColor,
+        ),
       ),
     );
   }
@@ -58,7 +66,7 @@ extension _WidgetFactories on _CustomSortByState {
 class _Styles {
   _Styles._();
 
-  static const dropdownBorderRadius = 15.0;
+  static const dropdownBorderRadius = 5.0;
   static const dropdownPadding = EdgeInsetsGeometry.symmetric(horizontal: 10);
 
   static const dropdownTextStyle = TextStyle(
