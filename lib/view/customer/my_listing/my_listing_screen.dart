@@ -120,7 +120,9 @@ extension _WidgetFactories on _MyListingScreenState {
         CustomSortBy(
           selectedValue: selectedSort,
           sortByItems: sortByItems,
-          onChanged: onSortByChanged,
+          onChanged: (String? value) {
+            onSortByChanged(value);
+          },
         ),
       ],
     );

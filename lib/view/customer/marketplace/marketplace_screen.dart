@@ -23,6 +23,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
       floatingActionButton: CustomFloatingActionButton(
         icon: Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
         onPressed: onCartPressed,
+        heroTag: 'marketplace_fab',
       ),
       appBar: CustomAppBar(
         title: 'Secondhand Marketplace',
