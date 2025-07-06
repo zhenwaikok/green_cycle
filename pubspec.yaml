@@ -41,6 +41,9 @@ dependencies:
   #Multi Image Picker
   multi_image_picker_view: ^3.0.0
 
+  #Carousel Slider
+  carousel_slider: ^5.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

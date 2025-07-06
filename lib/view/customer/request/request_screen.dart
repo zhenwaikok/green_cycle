@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
@@ -73,6 +74,10 @@ extension _Actions on _RequestScreenState {
       selectedValue = value;
     });
   }
+
+  void onRequestCardPressed() {
+    context.router.push(RequestDetailsRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -103,29 +108,32 @@ extension _WidgetFactories on _RequestScreenState {
   }
 
   Widget getRequestCard() {
-    return Padding(
-      padding: _Styles.cardPadding,
-      child: CustomCard(
-        padding: _Styles.customCardPadding,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getRequestID(),
-                  getRequestStatus(status: 'Pending'),
-                ],
-              ),
-              getDivider(),
-              getItemDetails(),
-              getDivider(),
-              getRequestDetails(),
-            ],
-          ),
-        ],
+    return GestureDetector(
+      onTap: onRequestCardPressed,
+      child: Padding(
+        padding: _Styles.cardPadding,
+        child: CustomCard(
+          padding: _Styles.customCardPadding,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getRequestID(),
+                    getRequestStatus(status: 'Pending'),
+                  ],
+                ),
+                getDivider(),
+                getItemDetails(),
+                getDivider(),
+                getRequestDetails(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
