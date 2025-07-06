@@ -6,6 +6,8 @@ import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/dot_indicator.dart';
+import 'package:green_cycle_fyp/widget/image_slider.dart';
 
 @RoutePage()
 class ItemDetailsScreen extends StatefulWidget {
@@ -16,19 +18,35 @@ class ItemDetailsScreen extends StatefulWidget {
 }
 
 class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
+  final List<String> imgItems = [
+    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
+    'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
+    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
+  ];
+
+  int currentIndex = 0;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: getAddToCartButton(),
+      bottomNavigationBar: SafeArea(child: getAddToCartButton()),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Stack(
               children: [
-                getItemImage(),
+                getItemImageSlider(),
                 Positioned(top: 15, left: 15, child: getBackButton()),
               ],
             ),
+            SizedBox(height: 10),
+            getDotIndicator(),
             Padding(
               padding: _Styles.screenPadding,
               child: Column(
@@ -58,16 +76,40 @@ extension _Actions on _ItemDetailsScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
   }
+
+  void onImageChanged(int index, dynamic reason) {
+    _setState(() {
+      currentIndex = index;
+    });
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ItemDetailsScreenState {
-  Widget getItemImage() {
-    return CustomImage(
-      imageSize: _Styles.itemImageSize,
-      imageWidth: double.infinity,
-      imageURL:
-          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+  Widget getItemImageSlider() {
+    return ImageSlider(
+      items: imgItems,
+      imageBorderRadius: 0,
+      carouselHeight: _Styles.itemImageSize,
+      containerMargin: EdgeInsetsGeometry.all(0),
+      onImageChanged: onImageChanged,
+    );
+  }
+
+  Widget getDotIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: List.generate(
+        imgItems.length,
+        (index) => Padding(
+          padding: const EdgeInsets.only(right: _Styles.indicatorRightPadding),
+          child: DotIndicator(
+            isActive: index == currentIndex,
+            dotIndicatorSize: _Styles.dotIndicatorSize,
+          ),
+        ),
+      ),
     );
   }
 
@@ -235,6 +277,9 @@ class _Styles {
   static const sellerBorderRadius = 80.0;
   static const backButtonContainerSize = 50.0;
   static const iconSize = 20.0;
+  static const dotIndicatorSize = 10.0;
+
+  static const indicatorRightPadding = 8.0;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
 

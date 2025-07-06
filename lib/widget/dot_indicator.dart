@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class DotIndicator extends StatelessWidget {
-  const DotIndicator({super.key, this.isActive = false});
+  const DotIndicator({super.key, this.isActive = false, this.dotIndicatorSize});
 
   final bool isActive;
+  final double? dotIndicatorSize;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: _Styles.animatedDuration),
-      height: _Styles.dotIndicatorSize,
-      width: _Styles.dotIndicatorSize,
+      height: dotIndicatorSize ?? _Styles.dotIndicatorSize,
+      width: dotIndicatorSize ?? _Styles.dotIndicatorSize,
       decoration: BoxDecoration(
-        color: isActive ? ColorManager.primary : ColorManager.greyColor,
+        color: isActive ? ColorManager.primary : ColorManager.lightGreyColor,
         borderRadius: BorderRadius.all(Radius.circular(_Styles.borderRadius)),
       ),
     );
@@ -24,7 +25,7 @@ class DotIndicator extends StatelessWidget {
 class _Styles {
   _Styles._();
 
-  static const dotIndicatorSize = 15.0;
+  static const dotIndicatorSize = 20.0;
   static const borderRadius = 12.0;
   static const animatedDuration = 300;
 }
