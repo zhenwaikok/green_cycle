@@ -38,5 +38,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: SchedulePickupRoute.page),
     AutoRoute(page: RequestItemDetailsRoute.page),
     AutoRoute(page: RequestSummaryRoute.page),
+    AutoRoute(page: EditListingRoute.page),
   ];
 }

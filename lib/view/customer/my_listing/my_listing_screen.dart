@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -107,6 +108,10 @@ extension _Actions on _MyListingScreenState {
       ],
     );
   }
+
+  void onEditPressed() {
+    context.router.push(EditListingRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -171,7 +176,7 @@ extension _WidgetFactories on _MyListingScreenState {
             icon: Icons.edit,
             color: ColorManager.blackColor,
             text: 'Edit',
-            onTap: () {},
+            onTap: onEditPressed,
           ),
           SizedBox(height: 10),
           getBottomSheetAction(

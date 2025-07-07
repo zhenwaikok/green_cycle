@@ -38,6 +38,8 @@ enum CreateListingFormFieldsEnum {
   category,
 }
 
+enum EditListingFormFieldsEnum { name, description, price, condition, category }
+
 enum RequestForPickupFormFieldsEnum {
   remarks,
   pickupDate,
