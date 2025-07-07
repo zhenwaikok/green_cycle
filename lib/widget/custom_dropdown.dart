@@ -8,18 +8,20 @@ class CustomDropdown extends StatefulWidget {
     super.key,
     required this.formName,
     required this.items,
-    required this.title,
-    required this.fontSize,
-    required this.color,
+    this.title,
+    this.fontSize,
+    this.color,
     this.onChanged,
+    this.needTitle = true,
   });
 
-  final String title;
-  final double fontSize;
-  final Color color;
+  final String? title;
+  final double? fontSize;
+  final Color? color;
   final String formName;
   final List<String> items;
   final void Function(String?)? onChanged;
+  final bool? needTitle;
 
   @override
   State<CustomDropdown> createState() => _CustomDropdownState();
@@ -31,11 +33,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitle(
-          title: widget.title,
-          fontSize: widget.fontSize,
-          color: widget.color,
-        ),
+        if (widget.needTitle == true)
+          getTitle(
+            title: widget.title ?? '',
+            fontSize: widget.fontSize ?? 0,
+            color: widget.color ?? Colors.transparent,
+          ),
         SizedBox(height: 10),
         getDropdownField(),
       ],

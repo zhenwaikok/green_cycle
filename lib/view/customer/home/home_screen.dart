@@ -52,7 +52,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CustomerHomeScreenState {
   void onRequestPickupButtonPressed() {
-    print('object');
+    context.router.push(SelectLocationRoute());
   }
 
   void onShowAllButtonPressed() {
