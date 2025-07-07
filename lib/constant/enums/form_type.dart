@@ -37,3 +37,12 @@ enum CreateListingFormFieldsEnum {
   condition,
   category,
 }
+
+enum RequestForPickupFormFieldsEnum {
+  remarks,
+  pickupDate,
+  itemDescription,
+  category,
+  quantity,
+  conditionInfo,
+}

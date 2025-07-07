@@ -9,7 +9,7 @@ class CustomTextField extends StatefulWidget {
     super.key,
     required this.fontSize,
     required this.color,
-    required this.title,
+    this.title,
     this.prefixIcon,
     this.suffixIcon,
     this.onTap,
@@ -20,14 +20,15 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.readonly,
     required this.formName,
+    this.needTitle = true,
   });
 
   final String formName;
   final double fontSize;
   final Color color;
-  final String title;
+  final String? title;
   final Icon? prefixIcon;
-  final IconButton? suffixIcon;
+  final Icon? suffixIcon;
   final void Function()? onTap;
   final void Function(String? value)? onChanged;
   final TextInputType? keyboardType;
@@ -35,6 +36,7 @@ class CustomTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
   final bool? readonly;
+  final bool? needTitle;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -46,13 +48,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitle(
-          title: widget.title,
-          fontSize: widget.fontSize,
-          color: widget.color,
-        ),
+        if (widget.needTitle ?? true)
+          getTitle(
+            title: widget.title ?? '',
+            fontSize: widget.fontSize,
+            color: widget.color,
+          ),
         SizedBox(height: 10),
-        getTextField(name: widget.title),
+        getTextField(name: widget.formName),
       ],
     );
   }
