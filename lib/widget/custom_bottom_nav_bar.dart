@@ -6,7 +6,9 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 
 @RoutePage()
 class CustomBottomNavBar extends StatefulWidget {
-  const CustomBottomNavBar({super.key});
+  const CustomBottomNavBar({super.key, required this.userRole});
+
+  final String userRole;
 
   @override
   State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
@@ -16,12 +18,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
-      routes: [
-        CustomerHomeRoute(),
-        RequestRoute(),
-        MarketplaceRoute(),
-        ProfileRoute(),
-      ],
+      routes: getRoutes(),
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
 
@@ -73,12 +70,37 @@ extension _WidgetFactories on _CustomBottomNavBarState {
     );
   }
 
+  List<PageRouteInfo> getRoutes() {
+    return [
+      if (widget.userRole == 'Customer') ...[
+        CustomerHomeRoute(),
+        RequestRoute(),
+        MarketplaceRoute(),
+        ProfileRoute(),
+      ] else if (widget.userRole == 'Admin') ...[
+        AdminDashboardRoute(),
+        ManageCollectorsRoute(),
+        ManageRequestsRoute(),
+        ManageAwarenessRoute(),
+        AdminProfileRoute(),
+      ],
+    ];
+  }
+
   List<BottomNavigationBarItem> getBottomNavBarItems() {
     return [
-      getBottomNavBarIcon(icon: Icons.home, label: 'Home'),
-      getBottomNavBarIcon(icon: Icons.local_shipping, label: 'Request'),
-      getBottomNavBarIcon(icon: Icons.shopping_bag, label: 'Marketplace'),
-      getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
+      if (widget.userRole == 'Customer') ...[
+        getBottomNavBarIcon(icon: Icons.home, label: 'Home'),
+        getBottomNavBarIcon(icon: Icons.local_shipping, label: 'Request'),
+        getBottomNavBarIcon(icon: Icons.shopping_bag, label: 'Marketplace'),
+        getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
+      ] else if (widget.userRole == 'Admin') ...[
+        getBottomNavBarIcon(icon: Icons.home, label: 'Home'),
+        getBottomNavBarIcon(icon: Icons.people_rounded, label: 'Collectors'),
+        getBottomNavBarIcon(icon: Icons.local_shipping, label: 'Request'),
+        getBottomNavBarIcon(icon: Icons.campaign, label: 'Awareness'),
+        getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
+      ],
     ];
   }
 

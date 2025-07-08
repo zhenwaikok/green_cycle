@@ -59,25 +59,23 @@ extension _Actions on _PointsScreenState {
 extension _WidgetFactories on _PointsScreenState {
   Widget getCurrentPoints() {
     return CustomCard(
-      children: [
-        Row(
-          children: [
-            Icon(
-              FontAwesomeIcons.coins,
-              color: ColorManager.blackColor,
-              size: _Styles.coinIconSize,
+      child: Row(
+        children: [
+          Icon(
+            FontAwesomeIcons.coins,
+            color: ColorManager.blackColor,
+            size: _Styles.coinIconSize,
+          ),
+          SizedBox(width: 15),
+          Expanded(
+            child: Text(
+              'Current Points',
+              style: _Styles.currentPointsTextStyle,
             ),
-            SizedBox(width: 15),
-            Expanded(
-              child: Text(
-                'Current Points',
-                style: _Styles.currentPointsTextStyle,
-              ),
-            ),
-            Text('1522', style: _Styles.pointsTextStyle),
-          ],
-        ),
-      ],
+          ),
+          Text('1522', style: _Styles.pointsTextStyle),
+        ],
+      ),
     );
   }
 

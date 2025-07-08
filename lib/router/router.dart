@@ -13,10 +13,15 @@ class AppRouter extends $AppRouter {
     AutoRoute(
       page: CustomBottomNavBar.page,
       children: [
-        AutoRoute(page: CustomerHomeRoute.page, initial: true),
+        AutoRoute(page: CustomerHomeRoute.page),
         AutoRoute(page: RequestRoute.page),
         AutoRoute(page: MarketplaceRoute.page),
         AutoRoute(page: ProfileRoute.page),
+        AutoRoute(page: AdminDashboardRoute.page),
+        AutoRoute(page: ManageCollectorsRoute.page),
+        AutoRoute(page: ManageRequestsRoute.page),
+        AutoRoute(page: ManageAwarenessRoute.page),
+        AutoRoute(page: AdminProfileRoute.page),
       ],
     ),
     AutoRoute(page: AwarenessRoute.page),

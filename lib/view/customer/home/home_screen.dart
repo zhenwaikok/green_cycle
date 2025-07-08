@@ -114,7 +114,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   }
 
   Widget getRequestPickupCard() {
-    return CustomCard(children: [getRequestPickupCardContent()]);
+    return CustomCard(child: Column(children: [getRequestPickupCardContent()]));
   }
 
   Widget getRequestPickupCardContent() {

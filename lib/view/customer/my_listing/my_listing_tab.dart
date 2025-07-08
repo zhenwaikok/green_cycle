@@ -36,16 +36,10 @@ extension _WidgetFactories on MyListingTab {
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getStatus(),
-                SizedBox(height: 10),
-                getProductDetails(),
-              ],
-            ),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [getStatus(), SizedBox(height: 10), getProductDetails()],
+          ),
         ),
       ),
     );

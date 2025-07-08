@@ -4,18 +4,18 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 class CustomCard extends StatelessWidget {
   const CustomCard({
     super.key,
-    required this.children,
     this.padding,
     this.needBoxShadow = true,
     this.backgroundColor,
     this.borderRadius,
+    this.child,
   });
 
-  final List<Widget> children;
   final EdgeInsetsGeometry? padding;
   final bool? needBoxShadow;
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +36,7 @@ class CustomCard extends StatelessWidget {
               ]
             : null,
       ),
-      child: Padding(
-        padding: padding ?? _Styles.cardPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: children,
-        ),
-      ),
+      child: Padding(padding: padding ?? _Styles.cardPadding, child: child),
     );
   }
 }

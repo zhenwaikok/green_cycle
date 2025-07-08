@@ -98,13 +98,16 @@ extension _WidgetFactories on _SignUpScreenState {
 
   Widget getCard() {
     return CustomCard(
-      children: [
-        getCardTitleDescription(),
-        SizedBox(height: 20),
-        getSignUpTextField(),
-        SizedBox(height: 20),
-        getTextField(),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getCardTitleDescription(),
+          SizedBox(height: 20),
+          getSignUpTextField(),
+          SizedBox(height: 20),
+          getTextField(),
+        ],
+      ),
     );
   }
 

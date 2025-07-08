@@ -17,6 +17,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final userRole = 'Admin';
+  List<PageRouteInfo> routes = [];
+  List<BottomNavigationBarItem> navBarItems = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +52,7 @@ extension _Actions on _LoginScreenState {
     //TODO: Implement sign-in logic
 
     context.router.pushAndPopUntil(
-      CustomBottomNavBar(),
+      CustomBottomNavBar(userRole: userRole),
       predicate: (route) => false,
     );
   }
@@ -78,14 +82,17 @@ extension _WidgetFactories on _LoginScreenState {
 
   Widget getCard() {
     return CustomCard(
-      children: [
-        getCardTitleDescription(),
-        SizedBox(height: 30),
-        getLoginTextField(),
-        getForgotPasswordText(),
-        SizedBox(height: 30),
-        getButtons(),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getCardTitleDescription(),
+          SizedBox(height: 30),
+          getLoginTextField(),
+          getForgotPasswordText(),
+          SizedBox(height: 30),
+          getButtons(),
+        ],
+      ),
     );
   }
 
