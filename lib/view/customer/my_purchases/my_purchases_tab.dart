@@ -27,13 +27,16 @@ extension _WidgetFactories on MyPurchasesTab {
       padding: _Styles.cardPadding,
       child: CustomCard(
         padding: _Styles.customCardPadding,
-        children: [
-          getOrderDetails(),
-          getDivider(),
-          getItemList(),
-          getDivider(),
-          getBottomDetails(),
-        ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getOrderDetails(),
+            getDivider(),
+            getItemList(),
+            getDivider(),
+            getBottomDetails(),
+          ],
+        ),
       ),
     );
   }

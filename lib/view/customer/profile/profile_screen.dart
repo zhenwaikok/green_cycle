@@ -107,12 +107,15 @@ extension _WidgetFactories on _ProfileScreenState {
 
   Widget getProfileCard() {
     return CustomCard(
-      children: [
-        getProfileCardTop(),
-        SizedBox(height: 15),
-        Divider(color: ColorManager.lightGreyColor),
-        getProfileCardBottom(),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getProfileCardTop(),
+          SizedBox(height: 15),
+          Divider(color: ColorManager.lightGreyColor),
+          getProfileCardBottom(),
+        ],
+      ),
     );
   }
 

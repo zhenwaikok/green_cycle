@@ -33,26 +33,24 @@ extension _WidgetFactories on SecondHandItem {
   Widget getSecondHandItem() {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getItemImage(),
-            SizedBox(height: 10),
-            Padding(
-              padding: _Styles.productDetailsPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getItemStatus(text: text),
-                  SizedBox(height: 10),
-                  getItemDetails(),
-                ],
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getItemImage(),
+          SizedBox(height: 10),
+          Padding(
+            padding: _Styles.productDetailsPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getItemStatus(text: text),
+                SizedBox(height: 10),
+                getItemDetails(),
+              ],
             ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 

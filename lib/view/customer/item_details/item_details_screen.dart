@@ -199,15 +199,13 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     return CustomCard(
       needBoxShadow: false,
       backgroundColor: ColorManager.primaryLight,
-      children: [
-        Row(
-          children: [
-            getSellerProfileImage(),
-            SizedBox(width: 25),
-            Expanded(child: getSellerNamePhoneNum()),
-          ],
-        ),
-      ],
+      child: Row(
+        children: [
+          getSellerProfileImage(),
+          SizedBox(width: 25),
+          Expanded(child: getSellerNamePhoneNum()),
+        ],
+      ),
     );
   }
 

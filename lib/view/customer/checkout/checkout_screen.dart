@@ -84,16 +84,14 @@ extension _WidgetFactories on _CheckoutScreenState {
   Widget getDeliveryDetailsSection() {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            getDeliveryTitleAndEditButton(),
-            SizedBox(height: 10),
-            getDeliveryAddress(),
-          ],
-        ),
-      ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          getDeliveryTitleAndEditButton(),
+          SizedBox(height: 10),
+          getDeliveryAddress(),
+        ],
+      ),
     );
   }
 
@@ -137,17 +135,15 @@ extension _WidgetFactories on _CheckoutScreenState {
       padding: _Styles.cardPadding,
       child: CustomCard(
         padding: _Styles.customCardPadding,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getItemImage(),
-              SizedBox(width: 10),
-              Expanded(child: getItemDetails()),
-              getItemCondition(),
-            ],
-          ),
-        ],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getItemImage(),
+            SizedBox(width: 10),
+            Expanded(child: getItemDetails()),
+            getItemCondition(),
+          ],
+        ),
       ),
     );
   }

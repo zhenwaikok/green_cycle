@@ -73,20 +73,18 @@ extension _WidgetFactories on _CartScreenState {
   Widget getCartCard() {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getSellerName(),
-            getDivider(),
-            getCartItems(),
-            getDivider(),
-            getTotalAmount(),
-            getDivider(),
-            getCheckoutButton(),
-          ],
-        ),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getSellerName(),
+          getDivider(),
+          getCartItems(),
+          getDivider(),
+          getTotalAmount(),
+          getDivider(),
+          getCheckoutButton(),
+        ],
+      ),
     );
   }
 

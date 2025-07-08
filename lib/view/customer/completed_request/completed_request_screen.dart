@@ -84,18 +84,16 @@ extension _WidgetFactories on _CompletedRequestScreenState {
       padding: _Styles.cardPadding,
       child: CustomCard(
         padding: _Styles.customCardPadding,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getRequestID(),
-              getDivider(),
-              getItemDetails(),
-              getDivider(),
-              getCompletedDetails(),
-            ],
-          ),
-        ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getRequestID(),
+            getDivider(),
+            getItemDetails(),
+            getDivider(),
+            getCompletedDetails(),
+          ],
+        ),
       ),
     );
   }

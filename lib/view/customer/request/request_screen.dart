@@ -114,25 +114,23 @@ extension _WidgetFactories on _RequestScreenState {
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    getRequestID(),
-                    getRequestStatus(status: 'Pending'),
-                  ],
-                ),
-                getDivider(),
-                getItemDetails(),
-                getDivider(),
-                getRequestDetails(),
-              ],
-            ),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getRequestID(),
+                  getRequestStatus(status: 'Pending'),
+                ],
+              ),
+              getDivider(),
+              getItemDetails(),
+              getDivider(),
+              getRequestDetails(),
+            ],
+          ),
         ),
       ),
     );

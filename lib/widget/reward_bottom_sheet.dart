@@ -38,29 +38,22 @@ extension _Actions on _RewardBottomSheetState {}
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _RewardBottomSheetState {
   Widget getBottomSheetCard() {
-    final height = MediaQuery.of(context).size.height * 0.5;
-
     return CustomCard(
-      children: [
-        SizedBox(
-          height: height,
-          child: Column(
-            children: [
-              getBottomSheetCardImageName(
-                imageURL: widget.imageURL,
-                rewardName: widget.rewardName,
-              ),
-              SizedBox(height: 40),
-              getDescription(descriptionText: widget.descriptionText),
-              Spacer(),
-              getBottomSheetCardClaimButton(
-                buttonText: widget.buttonText,
-                onPressed: widget.onPressed,
-              ),
-            ],
+      child: Column(
+        children: [
+          getBottomSheetCardImageName(
+            imageURL: widget.imageURL,
+            rewardName: widget.rewardName,
           ),
-        ),
-      ],
+          SizedBox(height: 40),
+          getDescription(descriptionText: widget.descriptionText),
+          Spacer(),
+          getBottomSheetCardClaimButton(
+            buttonText: widget.buttonText,
+            onPressed: widget.onPressed,
+          ),
+        ],
+      ),
     );
   }
 

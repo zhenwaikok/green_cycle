@@ -54,25 +54,23 @@ extension _WidgetFactories on _MyRewardsTabState {
       padding: _Styles.gridViewBuilderPadding,
       child: CustomCard(
         padding: _Styles.myRewardsCardPadding,
-        children: [
-          Center(
-            child: Column(
-              children: [
-                getRewardImage(),
-                Padding(
-                  padding: _Styles.rewardNameButtonPadding,
-                  child: Column(
-                    children: [
-                      getRewardName(),
-                      SizedBox(height: 10),
-                      getUseButton(),
-                    ],
-                  ),
+        child: Center(
+          child: Column(
+            children: [
+              getRewardImage(),
+              Padding(
+                padding: _Styles.rewardNameButtonPadding,
+                child: Column(
+                  children: [
+                    getRewardName(),
+                    SizedBox(height: 10),
+                    getUseButton(),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
