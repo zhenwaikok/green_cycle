@@ -39,7 +39,8 @@ extension _Actions on _AwarenessScreenState {
   }
 
   void onAwarenessCardPressed() {
-    context.router.push(AwarenessDetailsRoute());
+    //TODO: get user role from shared preferences
+    context.router.push(AwarenessDetailsRoute(userRole: 'Customer'));
   }
 }
 

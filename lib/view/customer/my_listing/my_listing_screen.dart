@@ -6,6 +6,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
+import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 
 @RoutePage()
@@ -172,54 +173,27 @@ extension _WidgetFactories on _MyListingScreenState {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          getBottomSheetAction(
+          BottomSheetAction(
             icon: Icons.edit,
             color: ColorManager.blackColor,
             text: 'Edit',
             onTap: onEditPressed,
           ),
           SizedBox(height: 10),
-          getBottomSheetAction(
+          BottomSheetAction(
             icon: Icons.check,
             color: ColorManager.blackColor,
             text: 'Mark as sold',
             onTap: () {},
           ),
           SizedBox(height: 10),
-          getBottomSheetAction(
+          BottomSheetAction(
             icon: Icons.delete_outline,
             color: ColorManager.redColor,
             text: 'Remove',
             onTap: onRemovePressed,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget getBottomSheetAction({
-    required IconData icon,
-    required Color color,
-    required String text,
-    required void Function()? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(_Styles.inkWellBorderRadus),
-      child: Padding(
-        padding: _Styles.inkWellPadding,
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: _Styles.bottomSheetActionIconSize),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                text,
-                style: _Styles.bottomSheetActionTextStyle(color: color),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -240,11 +214,6 @@ extension _WidgetFactories on _MyListingScreenState {
 class _Styles {
   _Styles._();
 
-  static const bottomSheetActionIconSize = 25.0;
-  static const inkWellBorderRadus = 10.0;
-
-  static const inkWellPadding = EdgeInsets.all(5);
-
   static const tabBarPadding = EdgeInsets.symmetric(vertical: 20);
 
   static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);
@@ -264,13 +233,6 @@ class _Styles {
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
   );
-
-  static TextStyle bottomSheetActionTextStyle({required Color color}) =>
-      TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeightManager.regular,
-        color: color,
-      );
 
   static final textButtonStyle = ButtonStyle(
     overlayColor: WidgetStateProperty.all(ColorManager.lightGreyColor2),

@@ -44,5 +44,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: RequestItemDetailsRoute.page),
     AutoRoute(page: RequestSummaryRoute.page),
     AutoRoute(page: EditListingRoute.page),
+    AutoRoute(page: AddOrEditAwarenessRoute.page),
   ];
 }

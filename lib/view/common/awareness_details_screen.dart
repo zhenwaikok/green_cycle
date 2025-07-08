@@ -2,11 +2,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
+import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
+import 'package:green_cycle_fyp/widget/custom_image.dart';
 
 @RoutePage()
 class AwarenessDetailsScreen extends StatefulWidget {
-  const AwarenessDetailsScreen({super.key});
+  const AwarenessDetailsScreen({super.key, required this.userRole});
+
+  final String userRole;
 
   @override
   State<AwarenessDetailsScreen> createState() => _AwarenessDetailsScreenState();
@@ -20,6 +25,13 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
         title: 'Awareness Details',
         isBackButtonVisible: true,
         onPressed: onBackButtonPressed,
+        actions: [
+          if (widget.userRole == 'Admin')
+            IconButton(
+              onPressed: onMoreButtonPressed,
+              icon: Icon(Icons.more_horiz, color: ColorManager.whiteColor),
+            ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -38,6 +50,20 @@ extension _Actions on _AwarenessDetailsScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
   }
+
+  void onEditButtonPressed() {
+    context.router.push(AddOrEditAwarenessRoute(isEdit: true));
+  }
+
+  void onMoreButtonPressed() async {
+    showModalBottomSheet(
+      backgroundColor: ColorManager.whiteColor,
+      context: context,
+      builder: (context) {
+        return getMoreBottomSheet();
+      },
+    );
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -55,14 +81,12 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
   }
 
   Widget getImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(_Styles.borderRadius),
-      child: Image.network(
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.4,
-        'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-        fit: BoxFit.cover,
-      ),
+    return CustomImage(
+      imageURL:
+          'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
+      borderRadius: _Styles.borderRadius,
+      imageWidth: double.infinity,
+      imageSize: MediaQuery.of(context).size.height * 0.4,
     );
   }
 
@@ -103,6 +127,30 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
           textAlign: TextAlign.justify,
         ),
       ],
+    );
+  }
+
+  Widget getMoreBottomSheet() {
+    return Padding(
+      padding: _Styles.screenPadding,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BottomSheetAction(
+            icon: Icons.edit,
+            color: ColorManager.blackColor,
+            text: 'Edit',
+            onTap: onEditButtonPressed,
+          ),
+          SizedBox(height: 10),
+          BottomSheetAction(
+            icon: Icons.delete_outline,
+            color: ColorManager.redColor,
+            text: 'Remove',
+            onTap: () {},
+          ),
+        ],
+      ),
     );
   }
 }
