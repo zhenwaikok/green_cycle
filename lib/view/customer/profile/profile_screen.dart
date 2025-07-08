@@ -107,6 +107,7 @@ extension _WidgetFactories on _ProfileScreenState {
 
   Widget getProfileCard() {
     return CustomCard(
+      padding: _Styles.customCardPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -202,6 +203,8 @@ class _Styles {
 
   static const iconSize = 35.0;
   static const maxTextLines = 2;
+
+  static const customCardPadding = EdgeInsets.all(20);
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,

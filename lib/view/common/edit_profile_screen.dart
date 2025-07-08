@@ -43,6 +43,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         isBackButtonVisible: true,
         onPressed: onBackButtonPressed,
       ),
+      bottomNavigationBar: Padding(
+        padding: _Styles.screenPadding,
+        child: getButton(),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -53,8 +57,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   getProfileImage(),
                   SizedBox(height: 60),
                   getProfileTextFields(),
-                  SizedBox(height: 50),
-                  getButton(),
                 ],
               ),
             ),
@@ -127,10 +129,12 @@ extension _WidgetFactories on _EditProfileScreenState {
         getEmailText(),
         SizedBox(height: 20),
         getGenderDropdown(),
-        SizedBox(height: 20),
-        getPhoneTextField(),
-        SizedBox(height: 10),
-        getPasswordTextField(),
+        if (widget.selectedRole == 'Customer') ...[
+          SizedBox(height: 20),
+          getPhoneTextField(),
+          SizedBox(height: 10),
+          getAddressTextField(),
+        ],
       ],
     );
   }
@@ -224,13 +228,13 @@ extension _WidgetFactories on _EditProfileScreenState {
     );
   }
 
-  Widget getPasswordTextField() {
+  Widget getAddressTextField() {
     return CustomTextField(
       fontSize: _Styles.editProfileFormFieldFontSize,
       color: _Styles.editProfileFormFieldColor,
-      title: 'Password',
-      prefixIcon: Icon(Icons.lock_outline, color: ColorManager.greyColor),
-      formName: SignUpFormFieldsEnum.password.name,
+      title: 'Address',
+      prefixIcon: Icon(Icons.location_on, color: ColorManager.greyColor),
+      formName: EditProfileFormFieldsEnum.address.name,
     );
   }
 
