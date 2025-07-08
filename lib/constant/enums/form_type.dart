@@ -48,3 +48,5 @@ enum RequestForPickupFormFieldsEnum {
   quantity,
   conditionInfo,
 }
+
+enum AddAwarenessFormFieldsEnum { awarenessTitle, awarenessContent }

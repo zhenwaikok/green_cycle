@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/widget/custom_image.dart';
 
 class CustomAwarenessCard extends StatelessWidget {
   const CustomAwarenessCard({
@@ -19,14 +20,10 @@ class CustomAwarenessCard extends StatelessWidget {
     return SizedBox(
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(_Styles.borderRadius),
-            child: Image.network(
-              width: MediaQuery.of(context).size.width * 0.3,
-              height: MediaQuery.of(context).size.width * 0.3,
-              imageURL,
-              fit: BoxFit.cover,
-            ),
+          CustomImage(
+            imageSize: MediaQuery.of(context).size.width * 0.3,
+            borderRadius: _Styles.borderRadius,
+            imageURL: imageURL,
           ),
           SizedBox(width: 20),
           Expanded(
