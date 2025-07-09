@@ -85,7 +85,6 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
     return CustomSortBy(
       sortByItems: sortByItems,
       selectedValue: selectedSortBy,
-      isExpanded: false,
       onChanged: (value) {
         onSortByChanged(value);
       },

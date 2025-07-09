@@ -9,6 +9,7 @@ class CustomCard extends StatelessWidget {
     this.backgroundColor,
     this.borderRadius,
     this.child,
+    this.needBorder = false,
   });
 
   final EdgeInsetsGeometry? padding;
@@ -16,12 +17,16 @@ class CustomCard extends StatelessWidget {
   final Color? backgroundColor;
   final BorderRadiusGeometry? borderRadius;
   final Widget? child;
+  final bool? needBorder;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
+        border: (needBorder ?? false)
+            ? Border.all(color: ColorManager.greyColor)
+            : null,
         color: backgroundColor ?? ColorManager.whiteColor,
         borderRadius:
             borderRadius ?? BorderRadius.circular(_Styles.cardBorderRadius),

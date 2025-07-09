@@ -7,8 +7,8 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
-    required this.fontSize,
-    required this.color,
+    this.fontSize,
+    this.color,
     this.title,
     this.prefixIcon,
     this.suffixIcon,
@@ -21,11 +21,12 @@ class CustomTextField extends StatefulWidget {
     this.readonly,
     required this.formName,
     this.needTitle = true,
+    this.maxLines,
   });
 
   final String formName;
-  final double fontSize;
-  final Color color;
+  final double? fontSize;
+  final Color? color;
   final String? title;
   final Icon? prefixIcon;
   final Icon? suffixIcon;
@@ -37,6 +38,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final bool? readonly;
   final bool? needTitle;
+  final int? maxLines;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -47,12 +49,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (widget.needTitle ?? true)
           getTitle(
             title: widget.title ?? '',
-            fontSize: widget.fontSize,
-            color: widget.color,
+            fontSize: widget.fontSize ?? 0,
+            color: widget.color ?? Colors.transparent,
           ),
         SizedBox(height: 10),
         getTextField(name: widget.formName),
@@ -80,6 +83,7 @@ extension _WidgetFactories on _CustomTextFieldState {
   Widget getTextField({required String name}) {
     return FormBuilderTextField(
       name: name,
+      maxLines: widget.maxLines,
       onTap: widget.onTap,
       onChanged: widget.onChanged,
       keyboardType: widget.keyboardType ?? TextInputType.text,
