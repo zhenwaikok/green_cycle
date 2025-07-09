@@ -46,5 +46,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: EditListingRoute.page),
     AutoRoute(page: AddOrEditAwarenessRoute.page),
     AutoRoute(page: CollectorDetailsRoute.page),
+    AutoRoute(page: PickupRequestDetailsRoute.page),
   ];
 }

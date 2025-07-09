@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -62,6 +63,18 @@ extension _Actions on _AwarenessDetailsScreenState {
       builder: (context) {
         return getMoreBottomSheet();
       },
+    );
+  }
+
+  void onRemovePressed() async {
+    WidgetUtil.showAlertDialog(
+      context,
+      title: 'Delete Confirmation',
+      content: 'Are you sure you want to delete this awareness content?',
+      actions: [
+        getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
+        getAlertDialogTextButton(onPressed: () {}, text: 'Confirm'),
+      ],
     );
   }
 }
@@ -147,10 +160,21 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
             icon: Icons.delete_outline,
             color: ColorManager.redColor,
             text: 'Remove',
-            onTap: () {},
+            onTap: onRemovePressed,
           ),
         ],
       ),
+    );
+  }
+
+  Widget getAlertDialogTextButton({
+    required void Function()? onPressed,
+    required String text,
+  }) {
+    return TextButton(
+      style: _Styles.textButtonStyle,
+      onPressed: onPressed,
+      child: Text(text, style: _Styles.textButtonTextStyle),
     );
   }
 }
@@ -189,5 +213,15 @@ class _Styles {
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
+  );
+
+  static final textButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(ColorManager.lightGreyColor2),
+  );
+
+  static const textButtonTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
   );
 }
