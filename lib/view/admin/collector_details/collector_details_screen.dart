@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -68,9 +69,10 @@ extension _Actions on _CollectorDetailsScreenState {
   void onDeleteButtonPressed() {
     WidgetUtil.showAlertDialog(
       context,
-      title: 'Please provide the reason for rejecting this collector',
+      title: 'Please provide reason for rejecting this collector',
       maxLines: _Styles.maxLines,
       needTextField: true,
+      formName: RejectCollectorFormFieldEnum.reason.name,
       actions: [
         getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
         getAlertDialogTextButton(onPressed: () {}, text: 'Submit'),

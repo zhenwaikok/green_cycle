@@ -50,3 +50,5 @@ enum RequestForPickupFormFieldsEnum {
 }
 
 enum AddAwarenessFormFieldsEnum { awarenessTitle, awarenessContent }
+
+enum RejectCollectorFormFieldEnum { reason }
