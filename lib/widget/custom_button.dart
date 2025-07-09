@@ -9,6 +9,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
     required this.onPressed,
+    this.icon,
   });
 
   final String text;
@@ -16,6 +17,7 @@ class CustomButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? borderColor;
   final void Function() onPressed;
+  final Icon? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,14 @@ class CustomButton extends StatelessWidget {
                 ColorManager.greyColor.withValues(alpha: 0.1),
               ),
             ),
-        child: Text(text, style: _Styles.buttonTextStyle(color: textColor)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ?icon,
+            icon != null ? SizedBox(width: 10) : SizedBox(width: 0),
+            Text(text, style: _Styles.buttonTextStyle(color: textColor)),
+          ],
+        ),
       ),
     );
   }
