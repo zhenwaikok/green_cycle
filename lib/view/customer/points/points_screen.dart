@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/view/customer/points/earned_points_tab.dart';
 import 'package:green_cycle_fyp/view/customer/points/used_points_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
 class PointsScreen extends StatefulWidget {
@@ -33,7 +34,9 @@ class _PointsScreenState extends State<PointsScreen> {
             child: Column(
               children: [
                 getCurrentPoints(),
+                SizedBox(height: 20),
                 getTabBar(),
+                SizedBox(height: 15),
                 Expanded(
                   child: TabBarView(
                     children: [EarnedPointsTab(), UsedPointsTab()],
@@ -80,24 +83,7 @@ extension _WidgetFactories on _PointsScreenState {
   }
 
   Widget getTabBar() {
-    return TabBar(
-      tabs: [Text('Earned'), Text('Used')],
-      dividerColor: Colors.transparent,
-      indicatorColor: ColorManager.primary,
-      labelColor: ColorManager.primary,
-      unselectedLabelColor: ColorManager.greyColor,
-      labelStyle: _Styles.tabLabelTextStyle,
-      padding: _Styles.tabBarPadding,
-      labelPadding: _Styles.tabBarLabelPadding,
-      overlayColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.pressed)) {
-          return ColorManager.lightGreyColor2;
-        }
-        return null;
-      }),
-    );
+    return CustomTabBar(tabs: [Text('Earned'), Text('Used')]);
   }
 }
 

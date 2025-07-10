@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/view/customer/my_purchases/my_purchases_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
+import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
 class MyPurchasesScreen extends StatefulWidget {
@@ -25,12 +26,13 @@ class _MyPurchasesScreenState extends State<MyPurchasesScreen> {
           onPressed: onBackButtonPressed,
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              getTabBar(),
-              Expanded(
-                child: Padding(
-                  padding: _Styles.screenPadding,
+          child: Padding(
+            padding: _Styles.screenPadding,
+            child: Column(
+              children: [
+                getTabBar(),
+                SizedBox(height: 15),
+                Expanded(
                   child: TabBarView(
                     children: [
                       getPurchasesList(purchaseStatus: ''),
@@ -39,8 +41,8 @@ class _MyPurchasesScreenState extends State<MyPurchasesScreen> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -58,21 +60,8 @@ extension _Actions on _MyPurchasesScreenState {
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MyPurchasesScreenState {
   Widget getTabBar() {
-    return TabBar(
+    return CustomTabBar(
       tabs: [Text('All'), Text('In Progress'), Text('Completed')],
-      indicatorColor: ColorManager.primary,
-      labelColor: ColorManager.primary,
-      unselectedLabelColor: ColorManager.greyColor,
-      labelStyle: _Styles.tabLabelTextStyle,
-      labelPadding: _Styles.tabBarLabelPadding,
-      overlayColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.pressed)) {
-          return ColorManager.lightGreyColor2;
-        }
-        return null;
-      }),
     );
   }
 

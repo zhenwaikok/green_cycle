@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
 class MyListingScreen extends StatefulWidget {
@@ -57,7 +58,9 @@ class _MyListingScreenState extends State<MyListingScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 getSortBy(),
+                SizedBox(height: 20),
                 getTabBar(),
+                SizedBox(height: 15),
                 Expanded(
                   child: TabBarView(
                     children: [
@@ -135,24 +138,7 @@ extension _WidgetFactories on _MyListingScreenState {
   }
 
   Widget getTabBar() {
-    return TabBar(
-      tabs: [Text('All'), Text('Active'), Text('Sold')],
-      dividerColor: Colors.transparent,
-      indicatorColor: ColorManager.primary,
-      labelColor: ColorManager.primary,
-      unselectedLabelColor: ColorManager.greyColor,
-      labelStyle: _Styles.tabLabelTextStyle,
-      padding: _Styles.tabBarPadding,
-      labelPadding: _Styles.tabBarLabelPadding,
-      overlayColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.pressed)) {
-          return ColorManager.lightGreyColor2;
-        }
-        return null;
-      }),
-    );
+    return CustomTabBar(tabs: [Text('All'), Text('Active'), Text('Sold')]);
   }
 
   Widget getMyListingList({required String listingStatus}) {

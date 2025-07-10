@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/view/customer/reward/my_rewards_tab.dart';
 import 'package:green_cycle_fyp/view/customer/reward/toredeem_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
 class RewardScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class _RewardSreenState extends State<RewardScreen> {
             child: Column(
               children: [
                 getCurrentPoints(),
+                SizedBox(height: 20),
                 getTabBar(),
                 Expanded(
                   child: TabBarView(children: [ToRedeemTab(), MyRewardsTab()]),
@@ -78,24 +80,7 @@ extension _WidgetFactories on _RewardSreenState {
   }
 
   Widget getTabBar() {
-    return TabBar(
-      tabs: [Text('To Redeem'), Text('My Rewards')],
-      dividerColor: Colors.transparent,
-      indicatorColor: ColorManager.primary,
-      labelColor: ColorManager.primary,
-      unselectedLabelColor: ColorManager.greyColor,
-      labelStyle: _Styles.tabLabelTextStyle,
-      padding: _Styles.tabBarPadding,
-      labelPadding: _Styles.tabBarLabelPadding,
-      overlayColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.pressed)) {
-          return ColorManager.lightGreyColor2;
-        }
-        return null;
-      }),
-    );
+    return CustomTabBar(tabs: [Text('To Redeem'), Text('My Rewards')]);
   }
 }
 
