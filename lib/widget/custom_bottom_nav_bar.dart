@@ -83,6 +83,11 @@ extension _WidgetFactories on _CustomBottomNavBarState {
         ManageRequestsRoute(),
         ManageAwarenessRoute(),
         AdminProfileRoute(),
+      ] else if (widget.userRole == 'Collector') ...[
+        CollectorHomeRoute(),
+        AvailablePickupRequestRoute(),
+        MyPickupRoute(),
+        CollectorProfileRoute(),
       ],
     ];
   }
@@ -99,6 +104,11 @@ extension _WidgetFactories on _CustomBottomNavBarState {
         getBottomNavBarIcon(icon: Icons.people_rounded, label: 'Collectors'),
         getBottomNavBarIcon(icon: Icons.local_shipping, label: 'Request'),
         getBottomNavBarIcon(icon: Icons.campaign, label: 'Awareness'),
+        getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
+      ] else if (widget.userRole == 'Collector') ...[
+        getBottomNavBarIcon(icon: Icons.home, label: 'Home'),
+        getBottomNavBarIcon(icon: Icons.pending_actions, label: 'Available'),
+        getBottomNavBarIcon(icon: Icons.work, label: 'My Pickup'),
         getBottomNavBarIcon(icon: Icons.person, label: 'Profile'),
       ],
     ];
