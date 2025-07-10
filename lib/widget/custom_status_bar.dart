@@ -3,16 +3,17 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 
 class CustomStatusBar extends StatelessWidget {
-  const CustomStatusBar({super.key, required this.text});
+  const CustomStatusBar({super.key, required this.text, this.color});
 
   final String text;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return IntrinsicWidth(
       child: Container(
         decoration: BoxDecoration(
-          color: ColorManager.primary,
+          color: color ?? ColorManager.primary,
           borderRadius: BorderRadius.circular(_Styles.borderRadius),
         ),
         child: Padding(

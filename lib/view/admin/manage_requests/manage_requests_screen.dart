@@ -6,6 +6,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/view/admin/manage_requests/manage_request_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 
 @RoutePage()
@@ -76,22 +77,8 @@ extension _WidgetFactories on _ManageRequestsScreenState {
   }
 
   Widget getTabBar() {
-    return TabBar(
+    return CustomTabBar(
       tabs: [Text('All'), Text('Pending'), Text('Ongoing'), Text('Completed')],
-      indicatorColor: ColorManager.primary,
-      labelColor: ColorManager.primary,
-      unselectedLabelColor: ColorManager.greyColor,
-      labelStyle: _Styles.tabLabelTextStyle,
-      labelPadding: _Styles.tabBarLabelPadding,
-      dividerColor: Colors.transparent,
-      overlayColor: WidgetStateProperty.resolveWith<Color?>((
-        Set<WidgetState> states,
-      ) {
-        if (states.contains(WidgetState.pressed)) {
-          return ColorManager.lightGreyColor2;
-        }
-        return null;
-      }),
     );
   }
 
