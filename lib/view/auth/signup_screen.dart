@@ -280,7 +280,7 @@ extension _WidgetFactories on _SignUpScreenState {
         ),
         SizedBox(height: 12),
         CustomButton(
-          text: 'Already have an account? Sign In',
+          text: 'Have an account? Sign In',
           textColor: ColorManager.primary,
           backgroundColor: ColorManager.whiteColor,
           borderColor: ColorManager.primary,

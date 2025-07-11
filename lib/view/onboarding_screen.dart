@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 
 class OnBoard {
@@ -124,12 +125,11 @@ extension _WidgetFactories on _OnboardingScreenState {
     required String description,
   }) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Spacer(),
         getOnboardImage(image: image),
         SizedBox(height: 12),
         getOnboardMessage(title: title, description: description),
-        Spacer(),
       ],
     );
   }
@@ -185,21 +185,30 @@ extension _WidgetFactories on _OnboardingScreenState {
     return SizedBox(
       height: _Styles.bottomStartButtonHeight,
       width: _Styles.bottomStartButtonWidth,
-      child: ElevatedButton(
+      child: CustomButton(
+        text: 'Get Started',
+        textColor: ColorManager.whiteColor,
         onPressed: onStartButtonPressed,
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(_Styles.borderRadius),
-          ),
-          backgroundColor: ColorManager.primary,
-        ),
-        child: Text(
-          'Get Started',
-          textAlign: TextAlign.center,
-          style: _Styles.getStartedTextStyle,
-        ),
       ),
     );
+    // return SizedBox(
+    //   height: _Styles.bottomStartButtonHeight,
+    //   width: _Styles.bottomStartButtonWidth,
+    //   child: ElevatedButton(
+    //     onPressed: onStartButtonPressed,
+    //     style: ElevatedButton.styleFrom(
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadiusGeometry.circular(_Styles.borderRadius),
+    //       ),
+    //       backgroundColor: ColorManager.primary,
+    //     ),
+    //     child: Text(
+    //       'Get Started',
+    //       textAlign: TextAlign.center,
+    //       style: _Styles.getStartedTextStyle,
+    //     ),
+    //   ),
+    // );
   }
 
   Widget getDotIndicator() {
@@ -224,14 +233,13 @@ class _Styles {
   static const onboardImageSize = 350.0;
   static const bottomNextButtonSize = 60.0;
   static const bottomStartButtonHeight = 40.0;
-  static const bottomStartButtonWidth = 130.0;
+  static const bottomStartButtonWidth = 150.0;
   static const iconSize = 25.0;
-  static const borderRadius = 5.0;
   static const animatedDuration = 300;
   static const indicatorRightPadding = 8.0;
 
   static const titleTextStyle = TextStyle(
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
   );

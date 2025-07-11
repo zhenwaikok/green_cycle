@@ -1,7 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:green_cycle_fyp/constant/color_manager.dart';
-import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/view/customer/my_purchases/my_purchases_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
@@ -83,11 +81,4 @@ class _Styles {
     horizontal: 20,
     vertical: 20,
   );
-
-  static const tabLabelTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.regular,
-  );
-
-  static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);
 }
