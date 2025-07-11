@@ -44,6 +44,12 @@ dependencies:
   #Carousel Slider
   carousel_slider: ^5.1.1
 
+  #Map Launcher
+  map_launcher: ^3.5.0
+
+  #URL Launcher
+  url_launcher: ^6.3.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

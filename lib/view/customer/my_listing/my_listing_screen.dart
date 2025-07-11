@@ -200,18 +200,9 @@ extension _WidgetFactories on _MyListingScreenState {
 class _Styles {
   _Styles._();
 
-  static const tabBarPadding = EdgeInsets.symmetric(vertical: 20);
-
-  static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);
-
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
-  );
-
-  static const tabLabelTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.regular,
   );
 
   static const sortByTextStyle = TextStyle(

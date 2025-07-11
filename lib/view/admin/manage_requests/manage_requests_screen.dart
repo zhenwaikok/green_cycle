@@ -111,13 +111,6 @@ class _Styles {
 
   static const customCardPadding = EdgeInsets.all(10);
 
-  static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);
-
-  static const tabLabelTextStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeightManager.regular,
-  );
-
   static const blackTextStyle = TextStyle(
     fontSize: 15,
     fontWeight: FontWeightManager.bold,

@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
-import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
@@ -56,7 +56,13 @@ class _MyPickupScreenState extends State<MyPickupScreen> {
 }
 
 // * ---------------------------- Actions ----------------------------
-extension _Actions on _MyPickupScreenState {}
+extension _Actions on _MyPickupScreenState {
+  void onRequestCardPressed() {
+    context.router.push(
+      CollectorPickupRequestDetailsRoute(requestStatus: 'Ongoing'),
+    );
+  }
+}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MyPickupScreenState {
@@ -73,11 +79,14 @@ extension _WidgetFactories on _MyPickupScreenState {
     return ListView.builder(
       itemCount: 10,
       itemBuilder: (context, index) {
-        return MyPickupTab(
-          statusBarColor: statusBarColor,
-          status: status,
-          buttonText: buttonText,
-          onPressed: onPressed,
+        return GestureDetector(
+          onTap: onRequestCardPressed,
+          child: MyPickupTab(
+            statusBarColor: statusBarColor,
+            status: status,
+            buttonText: buttonText,
+            onPressed: onPressed,
+          ),
         );
       },
     );

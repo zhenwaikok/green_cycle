@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -72,6 +73,10 @@ extension _Actions on _AvailablePickupRequestScreenState {
       selectedSort = value;
     });
   }
+
+  void onPickUpItemPressed() {
+    context.router.push(CollectorPickupRequestDetailsRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -95,21 +100,24 @@ extension _WidgetFactories on _AvailablePickupRequestScreenState {
   }
 
   Widget getAvailablePickupRequestItem() {
-    return Padding(
-      padding: _Styles.cardPadding,
-      child: CustomCard(
-        padding: _Styles.customCardPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            getDistance(),
-            SizedBox(height: 15),
-            getItemDetails(),
-            getDivider(),
-            getLocationAndTime(),
-            SizedBox(height: 15),
-            getButton(),
-          ],
+    return GestureDetector(
+      onTap: onPickUpItemPressed,
+      child: Padding(
+        padding: _Styles.cardPadding,
+        child: CustomCard(
+          padding: _Styles.customCardPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              getDistance(),
+              SizedBox(height: 15),
+              getItemDetails(),
+              getDivider(),
+              getLocationAndTime(),
+              SizedBox(height: 15),
+              getButton(),
+            ],
+          ),
         ),
       ),
     );
