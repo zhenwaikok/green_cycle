@@ -9,10 +9,12 @@ class PhotoPicker extends StatefulWidget {
     super.key,
     required this.onTap,
     required this.selectedImage,
+    this.borderRadius,
   });
 
   final void Function()? onTap;
   final File selectedImage;
+  final double? borderRadius;
 
   @override
   State<PhotoPicker> createState() => _PhotoPickerState();
@@ -36,9 +38,15 @@ class _PhotoPickerState extends State<PhotoPicker> {
                 : ColorManager.primary,
             width: _Styles.borderWidth,
           ),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 0.0),
         ),
         child: widget.selectedImage.path.isNotEmpty
-            ? Image.file(widget.selectedImage, fit: BoxFit.cover)
+            ? Image.file(
+                height: _Styles.containerHeight,
+                width: double.infinity,
+                widget.selectedImage,
+                fit: BoxFit.contain,
+              )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

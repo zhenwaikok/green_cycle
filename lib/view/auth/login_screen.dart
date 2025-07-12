@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 15),
                   getTitle(),
                   SizedBox(height: 30),
-                  getCard(),
+                  getLogInForms(),
                 ],
               ),
             ),
@@ -58,7 +58,7 @@ extension _Actions on _LoginScreenState {
   }
 
   void onCreateAccountButtonPressed() {
-    context.router.push(SignUpRoute());
+    context.router.pushAndPopUntil(SignUpRoute(), predicate: (route) => false);
   }
 }
 
@@ -80,19 +80,17 @@ extension _WidgetFactories on _LoginScreenState {
     );
   }
 
-  Widget getCard() {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getCardTitleDescription(),
-          SizedBox(height: 30),
-          getLoginTextField(),
-          getForgotPasswordText(),
-          SizedBox(height: 30),
-          getButtons(),
-        ],
-      ),
+  Widget getLogInForms() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getCardTitleDescription(),
+        SizedBox(height: 30),
+        getLoginTextField(),
+        getForgotPasswordText(),
+        SizedBox(height: 30),
+        getButtons(),
+      ],
     );
   }
 
@@ -156,13 +154,18 @@ extension _WidgetFactories on _LoginScreenState {
           textColor: ColorManager.whiteColor,
           onPressed: onSignInButtonPressed,
         ),
-        SizedBox(height: 12),
-        CustomButton(
-          text: 'Create New Account',
-          textColor: ColorManager.primary,
-          backgroundColor: ColorManager.whiteColor,
-          borderColor: ColorManager.primary,
+        TextButton(
+          style: _Styles.createAccButtonStyle,
           onPressed: onCreateAccountButtonPressed,
+          child: RichText(
+            text: const TextSpan(
+              text: "Doesn't have an account? ",
+              style: _Styles.createAccTextStyle,
+              children: [
+                TextSpan(text: "Sign Up", style: _Styles.signUpTextStyle),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -210,5 +213,22 @@ class _Styles {
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
+  );
+
+  static const createAccTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
+
+  static const signUpTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
+    decoration: TextDecoration.underline,
+  );
+
+  static final createAccButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(Colors.transparent),
   );
 }

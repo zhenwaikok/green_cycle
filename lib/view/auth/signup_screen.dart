@@ -50,7 +50,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 15),
                   getTitle(),
                   SizedBox(height: 30),
-                  getCard(),
+                  getSignUpForms(),
                 ],
               ),
             ),
@@ -74,7 +74,10 @@ extension _Actions on _SignUpScreenState {
   }
 
   void onSignUpButtonPressed() {
-    context.router.push(CollectorAdditionalSignupRoute());
+    context.router.pushAndPopUntil(
+      CollectorAdditionalSignupRoute(),
+      predicate: (route) => false,
+    );
   }
 }
 
@@ -96,18 +99,16 @@ extension _WidgetFactories on _SignUpScreenState {
     );
   }
 
-  Widget getCard() {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getCardTitleDescription(),
-          SizedBox(height: 20),
-          getSignUpTextField(),
-          SizedBox(height: 20),
-          getTextField(),
-        ],
-      ),
+  Widget getSignUpForms() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getCardTitleDescription(),
+        SizedBox(height: 20),
+        getSignUpTextField(),
+        SizedBox(height: 20),
+        getTextField(),
+      ],
     );
   }
 
@@ -278,13 +279,18 @@ extension _WidgetFactories on _SignUpScreenState {
           textColor: ColorManager.whiteColor,
           onPressed: onSignUpButtonPressed,
         ),
-        SizedBox(height: 12),
-        CustomButton(
-          text: 'Have an account? Sign In',
-          textColor: ColorManager.primary,
-          backgroundColor: ColorManager.whiteColor,
-          borderColor: ColorManager.primary,
+        TextButton(
+          style: _Styles.alreadyHaveAccButtonStyle,
           onPressed: onSignInButtonPressed,
+          child: RichText(
+            text: const TextSpan(
+              text: "Already have an account? ",
+              style: _Styles.alreadyHaveAccTextStyle,
+              children: [
+                TextSpan(text: "Sign In", style: _Styles.signInTextStyle),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -336,5 +342,22 @@ class _Styles {
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
+  );
+
+  static const alreadyHaveAccTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
+
+  static const signInTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
+    decoration: TextDecoration.underline,
+  );
+
+  static final alreadyHaveAccButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(Colors.transparent),
   );
 }
