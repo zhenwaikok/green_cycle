@@ -1,11 +1,9 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
@@ -70,14 +68,11 @@ extension _Actions on _SignUpScreenState {
   }
 
   void onSignInButtonPressed() {
-    context.router.push(LoginRoute());
+    context.router.pushAndPopUntil(LoginRoute(), predicate: (route) => false);
   }
 
   void onSignUpButtonPressed() {
-    context.router.pushAndPopUntil(
-      CollectorAdditionalSignupRoute(),
-      predicate: (route) => false,
-    );
+    context.router.push(CollectorAdditionalSignupRoute());
   }
 }
 

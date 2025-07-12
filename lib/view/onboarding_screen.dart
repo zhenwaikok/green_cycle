@@ -250,12 +250,6 @@ class _Styles {
     color: ColorManager.blackColor,
   );
 
-  static const getStartedTextStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeightManager.medium,
-    color: ColorManager.whiteColor,
-  );
-
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
