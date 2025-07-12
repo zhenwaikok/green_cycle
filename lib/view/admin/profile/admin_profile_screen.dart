@@ -22,17 +22,19 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
     return Scaffold(
       appBar: CustomAppBar(title: 'Profile', isBackButtonVisible: false),
       body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getProfileDetails(),
-              SizedBox(height: 25),
-              Divider(color: ColorManager.lightGreyColor),
-              SizedBox(height: 25),
-              getProfileCard(),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: _Styles.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getProfileDetails(),
+                SizedBox(height: 25),
+                Divider(color: ColorManager.lightGreyColor),
+                SizedBox(height: 25),
+                getProfileCard(),
+              ],
+            ),
           ),
         ),
       ),

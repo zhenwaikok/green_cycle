@@ -135,6 +135,10 @@ extension _WidgetFactories on _EditProfileScreenState {
           SizedBox(height: 10),
           getAddressTextField(),
         ],
+        if (widget.selectedRole == 'Collector') ...[
+          SizedBox(height: 20),
+          getCollectorAdditionalInfo(),
+        ],
       ],
     );
   }
@@ -153,9 +157,9 @@ extension _WidgetFactories on _EditProfileScreenState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Email Address', style: _Styles.emailTitleTextStyle),
-        SizedBox(height: 10),
-        Text('xxx@gmail.com', style: _Styles.emailTextStyle),
+        Text('Email Address', style: _Styles.titleTextStyle),
+        SizedBox(height: 5),
+        Text('xxx@gmail.com', style: _Styles.valueTextStyle),
       ],
     );
   }
@@ -238,6 +242,39 @@ extension _WidgetFactories on _EditProfileScreenState {
     );
   }
 
+  Widget getCollectorAdditionalInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getCollectorAdditionalInfoItem(
+          title: 'Vehicle Plate Number',
+          value: 'WUS2222',
+        ),
+        SizedBox(height: 20),
+        getCollectorAdditionalInfoItem(
+          title: 'Company/Organization',
+          value: 'E-waste Sdn Bhd',
+        ),
+        SizedBox(height: 20),
+        getCollectorAdditionalInfoItem(title: 'Vehicle Type', value: 'Lorry'),
+      ],
+    );
+  }
+
+  Widget getCollectorAdditionalInfoItem({
+    required String title,
+    required String value,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: _Styles.titleTextStyle),
+        SizedBox(height: 5),
+        Text(value, style: _Styles.valueTextStyle),
+      ],
+    );
+  }
+
   Widget getButton() {
     return CustomButton(
       text: 'Save',
@@ -275,13 +312,13 @@ class _Styles {
     color: editProfileFormFieldColor,
   );
 
-  static const emailTitleTextStyle = TextStyle(
+  static const titleTextStyle = TextStyle(
     fontSize: editProfileFormFieldFontSize,
     fontWeight: FontWeightManager.bold,
     color: editProfileFormFieldColor,
   );
 
-  static const emailTextStyle = TextStyle(
+  static const valueTextStyle = TextStyle(
     fontSize: editProfileFormFieldFontSize,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,

@@ -41,7 +41,7 @@ class CustomProfileRowElement extends StatelessWidget {
             if (isSignOut == false)
               Icon(
                 Icons.arrow_forward_ios_outlined,
-                color: ColorManager.greyColor,
+                color: ColorManager.blackColor,
                 size: _Styles.arrowIconSize,
               ),
           ],
