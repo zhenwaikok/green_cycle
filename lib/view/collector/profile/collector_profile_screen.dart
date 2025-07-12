@@ -54,6 +54,10 @@ extension _Actions on _CollectorProfileScreenState {
     //TODO: Pass correct role ltr
     context.router.push(EditProfileRoute(selectedRole: 'Collector'));
   }
+
+  void onPickupHistoryPressed() {
+    context.router.push(PickupHistoryRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -144,7 +148,7 @@ extension _WidgetFactories on _CollectorProfileScreenState {
         CustomProfileRowElement(
           icon: Icons.history,
           text: 'Pickup History',
-          onTap: () {},
+          onTap: onPickupHistoryPressed,
         ),
         CustomProfileRowElement(
           icon: Icons.logout,
