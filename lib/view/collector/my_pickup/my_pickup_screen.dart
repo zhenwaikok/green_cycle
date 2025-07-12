@@ -59,7 +59,7 @@ class _MyPickupScreenState extends State<MyPickupScreen> {
 extension _Actions on _MyPickupScreenState {
   void onRequestCardPressed() {
     context.router.push(
-      CollectorPickupRequestDetailsRoute(requestStatus: 'Ongoing'),
+      CollectorPickupRequestDetailsRoute(requestStatus: 'Arrived'),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -129,6 +130,31 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     }
+  }
+
+  void Function() onButtonPressed(String status) {
+    return switch (status) {
+      'Accepted' => onOnMyWayPressed,
+      'Ongoing' => onArrivedPressed,
+      'Arrived' => onCompletePickupPressed,
+      _ => onAcceptPickupRequestPressed,
+    };
+  }
+
+  void onOnMyWayPressed() {
+    // Update status to "Ongoing"
+  }
+
+  void onArrivedPressed() {
+    // Update status to "Arrived"
+  }
+
+  void onCompletePickupPressed() {
+    context.router.push(CompletePickupRoute());
+  }
+
+  void onAcceptPickupRequestPressed() {
+    // Assign pickup to this collector
   }
 }
 
@@ -332,7 +358,7 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     return CustomButton(
       text: getButtonLabel(widget.requestStatus ?? ''),
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: onButtonPressed(widget.requestStatus ?? ''),
     );
   }
 
