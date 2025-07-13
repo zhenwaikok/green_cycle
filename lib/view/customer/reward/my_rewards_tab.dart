@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
-import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
 
@@ -21,11 +20,13 @@ class _MyRewardsTabState extends State<MyRewardsTab> {
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        mainAxisExtent: 210,
       ),
       itemCount: 10,
       itemBuilder: (context, index) {
-        return getMyRewards();
+        return GestureDetector(
+          onTap: showRewardBottomSheet,
+          child: getMyRewards(),
+        );
       },
     );
   }
@@ -60,13 +61,7 @@ extension _WidgetFactories on _MyRewardsTabState {
               getRewardImage(),
               Padding(
                 padding: _Styles.rewardNameButtonPadding,
-                child: Column(
-                  children: [
-                    getRewardName(),
-                    SizedBox(height: 10),
-                    getUseButton(),
-                  ],
-                ),
+                child: getRewardName(),
               ),
             ],
           ),
@@ -92,18 +87,6 @@ extension _WidgetFactories on _MyRewardsTabState {
       textAlign: TextAlign.justify,
       maxLines: _Styles.maxTextLines,
       overflow: TextOverflow.ellipsis,
-    );
-  }
-
-  Widget getUseButton() {
-    return SizedBox(
-      height: 25,
-      child: CustomButton(
-        text: 'Details',
-        textColor: ColorManager.whiteColor,
-        onPressed: showRewardBottomSheet,
-        backgroundColor: ColorManager.primary,
-      ),
     );
   }
 

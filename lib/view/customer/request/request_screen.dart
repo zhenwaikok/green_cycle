@@ -10,7 +10,6 @@ import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class RequestScreen extends StatefulWidget {

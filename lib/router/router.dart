@@ -5,6 +5,12 @@ import 'router.gr.dart';
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
 class AppRouter extends $AppRouter {
   @override
+  RouteType get defaultRouteType => const RouteType.custom(
+    transitionsBuilder: TransitionsBuilders.fadeIn,
+    durationInMilliseconds: 350,
+  );
+
+  @override
   List<AutoRoute> get routes => [
     AutoRoute(page: OnboardingRoute.page, initial: true),
     AutoRoute(page: LoadingRoute.page),

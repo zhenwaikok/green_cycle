@@ -6,4 +6,6 @@ class Images {
   static const fpxLogo = 'assets/images/fpx_logo.png';
   static const googleLogo = 'assets/images/google_map_logo.png';
   static const wazeLogo = 'assets/images/waze_logo.png';
+  static const collectorImage = 'assets/images/collector_image.png';
+  static const ewasteItemImage = 'assets/images/e-waste_item.png';
 }
