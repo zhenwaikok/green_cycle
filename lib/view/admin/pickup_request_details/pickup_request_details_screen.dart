@@ -212,7 +212,7 @@ class _Styles {
   static const dotIndicatorSize = 10.0;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
-  static const containerMargin = EdgeInsets.all(0);
+  static const containerMargin = EdgeInsets.symmetric(horizontal: 5);
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,

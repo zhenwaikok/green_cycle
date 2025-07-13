@@ -91,7 +91,7 @@ extension _WidgetFactories on _ItemDetailsScreenState {
       items: imgItems,
       imageBorderRadius: 0,
       carouselHeight: _Styles.itemImageSize,
-      containerMargin: EdgeInsetsGeometry.all(0),
+      containerMargin: _Styles.containerMargin,
       onImageChanged: onImageChanged,
     );
   }
@@ -280,6 +280,8 @@ class _Styles {
   static const indicatorRightPadding = 8.0;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
+
+  static const containerMargin = EdgeInsets.all(0);
 
   static const postedTextStyle = TextStyle(
     fontSize: 15,

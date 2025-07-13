@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class AwarenessScreen extends StatefulWidget {
@@ -22,10 +23,14 @@ class _AwarenessScreenState extends State<AwarenessScreen> {
         isBackButtonVisible: true,
         onPressed: onBackButtonPressed,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: getAwarenessContent(),
+      body: Skeletonizer(
+        //TODO: Change loading state later
+        enabled: false,
+        child: SafeArea(
+          child: Padding(
+            padding: _Styles.screenPadding,
+            child: getAwarenessContent(),
+          ),
         ),
       ),
     );
