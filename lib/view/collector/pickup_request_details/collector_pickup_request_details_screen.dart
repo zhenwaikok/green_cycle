@@ -386,7 +386,7 @@ class _Styles {
   static const maxTextLines = 2;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
-  static const containerMargin = EdgeInsets.all(0);
+  static const containerMargin = EdgeInsets.symmetric(horizontal: 5);
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
