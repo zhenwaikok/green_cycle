@@ -35,6 +35,7 @@ class ImageSlider extends StatelessWidget {
           .toList(),
       options: CarouselOptions(
         viewportFraction: 1.0,
+        enableInfiniteScroll: false,
         height: carouselHeight,
         onPageChanged: (index, reason) {
           if (onImageChanged != null) {
