@@ -296,7 +296,7 @@ extension _WidgetFactories on _SignUpScreenState {
 class _Styles {
   _Styles._();
 
-  static const logoSize = 100.0;
+  static const logoSize = 200.0;
   static const signUpFormFieldFontSize = 16.0;
   static const signUpFormFieldColor = ColorManager.blackColor;
   static const textFieldBorderWidth = 2.0;

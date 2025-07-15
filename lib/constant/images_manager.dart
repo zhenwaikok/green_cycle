@@ -8,4 +8,6 @@ class Images {
   static const wazeLogo = 'assets/images/waze_logo.png';
   static const collectorImage = 'assets/images/collector_image.png';
   static const ewasteItemImage = 'assets/images/e-waste_item.png';
+  static const marketplaceImage = 'assets/images/marketplace_image.png';
+  static const customerHomeImage = 'assets/images/customer_home_image.png';
 }

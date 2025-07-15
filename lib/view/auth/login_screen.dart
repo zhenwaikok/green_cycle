@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final userRole = 'Collector';
+  final userRole = 'Customer';
   List<PageRouteInfo> routes = [];
   List<BottomNavigationBarItem> navBarItems = [];
 
@@ -175,7 +175,7 @@ extension _WidgetFactories on _LoginScreenState {
 class _Styles {
   _Styles._();
 
-  static const logoSize = 100.0;
+  static const logoSize = 200.0;
   static const loginFormFieldFontSize = 16.0;
   static const loginFormFieldColor = ColorManager.blackColor;
 
