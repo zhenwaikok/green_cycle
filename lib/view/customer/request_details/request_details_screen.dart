@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -90,7 +91,7 @@ extension _Actions on _RequestDetailsScreenState {
       backgroundColor: ColorManager.whiteColor,
       context: context,
       builder: (context) {
-        return getBottomSheet();
+        return SingleChildScrollView(child: getBottomSheet());
       },
     );
   }
@@ -250,10 +251,34 @@ extension _WidgetFactories on _RequestDetailsScreenState {
 
   Widget getLocationTracking() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Location Tracking', style: _Styles.greenTextStyle),
         //TODO: integrate google map
+        SizedBox(height: 20),
+        getGoogleMap(),
       ],
+    );
+  }
+
+  Widget getGoogleMap() {
+    return SizedBox(
+      height: 400,
+      child: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: CameraPosition(
+          //TODO: Change to current location of user later
+          target: LatLng(3.0551, 101.7006),
+          zoom: 18,
+        ),
+        markers: {
+          Marker(
+            markerId: MarkerId("currentLocation"),
+            position: LatLng(3.0551, 101.7006),
+            icon: BitmapDescriptor.defaultMarker,
+          ),
+        },
+      ),
     );
   }
 

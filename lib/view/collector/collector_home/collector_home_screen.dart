@@ -28,6 +28,7 @@ class _CollectorHomeScreenState extends State<CollectorHomeScreen> {
               padding: _Styles.screenPadding,
               child: Column(
                 children: [
+                  SizedBox(height: 20),
                   getAvailablePickupRequestSection(),
                   SizedBox(height: 30),
                   getOngoingPickupRequestSection(),
@@ -96,6 +97,7 @@ extension _WidgetFactories on _CollectorHomeScreenState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomStatusBar(text: 'Welcome'),
+              SizedBox(height: 5),
               Text(
                 'Collector Nameasdasdasdasd',
                 style: _Styles.collectorNameTextStyle,
@@ -192,7 +194,7 @@ extension _WidgetFactories on _CollectorHomeScreenState {
 
   Widget getOngoingPickupRequestList() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.47,
+      height: 370,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
@@ -424,7 +426,7 @@ class _Styles {
   static const cardPadding = EdgeInsets.only(
     bottom: 10,
     top: 10,
-    right: 10,
+    right: 20,
     left: 5,
   );
   static const onGoingPickupRequestCustomCardPadding = EdgeInsets.symmetric(

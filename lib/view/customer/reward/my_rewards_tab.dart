@@ -60,7 +60,7 @@ extension _WidgetFactories on _MyRewardsTabState {
             children: [
               getRewardImage(),
               Padding(
-                padding: _Styles.rewardNameButtonPadding,
+                padding: _Styles.rewardNamePadding,
                 child: getRewardName(),
               ),
             ],
@@ -117,10 +117,7 @@ class _Styles {
   );
   static const myRewardsCardPadding = EdgeInsets.all(0);
 
-  static const rewardNameButtonPadding = EdgeInsets.symmetric(
-    vertical: 15,
-    horizontal: 20,
-  );
+  static const rewardNamePadding = EdgeInsets.all(10);
 
   static const rewardNameTextStyle = TextStyle(
     fontSize: 15,

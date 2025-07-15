@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
@@ -39,6 +40,8 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 getTitle(),
+                SizedBox(height: 20),
+                getGoogleMap(),
                 SizedBox(height: 30),
                 getSearchBar(),
                 SizedBox(height: 25),
@@ -82,8 +85,24 @@ extension _WidgetFactories on _SelectLocationScreenState {
   }
 
   Widget getGoogleMap() {
-    //TODO: Add google map later
-    return SizedBox();
+    return SizedBox(
+      height: 400,
+      child: GoogleMap(
+        mapType: MapType.normal,
+        initialCameraPosition: CameraPosition(
+          //TODO: Change to current location of user later
+          target: LatLng(3.0551, 101.7006),
+          zoom: 18,
+        ),
+        markers: {
+          Marker(
+            markerId: MarkerId("currentLocation"),
+            position: LatLng(3.0551, 101.7006),
+            icon: BitmapDescriptor.defaultMarker,
+          ),
+        },
+      ),
+    );
   }
 
   Widget getSearchBar() {

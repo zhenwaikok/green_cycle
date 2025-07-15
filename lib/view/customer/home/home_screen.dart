@@ -2,9 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
+import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 
 @RoutePage()
@@ -35,6 +38,10 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 padding: _Styles.screenPadding,
                 child: Column(
                   children: [
+                    getStartSellingSection(),
+                    SizedBox(height: 40),
+                    getRequestList(),
+                    SizedBox(height: 30),
                     getMarketplaceSection(),
                     SizedBox(height: 30),
                     getWhatNewSection(),
@@ -56,7 +63,15 @@ extension _Actions on _CustomerHomeScreenState {
   }
 
   void onShowAllButtonPressed() {
+    AutoTabsRouter.of(context).setActiveIndex(2);
+  }
+
+  void onMoreNewsButtonPressed() {
     context.router.push(AwarenessRoute());
+  }
+
+  void onStartSellingButtonPressed() {
+    context.router.push(CreateListingRoute());
   }
 }
 
@@ -68,10 +83,17 @@ extension _WidgetFactories on _CustomerHomeScreenState {
       height: _Styles.welcomeContainerHeight,
       padding: _Styles.welcomeContainerPadding,
       decoration: BoxDecoration(
-        color: ColorManager.primary,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(20.0),
           bottomRight: Radius.circular(20.0),
+        ),
+        image: DecorationImage(
+          image: AssetImage(Images.customerHomeImage),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            ColorManager.blackColor.withValues(alpha: 0.5),
+            BlendMode.darken,
+          ),
         ),
       ),
       child: Column(
@@ -141,12 +163,176 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
+  Widget getStartSellingSection() {
+    return GestureDetector(
+      onTap: onStartSellingButtonPressed,
+      child: CustomCard(
+        padding: _Styles.customCardPadding,
+        child: Row(
+          children: [
+            Image.asset(
+              Images.marketplaceImage,
+              width: _Styles.marketplaceImageSize,
+              height: _Styles.marketplaceImageSize,
+              fit: BoxFit.contain,
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Start Selling Your Old Electronics',
+                style: _Styles.titleTextStyle,
+              ),
+            ),
+            Container(
+              width: _Styles.iconButtonContainerSize,
+              height: _Styles.iconButtonContainerSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.lightGreyColor2,
+              ),
+              child: Icon(
+                Icons.arrow_forward_sharp,
+                color: ColorManager.blackColor,
+                size: _Styles.iconButtonSize,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getRequestList() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Recent Pickup Requests', style: _Styles.titleTextStyle),
+        SizedBox(height: 20),
+        SizedBox(
+          height: 240,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: getRequestCard(),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getRequestCard() {
+    return GestureDetector(
+      onTap: () {},
+      child: Padding(
+        padding: _Styles.cardPadding,
+        child: CustomCard(
+          padding: _Styles.customCardPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getRequestID(),
+                  getRequestStatus(status: 'Pending'),
+                ],
+              ),
+              getDivider(),
+              getItemDetails(),
+              getDivider(),
+              getRequestDetails(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getRequestDetails() {
+    return Text(
+      'Requested: 29/4/2025, 11:22 PM',
+      style: _Styles.completedTextStyle,
+    );
+  }
+
+  Widget getDivider() {
+    return Padding(
+      padding: _Styles.dividerPadding,
+      child: Divider(color: ColorManager.lightGreyColor),
+    );
+  }
+
+  Widget getRequestID() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Request ID', style: _Styles.requestIDTitleTextStyle),
+        Text('#REQ13113', style: _Styles.requestIDTextStyle),
+      ],
+    );
+  }
+
+  Widget getRequestStatus({required String status}) {
+    return CustomStatusBar(text: status);
+  }
+
+  Widget getItemDetails() {
+    return Row(
+      children: [
+        getItemImage(),
+        SizedBox(width: 15),
+        Expanded(child: getItemDescription()),
+      ],
+    );
+  }
+
+  Widget getItemImage() {
+    return CustomImage(
+      imageSize: _Styles.imageSize,
+      imageURL:
+          'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+      borderRadius: _Styles.imageBorderRadius,
+    );
+  }
+
+  Widget getItemDescription() {
+    return SizedBox(
+      height: _Styles.imageSize,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Item Descriptionsas0',
+                maxLines: _Styles.maxTextLines,
+                overflow: TextOverflow.ellipsis,
+                style: _Styles.itemDescriptionTextStyle,
+              ),
+              Text('Category', style: _Styles.itemDescriptionTextStyle),
+            ],
+          ),
+          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+        ],
+      ),
+    );
+  }
+
   Widget getMarketplaceSection() {
     return Column(
       children: [
         getMarketplaceTitle(),
         SizedBox(height: 10),
-        getMarketplaceItems(),
+        getMarketplaceList(),
       ],
     );
   }
@@ -155,7 +341,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Old Electronics, New Value', style: _Styles.marketplaceTextStyle),
+        Text('Old Electronics, New Value', style: _Styles.titleTextStyle),
         TextButton(
           style: _Styles.showAllButtonStyle,
           onPressed: onShowAllButtonPressed,
@@ -169,9 +355,9 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getMarketplaceItems() {
+  Widget getMarketplaceList() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.28,
+      height: 220,
       child: ListView.builder(
         itemCount: 5,
         scrollDirection: Axis.horizontal,
@@ -207,10 +393,10 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('What\'s News', style: _Styles.whatNewTextStyle),
+        Text('What\'s News', style: _Styles.titleTextStyle),
         TextButton(
           style: _Styles.showAllButtonStyle,
-          onPressed: onShowAllButtonPressed,
+          onPressed: onMoreNewsButtonPressed,
           child: Text(
             'More >',
             style: _Styles.moreTextStyle,
@@ -271,9 +457,16 @@ extension _WidgetFactories on _CustomerHomeScreenState {
 class _Styles {
   _Styles._();
 
+  static const marketplaceImageSize = 80.0;
+
   static const welcomeContainerHeight = 180.0;
 
   static const screenPadding = EdgeInsets.only(left: 20, right: 20, bottom: 20);
+
+  static const customCardPadding = EdgeInsets.all(10);
+
+  static const iconButtonContainerSize = 40.0;
+  static const iconButtonSize = 20.0;
 
   static const welcomeContainerPadding = EdgeInsets.symmetric(
     horizontal: 20,
@@ -319,7 +512,7 @@ class _Styles {
     color: ColorManager.blackColor,
   );
 
-  static const marketplaceTextStyle = TextStyle(
+  static const titleTextStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
@@ -337,12 +530,6 @@ class _Styles {
     decorationColor: ColorManager.primary,
   );
 
-  static const whatNewTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.bold,
-    color: ColorManager.blackColor,
-  );
-
   static const moreTextStyle = TextStyle(
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
@@ -358,6 +545,48 @@ class _Styles {
   static const dateTextStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeightManager.bold,
+    color: ColorManager.greyColor,
+  );
+
+  static const imageSize = 80.0;
+  static const imageBorderRadius = 5.0;
+  static const maxTextLines = 2;
+
+  static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
+
+  static const cardPadding = EdgeInsets.only(
+    right: 30,
+    top: 10,
+    bottom: 10,
+    left: 5,
+  );
+  static const requestIDTitleTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.greyColor,
+  );
+
+  static const requestIDTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.blackColor,
+  );
+
+  static const itemDescriptionTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.blackColor,
+  );
+
+  static const quantityTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.greyColor,
+  );
+
+  static const completedTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,
   );
 }

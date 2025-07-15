@@ -5,10 +5,7 @@ import 'router.gr.dart';
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')
 class AppRouter extends $AppRouter {
   @override
-  RouteType get defaultRouteType => const RouteType.custom(
-    transitionsBuilder: TransitionsBuilders.fadeIn,
-    durationInMilliseconds: 350,
-  );
+  RouteType get defaultRouteType => const RouteType.cupertino();
 
   @override
   List<AutoRoute> get routes => [
