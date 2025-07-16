@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     AppRouter router = AppRouter();
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: router.config(),
       theme: ThemeData(scaffoldBackgroundColor: ColorManager.whiteColor),
     );
