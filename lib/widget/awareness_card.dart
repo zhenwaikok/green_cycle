@@ -56,10 +56,17 @@ class CustomAwarenessCard extends StatelessWidget {
             ),
           ),
           SizedBox(width: 35),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            size: _Styles.arrowIconSize,
-            color: ColorManager.blackColor,
+          Container(
+            padding: _Styles.iconContainerPadding,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: ColorManager.primary,
+            ),
+            child: Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: _Styles.arrowIconSize,
+              color: ColorManager.whiteColor,
+            ),
           ),
         ],
       ),
@@ -72,12 +79,14 @@ class _Styles {
   _Styles._();
 
   static const calendarIconSize = 15.0;
-  static const arrowIconSize = 25.0;
+  static const arrowIconSize = 18.0;
   static const maxTextLines = 3;
   static const borderRadius = 15.0;
 
+  static const iconContainerPadding = EdgeInsets.all(8);
+
   static const awarenessTitleTextStyle = TextStyle(
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
   );

@@ -10,4 +10,5 @@ class Images {
   static const ewasteItemImage = 'assets/images/e-waste_item.png';
   static const marketplaceImage = 'assets/images/marketplace_image.png';
   static const customerHomeImage = 'assets/images/customer_home_image.png';
+  static const requestPickupImage = 'assets/images/request_pickup_image.png';
 }

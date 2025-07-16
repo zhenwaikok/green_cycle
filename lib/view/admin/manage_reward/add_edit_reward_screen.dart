@@ -12,18 +12,18 @@ import 'package:green_cycle_fyp/widget/image_picker_widget.dart';
 import 'package:image_picker/image_picker.dart';
 
 @RoutePage()
-class AddOrEditAwarenessScreen extends StatefulWidget {
-  const AddOrEditAwarenessScreen({super.key, required this.isEdit});
+class AddOrEditRewardScreen extends StatefulWidget {
+  const AddOrEditRewardScreen({super.key, required this.isEdit});
 
   final bool isEdit;
 
   @override
-  State<AddOrEditAwarenessScreen> createState() =>
-      _AddOrEditAwarenessScreenState();
+  State<AddOrEditRewardScreen> createState() => _AddEditRewardScreenState();
 }
 
-class _AddOrEditAwarenessScreenState extends State<AddOrEditAwarenessScreen> {
+class _AddEditRewardScreenState extends State<AddOrEditRewardScreen> {
   File? selectedImage;
+  double sliderValue = 100;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -35,9 +35,7 @@ class _AddOrEditAwarenessScreenState extends State<AddOrEditAwarenessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.isEdit
-            ? 'Edit Awareness Content'
-            : 'Add Awareness Content',
+        title: widget.isEdit ? 'Edit Reward Content' : 'Add Reward Content',
         isBackButtonVisible: true,
         onPressed: onBackButtonPressed,
       ),
@@ -58,9 +56,11 @@ class _AddOrEditAwarenessScreenState extends State<AddOrEditAwarenessScreen> {
                 ],
                 getPhotoField(),
                 SizedBox(height: 25),
-                getAwarenessTitleField(),
+                getRewardTitleField(),
                 SizedBox(height: 25),
-                getAwarenessContentField(),
+                getRewardDescriptionField(),
+                SizedBox(height: 25),
+                getPointsRequiredField(),
               ],
             ),
           ),
@@ -71,7 +71,7 @@ class _AddOrEditAwarenessScreenState extends State<AddOrEditAwarenessScreen> {
 }
 
 // * ---------------------------- Actions ----------------------------
-extension _Actions on _AddOrEditAwarenessScreenState {
+extension _Actions on _AddEditRewardScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
   }
@@ -87,17 +87,23 @@ extension _Actions on _AddOrEditAwarenessScreenState {
       });
     }
   }
+
+  void onSliderChanged(double value) {
+    _setState(() {
+      sliderValue = value;
+    });
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
-extension _WidgetFactories on _AddOrEditAwarenessScreenState {
+extension _WidgetFactories on _AddEditRewardScreenState {
   Widget getTitleDescription() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Add Awareness Content', style: _Styles.titleTextStyle),
+        Text('Add Reward', style: _Styles.titleTextStyle),
         Text(
-          'Fill in the details below to add awareness content.',
+          'Fill in the details below to add reward.',
           style: _Styles.descriptionTextStyle,
         ),
       ],
@@ -108,7 +114,7 @@ extension _WidgetFactories on _AddOrEditAwarenessScreenState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Awareness Photo', style: _Styles.itemListingTitleTextStyle),
+        Text('Reward Photo', style: _Styles.titleTextStyle),
         SizedBox(height: 10),
         PhotoPicker(
           borderRadius: _Styles.borderRadius,
@@ -121,21 +127,22 @@ extension _WidgetFactories on _AddOrEditAwarenessScreenState {
     );
   }
 
-  Widget getAwarenessTitleField() {
+  Widget getRewardTitleField() {
     return CustomTextField(
-      title: 'Awareness Title',
+      title: 'Reward Title',
       fontSize: 18,
       color: ColorManager.primary,
-      formName: AddEditAwarenessFormFieldsEnum.awarenessTitle.name,
+      formName: AddEditRewardFormFieldsEnum.rewardTitle.name,
     );
   }
 
-  Widget getAwarenessContentField() {
+  Widget getRewardDescriptionField() {
     return CustomTextField(
-      title: 'Awareness Content',
+      title: 'Reward Description',
+      maxLines: 3,
       fontSize: 18,
       color: ColorManager.primary,
-      formName: AddEditAwarenessFormFieldsEnum.awarenessContent.name,
+      formName: AddEditRewardFormFieldsEnum.rewardDescription.name,
     );
   }
 
@@ -146,6 +153,37 @@ extension _WidgetFactories on _AddOrEditAwarenessScreenState {
       onPressed: () {},
     );
   }
+
+  Widget getPointsRequiredField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: 'Points Required: ',
+            style: _Styles.titleTextStyle,
+            children: [
+              TextSpan(
+                text: '${sliderValue.round()}',
+                style: _Styles.pointsTextStyle,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 15),
+        Slider(
+          padding: _Styles.sliderPadding,
+          activeColor: ColorManager.primary,
+          value: sliderValue,
+          min: 0,
+          max: 500,
+          onChanged: (value) {
+            onSliderChanged(value);
+          },
+        ),
+      ],
+    );
+  }
 }
 
 // * ----------------------------- Styles -----------------------------
@@ -154,16 +192,12 @@ class _Styles {
 
   static const borderRadius = 15.0;
 
-  static const itemListingTitleTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.bold,
-    color: ColorManager.primary,
-  );
-
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
   );
+
+  static const sliderPadding = EdgeInsets.zero;
 
   static const titleTextStyle = TextStyle(
     fontSize: 18,
@@ -175,5 +209,11 @@ class _Styles {
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
+  );
+
+  static const pointsTextStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.greyColor,
   );
 }

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 
@@ -54,6 +55,10 @@ extension _Actions on _AdminDashboardScreenState {
 
   void onManageNewsContentPressed() {
     AutoTabsRouter.of(context).setActiveIndex(3);
+  }
+
+  void onManageRewardsPressed() {
+    context.router.push(ManageRewardsRoute());
   }
 }
 
@@ -108,8 +113,14 @@ extension _WidgetFactories on _AdminDashboardScreenState {
         SizedBox(height: 20),
         getQuickActionCard(
           icon: Icons.campaign,
-          actionText: 'Manage News Content',
+          actionText: 'Manage Awareness Content',
           onTap: onManageNewsContentPressed,
+        ),
+        SizedBox(height: 20),
+        getQuickActionCard(
+          icon: Icons.card_giftcard_outlined,
+          actionText: 'Manage Rewards',
+          onTap: onManageRewardsPressed,
         ),
       ],
     );

@@ -136,7 +136,24 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   }
 
   Widget getRequestPickupCard() {
-    return CustomCard(child: Column(children: [getRequestPickupCardContent()]));
+    return CustomCard(
+      child: Column(
+        children: [
+          getRequestPickupImage(),
+          SizedBox(height: 15),
+          getRequestPickupCardContent(),
+        ],
+      ),
+    );
+  }
+
+  Widget getRequestPickupImage() {
+    return Image.asset(
+      Images.requestPickupImage,
+      width: _Styles.requestPickupImageSize,
+      height: _Styles.requestPickupImageSize,
+      fit: BoxFit.cover,
+    );
   }
 
   Widget getRequestPickupCardContent() {
@@ -149,7 +166,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
         ),
         SizedBox(height: 10),
         Text(
-          'Too busy to drop off recyclables? No problem! Book a pickup and we will collect them right from your home. It is a simple way to make a positive impact.',
+          'Too busy to drop off recyclables? No problem! Book a pickup and collector will collect them right from your home. It is a simple way to make a positive impact.',
           style: _Styles.requestPickupDescTextStyle,
           textAlign: TextAlign.center,
         ),
@@ -467,6 +484,8 @@ class _Styles {
 
   static const iconButtonContainerSize = 40.0;
   static const iconButtonSize = 20.0;
+
+  static const requestPickupImageSize = 120.0;
 
   static const welcomeContainerPadding = EdgeInsets.symmetric(
     horizontal: 20,

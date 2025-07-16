@@ -49,6 +49,8 @@ enum RequestForPickupFormFieldsEnum {
   conditionInfo,
 }
 
-enum AddAwarenessFormFieldsEnum { awarenessTitle, awarenessContent }
+enum AddEditAwarenessFormFieldsEnum { awarenessTitle, awarenessContent }
+
+enum AddEditRewardFormFieldsEnum { rewardTitle, rewardDescription }
 
 enum RejectCollectorFormFieldEnum { reason }

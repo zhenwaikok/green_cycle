@@ -22,14 +22,18 @@ class WidgetUtil {
     return showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding: const EdgeInsets.all(20),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         title: Text(
           title ?? '',
           textAlign: TextAlign.justify,
-          style: TextStyle(fontWeight: FontWeightManager.bold),
+          style: TextStyle(fontWeight: FontWeightManager.bold, fontSize: 20),
         ),
         content: needTextField
             ? CustomTextField(formName: formName ?? '', maxLines: maxLines)
-            : Text(content ?? ''),
+            : Text(content ?? '', style: TextStyle(fontSize: 16)),
         actions: actions,
         backgroundColor: ColorManager.whiteColor,
       ),
