@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final userRole = 'Admin';
+  final userRole = 'Customer';
   List<PageRouteInfo> routes = [];
   List<BottomNavigationBarItem> navBarItems = [];
 
