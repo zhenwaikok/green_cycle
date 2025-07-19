@@ -65,6 +65,9 @@ dependencies:
   #Google Map
   google_maps_flutter: ^2.12.3
 
+  #API Calling
+  dio: ^5.7.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

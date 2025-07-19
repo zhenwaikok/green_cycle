@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/test_model.dart';
+import 'package:green_cycle_fyp/repository/test_repository.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -26,6 +28,8 @@ class _CollectorAdditionalSignupScreenState
   File? selectedImage;
   List<String> vehicleTypes = ['Car', 'Truck', 'Van'];
 
+  DogImageResponse? dogModel;
+
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
@@ -45,7 +49,7 @@ class _CollectorAdditionalSignupScreenState
         child: CustomButton(
           text: 'Submit for Approval',
           textColor: ColorManager.whiteColor,
-          onPressed: () {},
+          onPressed: getDogImage,
         ),
       ),
       body: SafeArea(
@@ -89,6 +93,20 @@ extension _Actions on _CollectorAdditionalSignupScreenState {
         selectedImage = File(pickedFile.path);
       });
     }
+  }
+
+  void getDogImage() async {
+    final testModel = await TestRepository().getDogImage();
+    print('Test Model: ${testModel.data}');
+    _setState(() {
+      if (testModel.data != null) {
+        dogModel = testModel.data as DogImageResponse;
+      } else {
+        dogModel = null;
+        print('Error: API call failed or returned null data');
+      }
+    });
+    print('Dog Image: ${dogModel?.message}');
   }
 }
 
