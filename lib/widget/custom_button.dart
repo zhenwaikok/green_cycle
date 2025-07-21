@@ -51,7 +51,7 @@ class CustomButton extends StatelessWidget {
                 : SizedBox.shrink(),
             image != null ? SizedBox(width: 5) : SizedBox(width: 0),
 
-            ?icon,
+            icon ?? SizedBox.shrink(),
             icon != null ? SizedBox(width: 10) : SizedBox(width: 0),
 
             Text(

@@ -42,7 +42,6 @@ abstract class BaseServices {
 
       switch (httpMethod) {
         case HttpMethod.get:
-          print('api calling');
           response = await dio?.get(path);
           break;
         case HttpMethod.post:
@@ -56,11 +55,7 @@ abstract class BaseServices {
           break;
       }
 
-      print('Response status code: ${response?.statusCode}');
-      print('Response is $response');
-
       if (response?.statusCode == HttpStatus.ok) {
-        print('API Call Success: ${response?.data}');
         return MyResponse.complete(response?.data);
       }
     } catch (e) {
@@ -68,7 +63,6 @@ abstract class BaseServices {
         var processedError = ErrorModel.fromJson(e.response?.data);
         processedError.statusCode = e.response?.statusCode;
 
-        print('API Call Error: ${processedError.message}');
         return MyResponse.error(processedError.toJson());
       } else if (e is DioException) {
         String? message;
@@ -83,7 +77,6 @@ abstract class BaseServices {
             message = e.message;
         }
 
-        print('API Call Error: $message');
         return MyResponse.error(
           ErrorModel(
             statusCode: e.response?.statusCode,
@@ -94,7 +87,6 @@ abstract class BaseServices {
       return MyResponse.error(e.toString());
     }
 
-    print('API Call Failed: No response or invalid status code');
     return MyResponse.error(
       DioException(requestOptions: RequestOptions(path: path)),
     );
