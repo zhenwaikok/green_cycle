@@ -12,36 +12,26 @@ dependencies:
   flutter:
     sdk: flutter
 
+  #Icons
+  font_awesome_flutter: ^10.8.0
   cupertino_icons: ^1.0.8
 
-  #Flutter Form Builder
+  #Form
   flutter_form_builder: ^10.0.1
 
-  #Phone TextField
+  #Formatting
   intl_phone_field: ^3.2.0
-
-  #Image Picker
-  image_picker: ^1.1.2
-
-  #Router
-  auto_route: ^8.3.0
-
-  #Network Image
-  cached_network_image: ^3.4.0
-
-  #Blur Image
-  flutter_blurhash: ^0.9.1
-
-  #Font Awesome Icon
-  font_awesome_flutter: ^10.8.0
-
-  #Date Formatter
   intl: ^0.20.2
 
-  #Multi Image Picker
-  multi_image_picker_view: ^3.0.0
+  #Navigation
+  auto_route: ^8.3.0
 
-  #Carousel Slider
+  
+  #Image
+  image_picker: ^1.1.2
+  cached_network_image: ^3.4.0
+  flutter_blurhash: ^0.9.1
+  multi_image_picker_view: ^3.0.0
   carousel_slider: ^5.1.1
 
   #Map Launcher
@@ -65,8 +55,10 @@ dependencies:
   #Google Map
   google_maps_flutter: ^2.12.3
 
-  #API Calling
+  #Data
   dio: ^5.7.0
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +67,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.11
   auto_route_generator: ^8.1.0
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0
 
 
 # The following section is specific to Flutter packages.
