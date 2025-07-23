@@ -1,5 +1,5 @@
 import 'package:green_cycle_fyp/constant/constants.dart';
-import 'package:green_cycle_fyp/model/network/Response.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/base_services.dart';
 
 class TestServices extends BaseServices {

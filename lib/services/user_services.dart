@@ -1,0 +1,47 @@
+import 'package:green_cycle_fyp/constant/constants.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
+import 'package:green_cycle_fyp/services/base_services.dart';
+
+class UserServices extends BaseServices {
+  Future<MyResponse> getAllUsers() async {
+    String path = '${apiUrl()}/User';
+
+    return callAPI(httpMethod: HttpMethod.get, path: path);
+  }
+
+  Future<MyResponse> insertUser({required UserModel userModel}) async {
+    String path = '${apiUrl()}/User';
+
+    return callAPI(
+      httpMethod: HttpMethod.post,
+      path: path,
+      postBody: userModel.toJson(),
+    );
+  }
+
+  Future<MyResponse> getUserDetails({required String userID}) async {
+    String path = '${apiUrl()}/User/$userID';
+
+    return callAPI(httpMethod: HttpMethod.get, path: path);
+  }
+
+  Future<MyResponse> updateUser({
+    required String userID,
+    required UserModel userModel,
+  }) async {
+    String path = '${apiUrl()}/User/$userID';
+
+    return callAPI(
+      httpMethod: HttpMethod.put,
+      path: path,
+      postBody: userModel.toJson(),
+    );
+  }
+
+  Future<MyResponse> deleteUser({required String userID}) async {
+    String path = '${apiUrl()}/User/$userID';
+
+    return callAPI(httpMethod: HttpMethod.delete, path: path);
+  }
+}
