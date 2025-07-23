@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/error_model.dart';
-import 'package:green_cycle_fyp/model/network/Response.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
 
 abstract class BaseServices {
   BaseServices() {

@@ -4,5 +4,5 @@ class APIValues {
   APIValues._();
 
   //change host url later
-  static const hostUrl = 'https://dog.ceo/api';
+  static const hostUrl = 'https://localhost:7068/GreenCycleAPI';
 }
