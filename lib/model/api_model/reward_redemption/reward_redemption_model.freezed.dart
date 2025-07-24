@@ -12,10 +12,12 @@ part of 'reward_redemption_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 RewardRedemptionModel _$RewardRedemptionModelFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _RewardRedemptionModel.fromJson(json);
 }
 
@@ -40,24 +42,28 @@ mixin _$RewardRedemptionModel {
 
 /// @nodoc
 abstract class $RewardRedemptionModelCopyWith<$Res> {
-  factory $RewardRedemptionModelCopyWith(RewardRedemptionModel value,
-          $Res Function(RewardRedemptionModel) then) =
-      _$RewardRedemptionModelCopyWithImpl<$Res, RewardRedemptionModel>;
+  factory $RewardRedemptionModelCopyWith(
+    RewardRedemptionModel value,
+    $Res Function(RewardRedemptionModel) then,
+  ) = _$RewardRedemptionModelCopyWithImpl<$Res, RewardRedemptionModel>;
   @useResult
-  $Res call(
-      {int? rewardRedemptionID,
-      String? userID,
-      int? rewardID,
-      bool? isUsed,
-      DateTime? redeemedDate,
-      RewardModel? reward});
+  $Res call({
+    int? rewardRedemptionID,
+    String? userID,
+    int? rewardID,
+    bool? isUsed,
+    DateTime? redeemedDate,
+    RewardModel? reward,
+  });
 
   $RewardModelCopyWith<$Res>? get reward;
 }
 
 /// @nodoc
-class _$RewardRedemptionModelCopyWithImpl<$Res,
-        $Val extends RewardRedemptionModel>
+class _$RewardRedemptionModelCopyWithImpl<
+  $Res,
+  $Val extends RewardRedemptionModel
+>
     implements $RewardRedemptionModelCopyWith<$Res> {
   _$RewardRedemptionModelCopyWithImpl(this._value, this._then);
 
@@ -78,32 +84,35 @@ class _$RewardRedemptionModelCopyWithImpl<$Res,
     Object? redeemedDate = freezed,
     Object? reward = freezed,
   }) {
-    return _then(_value.copyWith(
-      rewardRedemptionID: freezed == rewardRedemptionID
-          ? _value.rewardRedemptionID
-          : rewardRedemptionID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rewardID: freezed == rewardID
-          ? _value.rewardID
-          : rewardID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isUsed: freezed == isUsed
-          ? _value.isUsed
-          : isUsed // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      redeemedDate: freezed == redeemedDate
-          ? _value.redeemedDate
-          : redeemedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      reward: freezed == reward
-          ? _value.reward
-          : reward // ignore: cast_nullable_to_non_nullable
-              as RewardModel?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            rewardRedemptionID: freezed == rewardRedemptionID
+                ? _value.rewardRedemptionID
+                : rewardRedemptionID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            userID: freezed == userID
+                ? _value.userID
+                : userID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rewardID: freezed == rewardID
+                ? _value.rewardID
+                : rewardID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            isUsed: freezed == isUsed
+                ? _value.isUsed
+                : isUsed // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            redeemedDate: freezed == redeemedDate
+                ? _value.redeemedDate
+                : redeemedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            reward: freezed == reward
+                ? _value.reward
+                : reward // ignore: cast_nullable_to_non_nullable
+                      as RewardModel?,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of RewardRedemptionModel
@@ -125,18 +134,19 @@ class _$RewardRedemptionModelCopyWithImpl<$Res,
 abstract class _$$RewardRedemptionModelImplCopyWith<$Res>
     implements $RewardRedemptionModelCopyWith<$Res> {
   factory _$$RewardRedemptionModelImplCopyWith(
-          _$RewardRedemptionModelImpl value,
-          $Res Function(_$RewardRedemptionModelImpl) then) =
-      __$$RewardRedemptionModelImplCopyWithImpl<$Res>;
+    _$RewardRedemptionModelImpl value,
+    $Res Function(_$RewardRedemptionModelImpl) then,
+  ) = __$$RewardRedemptionModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? rewardRedemptionID,
-      String? userID,
-      int? rewardID,
-      bool? isUsed,
-      DateTime? redeemedDate,
-      RewardModel? reward});
+  $Res call({
+    int? rewardRedemptionID,
+    String? userID,
+    int? rewardID,
+    bool? isUsed,
+    DateTime? redeemedDate,
+    RewardModel? reward,
+  });
 
   @override
   $RewardModelCopyWith<$Res>? get reward;
@@ -144,12 +154,13 @@ abstract class _$$RewardRedemptionModelImplCopyWith<$Res>
 
 /// @nodoc
 class __$$RewardRedemptionModelImplCopyWithImpl<$Res>
-    extends _$RewardRedemptionModelCopyWithImpl<$Res,
-        _$RewardRedemptionModelImpl>
+    extends
+        _$RewardRedemptionModelCopyWithImpl<$Res, _$RewardRedemptionModelImpl>
     implements _$$RewardRedemptionModelImplCopyWith<$Res> {
-  __$$RewardRedemptionModelImplCopyWithImpl(_$RewardRedemptionModelImpl _value,
-      $Res Function(_$RewardRedemptionModelImpl) _then)
-      : super(_value, _then);
+  __$$RewardRedemptionModelImplCopyWithImpl(
+    _$RewardRedemptionModelImpl _value,
+    $Res Function(_$RewardRedemptionModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of RewardRedemptionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -163,45 +174,48 @@ class __$$RewardRedemptionModelImplCopyWithImpl<$Res>
     Object? redeemedDate = freezed,
     Object? reward = freezed,
   }) {
-    return _then(_$RewardRedemptionModelImpl(
-      rewardRedemptionID: freezed == rewardRedemptionID
-          ? _value.rewardRedemptionID
-          : rewardRedemptionID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rewardID: freezed == rewardID
-          ? _value.rewardID
-          : rewardID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      isUsed: freezed == isUsed
-          ? _value.isUsed
-          : isUsed // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      redeemedDate: freezed == redeemedDate
-          ? _value.redeemedDate
-          : redeemedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      reward: freezed == reward
-          ? _value.reward
-          : reward // ignore: cast_nullable_to_non_nullable
-              as RewardModel?,
-    ));
+    return _then(
+      _$RewardRedemptionModelImpl(
+        rewardRedemptionID: freezed == rewardRedemptionID
+            ? _value.rewardRedemptionID
+            : rewardRedemptionID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        userID: freezed == userID
+            ? _value.userID
+            : userID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rewardID: freezed == rewardID
+            ? _value.rewardID
+            : rewardID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        isUsed: freezed == isUsed
+            ? _value.isUsed
+            : isUsed // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        redeemedDate: freezed == redeemedDate
+            ? _value.redeemedDate
+            : redeemedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        reward: freezed == reward
+            ? _value.reward
+            : reward // ignore: cast_nullable_to_non_nullable
+                  as RewardModel?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
-  const _$RewardRedemptionModelImpl(
-      {this.rewardRedemptionID,
-      this.userID,
-      this.rewardID,
-      this.isUsed,
-      this.redeemedDate,
-      this.reward});
+  const _$RewardRedemptionModelImpl({
+    this.rewardRedemptionID,
+    this.userID,
+    this.rewardID,
+    this.isUsed,
+    this.redeemedDate,
+    this.reward,
+  });
 
   factory _$RewardRedemptionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RewardRedemptionModelImplFromJson(json);
@@ -242,8 +256,15 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, rewardRedemptionID, userID,
-      rewardID, isUsed, redeemedDate, reward);
+  int get hashCode => Object.hash(
+    runtimeType,
+    rewardRedemptionID,
+    userID,
+    rewardID,
+    isUsed,
+    redeemedDate,
+    reward,
+  );
 
   /// Create a copy of RewardRedemptionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -251,25 +272,27 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
   @override
   @pragma('vm:prefer-inline')
   _$$RewardRedemptionModelImplCopyWith<_$RewardRedemptionModelImpl>
-      get copyWith => __$$RewardRedemptionModelImplCopyWithImpl<
-          _$RewardRedemptionModelImpl>(this, _$identity);
+  get copyWith =>
+      __$$RewardRedemptionModelImplCopyWithImpl<_$RewardRedemptionModelImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$RewardRedemptionModelImplToJson(
-      this,
-    );
+    return _$$RewardRedemptionModelImplToJson(this);
   }
 }
 
 abstract class _RewardRedemptionModel implements RewardRedemptionModel {
-  const factory _RewardRedemptionModel(
-      {final int? rewardRedemptionID,
-      final String? userID,
-      final int? rewardID,
-      final bool? isUsed,
-      final DateTime? redeemedDate,
-      final RewardModel? reward}) = _$RewardRedemptionModelImpl;
+  const factory _RewardRedemptionModel({
+    final int? rewardRedemptionID,
+    final String? userID,
+    final int? rewardID,
+    final bool? isUsed,
+    final DateTime? redeemedDate,
+    final RewardModel? reward,
+  }) = _$RewardRedemptionModelImpl;
 
   factory _RewardRedemptionModel.fromJson(Map<String, dynamic> json) =
       _$RewardRedemptionModelImpl.fromJson;
@@ -292,5 +315,5 @@ abstract class _RewardRedemptionModel implements RewardRedemptionModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RewardRedemptionModelImplCopyWith<_$RewardRedemptionModelImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }

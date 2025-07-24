@@ -18,7 +18,8 @@ _$CartModelImpl _$$CartModelImplFromJson(Map<String, dynamic> json) =>
       itemListing: json['itemListing'] == null
           ? null
           : ItemListingModel.fromJson(
-              json['itemListing'] as Map<String, dynamic>),
+              json['itemListing'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$$CartModelImplToJson(_$CartModelImpl instance) =>

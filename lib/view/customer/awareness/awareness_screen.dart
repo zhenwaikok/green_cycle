@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
-import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';

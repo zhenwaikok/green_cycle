@@ -12,7 +12,8 @@ part of 'user_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) {
   return _UserModel.fromJson(json);
@@ -52,23 +53,24 @@ abstract class $UserModelCopyWith<$Res> {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) then) =
       _$UserModelCopyWithImpl<$Res, UserModel>;
   @useResult
-  $Res call(
-      {String? userID,
-      String? userRole,
-      String? fullName,
-      String? firstName,
-      String? lastName,
-      String? emailAddress,
-      String? gender,
-      String? phoneNumber,
-      String? password,
-      String? address,
-      String? vehicleType,
-      String? vehiclePlateNumber,
-      String? companyName,
-      String? profileImageURL,
-      bool? isApproved,
-      DateTime? createdDate});
+  $Res call({
+    String? userID,
+    String? userRole,
+    String? fullName,
+    String? firstName,
+    String? lastName,
+    String? emailAddress,
+    String? gender,
+    String? phoneNumber,
+    String? password,
+    String? address,
+    String? vehicleType,
+    String? vehiclePlateNumber,
+    String? companyName,
+    String? profileImageURL,
+    bool? isApproved,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -103,72 +105,75 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? isApproved = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userRole: freezed == userRole
-          ? _value.userRole
-          : userRole // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fullName: freezed == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emailAddress: freezed == emailAddress
-          ? _value.emailAddress
-          : emailAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      gender: freezed == gender
-          ? _value.gender
-          : gender // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phoneNumber: freezed == phoneNumber
-          ? _value.phoneNumber
-          : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      vehicleType: freezed == vehicleType
-          ? _value.vehicleType
-          : vehicleType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      vehiclePlateNumber: freezed == vehiclePlateNumber
-          ? _value.vehiclePlateNumber
-          : vehiclePlateNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      companyName: freezed == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      profileImageURL: freezed == profileImageURL
-          ? _value.profileImageURL
-          : profileImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isApproved: freezed == isApproved
-          ? _value.isApproved
-          : isApproved // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            userID: freezed == userID
+                ? _value.userID
+                : userID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userRole: freezed == userRole
+                ? _value.userRole
+                : userRole // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            fullName: freezed == fullName
+                ? _value.fullName
+                : fullName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            firstName: freezed == firstName
+                ? _value.firstName
+                : firstName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            lastName: freezed == lastName
+                ? _value.lastName
+                : lastName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            emailAddress: freezed == emailAddress
+                ? _value.emailAddress
+                : emailAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            gender: freezed == gender
+                ? _value.gender
+                : gender // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            phoneNumber: freezed == phoneNumber
+                ? _value.phoneNumber
+                : phoneNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            password: freezed == password
+                ? _value.password
+                : password // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            vehicleType: freezed == vehicleType
+                ? _value.vehicleType
+                : vehicleType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            vehiclePlateNumber: freezed == vehiclePlateNumber
+                ? _value.vehiclePlateNumber
+                : vehiclePlateNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            companyName: freezed == companyName
+                ? _value.companyName
+                : companyName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            profileImageURL: freezed == profileImageURL
+                ? _value.profileImageURL
+                : profileImageURL // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isApproved: freezed == isApproved
+                ? _value.isApproved
+                : isApproved // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            createdDate: freezed == createdDate
+                ? _value.createdDate
+                : createdDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -176,27 +181,29 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
 abstract class _$$UserModelImplCopyWith<$Res>
     implements $UserModelCopyWith<$Res> {
   factory _$$UserModelImplCopyWith(
-          _$UserModelImpl value, $Res Function(_$UserModelImpl) then) =
-      __$$UserModelImplCopyWithImpl<$Res>;
+    _$UserModelImpl value,
+    $Res Function(_$UserModelImpl) then,
+  ) = __$$UserModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? userID,
-      String? userRole,
-      String? fullName,
-      String? firstName,
-      String? lastName,
-      String? emailAddress,
-      String? gender,
-      String? phoneNumber,
-      String? password,
-      String? address,
-      String? vehicleType,
-      String? vehiclePlateNumber,
-      String? companyName,
-      String? profileImageURL,
-      bool? isApproved,
-      DateTime? createdDate});
+  $Res call({
+    String? userID,
+    String? userRole,
+    String? fullName,
+    String? firstName,
+    String? lastName,
+    String? emailAddress,
+    String? gender,
+    String? phoneNumber,
+    String? password,
+    String? address,
+    String? vehicleType,
+    String? vehiclePlateNumber,
+    String? companyName,
+    String? profileImageURL,
+    bool? isApproved,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -204,8 +211,9 @@ class __$$UserModelImplCopyWithImpl<$Res>
     extends _$UserModelCopyWithImpl<$Res, _$UserModelImpl>
     implements _$$UserModelImplCopyWith<$Res> {
   __$$UserModelImplCopyWithImpl(
-      _$UserModelImpl _value, $Res Function(_$UserModelImpl) _then)
-      : super(_value, _then);
+    _$UserModelImpl _value,
+    $Res Function(_$UserModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -229,95 +237,98 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? isApproved = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_$UserModelImpl(
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userRole: freezed == userRole
-          ? _value.userRole
-          : userRole // ignore: cast_nullable_to_non_nullable
-              as String?,
-      fullName: freezed == fullName
-          ? _value.fullName
-          : fullName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      emailAddress: freezed == emailAddress
-          ? _value.emailAddress
-          : emailAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      gender: freezed == gender
-          ? _value.gender
-          : gender // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phoneNumber: freezed == phoneNumber
-          ? _value.phoneNumber
-          : phoneNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      password: freezed == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      vehicleType: freezed == vehicleType
-          ? _value.vehicleType
-          : vehicleType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      vehiclePlateNumber: freezed == vehiclePlateNumber
-          ? _value.vehiclePlateNumber
-          : vehiclePlateNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      companyName: freezed == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      profileImageURL: freezed == profileImageURL
-          ? _value.profileImageURL
-          : profileImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isApproved: freezed == isApproved
-          ? _value.isApproved
-          : isApproved // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$UserModelImpl(
+        userID: freezed == userID
+            ? _value.userID
+            : userID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userRole: freezed == userRole
+            ? _value.userRole
+            : userRole // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        fullName: freezed == fullName
+            ? _value.fullName
+            : fullName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        firstName: freezed == firstName
+            ? _value.firstName
+            : firstName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        lastName: freezed == lastName
+            ? _value.lastName
+            : lastName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        emailAddress: freezed == emailAddress
+            ? _value.emailAddress
+            : emailAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        gender: freezed == gender
+            ? _value.gender
+            : gender // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        phoneNumber: freezed == phoneNumber
+            ? _value.phoneNumber
+            : phoneNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        password: freezed == password
+            ? _value.password
+            : password // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        vehicleType: freezed == vehicleType
+            ? _value.vehicleType
+            : vehicleType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        vehiclePlateNumber: freezed == vehiclePlateNumber
+            ? _value.vehiclePlateNumber
+            : vehiclePlateNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        companyName: freezed == companyName
+            ? _value.companyName
+            : companyName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        profileImageURL: freezed == profileImageURL
+            ? _value.profileImageURL
+            : profileImageURL // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isApproved: freezed == isApproved
+            ? _value.isApproved
+            : isApproved // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        createdDate: freezed == createdDate
+            ? _value.createdDate
+            : createdDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$UserModelImpl implements _UserModel {
-  const _$UserModelImpl(
-      {this.userID,
-      this.userRole,
-      this.fullName,
-      this.firstName,
-      this.lastName,
-      this.emailAddress,
-      this.gender,
-      this.phoneNumber,
-      this.password,
-      this.address,
-      this.vehicleType,
-      this.vehiclePlateNumber,
-      this.companyName,
-      this.profileImageURL,
-      this.isApproved,
-      this.createdDate});
+  const _$UserModelImpl({
+    this.userID,
+    this.userRole,
+    this.fullName,
+    this.firstName,
+    this.lastName,
+    this.emailAddress,
+    this.gender,
+    this.phoneNumber,
+    this.password,
+    this.address,
+    this.vehicleType,
+    this.vehiclePlateNumber,
+    this.companyName,
+    this.profileImageURL,
+    this.isApproved,
+    this.createdDate,
+  });
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserModelImplFromJson(json);
@@ -399,23 +410,24 @@ class _$UserModelImpl implements _UserModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      userID,
-      userRole,
-      fullName,
-      firstName,
-      lastName,
-      emailAddress,
-      gender,
-      phoneNumber,
-      password,
-      address,
-      vehicleType,
-      vehiclePlateNumber,
-      companyName,
-      profileImageURL,
-      isApproved,
-      createdDate);
+    runtimeType,
+    userID,
+    userRole,
+    fullName,
+    firstName,
+    lastName,
+    emailAddress,
+    gender,
+    phoneNumber,
+    password,
+    address,
+    vehicleType,
+    vehiclePlateNumber,
+    companyName,
+    profileImageURL,
+    isApproved,
+    createdDate,
+  );
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -427,30 +439,29 @@ class _$UserModelImpl implements _UserModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$UserModelImplToJson(
-      this,
-    );
+    return _$$UserModelImplToJson(this);
   }
 }
 
 abstract class _UserModel implements UserModel {
-  const factory _UserModel(
-      {final String? userID,
-      final String? userRole,
-      final String? fullName,
-      final String? firstName,
-      final String? lastName,
-      final String? emailAddress,
-      final String? gender,
-      final String? phoneNumber,
-      final String? password,
-      final String? address,
-      final String? vehicleType,
-      final String? vehiclePlateNumber,
-      final String? companyName,
-      final String? profileImageURL,
-      final bool? isApproved,
-      final DateTime? createdDate}) = _$UserModelImpl;
+  const factory _UserModel({
+    final String? userID,
+    final String? userRole,
+    final String? fullName,
+    final String? firstName,
+    final String? lastName,
+    final String? emailAddress,
+    final String? gender,
+    final String? phoneNumber,
+    final String? password,
+    final String? address,
+    final String? vehicleType,
+    final String? vehiclePlateNumber,
+    final String? companyName,
+    final String? profileImageURL,
+    final bool? isApproved,
+    final DateTime? createdDate,
+  }) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;

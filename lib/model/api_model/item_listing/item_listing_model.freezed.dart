@@ -12,7 +12,8 @@ part of 'item_listing_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 ItemListingModel _$ItemListingModelFromJson(Map<String, dynamic> json) {
   return _ItemListingModel.fromJson(json);
@@ -45,21 +46,23 @@ mixin _$ItemListingModel {
 /// @nodoc
 abstract class $ItemListingModelCopyWith<$Res> {
   factory $ItemListingModelCopyWith(
-          ItemListingModel value, $Res Function(ItemListingModel) then) =
-      _$ItemListingModelCopyWithImpl<$Res, ItemListingModel>;
+    ItemListingModel value,
+    $Res Function(ItemListingModel) then,
+  ) = _$ItemListingModelCopyWithImpl<$Res, ItemListingModel>;
   @useResult
-  $Res call(
-      {int? itemListingID,
-      String? userID,
-      List<String>? itemImageURL,
-      String? itemName,
-      String? itemDescription,
-      double? itemPrice,
-      String? itemCondition,
-      String? itemCategory,
-      bool? isSold,
-      String? status,
-      DateTime? createdDate});
+  $Res call({
+    int? itemListingID,
+    String? userID,
+    List<String>? itemImageURL,
+    String? itemName,
+    String? itemDescription,
+    double? itemPrice,
+    String? itemCondition,
+    String? itemCategory,
+    bool? isSold,
+    String? status,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -89,84 +92,90 @@ class _$ItemListingModelCopyWithImpl<$Res, $Val extends ItemListingModel>
     Object? status = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      itemListingID: freezed == itemListingID
-          ? _value.itemListingID
-          : itemListingID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemImageURL: freezed == itemImageURL
-          ? _value.itemImageURL
-          : itemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      itemName: freezed == itemName
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemDescription: freezed == itemDescription
-          ? _value.itemDescription
-          : itemDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemPrice: freezed == itemPrice
-          ? _value.itemPrice
-          : itemPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      itemCondition: freezed == itemCondition
-          ? _value.itemCondition
-          : itemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemCategory: freezed == itemCategory
-          ? _value.itemCategory
-          : itemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isSold: freezed == isSold
-          ? _value.isSold
-          : isSold // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            itemListingID: freezed == itemListingID
+                ? _value.itemListingID
+                : itemListingID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            userID: freezed == userID
+                ? _value.userID
+                : userID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemImageURL: freezed == itemImageURL
+                ? _value.itemImageURL
+                : itemImageURL // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            itemName: freezed == itemName
+                ? _value.itemName
+                : itemName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemDescription: freezed == itemDescription
+                ? _value.itemDescription
+                : itemDescription // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemPrice: freezed == itemPrice
+                ? _value.itemPrice
+                : itemPrice // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            itemCondition: freezed == itemCondition
+                ? _value.itemCondition
+                : itemCondition // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemCategory: freezed == itemCategory
+                ? _value.itemCategory
+                : itemCategory // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isSold: freezed == isSold
+                ? _value.isSold
+                : isSold // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdDate: freezed == createdDate
+                ? _value.createdDate
+                : createdDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$ItemListingModelImplCopyWith<$Res>
     implements $ItemListingModelCopyWith<$Res> {
-  factory _$$ItemListingModelImplCopyWith(_$ItemListingModelImpl value,
-          $Res Function(_$ItemListingModelImpl) then) =
-      __$$ItemListingModelImplCopyWithImpl<$Res>;
+  factory _$$ItemListingModelImplCopyWith(
+    _$ItemListingModelImpl value,
+    $Res Function(_$ItemListingModelImpl) then,
+  ) = __$$ItemListingModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? itemListingID,
-      String? userID,
-      List<String>? itemImageURL,
-      String? itemName,
-      String? itemDescription,
-      double? itemPrice,
-      String? itemCondition,
-      String? itemCategory,
-      bool? isSold,
-      String? status,
-      DateTime? createdDate});
+  $Res call({
+    int? itemListingID,
+    String? userID,
+    List<String>? itemImageURL,
+    String? itemName,
+    String? itemDescription,
+    double? itemPrice,
+    String? itemCondition,
+    String? itemCategory,
+    bool? isSold,
+    String? status,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
 class __$$ItemListingModelImplCopyWithImpl<$Res>
     extends _$ItemListingModelCopyWithImpl<$Res, _$ItemListingModelImpl>
     implements _$$ItemListingModelImplCopyWith<$Res> {
-  __$$ItemListingModelImplCopyWithImpl(_$ItemListingModelImpl _value,
-      $Res Function(_$ItemListingModelImpl) _then)
-      : super(_value, _then);
+  __$$ItemListingModelImplCopyWithImpl(
+    _$ItemListingModelImpl _value,
+    $Res Function(_$ItemListingModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ItemListingModel
   /// with the given fields replaced by the non-null parameter values.
@@ -185,71 +194,73 @@ class __$$ItemListingModelImplCopyWithImpl<$Res>
     Object? status = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_$ItemListingModelImpl(
-      itemListingID: freezed == itemListingID
-          ? _value.itemListingID
-          : itemListingID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemImageURL: freezed == itemImageURL
-          ? _value._itemImageURL
-          : itemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      itemName: freezed == itemName
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemDescription: freezed == itemDescription
-          ? _value.itemDescription
-          : itemDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemPrice: freezed == itemPrice
-          ? _value.itemPrice
-          : itemPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      itemCondition: freezed == itemCondition
-          ? _value.itemCondition
-          : itemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemCategory: freezed == itemCategory
-          ? _value.itemCategory
-          : itemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isSold: freezed == isSold
-          ? _value.isSold
-          : isSold // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      status: freezed == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$ItemListingModelImpl(
+        itemListingID: freezed == itemListingID
+            ? _value.itemListingID
+            : itemListingID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        userID: freezed == userID
+            ? _value.userID
+            : userID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemImageURL: freezed == itemImageURL
+            ? _value._itemImageURL
+            : itemImageURL // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        itemName: freezed == itemName
+            ? _value.itemName
+            : itemName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemDescription: freezed == itemDescription
+            ? _value.itemDescription
+            : itemDescription // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemPrice: freezed == itemPrice
+            ? _value.itemPrice
+            : itemPrice // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        itemCondition: freezed == itemCondition
+            ? _value.itemCondition
+            : itemCondition // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemCategory: freezed == itemCategory
+            ? _value.itemCategory
+            : itemCategory // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isSold: freezed == isSold
+            ? _value.isSold
+            : isSold // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdDate: freezed == createdDate
+            ? _value.createdDate
+            : createdDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ItemListingModelImpl implements _ItemListingModel {
-  const _$ItemListingModelImpl(
-      {this.itemListingID,
-      this.userID,
-      final List<String>? itemImageURL,
-      this.itemName,
-      this.itemDescription,
-      this.itemPrice,
-      this.itemCondition,
-      this.itemCategory,
-      this.isSold,
-      this.status,
-      this.createdDate})
-      : _itemImageURL = itemImageURL;
+  const _$ItemListingModelImpl({
+    this.itemListingID,
+    this.userID,
+    final List<String>? itemImageURL,
+    this.itemName,
+    this.itemDescription,
+    this.itemPrice,
+    this.itemCondition,
+    this.itemCategory,
+    this.isSold,
+    this.status,
+    this.createdDate,
+  }) : _itemImageURL = itemImageURL;
 
   factory _$ItemListingModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ItemListingModelImplFromJson(json);
@@ -298,8 +309,10 @@ class _$ItemListingModelImpl implements _ItemListingModel {
             (identical(other.itemListingID, itemListingID) ||
                 other.itemListingID == itemListingID) &&
             (identical(other.userID, userID) || other.userID == userID) &&
-            const DeepCollectionEquality()
-                .equals(other._itemImageURL, _itemImageURL) &&
+            const DeepCollectionEquality().equals(
+              other._itemImageURL,
+              _itemImageURL,
+            ) &&
             (identical(other.itemName, itemName) ||
                 other.itemName == itemName) &&
             (identical(other.itemDescription, itemDescription) ||
@@ -319,18 +332,19 @@ class _$ItemListingModelImpl implements _ItemListingModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      itemListingID,
-      userID,
-      const DeepCollectionEquality().hash(_itemImageURL),
-      itemName,
-      itemDescription,
-      itemPrice,
-      itemCondition,
-      itemCategory,
-      isSold,
-      status,
-      createdDate);
+    runtimeType,
+    itemListingID,
+    userID,
+    const DeepCollectionEquality().hash(_itemImageURL),
+    itemName,
+    itemDescription,
+    itemPrice,
+    itemCondition,
+    itemCategory,
+    isSold,
+    status,
+    createdDate,
+  );
 
   /// Create a copy of ItemListingModel
   /// with the given fields replaced by the non-null parameter values.
@@ -339,29 +353,30 @@ class _$ItemListingModelImpl implements _ItemListingModel {
   @pragma('vm:prefer-inline')
   _$$ItemListingModelImplCopyWith<_$ItemListingModelImpl> get copyWith =>
       __$$ItemListingModelImplCopyWithImpl<_$ItemListingModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ItemListingModelImplToJson(
-      this,
-    );
+    return _$$ItemListingModelImplToJson(this);
   }
 }
 
 abstract class _ItemListingModel implements ItemListingModel {
-  const factory _ItemListingModel(
-      {final int? itemListingID,
-      final String? userID,
-      final List<String>? itemImageURL,
-      final String? itemName,
-      final String? itemDescription,
-      final double? itemPrice,
-      final String? itemCondition,
-      final String? itemCategory,
-      final bool? isSold,
-      final String? status,
-      final DateTime? createdDate}) = _$ItemListingModelImpl;
+  const factory _ItemListingModel({
+    final int? itemListingID,
+    final String? userID,
+    final List<String>? itemImageURL,
+    final String? itemName,
+    final String? itemDescription,
+    final double? itemPrice,
+    final String? itemCondition,
+    final String? itemCategory,
+    final bool? isSold,
+    final String? status,
+    final DateTime? createdDate,
+  }) = _$ItemListingModelImpl;
 
   factory _ItemListingModel.fromJson(Map<String, dynamic> json) =
       _$ItemListingModelImpl.fromJson;
