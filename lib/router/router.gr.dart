@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -97,332 +98,6 @@ import 'package:green_cycle_fyp/view/customer/reward/reward_screen.dart'
 import 'package:green_cycle_fyp/view/onboarding_screen.dart' as _i36;
 import 'package:green_cycle_fyp/widget/custom_bottom_nav_bar.dart' as _i19;
 
-abstract class $AppRouter extends _i49.RootStackRouter {
-  $AppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, _i49.PageFactory> pagesMap = {
-    AddOrEditAwarenessRoute.name: (routeData) {
-      final args = routeData.argsAs<AddOrEditAwarenessRouteArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.AddOrEditAwarenessScreen(
-          key: args.key,
-          isEdit: args.isEdit,
-        ),
-      );
-    },
-    AddOrEditRewardRoute.name: (routeData) {
-      final args = routeData.argsAs<AddOrEditRewardRouteArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i2.AddOrEditRewardScreen(
-          key: args.key,
-          isEdit: args.isEdit,
-        ),
-      );
-    },
-    AdminDashboardRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i3.AdminDashboardScreen(),
-      );
-    },
-    AdminProfileRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i4.AdminProfileScreen(),
-      );
-    },
-    AvailablePickupRequestRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i5.AvailablePickupRequestScreen(),
-      );
-    },
-    AwarenessDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<AwarenessDetailsRouteArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i6.AwarenessDetailsScreen(
-          key: args.key,
-          userRole: args.userRole,
-          awarenessId: args.awarenessId,
-        ),
-      );
-    },
-    AwarenessRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i7.AwarenessScreen(),
-      );
-    },
-    CartRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i8.CartScreen(),
-      );
-    },
-    ChangePasswordRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i9.ChangePasswordScreen(),
-      );
-    },
-    CheckoutRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i10.CheckoutScreen(),
-      );
-    },
-    CollectorAdditionalSignupRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i11.CollectorAdditionalSignupScreen(),
-      );
-    },
-    CollectorDetailsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i12.CollectorDetailsScreen(),
-      );
-    },
-    CollectorHomeRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i13.CollectorHomeScreen(),
-      );
-    },
-    CollectorPickupRequestDetailsRoute.name: (routeData) {
-      final args = routeData.argsAs<CollectorPickupRequestDetailsRouteArgs>(
-          orElse: () => const CollectorPickupRequestDetailsRouteArgs());
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i14.CollectorPickupRequestDetailsScreen(
-          key: args.key,
-          requestStatus: args.requestStatus,
-        ),
-      );
-    },
-    CollectorProfileRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i15.CollectorProfileScreen(),
-      );
-    },
-    CompletePickupRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i16.CompletePickupScreen(),
-      );
-    },
-    CompletedRequestRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i17.CompletedRequestScreen(),
-      );
-    },
-    CreateListingRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i18.CreateListingScreen(),
-      );
-    },
-    CustomBottomNavBar.name: (routeData) {
-      final args = routeData.argsAs<CustomBottomNavBarArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i19.CustomBottomNavBar(
-          key: args.key,
-          userRole: args.userRole,
-        ),
-      );
-    },
-    CustomerHomeRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i20.CustomerHomeScreen(),
-      );
-    },
-    EditListingRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i21.EditListingScreen(),
-      );
-    },
-    EditProfileRoute.name: (routeData) {
-      final args = routeData.argsAs<EditProfileRouteArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i22.EditProfileScreen(
-          key: args.key,
-          selectedRole: args.selectedRole,
-        ),
-      );
-    },
-    InitRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i23.InitScreen(),
-      );
-    },
-    ItemDetailsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i24.ItemDetailsScreen(),
-      );
-    },
-    LoadingRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i25.LoadingScreen(),
-      );
-    },
-    LoginRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i26.LoginScreen(),
-      );
-    },
-    ManageAwarenessRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i27.ManageAwarenessScreen(),
-      );
-    },
-    ManageCollectorsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i28.ManageCollectorsScreen(),
-      );
-    },
-    ManageRequestsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i29.ManageRequestsScreen(),
-      );
-    },
-    ManageRewardsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i30.ManageRewardsScreen(),
-      );
-    },
-    MarketplaceCategoryRoute.name: (routeData) {
-      final args = routeData.argsAs<MarketplaceCategoryRouteArgs>();
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i31.MarketplaceCategoryScreen(
-          key: args.key,
-          category: args.category,
-        ),
-      );
-    },
-    MarketplaceRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i32.MarketplaceScreen(),
-      );
-    },
-    MyListingRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i33.MyListingScreen(),
-      );
-    },
-    MyPickupRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i34.MyPickupScreen(),
-      );
-    },
-    MyPurchasesRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i35.MyPurchasesScreen(),
-      );
-    },
-    OnboardingRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i36.OnboardingScreen(),
-      );
-    },
-    PickupHistoryRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i37.PickupHistoryScreen(),
-      );
-    },
-    PickupRequestDetailsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i38.PickupRequestDetailsScreen(),
-      );
-    },
-    PointsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i39.PointsScreen(),
-      );
-    },
-    ProfileRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i40.ProfileScreen(),
-      );
-    },
-    RequestDetailsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i41.RequestDetailsScreen(),
-      );
-    },
-    RequestItemDetailsRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i42.RequestItemDetailsScreen(),
-      );
-    },
-    RequestRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i43.RequestScreen(),
-      );
-    },
-    RequestSummaryRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i44.RequestSummaryScreen(),
-      );
-    },
-    RewardRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i45.RewardScreen(),
-      );
-    },
-    SchedulePickupRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i46.SchedulePickupScreen(),
-      );
-    },
-    SelectLocationRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i47.SelectLocationScreen(),
-      );
-    },
-    SignUpRoute.name: (routeData) {
-      return _i49.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i48.SignUpScreen(),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [_i1.AddOrEditAwarenessScreen]
 class AddOrEditAwarenessRoute
@@ -432,25 +107,24 @@ class AddOrEditAwarenessRoute
     required bool isEdit,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          AddOrEditAwarenessRoute.name,
-          args: AddOrEditAwarenessRouteArgs(
-            key: key,
-            isEdit: isEdit,
-          ),
-          initialChildren: children,
-        );
+         AddOrEditAwarenessRoute.name,
+         args: AddOrEditAwarenessRouteArgs(key: key, isEdit: isEdit),
+         initialChildren: children,
+       );
 
   static const String name = 'AddOrEditAwarenessRoute';
 
-  static const _i49.PageInfo<AddOrEditAwarenessRouteArgs> page =
-      _i49.PageInfo<AddOrEditAwarenessRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AddOrEditAwarenessRouteArgs>();
+      return _i1.AddOrEditAwarenessScreen(key: args.key, isEdit: args.isEdit);
+    },
+  );
 }
 
 class AddOrEditAwarenessRouteArgs {
-  const AddOrEditAwarenessRouteArgs({
-    this.key,
-    required this.isEdit,
-  });
+  const AddOrEditAwarenessRouteArgs({this.key, required this.isEdit});
 
   final _i50.Key? key;
 
@@ -471,25 +145,24 @@ class AddOrEditRewardRoute
     required bool isEdit,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          AddOrEditRewardRoute.name,
-          args: AddOrEditRewardRouteArgs(
-            key: key,
-            isEdit: isEdit,
-          ),
-          initialChildren: children,
-        );
+         AddOrEditRewardRoute.name,
+         args: AddOrEditRewardRouteArgs(key: key, isEdit: isEdit),
+         initialChildren: children,
+       );
 
   static const String name = 'AddOrEditRewardRoute';
 
-  static const _i49.PageInfo<AddOrEditRewardRouteArgs> page =
-      _i49.PageInfo<AddOrEditRewardRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AddOrEditRewardRouteArgs>();
+      return _i2.AddOrEditRewardScreen(key: args.key, isEdit: args.isEdit);
+    },
+  );
 }
 
 class AddOrEditRewardRouteArgs {
-  const AddOrEditRewardRouteArgs({
-    this.key,
-    required this.isEdit,
-  });
+  const AddOrEditRewardRouteArgs({this.key, required this.isEdit});
 
   final _i50.Key? key;
 
@@ -505,42 +178,48 @@ class AddOrEditRewardRouteArgs {
 /// [_i3.AdminDashboardScreen]
 class AdminDashboardRoute extends _i49.PageRouteInfo<void> {
   const AdminDashboardRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          AdminDashboardRoute.name,
-          initialChildren: children,
-        );
+    : super(AdminDashboardRoute.name, initialChildren: children);
 
   static const String name = 'AdminDashboardRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i3.AdminDashboardScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i4.AdminProfileScreen]
 class AdminProfileRoute extends _i49.PageRouteInfo<void> {
   const AdminProfileRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          AdminProfileRoute.name,
-          initialChildren: children,
-        );
+    : super(AdminProfileRoute.name, initialChildren: children);
 
   static const String name = 'AdminProfileRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i4.AdminProfileScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i5.AvailablePickupRequestScreen]
 class AvailablePickupRequestRoute extends _i49.PageRouteInfo<void> {
   const AvailablePickupRequestRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          AvailablePickupRequestRoute.name,
-          initialChildren: children,
-        );
+    : super(AvailablePickupRequestRoute.name, initialChildren: children);
 
   static const String name = 'AvailablePickupRequestRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i5.AvailablePickupRequestScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -553,19 +232,28 @@ class AwarenessDetailsRoute
     required int awarenessId,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          AwarenessDetailsRoute.name,
-          args: AwarenessDetailsRouteArgs(
-            key: key,
-            userRole: userRole,
-            awarenessId: awarenessId,
-          ),
-          initialChildren: children,
-        );
+         AwarenessDetailsRoute.name,
+         args: AwarenessDetailsRouteArgs(
+           key: key,
+           userRole: userRole,
+           awarenessId: awarenessId,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'AwarenessDetailsRoute';
 
-  static const _i49.PageInfo<AwarenessDetailsRouteArgs> page =
-      _i49.PageInfo<AwarenessDetailsRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AwarenessDetailsRouteArgs>();
+      return _i6.AwarenessDetailsScreen(
+        key: args.key,
+        userRole: args.userRole,
+        awarenessId: args.awarenessId,
+      );
+    },
+  );
 }
 
 class AwarenessDetailsRouteArgs {
@@ -591,98 +279,112 @@ class AwarenessDetailsRouteArgs {
 /// [_i7.AwarenessScreen]
 class AwarenessRoute extends _i49.PageRouteInfo<void> {
   const AwarenessRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          AwarenessRoute.name,
-          initialChildren: children,
-        );
+    : super(AwarenessRoute.name, initialChildren: children);
 
   static const String name = 'AwarenessRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i7.AwarenessScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i8.CartScreen]
 class CartRoute extends _i49.PageRouteInfo<void> {
   const CartRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CartRoute.name,
-          initialChildren: children,
-        );
+    : super(CartRoute.name, initialChildren: children);
 
   static const String name = 'CartRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i8.CartScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i9.ChangePasswordScreen]
 class ChangePasswordRoute extends _i49.PageRouteInfo<void> {
   const ChangePasswordRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ChangePasswordRoute.name,
-          initialChildren: children,
-        );
+    : super(ChangePasswordRoute.name, initialChildren: children);
 
   static const String name = 'ChangePasswordRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i9.ChangePasswordScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i10.CheckoutScreen]
 class CheckoutRoute extends _i49.PageRouteInfo<void> {
   const CheckoutRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CheckoutRoute.name,
-          initialChildren: children,
-        );
+    : super(CheckoutRoute.name, initialChildren: children);
 
   static const String name = 'CheckoutRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i10.CheckoutScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i11.CollectorAdditionalSignupScreen]
 class CollectorAdditionalSignupRoute extends _i49.PageRouteInfo<void> {
   const CollectorAdditionalSignupRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CollectorAdditionalSignupRoute.name,
-          initialChildren: children,
-        );
+    : super(CollectorAdditionalSignupRoute.name, initialChildren: children);
 
   static const String name = 'CollectorAdditionalSignupRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i11.CollectorAdditionalSignupScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i12.CollectorDetailsScreen]
 class CollectorDetailsRoute extends _i49.PageRouteInfo<void> {
   const CollectorDetailsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CollectorDetailsRoute.name,
-          initialChildren: children,
-        );
+    : super(CollectorDetailsRoute.name, initialChildren: children);
 
   static const String name = 'CollectorDetailsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i12.CollectorDetailsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i13.CollectorHomeScreen]
 class CollectorHomeRoute extends _i49.PageRouteInfo<void> {
   const CollectorHomeRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CollectorHomeRoute.name,
-          initialChildren: children,
-        );
+    : super(CollectorHomeRoute.name, initialChildren: children);
 
   static const String name = 'CollectorHomeRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i13.CollectorHomeScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -694,25 +396,32 @@ class CollectorPickupRequestDetailsRoute
     String? requestStatus,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          CollectorPickupRequestDetailsRoute.name,
-          args: CollectorPickupRequestDetailsRouteArgs(
-            key: key,
-            requestStatus: requestStatus,
-          ),
-          initialChildren: children,
-        );
+         CollectorPickupRequestDetailsRoute.name,
+         args: CollectorPickupRequestDetailsRouteArgs(
+           key: key,
+           requestStatus: requestStatus,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'CollectorPickupRequestDetailsRoute';
 
-  static const _i49.PageInfo<CollectorPickupRequestDetailsRouteArgs> page =
-      _i49.PageInfo<CollectorPickupRequestDetailsRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CollectorPickupRequestDetailsRouteArgs>(
+        orElse: () => const CollectorPickupRequestDetailsRouteArgs(),
+      );
+      return _i14.CollectorPickupRequestDetailsScreen(
+        key: args.key,
+        requestStatus: args.requestStatus,
+      );
+    },
+  );
 }
 
 class CollectorPickupRequestDetailsRouteArgs {
-  const CollectorPickupRequestDetailsRouteArgs({
-    this.key,
-    this.requestStatus,
-  });
+  const CollectorPickupRequestDetailsRouteArgs({this.key, this.requestStatus});
 
   final _i50.Key? key;
 
@@ -728,56 +437,64 @@ class CollectorPickupRequestDetailsRouteArgs {
 /// [_i15.CollectorProfileScreen]
 class CollectorProfileRoute extends _i49.PageRouteInfo<void> {
   const CollectorProfileRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CollectorProfileRoute.name,
-          initialChildren: children,
-        );
+    : super(CollectorProfileRoute.name, initialChildren: children);
 
   static const String name = 'CollectorProfileRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i15.CollectorProfileScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i16.CompletePickupScreen]
 class CompletePickupRoute extends _i49.PageRouteInfo<void> {
   const CompletePickupRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CompletePickupRoute.name,
-          initialChildren: children,
-        );
+    : super(CompletePickupRoute.name, initialChildren: children);
 
   static const String name = 'CompletePickupRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i16.CompletePickupScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i17.CompletedRequestScreen]
 class CompletedRequestRoute extends _i49.PageRouteInfo<void> {
   const CompletedRequestRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CompletedRequestRoute.name,
-          initialChildren: children,
-        );
+    : super(CompletedRequestRoute.name, initialChildren: children);
 
   static const String name = 'CompletedRequestRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i17.CompletedRequestScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i18.CreateListingScreen]
 class CreateListingRoute extends _i49.PageRouteInfo<void> {
   const CreateListingRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CreateListingRoute.name,
-          initialChildren: children,
-        );
+    : super(CreateListingRoute.name, initialChildren: children);
 
   static const String name = 'CreateListingRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i18.CreateListingScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -788,25 +505,24 @@ class CustomBottomNavBar extends _i49.PageRouteInfo<CustomBottomNavBarArgs> {
     required String userRole,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          CustomBottomNavBar.name,
-          args: CustomBottomNavBarArgs(
-            key: key,
-            userRole: userRole,
-          ),
-          initialChildren: children,
-        );
+         CustomBottomNavBar.name,
+         args: CustomBottomNavBarArgs(key: key, userRole: userRole),
+         initialChildren: children,
+       );
 
   static const String name = 'CustomBottomNavBar';
 
-  static const _i49.PageInfo<CustomBottomNavBarArgs> page =
-      _i49.PageInfo<CustomBottomNavBarArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CustomBottomNavBarArgs>();
+      return _i19.CustomBottomNavBar(key: args.key, userRole: args.userRole);
+    },
+  );
 }
 
 class CustomBottomNavBarArgs {
-  const CustomBottomNavBarArgs({
-    this.key,
-    required this.userRole,
-  });
+  const CustomBottomNavBarArgs({this.key, required this.userRole});
 
   final _i50.Key? key;
 
@@ -822,28 +538,32 @@ class CustomBottomNavBarArgs {
 /// [_i20.CustomerHomeScreen]
 class CustomerHomeRoute extends _i49.PageRouteInfo<void> {
   const CustomerHomeRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          CustomerHomeRoute.name,
-          initialChildren: children,
-        );
+    : super(CustomerHomeRoute.name, initialChildren: children);
 
   static const String name = 'CustomerHomeRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i20.CustomerHomeScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i21.EditListingScreen]
 class EditListingRoute extends _i49.PageRouteInfo<void> {
   const EditListingRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          EditListingRoute.name,
-          initialChildren: children,
-        );
+    : super(EditListingRoute.name, initialChildren: children);
 
   static const String name = 'EditListingRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i21.EditListingScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -854,25 +574,27 @@ class EditProfileRoute extends _i49.PageRouteInfo<EditProfileRouteArgs> {
     required String selectedRole,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          EditProfileRoute.name,
-          args: EditProfileRouteArgs(
-            key: key,
-            selectedRole: selectedRole,
-          ),
-          initialChildren: children,
-        );
+         EditProfileRoute.name,
+         args: EditProfileRouteArgs(key: key, selectedRole: selectedRole),
+         initialChildren: children,
+       );
 
   static const String name = 'EditProfileRoute';
 
-  static const _i49.PageInfo<EditProfileRouteArgs> page =
-      _i49.PageInfo<EditProfileRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<EditProfileRouteArgs>();
+      return _i22.EditProfileScreen(
+        key: args.key,
+        selectedRole: args.selectedRole,
+      );
+    },
+  );
 }
 
 class EditProfileRouteArgs {
-  const EditProfileRouteArgs({
-    this.key,
-    required this.selectedRole,
-  });
+  const EditProfileRouteArgs({this.key, required this.selectedRole});
 
   final _i50.Key? key;
 
@@ -888,112 +610,128 @@ class EditProfileRouteArgs {
 /// [_i23.InitScreen]
 class InitRoute extends _i49.PageRouteInfo<void> {
   const InitRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          InitRoute.name,
-          initialChildren: children,
-        );
+    : super(InitRoute.name, initialChildren: children);
 
   static const String name = 'InitRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i23.InitScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i24.ItemDetailsScreen]
 class ItemDetailsRoute extends _i49.PageRouteInfo<void> {
   const ItemDetailsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ItemDetailsRoute.name,
-          initialChildren: children,
-        );
+    : super(ItemDetailsRoute.name, initialChildren: children);
 
   static const String name = 'ItemDetailsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i24.ItemDetailsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i25.LoadingScreen]
 class LoadingRoute extends _i49.PageRouteInfo<void> {
   const LoadingRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          LoadingRoute.name,
-          initialChildren: children,
-        );
+    : super(LoadingRoute.name, initialChildren: children);
 
   static const String name = 'LoadingRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i25.LoadingScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i26.LoginScreen]
 class LoginRoute extends _i49.PageRouteInfo<void> {
   const LoginRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          LoginRoute.name,
-          initialChildren: children,
-        );
+    : super(LoginRoute.name, initialChildren: children);
 
   static const String name = 'LoginRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i26.LoginScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i27.ManageAwarenessScreen]
 class ManageAwarenessRoute extends _i49.PageRouteInfo<void> {
   const ManageAwarenessRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ManageAwarenessRoute.name,
-          initialChildren: children,
-        );
+    : super(ManageAwarenessRoute.name, initialChildren: children);
 
   static const String name = 'ManageAwarenessRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i27.ManageAwarenessScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i28.ManageCollectorsScreen]
 class ManageCollectorsRoute extends _i49.PageRouteInfo<void> {
   const ManageCollectorsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ManageCollectorsRoute.name,
-          initialChildren: children,
-        );
+    : super(ManageCollectorsRoute.name, initialChildren: children);
 
   static const String name = 'ManageCollectorsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i28.ManageCollectorsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i29.ManageRequestsScreen]
 class ManageRequestsRoute extends _i49.PageRouteInfo<void> {
   const ManageRequestsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ManageRequestsRoute.name,
-          initialChildren: children,
-        );
+    : super(ManageRequestsRoute.name, initialChildren: children);
 
   static const String name = 'ManageRequestsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i29.ManageRequestsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i30.ManageRewardsScreen]
 class ManageRewardsRoute extends _i49.PageRouteInfo<void> {
   const ManageRewardsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ManageRewardsRoute.name,
-          initialChildren: children,
-        );
+    : super(ManageRewardsRoute.name, initialChildren: children);
 
   static const String name = 'ManageRewardsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i30.ManageRewardsScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -1005,25 +743,27 @@ class MarketplaceCategoryRoute
     required String category,
     List<_i49.PageRouteInfo>? children,
   }) : super(
-          MarketplaceCategoryRoute.name,
-          args: MarketplaceCategoryRouteArgs(
-            key: key,
-            category: category,
-          ),
-          initialChildren: children,
-        );
+         MarketplaceCategoryRoute.name,
+         args: MarketplaceCategoryRouteArgs(key: key, category: category),
+         initialChildren: children,
+       );
 
   static const String name = 'MarketplaceCategoryRoute';
 
-  static const _i49.PageInfo<MarketplaceCategoryRouteArgs> page =
-      _i49.PageInfo<MarketplaceCategoryRouteArgs>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<MarketplaceCategoryRouteArgs>();
+      return _i31.MarketplaceCategoryScreen(
+        key: args.key,
+        category: args.category,
+      );
+    },
+  );
 }
 
 class MarketplaceCategoryRouteArgs {
-  const MarketplaceCategoryRouteArgs({
-    this.key,
-    required this.category,
-  });
+  const MarketplaceCategoryRouteArgs({this.key, required this.category});
 
   final _i50.Key? key;
 
@@ -1039,236 +779,270 @@ class MarketplaceCategoryRouteArgs {
 /// [_i32.MarketplaceScreen]
 class MarketplaceRoute extends _i49.PageRouteInfo<void> {
   const MarketplaceRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          MarketplaceRoute.name,
-          initialChildren: children,
-        );
+    : super(MarketplaceRoute.name, initialChildren: children);
 
   static const String name = 'MarketplaceRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i32.MarketplaceScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i33.MyListingScreen]
 class MyListingRoute extends _i49.PageRouteInfo<void> {
   const MyListingRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          MyListingRoute.name,
-          initialChildren: children,
-        );
+    : super(MyListingRoute.name, initialChildren: children);
 
   static const String name = 'MyListingRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i33.MyListingScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i34.MyPickupScreen]
 class MyPickupRoute extends _i49.PageRouteInfo<void> {
   const MyPickupRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          MyPickupRoute.name,
-          initialChildren: children,
-        );
+    : super(MyPickupRoute.name, initialChildren: children);
 
   static const String name = 'MyPickupRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i34.MyPickupScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i35.MyPurchasesScreen]
 class MyPurchasesRoute extends _i49.PageRouteInfo<void> {
   const MyPurchasesRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          MyPurchasesRoute.name,
-          initialChildren: children,
-        );
+    : super(MyPurchasesRoute.name, initialChildren: children);
 
   static const String name = 'MyPurchasesRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i35.MyPurchasesScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i36.OnboardingScreen]
 class OnboardingRoute extends _i49.PageRouteInfo<void> {
   const OnboardingRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          OnboardingRoute.name,
-          initialChildren: children,
-        );
+    : super(OnboardingRoute.name, initialChildren: children);
 
   static const String name = 'OnboardingRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i36.OnboardingScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i37.PickupHistoryScreen]
 class PickupHistoryRoute extends _i49.PageRouteInfo<void> {
   const PickupHistoryRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          PickupHistoryRoute.name,
-          initialChildren: children,
-        );
+    : super(PickupHistoryRoute.name, initialChildren: children);
 
   static const String name = 'PickupHistoryRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i37.PickupHistoryScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i38.PickupRequestDetailsScreen]
 class PickupRequestDetailsRoute extends _i49.PageRouteInfo<void> {
   const PickupRequestDetailsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          PickupRequestDetailsRoute.name,
-          initialChildren: children,
-        );
+    : super(PickupRequestDetailsRoute.name, initialChildren: children);
 
   static const String name = 'PickupRequestDetailsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i38.PickupRequestDetailsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i39.PointsScreen]
 class PointsRoute extends _i49.PageRouteInfo<void> {
   const PointsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          PointsRoute.name,
-          initialChildren: children,
-        );
+    : super(PointsRoute.name, initialChildren: children);
 
   static const String name = 'PointsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i39.PointsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i40.ProfileScreen]
 class ProfileRoute extends _i49.PageRouteInfo<void> {
   const ProfileRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          ProfileRoute.name,
-          initialChildren: children,
-        );
+    : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i40.ProfileScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i41.RequestDetailsScreen]
 class RequestDetailsRoute extends _i49.PageRouteInfo<void> {
   const RequestDetailsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          RequestDetailsRoute.name,
-          initialChildren: children,
-        );
+    : super(RequestDetailsRoute.name, initialChildren: children);
 
   static const String name = 'RequestDetailsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i41.RequestDetailsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i42.RequestItemDetailsScreen]
 class RequestItemDetailsRoute extends _i49.PageRouteInfo<void> {
   const RequestItemDetailsRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          RequestItemDetailsRoute.name,
-          initialChildren: children,
-        );
+    : super(RequestItemDetailsRoute.name, initialChildren: children);
 
   static const String name = 'RequestItemDetailsRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i42.RequestItemDetailsScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i43.RequestScreen]
 class RequestRoute extends _i49.PageRouteInfo<void> {
   const RequestRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          RequestRoute.name,
-          initialChildren: children,
-        );
+    : super(RequestRoute.name, initialChildren: children);
 
   static const String name = 'RequestRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i43.RequestScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i44.RequestSummaryScreen]
 class RequestSummaryRoute extends _i49.PageRouteInfo<void> {
   const RequestSummaryRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          RequestSummaryRoute.name,
-          initialChildren: children,
-        );
+    : super(RequestSummaryRoute.name, initialChildren: children);
 
   static const String name = 'RequestSummaryRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i44.RequestSummaryScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i45.RewardScreen]
 class RewardRoute extends _i49.PageRouteInfo<void> {
   const RewardRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          RewardRoute.name,
-          initialChildren: children,
-        );
+    : super(RewardRoute.name, initialChildren: children);
 
   static const String name = 'RewardRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i45.RewardScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i46.SchedulePickupScreen]
 class SchedulePickupRoute extends _i49.PageRouteInfo<void> {
   const SchedulePickupRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          SchedulePickupRoute.name,
-          initialChildren: children,
-        );
+    : super(SchedulePickupRoute.name, initialChildren: children);
 
   static const String name = 'SchedulePickupRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i46.SchedulePickupScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i47.SelectLocationScreen]
 class SelectLocationRoute extends _i49.PageRouteInfo<void> {
   const SelectLocationRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          SelectLocationRoute.name,
-          initialChildren: children,
-        );
+    : super(SelectLocationRoute.name, initialChildren: children);
 
   static const String name = 'SelectLocationRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i47.SelectLocationScreen();
+    },
+  );
 }
 
 /// generated route for
 /// [_i48.SignUpScreen]
 class SignUpRoute extends _i49.PageRouteInfo<void> {
   const SignUpRoute({List<_i49.PageRouteInfo>? children})
-      : super(
-          SignUpRoute.name,
-          initialChildren: children,
-        );
+    : super(SignUpRoute.name, initialChildren: children);
 
   static const String name = 'SignUpRoute';
 
-  static const _i49.PageInfo<void> page = _i49.PageInfo<void>(name);
+  static _i49.PageInfo page = _i49.PageInfo(
+    name,
+    builder: (data) {
+      return const _i48.SignUpScreen();
+    },
+  );
 }

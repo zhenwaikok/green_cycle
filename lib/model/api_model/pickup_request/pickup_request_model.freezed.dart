@@ -12,7 +12,8 @@ part of 'pickup_request_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PickupRequestModel _$PickupRequestModelFromJson(Map<String, dynamic> json) {
   return _PickupRequestModel.fromJson(json);
@@ -50,26 +51,28 @@ mixin _$PickupRequestModel {
 /// @nodoc
 abstract class $PickupRequestModelCopyWith<$Res> {
   factory $PickupRequestModelCopyWith(
-          PickupRequestModel value, $Res Function(PickupRequestModel) then) =
-      _$PickupRequestModelCopyWithImpl<$Res, PickupRequestModel>;
+    PickupRequestModel value,
+    $Res Function(PickupRequestModel) then,
+  ) = _$PickupRequestModelCopyWithImpl<$Res, PickupRequestModel>;
   @useResult
-  $Res call(
-      {String? pickupRequestID,
-      String? userID,
-      String? collectorUserID,
-      String? pickupLocation,
-      String? remarks,
-      DateTime? pickupDate,
-      String? pickupTimeRange,
-      List<String>? pickupItemImageURL,
-      String? pickupItemDescription,
-      String? pickupItemCategory,
-      int? pickupItemQuantity,
-      String? pickupItemCondition,
-      String? pickupRequestStatus,
-      String? collectionProofImageURL,
-      DateTime? requestedDate,
-      DateTime? completedDate});
+  $Res call({
+    String? pickupRequestID,
+    String? userID,
+    String? collectorUserID,
+    String? pickupLocation,
+    String? remarks,
+    DateTime? pickupDate,
+    String? pickupTimeRange,
+    List<String>? pickupItemImageURL,
+    String? pickupItemDescription,
+    String? pickupItemCategory,
+    int? pickupItemQuantity,
+    String? pickupItemCondition,
+    String? pickupRequestStatus,
+    String? collectionProofImageURL,
+    DateTime? requestedDate,
+    DateTime? completedDate,
+  });
 }
 
 /// @nodoc
@@ -104,109 +107,115 @@ class _$PickupRequestModelCopyWithImpl<$Res, $Val extends PickupRequestModel>
     Object? requestedDate = freezed,
     Object? completedDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      pickupRequestID: freezed == pickupRequestID
-          ? _value.pickupRequestID
-          : pickupRequestID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      collectorUserID: freezed == collectorUserID
-          ? _value.collectorUserID
-          : collectorUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupLocation: freezed == pickupLocation
-          ? _value.pickupLocation
-          : pickupLocation // ignore: cast_nullable_to_non_nullable
-              as String?,
-      remarks: freezed == remarks
-          ? _value.remarks
-          : remarks // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupDate: freezed == pickupDate
-          ? _value.pickupDate
-          : pickupDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      pickupTimeRange: freezed == pickupTimeRange
-          ? _value.pickupTimeRange
-          : pickupTimeRange // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemImageURL: freezed == pickupItemImageURL
-          ? _value.pickupItemImageURL
-          : pickupItemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      pickupItemDescription: freezed == pickupItemDescription
-          ? _value.pickupItemDescription
-          : pickupItemDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemCategory: freezed == pickupItemCategory
-          ? _value.pickupItemCategory
-          : pickupItemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemQuantity: freezed == pickupItemQuantity
-          ? _value.pickupItemQuantity
-          : pickupItemQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      pickupItemCondition: freezed == pickupItemCondition
-          ? _value.pickupItemCondition
-          : pickupItemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupRequestStatus: freezed == pickupRequestStatus
-          ? _value.pickupRequestStatus
-          : pickupRequestStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      collectionProofImageURL: freezed == collectionProofImageURL
-          ? _value.collectionProofImageURL
-          : collectionProofImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      requestedDate: freezed == requestedDate
-          ? _value.requestedDate
-          : requestedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      completedDate: freezed == completedDate
-          ? _value.completedDate
-          : completedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            pickupRequestID: freezed == pickupRequestID
+                ? _value.pickupRequestID
+                : pickupRequestID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userID: freezed == userID
+                ? _value.userID
+                : userID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            collectorUserID: freezed == collectorUserID
+                ? _value.collectorUserID
+                : collectorUserID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupLocation: freezed == pickupLocation
+                ? _value.pickupLocation
+                : pickupLocation // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            remarks: freezed == remarks
+                ? _value.remarks
+                : remarks // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupDate: freezed == pickupDate
+                ? _value.pickupDate
+                : pickupDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            pickupTimeRange: freezed == pickupTimeRange
+                ? _value.pickupTimeRange
+                : pickupTimeRange // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupItemImageURL: freezed == pickupItemImageURL
+                ? _value.pickupItemImageURL
+                : pickupItemImageURL // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            pickupItemDescription: freezed == pickupItemDescription
+                ? _value.pickupItemDescription
+                : pickupItemDescription // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupItemCategory: freezed == pickupItemCategory
+                ? _value.pickupItemCategory
+                : pickupItemCategory // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupItemQuantity: freezed == pickupItemQuantity
+                ? _value.pickupItemQuantity
+                : pickupItemQuantity // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            pickupItemCondition: freezed == pickupItemCondition
+                ? _value.pickupItemCondition
+                : pickupItemCondition // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pickupRequestStatus: freezed == pickupRequestStatus
+                ? _value.pickupRequestStatus
+                : pickupRequestStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            collectionProofImageURL: freezed == collectionProofImageURL
+                ? _value.collectionProofImageURL
+                : collectionProofImageURL // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            requestedDate: freezed == requestedDate
+                ? _value.requestedDate
+                : requestedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            completedDate: freezed == completedDate
+                ? _value.completedDate
+                : completedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PickupRequestModelImplCopyWith<$Res>
     implements $PickupRequestModelCopyWith<$Res> {
-  factory _$$PickupRequestModelImplCopyWith(_$PickupRequestModelImpl value,
-          $Res Function(_$PickupRequestModelImpl) then) =
-      __$$PickupRequestModelImplCopyWithImpl<$Res>;
+  factory _$$PickupRequestModelImplCopyWith(
+    _$PickupRequestModelImpl value,
+    $Res Function(_$PickupRequestModelImpl) then,
+  ) = __$$PickupRequestModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? pickupRequestID,
-      String? userID,
-      String? collectorUserID,
-      String? pickupLocation,
-      String? remarks,
-      DateTime? pickupDate,
-      String? pickupTimeRange,
-      List<String>? pickupItemImageURL,
-      String? pickupItemDescription,
-      String? pickupItemCategory,
-      int? pickupItemQuantity,
-      String? pickupItemCondition,
-      String? pickupRequestStatus,
-      String? collectionProofImageURL,
-      DateTime? requestedDate,
-      DateTime? completedDate});
+  $Res call({
+    String? pickupRequestID,
+    String? userID,
+    String? collectorUserID,
+    String? pickupLocation,
+    String? remarks,
+    DateTime? pickupDate,
+    String? pickupTimeRange,
+    List<String>? pickupItemImageURL,
+    String? pickupItemDescription,
+    String? pickupItemCategory,
+    int? pickupItemQuantity,
+    String? pickupItemCondition,
+    String? pickupRequestStatus,
+    String? collectionProofImageURL,
+    DateTime? requestedDate,
+    DateTime? completedDate,
+  });
 }
 
 /// @nodoc
 class __$$PickupRequestModelImplCopyWithImpl<$Res>
     extends _$PickupRequestModelCopyWithImpl<$Res, _$PickupRequestModelImpl>
     implements _$$PickupRequestModelImplCopyWith<$Res> {
-  __$$PickupRequestModelImplCopyWithImpl(_$PickupRequestModelImpl _value,
-      $Res Function(_$PickupRequestModelImpl) _then)
-      : super(_value, _then);
+  __$$PickupRequestModelImplCopyWithImpl(
+    _$PickupRequestModelImpl _value,
+    $Res Function(_$PickupRequestModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PickupRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -230,96 +239,98 @@ class __$$PickupRequestModelImplCopyWithImpl<$Res>
     Object? requestedDate = freezed,
     Object? completedDate = freezed,
   }) {
-    return _then(_$PickupRequestModelImpl(
-      pickupRequestID: freezed == pickupRequestID
-          ? _value.pickupRequestID
-          : pickupRequestID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      collectorUserID: freezed == collectorUserID
-          ? _value.collectorUserID
-          : collectorUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupLocation: freezed == pickupLocation
-          ? _value.pickupLocation
-          : pickupLocation // ignore: cast_nullable_to_non_nullable
-              as String?,
-      remarks: freezed == remarks
-          ? _value.remarks
-          : remarks // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupDate: freezed == pickupDate
-          ? _value.pickupDate
-          : pickupDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      pickupTimeRange: freezed == pickupTimeRange
-          ? _value.pickupTimeRange
-          : pickupTimeRange // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemImageURL: freezed == pickupItemImageURL
-          ? _value._pickupItemImageURL
-          : pickupItemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      pickupItemDescription: freezed == pickupItemDescription
-          ? _value.pickupItemDescription
-          : pickupItemDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemCategory: freezed == pickupItemCategory
-          ? _value.pickupItemCategory
-          : pickupItemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupItemQuantity: freezed == pickupItemQuantity
-          ? _value.pickupItemQuantity
-          : pickupItemQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      pickupItemCondition: freezed == pickupItemCondition
-          ? _value.pickupItemCondition
-          : pickupItemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pickupRequestStatus: freezed == pickupRequestStatus
-          ? _value.pickupRequestStatus
-          : pickupRequestStatus // ignore: cast_nullable_to_non_nullable
-              as String?,
-      collectionProofImageURL: freezed == collectionProofImageURL
-          ? _value.collectionProofImageURL
-          : collectionProofImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      requestedDate: freezed == requestedDate
-          ? _value.requestedDate
-          : requestedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      completedDate: freezed == completedDate
-          ? _value.completedDate
-          : completedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PickupRequestModelImpl(
+        pickupRequestID: freezed == pickupRequestID
+            ? _value.pickupRequestID
+            : pickupRequestID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userID: freezed == userID
+            ? _value.userID
+            : userID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        collectorUserID: freezed == collectorUserID
+            ? _value.collectorUserID
+            : collectorUserID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupLocation: freezed == pickupLocation
+            ? _value.pickupLocation
+            : pickupLocation // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        remarks: freezed == remarks
+            ? _value.remarks
+            : remarks // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupDate: freezed == pickupDate
+            ? _value.pickupDate
+            : pickupDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        pickupTimeRange: freezed == pickupTimeRange
+            ? _value.pickupTimeRange
+            : pickupTimeRange // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupItemImageURL: freezed == pickupItemImageURL
+            ? _value._pickupItemImageURL
+            : pickupItemImageURL // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        pickupItemDescription: freezed == pickupItemDescription
+            ? _value.pickupItemDescription
+            : pickupItemDescription // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupItemCategory: freezed == pickupItemCategory
+            ? _value.pickupItemCategory
+            : pickupItemCategory // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupItemQuantity: freezed == pickupItemQuantity
+            ? _value.pickupItemQuantity
+            : pickupItemQuantity // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        pickupItemCondition: freezed == pickupItemCondition
+            ? _value.pickupItemCondition
+            : pickupItemCondition // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pickupRequestStatus: freezed == pickupRequestStatus
+            ? _value.pickupRequestStatus
+            : pickupRequestStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        collectionProofImageURL: freezed == collectionProofImageURL
+            ? _value.collectionProofImageURL
+            : collectionProofImageURL // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        requestedDate: freezed == requestedDate
+            ? _value.requestedDate
+            : requestedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        completedDate: freezed == completedDate
+            ? _value.completedDate
+            : completedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PickupRequestModelImpl implements _PickupRequestModel {
-  const _$PickupRequestModelImpl(
-      {this.pickupRequestID,
-      this.userID,
-      this.collectorUserID,
-      this.pickupLocation,
-      this.remarks,
-      this.pickupDate,
-      this.pickupTimeRange,
-      final List<String>? pickupItemImageURL,
-      this.pickupItemDescription,
-      this.pickupItemCategory,
-      this.pickupItemQuantity,
-      this.pickupItemCondition,
-      this.pickupRequestStatus,
-      this.collectionProofImageURL,
-      this.requestedDate,
-      this.completedDate})
-      : _pickupItemImageURL = pickupItemImageURL;
+  const _$PickupRequestModelImpl({
+    this.pickupRequestID,
+    this.userID,
+    this.collectorUserID,
+    this.pickupLocation,
+    this.remarks,
+    this.pickupDate,
+    this.pickupTimeRange,
+    final List<String>? pickupItemImageURL,
+    this.pickupItemDescription,
+    this.pickupItemCategory,
+    this.pickupItemQuantity,
+    this.pickupItemCondition,
+    this.pickupRequestStatus,
+    this.collectionProofImageURL,
+    this.requestedDate,
+    this.completedDate,
+  }) : _pickupItemImageURL = pickupItemImageURL;
 
   factory _$PickupRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PickupRequestModelImplFromJson(json);
@@ -388,8 +399,10 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
                 other.pickupDate == pickupDate) &&
             (identical(other.pickupTimeRange, pickupTimeRange) ||
                 other.pickupTimeRange == pickupTimeRange) &&
-            const DeepCollectionEquality()
-                .equals(other._pickupItemImageURL, _pickupItemImageURL) &&
+            const DeepCollectionEquality().equals(
+              other._pickupItemImageURL,
+              _pickupItemImageURL,
+            ) &&
             (identical(other.pickupItemDescription, pickupItemDescription) ||
                 other.pickupItemDescription == pickupItemDescription) &&
             (identical(other.pickupItemCategory, pickupItemCategory) ||
@@ -401,7 +414,9 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
             (identical(other.pickupRequestStatus, pickupRequestStatus) ||
                 other.pickupRequestStatus == pickupRequestStatus) &&
             (identical(
-                    other.collectionProofImageURL, collectionProofImageURL) ||
+                  other.collectionProofImageURL,
+                  collectionProofImageURL,
+                ) ||
                 other.collectionProofImageURL == collectionProofImageURL) &&
             (identical(other.requestedDate, requestedDate) ||
                 other.requestedDate == requestedDate) &&
@@ -412,23 +427,24 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      pickupRequestID,
-      userID,
-      collectorUserID,
-      pickupLocation,
-      remarks,
-      pickupDate,
-      pickupTimeRange,
-      const DeepCollectionEquality().hash(_pickupItemImageURL),
-      pickupItemDescription,
-      pickupItemCategory,
-      pickupItemQuantity,
-      pickupItemCondition,
-      pickupRequestStatus,
-      collectionProofImageURL,
-      requestedDate,
-      completedDate);
+    runtimeType,
+    pickupRequestID,
+    userID,
+    collectorUserID,
+    pickupLocation,
+    remarks,
+    pickupDate,
+    pickupTimeRange,
+    const DeepCollectionEquality().hash(_pickupItemImageURL),
+    pickupItemDescription,
+    pickupItemCategory,
+    pickupItemQuantity,
+    pickupItemCondition,
+    pickupRequestStatus,
+    collectionProofImageURL,
+    requestedDate,
+    completedDate,
+  );
 
   /// Create a copy of PickupRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -437,34 +453,35 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
   @pragma('vm:prefer-inline')
   _$$PickupRequestModelImplCopyWith<_$PickupRequestModelImpl> get copyWith =>
       __$$PickupRequestModelImplCopyWithImpl<_$PickupRequestModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PickupRequestModelImplToJson(
-      this,
-    );
+    return _$$PickupRequestModelImplToJson(this);
   }
 }
 
 abstract class _PickupRequestModel implements PickupRequestModel {
-  const factory _PickupRequestModel(
-      {final String? pickupRequestID,
-      final String? userID,
-      final String? collectorUserID,
-      final String? pickupLocation,
-      final String? remarks,
-      final DateTime? pickupDate,
-      final String? pickupTimeRange,
-      final List<String>? pickupItemImageURL,
-      final String? pickupItemDescription,
-      final String? pickupItemCategory,
-      final int? pickupItemQuantity,
-      final String? pickupItemCondition,
-      final String? pickupRequestStatus,
-      final String? collectionProofImageURL,
-      final DateTime? requestedDate,
-      final DateTime? completedDate}) = _$PickupRequestModelImpl;
+  const factory _PickupRequestModel({
+    final String? pickupRequestID,
+    final String? userID,
+    final String? collectorUserID,
+    final String? pickupLocation,
+    final String? remarks,
+    final DateTime? pickupDate,
+    final String? pickupTimeRange,
+    final List<String>? pickupItemImageURL,
+    final String? pickupItemDescription,
+    final String? pickupItemCategory,
+    final int? pickupItemQuantity,
+    final String? pickupItemCondition,
+    final String? pickupRequestStatus,
+    final String? collectionProofImageURL,
+    final DateTime? requestedDate,
+    final DateTime? completedDate,
+  }) = _$PickupRequestModelImpl;
 
   factory _PickupRequestModel.fromJson(Map<String, dynamic> json) =
       _$PickupRequestModelImpl.fromJson;

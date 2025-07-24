@@ -12,7 +12,8 @@ part of 'purchases_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PurchasesModel _$PurchasesModelFromJson(Map<String, dynamic> json) {
   return _PurchasesModel.fromJson(json);
@@ -46,22 +47,24 @@ mixin _$PurchasesModel {
 /// @nodoc
 abstract class $PurchasesModelCopyWith<$Res> {
   factory $PurchasesModelCopyWith(
-          PurchasesModel value, $Res Function(PurchasesModel) then) =
-      _$PurchasesModelCopyWithImpl<$Res, PurchasesModel>;
+    PurchasesModel value,
+    $Res Function(PurchasesModel) then,
+  ) = _$PurchasesModelCopyWithImpl<$Res, PurchasesModel>;
   @useResult
-  $Res call(
-      {String? purchaseID,
-      String? buyerUserID,
-      String? sellerUserID,
-      int? itemListingID,
-      String? itemName,
-      double? itemPrice,
-      String? itemCondition,
-      String? itemCategory,
-      List<String>? itemImageURL,
-      bool? isDelivered,
-      DateTime? purchasedDate,
-      DateTime? deliveredDate});
+  $Res call({
+    String? purchaseID,
+    String? buyerUserID,
+    String? sellerUserID,
+    int? itemListingID,
+    String? itemName,
+    double? itemPrice,
+    String? itemCondition,
+    String? itemCategory,
+    List<String>? itemImageURL,
+    bool? isDelivered,
+    DateTime? purchasedDate,
+    DateTime? deliveredDate,
+  });
 }
 
 /// @nodoc
@@ -92,80 +95,85 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
     Object? purchasedDate = freezed,
     Object? deliveredDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      purchaseID: freezed == purchaseID
-          ? _value.purchaseID
-          : purchaseID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buyerUserID: freezed == buyerUserID
-          ? _value.buyerUserID
-          : buyerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sellerUserID: freezed == sellerUserID
-          ? _value.sellerUserID
-          : sellerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemListingID: freezed == itemListingID
-          ? _value.itemListingID
-          : itemListingID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      itemName: freezed == itemName
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemPrice: freezed == itemPrice
-          ? _value.itemPrice
-          : itemPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      itemCondition: freezed == itemCondition
-          ? _value.itemCondition
-          : itemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemCategory: freezed == itemCategory
-          ? _value.itemCategory
-          : itemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemImageURL: freezed == itemImageURL
-          ? _value.itemImageURL
-          : itemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      isDelivered: freezed == isDelivered
-          ? _value.isDelivered
-          : isDelivered // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      purchasedDate: freezed == purchasedDate
-          ? _value.purchasedDate
-          : purchasedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredDate: freezed == deliveredDate
-          ? _value.deliveredDate
-          : deliveredDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            purchaseID: freezed == purchaseID
+                ? _value.purchaseID
+                : purchaseID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            buyerUserID: freezed == buyerUserID
+                ? _value.buyerUserID
+                : buyerUserID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sellerUserID: freezed == sellerUserID
+                ? _value.sellerUserID
+                : sellerUserID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemListingID: freezed == itemListingID
+                ? _value.itemListingID
+                : itemListingID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            itemName: freezed == itemName
+                ? _value.itemName
+                : itemName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemPrice: freezed == itemPrice
+                ? _value.itemPrice
+                : itemPrice // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            itemCondition: freezed == itemCondition
+                ? _value.itemCondition
+                : itemCondition // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemCategory: freezed == itemCategory
+                ? _value.itemCategory
+                : itemCategory // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            itemImageURL: freezed == itemImageURL
+                ? _value.itemImageURL
+                : itemImageURL // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            isDelivered: freezed == isDelivered
+                ? _value.isDelivered
+                : isDelivered // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            purchasedDate: freezed == purchasedDate
+                ? _value.purchasedDate
+                : purchasedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            deliveredDate: freezed == deliveredDate
+                ? _value.deliveredDate
+                : deliveredDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PurchasesModelImplCopyWith<$Res>
     implements $PurchasesModelCopyWith<$Res> {
-  factory _$$PurchasesModelImplCopyWith(_$PurchasesModelImpl value,
-          $Res Function(_$PurchasesModelImpl) then) =
-      __$$PurchasesModelImplCopyWithImpl<$Res>;
+  factory _$$PurchasesModelImplCopyWith(
+    _$PurchasesModelImpl value,
+    $Res Function(_$PurchasesModelImpl) then,
+  ) = __$$PurchasesModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String? purchaseID,
-      String? buyerUserID,
-      String? sellerUserID,
-      int? itemListingID,
-      String? itemName,
-      double? itemPrice,
-      String? itemCondition,
-      String? itemCategory,
-      List<String>? itemImageURL,
-      bool? isDelivered,
-      DateTime? purchasedDate,
-      DateTime? deliveredDate});
+  $Res call({
+    String? purchaseID,
+    String? buyerUserID,
+    String? sellerUserID,
+    int? itemListingID,
+    String? itemName,
+    double? itemPrice,
+    String? itemCondition,
+    String? itemCategory,
+    List<String>? itemImageURL,
+    bool? isDelivered,
+    DateTime? purchasedDate,
+    DateTime? deliveredDate,
+  });
 }
 
 /// @nodoc
@@ -173,8 +181,9 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
     extends _$PurchasesModelCopyWithImpl<$Res, _$PurchasesModelImpl>
     implements _$$PurchasesModelImplCopyWith<$Res> {
   __$$PurchasesModelImplCopyWithImpl(
-      _$PurchasesModelImpl _value, $Res Function(_$PurchasesModelImpl) _then)
-      : super(_value, _then);
+    _$PurchasesModelImpl _value,
+    $Res Function(_$PurchasesModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PurchasesModel
   /// with the given fields replaced by the non-null parameter values.
@@ -194,76 +203,78 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
     Object? purchasedDate = freezed,
     Object? deliveredDate = freezed,
   }) {
-    return _then(_$PurchasesModelImpl(
-      purchaseID: freezed == purchaseID
-          ? _value.purchaseID
-          : purchaseID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buyerUserID: freezed == buyerUserID
-          ? _value.buyerUserID
-          : buyerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sellerUserID: freezed == sellerUserID
-          ? _value.sellerUserID
-          : sellerUserID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemListingID: freezed == itemListingID
-          ? _value.itemListingID
-          : itemListingID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      itemName: freezed == itemName
-          ? _value.itemName
-          : itemName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemPrice: freezed == itemPrice
-          ? _value.itemPrice
-          : itemPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      itemCondition: freezed == itemCondition
-          ? _value.itemCondition
-          : itemCondition // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemCategory: freezed == itemCategory
-          ? _value.itemCategory
-          : itemCategory // ignore: cast_nullable_to_non_nullable
-              as String?,
-      itemImageURL: freezed == itemImageURL
-          ? _value._itemImageURL
-          : itemImageURL // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      isDelivered: freezed == isDelivered
-          ? _value.isDelivered
-          : isDelivered // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      purchasedDate: freezed == purchasedDate
-          ? _value.purchasedDate
-          : purchasedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      deliveredDate: freezed == deliveredDate
-          ? _value.deliveredDate
-          : deliveredDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PurchasesModelImpl(
+        purchaseID: freezed == purchaseID
+            ? _value.purchaseID
+            : purchaseID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        buyerUserID: freezed == buyerUserID
+            ? _value.buyerUserID
+            : buyerUserID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sellerUserID: freezed == sellerUserID
+            ? _value.sellerUserID
+            : sellerUserID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemListingID: freezed == itemListingID
+            ? _value.itemListingID
+            : itemListingID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        itemName: freezed == itemName
+            ? _value.itemName
+            : itemName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemPrice: freezed == itemPrice
+            ? _value.itemPrice
+            : itemPrice // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        itemCondition: freezed == itemCondition
+            ? _value.itemCondition
+            : itemCondition // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemCategory: freezed == itemCategory
+            ? _value.itemCategory
+            : itemCategory // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        itemImageURL: freezed == itemImageURL
+            ? _value._itemImageURL
+            : itemImageURL // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        isDelivered: freezed == isDelivered
+            ? _value.isDelivered
+            : isDelivered // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        purchasedDate: freezed == purchasedDate
+            ? _value.purchasedDate
+            : purchasedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        deliveredDate: freezed == deliveredDate
+            ? _value.deliveredDate
+            : deliveredDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PurchasesModelImpl implements _PurchasesModel {
-  const _$PurchasesModelImpl(
-      {this.purchaseID,
-      this.buyerUserID,
-      this.sellerUserID,
-      this.itemListingID,
-      this.itemName,
-      this.itemPrice,
-      this.itemCondition,
-      this.itemCategory,
-      final List<String>? itemImageURL,
-      this.isDelivered,
-      this.purchasedDate,
-      this.deliveredDate})
-      : _itemImageURL = itemImageURL;
+  const _$PurchasesModelImpl({
+    this.purchaseID,
+    this.buyerUserID,
+    this.sellerUserID,
+    this.itemListingID,
+    this.itemName,
+    this.itemPrice,
+    this.itemCondition,
+    this.itemCategory,
+    final List<String>? itemImageURL,
+    this.isDelivered,
+    this.purchasedDate,
+    this.deliveredDate,
+  }) : _itemImageURL = itemImageURL;
 
   factory _$PurchasesModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PurchasesModelImplFromJson(json);
@@ -327,8 +338,10 @@ class _$PurchasesModelImpl implements _PurchasesModel {
                 other.itemCondition == itemCondition) &&
             (identical(other.itemCategory, itemCategory) ||
                 other.itemCategory == itemCategory) &&
-            const DeepCollectionEquality()
-                .equals(other._itemImageURL, _itemImageURL) &&
+            const DeepCollectionEquality().equals(
+              other._itemImageURL,
+              _itemImageURL,
+            ) &&
             (identical(other.isDelivered, isDelivered) ||
                 other.isDelivered == isDelivered) &&
             (identical(other.purchasedDate, purchasedDate) ||
@@ -340,19 +353,20 @@ class _$PurchasesModelImpl implements _PurchasesModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      purchaseID,
-      buyerUserID,
-      sellerUserID,
-      itemListingID,
-      itemName,
-      itemPrice,
-      itemCondition,
-      itemCategory,
-      const DeepCollectionEquality().hash(_itemImageURL),
-      isDelivered,
-      purchasedDate,
-      deliveredDate);
+    runtimeType,
+    purchaseID,
+    buyerUserID,
+    sellerUserID,
+    itemListingID,
+    itemName,
+    itemPrice,
+    itemCondition,
+    itemCategory,
+    const DeepCollectionEquality().hash(_itemImageURL),
+    isDelivered,
+    purchasedDate,
+    deliveredDate,
+  );
 
   /// Create a copy of PurchasesModel
   /// with the given fields replaced by the non-null parameter values.
@@ -361,30 +375,31 @@ class _$PurchasesModelImpl implements _PurchasesModel {
   @pragma('vm:prefer-inline')
   _$$PurchasesModelImplCopyWith<_$PurchasesModelImpl> get copyWith =>
       __$$PurchasesModelImplCopyWithImpl<_$PurchasesModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PurchasesModelImplToJson(
-      this,
-    );
+    return _$$PurchasesModelImplToJson(this);
   }
 }
 
 abstract class _PurchasesModel implements PurchasesModel {
-  const factory _PurchasesModel(
-      {final String? purchaseID,
-      final String? buyerUserID,
-      final String? sellerUserID,
-      final int? itemListingID,
-      final String? itemName,
-      final double? itemPrice,
-      final String? itemCondition,
-      final String? itemCategory,
-      final List<String>? itemImageURL,
-      final bool? isDelivered,
-      final DateTime? purchasedDate,
-      final DateTime? deliveredDate}) = _$PurchasesModelImpl;
+  const factory _PurchasesModel({
+    final String? purchaseID,
+    final String? buyerUserID,
+    final String? sellerUserID,
+    final int? itemListingID,
+    final String? itemName,
+    final double? itemPrice,
+    final String? itemCondition,
+    final String? itemCategory,
+    final List<String>? itemImageURL,
+    final bool? isDelivered,
+    final DateTime? purchasedDate,
+    final DateTime? deliveredDate,
+  }) = _$PurchasesModelImpl;
 
   factory _PurchasesModel.fromJson(Map<String, dynamic> json) =
       _$PurchasesModelImpl.fromJson;

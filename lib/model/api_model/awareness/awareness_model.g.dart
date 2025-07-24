@@ -18,11 +18,11 @@ _$AwarenessModelImpl _$$AwarenessModelImplFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$$AwarenessModelImplToJson(
-        _$AwarenessModelImpl instance) =>
-    <String, dynamic>{
-      'awarenessID': instance.awarenessID,
-      'awarenessImageURL': instance.awarenessImageURL,
-      'awarenessTitle': instance.awarenessTitle,
-      'awarenessContent': instance.awarenessContent,
-      'createdDate': instance.createdDate?.toIso8601String(),
-    };
+  _$AwarenessModelImpl instance,
+) => <String, dynamic>{
+  'awarenessID': instance.awarenessID,
+  'awarenessImageURL': instance.awarenessImageURL,
+  'awarenessTitle': instance.awarenessTitle,
+  'awarenessContent': instance.awarenessContent,
+  'createdDate': instance.createdDate?.toIso8601String(),
+};

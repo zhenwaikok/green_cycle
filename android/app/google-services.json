@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "931591092978",
+    "project_id": "greencyclefyp",
+    "storage_bucket": "greencyclefyp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931591092978:android:48af08463f2122bf86ae6b",
+        "android_client_info": {
+          "package_name": "com.example.green_cycle_fyp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRTVEeYdtQ6ceOi34dcl_mqxGhdF7i_M8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,7 +12,8 @@ part of 'points_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PointsModel _$PointsModelFromJson(Map<String, dynamic> json) {
   return _PointsModel.fromJson(json);
@@ -40,16 +41,18 @@ mixin _$PointsModel {
 /// @nodoc
 abstract class $PointsModelCopyWith<$Res> {
   factory $PointsModelCopyWith(
-          PointsModel value, $Res Function(PointsModel) then) =
-      _$PointsModelCopyWithImpl<$Res, PointsModel>;
+    PointsModel value,
+    $Res Function(PointsModel) then,
+  ) = _$PointsModelCopyWithImpl<$Res, PointsModel>;
   @useResult
-  $Res call(
-      {int? pointID,
-      String? userID,
-      int? point,
-      String? type,
-      String? description,
-      DateTime? createdAt});
+  $Res call({
+    int? pointID,
+    String? userID,
+    int? point,
+    String? type,
+    String? description,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -74,32 +77,35 @@ class _$PointsModelCopyWithImpl<$Res, $Val extends PointsModel>
     Object? description = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      pointID: freezed == pointID
-          ? _value.pointID
-          : pointID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      point: freezed == point
-          ? _value.point
-          : point // ignore: cast_nullable_to_non_nullable
-              as int?,
-      type: freezed == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String?,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            pointID: freezed == pointID
+                ? _value.pointID
+                : pointID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            userID: freezed == userID
+                ? _value.userID
+                : userID // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            point: freezed == point
+                ? _value.point
+                : point // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            type: freezed == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -107,17 +113,19 @@ class _$PointsModelCopyWithImpl<$Res, $Val extends PointsModel>
 abstract class _$$PointsModelImplCopyWith<$Res>
     implements $PointsModelCopyWith<$Res> {
   factory _$$PointsModelImplCopyWith(
-          _$PointsModelImpl value, $Res Function(_$PointsModelImpl) then) =
-      __$$PointsModelImplCopyWithImpl<$Res>;
+    _$PointsModelImpl value,
+    $Res Function(_$PointsModelImpl) then,
+  ) = __$$PointsModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? pointID,
-      String? userID,
-      int? point,
-      String? type,
-      String? description,
-      DateTime? createdAt});
+  $Res call({
+    int? pointID,
+    String? userID,
+    int? point,
+    String? type,
+    String? description,
+    DateTime? createdAt,
+  });
 }
 
 /// @nodoc
@@ -125,8 +133,9 @@ class __$$PointsModelImplCopyWithImpl<$Res>
     extends _$PointsModelCopyWithImpl<$Res, _$PointsModelImpl>
     implements _$$PointsModelImplCopyWith<$Res> {
   __$$PointsModelImplCopyWithImpl(
-      _$PointsModelImpl _value, $Res Function(_$PointsModelImpl) _then)
-      : super(_value, _then);
+    _$PointsModelImpl _value,
+    $Res Function(_$PointsModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PointsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -140,45 +149,48 @@ class __$$PointsModelImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? createdAt = freezed,
   }) {
-    return _then(_$PointsModelImpl(
-      pointID: freezed == pointID
-          ? _value.pointID
-          : pointID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      userID: freezed == userID
-          ? _value.userID
-          : userID // ignore: cast_nullable_to_non_nullable
-              as String?,
-      point: freezed == point
-          ? _value.point
-          : point // ignore: cast_nullable_to_non_nullable
-              as int?,
-      type: freezed == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String?,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PointsModelImpl(
+        pointID: freezed == pointID
+            ? _value.pointID
+            : pointID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        userID: freezed == userID
+            ? _value.userID
+            : userID // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        point: freezed == point
+            ? _value.point
+            : point // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        type: freezed == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PointsModelImpl implements _PointsModel {
-  const _$PointsModelImpl(
-      {this.pointID,
-      this.userID,
-      this.point,
-      this.type,
-      this.description,
-      this.createdAt});
+  const _$PointsModelImpl({
+    this.pointID,
+    this.userID,
+    this.point,
+    this.type,
+    this.description,
+    this.createdAt,
+  });
 
   factory _$PointsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PointsModelImplFromJson(json);
@@ -219,7 +231,14 @@ class _$PointsModelImpl implements _PointsModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, pointID, userID, point, type, description, createdAt);
+    runtimeType,
+    pointID,
+    userID,
+    point,
+    type,
+    description,
+    createdAt,
+  );
 
   /// Create a copy of PointsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -231,20 +250,19 @@ class _$PointsModelImpl implements _PointsModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PointsModelImplToJson(
-      this,
-    );
+    return _$$PointsModelImplToJson(this);
   }
 }
 
 abstract class _PointsModel implements PointsModel {
-  const factory _PointsModel(
-      {final int? pointID,
-      final String? userID,
-      final int? point,
-      final String? type,
-      final String? description,
-      final DateTime? createdAt}) = _$PointsModelImpl;
+  const factory _PointsModel({
+    final int? pointID,
+    final String? userID,
+    final int? point,
+    final String? type,
+    final String? description,
+    final DateTime? createdAt,
+  }) = _$PointsModelImpl;
 
   factory _PointsModel.fromJson(Map<String, dynamic> json) =
       _$PointsModelImpl.fromJson;

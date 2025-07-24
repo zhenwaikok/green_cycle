@@ -12,7 +12,8 @@ part of 'error_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 ErrorModel _$ErrorModelFromJson(Map<String, dynamic> json) {
   return _ErrorModel.fromJson(json);
@@ -36,8 +37,9 @@ mixin _$ErrorModel {
 /// @nodoc
 abstract class $ErrorModelCopyWith<$Res> {
   factory $ErrorModelCopyWith(
-          ErrorModel value, $Res Function(ErrorModel) then) =
-      _$ErrorModelCopyWithImpl<$Res, ErrorModel>;
+    ErrorModel value,
+    $Res Function(ErrorModel) then,
+  ) = _$ErrorModelCopyWithImpl<$Res, ErrorModel>;
   @useResult
   $Res call({int? statusCode, String? message});
 }
@@ -56,20 +58,20 @@ class _$ErrorModelCopyWithImpl<$Res, $Val extends ErrorModel>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? statusCode = freezed,
-    Object? message = freezed,
-  }) {
-    return _then(_value.copyWith(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  $Res call({Object? statusCode = freezed, Object? message = freezed}) {
+    return _then(
+      _value.copyWith(
+            statusCode: freezed == statusCode
+                ? _value.statusCode
+                : statusCode // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            message: freezed == message
+                ? _value.message
+                : message // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -77,8 +79,9 @@ class _$ErrorModelCopyWithImpl<$Res, $Val extends ErrorModel>
 abstract class _$$ErrorModelImplCopyWith<$Res>
     implements $ErrorModelCopyWith<$Res> {
   factory _$$ErrorModelImplCopyWith(
-          _$ErrorModelImpl value, $Res Function(_$ErrorModelImpl) then) =
-      __$$ErrorModelImplCopyWithImpl<$Res>;
+    _$ErrorModelImpl value,
+    $Res Function(_$ErrorModelImpl) then,
+  ) = __$$ErrorModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int? statusCode, String? message});
@@ -89,27 +92,27 @@ class __$$ErrorModelImplCopyWithImpl<$Res>
     extends _$ErrorModelCopyWithImpl<$Res, _$ErrorModelImpl>
     implements _$$ErrorModelImplCopyWith<$Res> {
   __$$ErrorModelImplCopyWithImpl(
-      _$ErrorModelImpl _value, $Res Function(_$ErrorModelImpl) _then)
-      : super(_value, _then);
+    _$ErrorModelImpl _value,
+    $Res Function(_$ErrorModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ErrorModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? statusCode = freezed,
-    Object? message = freezed,
-  }) {
-    return _then(_$ErrorModelImpl(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      message: freezed == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+  $Res call({Object? statusCode = freezed, Object? message = freezed}) {
+    return _then(
+      _$ErrorModelImpl(
+        statusCode: freezed == statusCode
+            ? _value.statusCode
+            : statusCode // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        message: freezed == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
@@ -155,9 +158,7 @@ class _$ErrorModelImpl implements _ErrorModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ErrorModelImplToJson(
-      this,
-    );
+    return _$$ErrorModelImplToJson(this);
   }
 }
 

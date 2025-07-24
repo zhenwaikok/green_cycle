@@ -12,7 +12,8 @@ part of 'reward_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 RewardModel _$RewardModelFromJson(Map<String, dynamic> json) {
   return _RewardModel.fromJson(json);
@@ -40,16 +41,18 @@ mixin _$RewardModel {
 /// @nodoc
 abstract class $RewardModelCopyWith<$Res> {
   factory $RewardModelCopyWith(
-          RewardModel value, $Res Function(RewardModel) then) =
-      _$RewardModelCopyWithImpl<$Res, RewardModel>;
+    RewardModel value,
+    $Res Function(RewardModel) then,
+  ) = _$RewardModelCopyWithImpl<$Res, RewardModel>;
   @useResult
-  $Res call(
-      {int? rewardID,
-      String? rewardName,
-      String? rewardDescription,
-      int? pointsRequired,
-      String? rewardImageURL,
-      DateTime? createdDate});
+  $Res call({
+    int? rewardID,
+    String? rewardName,
+    String? rewardDescription,
+    int? pointsRequired,
+    String? rewardImageURL,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -74,32 +77,35 @@ class _$RewardModelCopyWithImpl<$Res, $Val extends RewardModel>
     Object? rewardImageURL = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      rewardID: freezed == rewardID
-          ? _value.rewardID
-          : rewardID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      rewardName: freezed == rewardName
-          ? _value.rewardName
-          : rewardName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rewardDescription: freezed == rewardDescription
-          ? _value.rewardDescription
-          : rewardDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pointsRequired: freezed == pointsRequired
-          ? _value.pointsRequired
-          : pointsRequired // ignore: cast_nullable_to_non_nullable
-              as int?,
-      rewardImageURL: freezed == rewardImageURL
-          ? _value.rewardImageURL
-          : rewardImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            rewardID: freezed == rewardID
+                ? _value.rewardID
+                : rewardID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            rewardName: freezed == rewardName
+                ? _value.rewardName
+                : rewardName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rewardDescription: freezed == rewardDescription
+                ? _value.rewardDescription
+                : rewardDescription // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pointsRequired: freezed == pointsRequired
+                ? _value.pointsRequired
+                : pointsRequired // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            rewardImageURL: freezed == rewardImageURL
+                ? _value.rewardImageURL
+                : rewardImageURL // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdDate: freezed == createdDate
+                ? _value.createdDate
+                : createdDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -107,17 +113,19 @@ class _$RewardModelCopyWithImpl<$Res, $Val extends RewardModel>
 abstract class _$$RewardModelImplCopyWith<$Res>
     implements $RewardModelCopyWith<$Res> {
   factory _$$RewardModelImplCopyWith(
-          _$RewardModelImpl value, $Res Function(_$RewardModelImpl) then) =
-      __$$RewardModelImplCopyWithImpl<$Res>;
+    _$RewardModelImpl value,
+    $Res Function(_$RewardModelImpl) then,
+  ) = __$$RewardModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? rewardID,
-      String? rewardName,
-      String? rewardDescription,
-      int? pointsRequired,
-      String? rewardImageURL,
-      DateTime? createdDate});
+  $Res call({
+    int? rewardID,
+    String? rewardName,
+    String? rewardDescription,
+    int? pointsRequired,
+    String? rewardImageURL,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -125,8 +133,9 @@ class __$$RewardModelImplCopyWithImpl<$Res>
     extends _$RewardModelCopyWithImpl<$Res, _$RewardModelImpl>
     implements _$$RewardModelImplCopyWith<$Res> {
   __$$RewardModelImplCopyWithImpl(
-      _$RewardModelImpl _value, $Res Function(_$RewardModelImpl) _then)
-      : super(_value, _then);
+    _$RewardModelImpl _value,
+    $Res Function(_$RewardModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of RewardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -140,45 +149,48 @@ class __$$RewardModelImplCopyWithImpl<$Res>
     Object? rewardImageURL = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_$RewardModelImpl(
-      rewardID: freezed == rewardID
-          ? _value.rewardID
-          : rewardID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      rewardName: freezed == rewardName
-          ? _value.rewardName
-          : rewardName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rewardDescription: freezed == rewardDescription
-          ? _value.rewardDescription
-          : rewardDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      pointsRequired: freezed == pointsRequired
-          ? _value.pointsRequired
-          : pointsRequired // ignore: cast_nullable_to_non_nullable
-              as int?,
-      rewardImageURL: freezed == rewardImageURL
-          ? _value.rewardImageURL
-          : rewardImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$RewardModelImpl(
+        rewardID: freezed == rewardID
+            ? _value.rewardID
+            : rewardID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        rewardName: freezed == rewardName
+            ? _value.rewardName
+            : rewardName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rewardDescription: freezed == rewardDescription
+            ? _value.rewardDescription
+            : rewardDescription // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pointsRequired: freezed == pointsRequired
+            ? _value.pointsRequired
+            : pointsRequired // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        rewardImageURL: freezed == rewardImageURL
+            ? _value.rewardImageURL
+            : rewardImageURL // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdDate: freezed == createdDate
+            ? _value.createdDate
+            : createdDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$RewardModelImpl implements _RewardModel {
-  const _$RewardModelImpl(
-      {this.rewardID,
-      this.rewardName,
-      this.rewardDescription,
-      this.pointsRequired,
-      this.rewardImageURL,
-      this.createdDate});
+  const _$RewardModelImpl({
+    this.rewardID,
+    this.rewardName,
+    this.rewardDescription,
+    this.pointsRequired,
+    this.rewardImageURL,
+    this.createdDate,
+  });
 
   factory _$RewardModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RewardModelImplFromJson(json);
@@ -222,8 +234,15 @@ class _$RewardModelImpl implements _RewardModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, rewardID, rewardName,
-      rewardDescription, pointsRequired, rewardImageURL, createdDate);
+  int get hashCode => Object.hash(
+    runtimeType,
+    rewardID,
+    rewardName,
+    rewardDescription,
+    pointsRequired,
+    rewardImageURL,
+    createdDate,
+  );
 
   /// Create a copy of RewardModel
   /// with the given fields replaced by the non-null parameter values.
@@ -235,20 +254,19 @@ class _$RewardModelImpl implements _RewardModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$RewardModelImplToJson(
-      this,
-    );
+    return _$$RewardModelImplToJson(this);
   }
 }
 
 abstract class _RewardModel implements RewardModel {
-  const factory _RewardModel(
-      {final int? rewardID,
-      final String? rewardName,
-      final String? rewardDescription,
-      final int? pointsRequired,
-      final String? rewardImageURL,
-      final DateTime? createdDate}) = _$RewardModelImpl;
+  const factory _RewardModel({
+    final int? rewardID,
+    final String? rewardName,
+    final String? rewardDescription,
+    final int? pointsRequired,
+    final String? rewardImageURL,
+    final DateTime? createdDate,
+  }) = _$RewardModelImpl;
 
   factory _RewardModel.fromJson(Map<String, dynamic> json) =
       _$RewardModelImpl.fromJson;

@@ -12,7 +12,8 @@ part of 'awareness_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AwarenessModel _$AwarenessModelFromJson(Map<String, dynamic> json) {
   return _AwarenessModel.fromJson(json);
@@ -39,15 +40,17 @@ mixin _$AwarenessModel {
 /// @nodoc
 abstract class $AwarenessModelCopyWith<$Res> {
   factory $AwarenessModelCopyWith(
-          AwarenessModel value, $Res Function(AwarenessModel) then) =
-      _$AwarenessModelCopyWithImpl<$Res, AwarenessModel>;
+    AwarenessModel value,
+    $Res Function(AwarenessModel) then,
+  ) = _$AwarenessModelCopyWithImpl<$Res, AwarenessModel>;
   @useResult
-  $Res call(
-      {int? awarenessID,
-      String? awarenessImageURL,
-      String? awarenessTitle,
-      String? awarenessContent,
-      DateTime? createdDate});
+  $Res call({
+    int? awarenessID,
+    String? awarenessImageURL,
+    String? awarenessTitle,
+    String? awarenessContent,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -71,45 +74,50 @@ class _$AwarenessModelCopyWithImpl<$Res, $Val extends AwarenessModel>
     Object? awarenessContent = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_value.copyWith(
-      awarenessID: freezed == awarenessID
-          ? _value.awarenessID
-          : awarenessID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      awarenessImageURL: freezed == awarenessImageURL
-          ? _value.awarenessImageURL
-          : awarenessImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      awarenessTitle: freezed == awarenessTitle
-          ? _value.awarenessTitle
-          : awarenessTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      awarenessContent: freezed == awarenessContent
-          ? _value.awarenessContent
-          : awarenessContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            awarenessID: freezed == awarenessID
+                ? _value.awarenessID
+                : awarenessID // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            awarenessImageURL: freezed == awarenessImageURL
+                ? _value.awarenessImageURL
+                : awarenessImageURL // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            awarenessTitle: freezed == awarenessTitle
+                ? _value.awarenessTitle
+                : awarenessTitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            awarenessContent: freezed == awarenessContent
+                ? _value.awarenessContent
+                : awarenessContent // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdDate: freezed == createdDate
+                ? _value.createdDate
+                : createdDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AwarenessModelImplCopyWith<$Res>
     implements $AwarenessModelCopyWith<$Res> {
-  factory _$$AwarenessModelImplCopyWith(_$AwarenessModelImpl value,
-          $Res Function(_$AwarenessModelImpl) then) =
-      __$$AwarenessModelImplCopyWithImpl<$Res>;
+  factory _$$AwarenessModelImplCopyWith(
+    _$AwarenessModelImpl value,
+    $Res Function(_$AwarenessModelImpl) then,
+  ) = __$$AwarenessModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? awarenessID,
-      String? awarenessImageURL,
-      String? awarenessTitle,
-      String? awarenessContent,
-      DateTime? createdDate});
+  $Res call({
+    int? awarenessID,
+    String? awarenessImageURL,
+    String? awarenessTitle,
+    String? awarenessContent,
+    DateTime? createdDate,
+  });
 }
 
 /// @nodoc
@@ -117,8 +125,9 @@ class __$$AwarenessModelImplCopyWithImpl<$Res>
     extends _$AwarenessModelCopyWithImpl<$Res, _$AwarenessModelImpl>
     implements _$$AwarenessModelImplCopyWith<$Res> {
   __$$AwarenessModelImplCopyWithImpl(
-      _$AwarenessModelImpl _value, $Res Function(_$AwarenessModelImpl) _then)
-      : super(_value, _then);
+    _$AwarenessModelImpl _value,
+    $Res Function(_$AwarenessModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AwarenessModel
   /// with the given fields replaced by the non-null parameter values.
@@ -131,40 +140,43 @@ class __$$AwarenessModelImplCopyWithImpl<$Res>
     Object? awarenessContent = freezed,
     Object? createdDate = freezed,
   }) {
-    return _then(_$AwarenessModelImpl(
-      awarenessID: freezed == awarenessID
-          ? _value.awarenessID
-          : awarenessID // ignore: cast_nullable_to_non_nullable
-              as int?,
-      awarenessImageURL: freezed == awarenessImageURL
-          ? _value.awarenessImageURL
-          : awarenessImageURL // ignore: cast_nullable_to_non_nullable
-              as String?,
-      awarenessTitle: freezed == awarenessTitle
-          ? _value.awarenessTitle
-          : awarenessTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      awarenessContent: freezed == awarenessContent
-          ? _value.awarenessContent
-          : awarenessContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdDate: freezed == createdDate
-          ? _value.createdDate
-          : createdDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$AwarenessModelImpl(
+        awarenessID: freezed == awarenessID
+            ? _value.awarenessID
+            : awarenessID // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        awarenessImageURL: freezed == awarenessImageURL
+            ? _value.awarenessImageURL
+            : awarenessImageURL // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        awarenessTitle: freezed == awarenessTitle
+            ? _value.awarenessTitle
+            : awarenessTitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        awarenessContent: freezed == awarenessContent
+            ? _value.awarenessContent
+            : awarenessContent // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdDate: freezed == createdDate
+            ? _value.createdDate
+            : createdDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AwarenessModelImpl implements _AwarenessModel {
-  const _$AwarenessModelImpl(
-      {this.awarenessID,
-      this.awarenessImageURL,
-      this.awarenessTitle,
-      this.awarenessContent,
-      this.createdDate});
+  const _$AwarenessModelImpl({
+    this.awarenessID,
+    this.awarenessImageURL,
+    this.awarenessTitle,
+    this.awarenessContent,
+    this.createdDate,
+  });
 
   factory _$AwarenessModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AwarenessModelImplFromJson(json);
@@ -204,8 +216,14 @@ class _$AwarenessModelImpl implements _AwarenessModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, awarenessID, awarenessImageURL,
-      awarenessTitle, awarenessContent, createdDate);
+  int get hashCode => Object.hash(
+    runtimeType,
+    awarenessID,
+    awarenessImageURL,
+    awarenessTitle,
+    awarenessContent,
+    createdDate,
+  );
 
   /// Create a copy of AwarenessModel
   /// with the given fields replaced by the non-null parameter values.
@@ -214,23 +232,24 @@ class _$AwarenessModelImpl implements _AwarenessModel {
   @pragma('vm:prefer-inline')
   _$$AwarenessModelImplCopyWith<_$AwarenessModelImpl> get copyWith =>
       __$$AwarenessModelImplCopyWithImpl<_$AwarenessModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AwarenessModelImplToJson(
-      this,
-    );
+    return _$$AwarenessModelImplToJson(this);
   }
 }
 
 abstract class _AwarenessModel implements AwarenessModel {
-  const factory _AwarenessModel(
-      {final int? awarenessID,
-      final String? awarenessImageURL,
-      final String? awarenessTitle,
-      final String? awarenessContent,
-      final DateTime? createdDate}) = _$AwarenessModelImpl;
+  const factory _AwarenessModel({
+    final int? awarenessID,
+    final String? awarenessImageURL,
+    final String? awarenessTitle,
+    final String? awarenessContent,
+    final DateTime? createdDate,
+  }) = _$AwarenessModelImpl;
 
   factory _AwarenessModel.fromJson(Map<String, dynamic> json) =
       _$AwarenessModelImpl.fromJson;

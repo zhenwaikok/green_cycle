@@ -109,7 +109,7 @@ extension _WidgetFactories on _ToRedeemTabState {
             _rewardDetails = rewardDetails ?? RewardModel();
           });
 
-          showRewardBottomSheet(rewardDetails: rewardDetails ?? RewardModel());
+          showRewardBottomSheet(rewardDetails: _rewardDetails);
         },
         backgroundColor: ColorManager.whiteColor,
         borderColor: ColorManager.primary,
