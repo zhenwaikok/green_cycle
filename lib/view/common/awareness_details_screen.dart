@@ -2,17 +2,27 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/common/loading_screen.dart';
+import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class AwarenessDetailsScreen extends StatefulWidget {
-  const AwarenessDetailsScreen({super.key, required this.userRole});
+  const AwarenessDetailsScreen({
+    super.key,
+    required this.userRole,
+    required this.awarenessId,
+  });
 
   final String userRole;
+  final int awarenessId;
 
   @override
   State<AwarenessDetailsScreen> createState() => _AwarenessDetailsScreenState();
@@ -20,7 +30,19 @@ class AwarenessDetailsScreen extends StatefulWidget {
 
 class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AwarenessViewModel>().getAwarenessDetails(
+        awarenessID: widget.awarenessId,
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final awarenessVM = context.watch<AwarenessViewModel>();
+    final awarenessDetails = awarenessVM.awarenessDetails;
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Awareness Details',
@@ -35,11 +57,21 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: getAwarenessDetails(),
-          ),
+        child: Builder(
+          builder: (context) {
+            if (awarenessVM.response.status == ResponseStatus.loading) {
+              return LoadingScreen();
+            } else {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: _Styles.screenPadding,
+                  child: getAwarenessDetails(
+                    awarenessModel: awarenessDetails ?? AwarenessModel(),
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
@@ -81,34 +113,34 @@ extension _Actions on _AwarenessDetailsScreenState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _AwarenessDetailsScreenState {
-  Widget getAwarenessDetails() {
+  Widget getAwarenessDetails({required AwarenessModel awarenessModel}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getImage(),
+        getImage(awarenessModel: awarenessModel),
         SizedBox(height: 25),
-        getTitleDate(),
+        getTitleDate(awarenessModel: awarenessModel),
         SizedBox(height: 30),
-        getDescription(),
+        getDescription(awarenessModel: awarenessModel),
       ],
     );
   }
 
-  Widget getImage() {
+  Widget getImage({required AwarenessModel awarenessModel}) {
     return CustomImage(
-      imageURL:
-          'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
       borderRadius: _Styles.borderRadius,
       imageWidth: double.infinity,
       imageSize: MediaQuery.of(context).size.height * 0.4,
+      imageURL: awarenessModel.awarenessImageURL ?? '',
     );
   }
 
-  Widget getTitleDate() {
+  Widget getTitleDate({required AwarenessModel awarenessModel}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MyGOV Malaysia Mobile App Set To Transform Public Service Delivery',
+          awarenessModel.awarenessTitle ?? '',
           style: _Styles.awarenessTitleTextStyle,
           textAlign: TextAlign.justify,
         ),
@@ -121,21 +153,26 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
               size: _Styles.iconSize,
             ),
             SizedBox(width: 5),
-            Text('21/2/2025', style: _Styles.dateTextStyle),
+            Text(
+              WidgetUtil.dateFormatter(
+                awarenessModel.createdDate ?? DateTime.now(),
+              ),
+              style: _Styles.dateTextStyle,
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget getDescription() {
+  Widget getDescription({required AwarenessModel awarenessModel}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Description:', style: _Styles.descTitleTextStyle),
         SizedBox(height: 5),
         Text(
-          'ISLAMABAD: Prime Minister Shehbaz Sharif on Sunday inaugurated a mobile application that allows power consumers in Pakistan to record and submit their meter readings themselves, with the government saying the initiative will introduce more transparency in the electricity system and reduce overbilling. Electricity bills are generated in Pakistan every month by readings obtained from power meters installed at homes and businesses. These readings show the number of electricity units consumed during a monthly cycle and are taken by meter readers employed by power companies. ',
+          awarenessModel.awarenessContent ?? '',
           style: _Styles.descTextStyle,
           textAlign: TextAlign.justify,
         ),

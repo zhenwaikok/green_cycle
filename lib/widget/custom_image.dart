@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class CustomImage extends StatelessWidget {
   const CustomImage({
@@ -18,6 +19,22 @@ class CustomImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageURL.isEmpty) {
+      return Container(
+        height: imageSize,
+        width: imageWidth ?? imageSize,
+        decoration: BoxDecoration(
+          color: ColorManager.lightGreyColor2,
+          borderRadius: BorderRadius.circular(borderRadius ?? 0),
+        ),
+        child: Icon(
+          Icons.broken_image,
+          size: 40,
+          color: ColorManager.greyColor,
+        ),
+      );
+    }
+
     return SizedBox(
       height: imageSize,
       width: imageWidth ?? imageSize,

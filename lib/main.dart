@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/router/router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,10 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppRouter router = AppRouter();
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: router.config(),
-      theme: ThemeData(scaffoldBackgroundColor: ColorManager.whiteColor),
+    return MultiProvider(
+      providers: providerAssets(),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: router.config(),
+        theme: ThemeData(scaffoldBackgroundColor: ColorManager.whiteColor),
+      ),
     );
   }
 }

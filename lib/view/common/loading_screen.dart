@@ -26,7 +26,7 @@ class LoadingScreen extends StatelessWidget {
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on LoadingScreen {
   Widget getLoadingIndicator() {
-    return SpinKitChasingDots(color: ColorManager.primary);
+    return SpinKitWanderingCubes(color: ColorManager.primary);
   }
 
   Widget getText() {

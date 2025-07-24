@@ -8,9 +8,11 @@ class RewardRepository {
   Future<MyResponse> getAllRewards() async {
     final response = await _rewardServices.getAllRewards();
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = RewardModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => RewardModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }

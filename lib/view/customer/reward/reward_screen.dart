@@ -5,9 +5,11 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/view/customer/reward/my_rewards_tab.dart';
 import 'package:green_cycle_fyp/view/customer/reward/toredeem_tab.dart';
+import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class RewardScreen extends StatefulWidget {
@@ -19,7 +21,18 @@ class RewardScreen extends StatefulWidget {
 
 class _RewardSreenState extends State<RewardScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<RewardViewModel>().getRewardList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final rewardVM = context.watch<RewardViewModel>();
+    final rewardList = rewardVM.rewardList;
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -37,7 +50,12 @@ class _RewardSreenState extends State<RewardScreen> {
                 SizedBox(height: 20),
                 getTabBar(),
                 Expanded(
-                  child: TabBarView(children: [ToRedeemTab(), MyRewardsTab()]),
+                  child: TabBarView(
+                    children: [
+                      ToRedeemTab(rewardList: rewardList),
+                      MyRewardsTab(),
+                    ],
+                  ),
                 ),
               ],
             ),

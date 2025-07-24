@@ -1,9 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
+import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
@@ -16,20 +21,30 @@ class AwarenessScreen extends StatefulWidget {
 
 class _AwarenessScreenState extends State<AwarenessScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AwarenessViewModel>().getAwarenessList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final awarenessVM = context.watch<AwarenessViewModel>();
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Awareness Feed',
         isBackButtonVisible: true,
         onPressed: onBackButtonPressed,
       ),
-      body: Skeletonizer(
-        //TODO: Change loading state later
-        enabled: false,
-        child: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: getAwarenessContent(),
+      body: SafeArea(
+        child: Padding(
+          padding: _Styles.screenPadding,
+          child: Skeletonizer(
+            enabled: awarenessVM.response.status == ResponseStatus.loading,
+            child: getAwarenessContent(
+              awarenessModel: awarenessVM.awarenessList,
+            ),
           ),
         ),
       ),
@@ -43,30 +58,34 @@ extension _Actions on _AwarenessScreenState {
     context.router.maybePop();
   }
 
-  void onAwarenessCardPressed() {
+  void onAwarenessCardPressed({required int awarenessID}) {
     //TODO: get user role from shared preferences
-    context.router.push(AwarenessDetailsRoute(userRole: 'Customer'));
+    context.router.push(
+      AwarenessDetailsRoute(userRole: 'Customer', awarenessId: awarenessID),
+    );
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _AwarenessScreenState {
-  Widget getAwarenessContent() {
+  Widget getAwarenessContent({required List<AwarenessModel> awarenessModel}) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: awarenessModel.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
             Padding(
               padding: _Styles.awarenessContentPadding,
               child: GestureDetector(
-                onTap: onAwarenessCardPressed,
+                onTap: () => onAwarenessCardPressed(
+                  awarenessID: awarenessModel[index].awarenessID ?? 0,
+                ),
                 child: CustomAwarenessCard(
-                  imageURL:
-                      'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-                  awarenessTitle:
-                      'MyGOV Malaysia Mobile App Set To Transform Public Service Delivery',
-                  date: '21/2/2025',
+                  imageURL: awarenessModel[index].awarenessImageURL ?? '',
+                  awarenessTitle: awarenessModel[index].awarenessTitle ?? '',
+                  date: WidgetUtil.dateFormatter(
+                    awarenessModel[index].createdDate ?? DateTime.now(),
+                  ),
                 ),
               ),
             ),

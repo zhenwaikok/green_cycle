@@ -71,7 +71,9 @@ extension _Actions on _ManageAwarenessScreenState {
 
   void onAwarenessCardPressed() {
     //TODO: get user role from shared preferences
-    context.router.push(AwarenessDetailsRoute(userRole: 'Admin'));
+    context.router.push(
+      AwarenessDetailsRoute(userRole: 'Admin', awarenessId: 0),
+    );
   }
 
   void onAddButtonPressed() {

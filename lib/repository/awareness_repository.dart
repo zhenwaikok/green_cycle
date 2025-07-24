@@ -7,10 +7,13 @@ class AwarenessRepository {
 
   Future<MyResponse> getAllAwareness() async {
     final response = await _awarenessServices.getAllAwareness();
+    print('Response from Awareness API: ${response.data}');
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = AwarenessModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => AwarenessModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }

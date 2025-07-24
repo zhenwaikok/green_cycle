@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class CustomerHomeScreen extends StatefulWidget {
@@ -20,7 +24,23 @@ class CustomerHomeScreen extends StatefulWidget {
 
 class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AwarenessViewModel>().getAwarenessList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final awarenessVM = context.watch<AwarenessViewModel>();
+    final awarenessList = awarenessVM.awarenessList
+      ..sort(
+        (a, b) =>
+            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
+      );
+    final latest5AwarenessList = awarenessList.take(2).toList();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -44,7 +64,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                     SizedBox(height: 30),
                     getMarketplaceSection(),
                     SizedBox(height: 30),
-                    getWhatNewSection(),
+                    getWhatNewSection(awarenessList: latest5AwarenessList),
                   ],
                 ),
               ),
@@ -72,6 +92,12 @@ extension _Actions on _CustomerHomeScreenState {
 
   void onStartSellingButtonPressed() {
     context.router.push(CreateListingRoute());
+  }
+
+  void onNewsCardPressed({required int awarenessID}) {
+    context.router.push(
+      AwarenessDetailsRoute(userRole: 'Customer', awarenessId: awarenessID),
+    );
   }
 }
 
@@ -400,9 +426,13 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getWhatNewSection() {
+  Widget getWhatNewSection({required List<AwarenessModel> awarenessList}) {
     return Column(
-      children: [getWhatNewTitle(), SizedBox(height: 10), getWhatNewItems()],
+      children: [
+        getWhatNewTitle(),
+        SizedBox(height: 10),
+        getWhatNewItems(awarenessList: awarenessList),
+      ],
     );
   }
 
@@ -424,11 +454,11 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getWhatNewItems() {
+  Widget getWhatNewItems({required List<AwarenessModel> awarenessList}) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       child: ListView.builder(
-        itemCount: 5,
+        itemCount: awarenessList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           return Padding(
@@ -436,26 +466,34 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: GestureDetector(
-                onTap: () {},
+                onTap: () => onNewsCardPressed(
+                  awarenessID: awarenessList[index].awarenessID ?? 0,
+                ),
                 child: SizedBox(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.network(
-                          height: MediaQuery.of(context).size.height * 0.15,
-                          width: double.infinity,
-                          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-                          fit: BoxFit.cover,
-                        ),
+                      CustomImage(
+                        imageURL: awarenessList[index].awarenessImageURL ?? '',
+                        imageSize: MediaQuery.of(context).size.height * 0.15,
+                        imageWidth: double.infinity,
+                        borderRadius: 10.0,
                       ),
                       SizedBox(height: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('News Title', style: _Styles.newsTitleTextStyle),
-                          Text('Date', style: _Styles.dateTextStyle),
+                          Text(
+                            awarenessList[index].awarenessTitle ?? '',
+                            style: _Styles.newsTitleTextStyle,
+                          ),
+                          Text(
+                            WidgetUtil.dateFormatter(
+                              awarenessList[index].createdDate ??
+                                  DateTime.now(),
+                            ),
+                            style: _Styles.dateTextStyle,
+                          ),
                         ],
                       ),
                     ],
@@ -562,8 +600,8 @@ class _Styles {
   );
 
   static const dateTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.bold,
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,
   );
 

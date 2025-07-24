@@ -146,6 +146,7 @@ abstract class $AppRouter extends _i48.RootStackRouter {
         child: _i6.AwarenessDetailsScreen(
           key: args.key,
           userRole: args.userRole,
+          awarenessId: args.awarenessId,
         ),
       );
     },
@@ -542,12 +543,14 @@ class AwarenessDetailsRoute
   AwarenessDetailsRoute({
     _i49.Key? key,
     required String userRole,
+    required int awarenessId,
     List<_i48.PageRouteInfo>? children,
   }) : super(
           AwarenessDetailsRoute.name,
           args: AwarenessDetailsRouteArgs(
             key: key,
             userRole: userRole,
+            awarenessId: awarenessId,
           ),
           initialChildren: children,
         );
@@ -562,15 +565,18 @@ class AwarenessDetailsRouteArgs {
   const AwarenessDetailsRouteArgs({
     this.key,
     required this.userRole,
+    required this.awarenessId,
   });
 
   final _i49.Key? key;
 
   final String userRole;
 
+  final int awarenessId;
+
   @override
   String toString() {
-    return 'AwarenessDetailsRouteArgs{key: $key, userRole: $userRole}';
+    return 'AwarenessDetailsRouteArgs{key: $key, userRole: $userRole, awarenessId: $awarenessId}';
   }
 }
 
