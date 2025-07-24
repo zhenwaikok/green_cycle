@@ -40,10 +40,13 @@ extension _WidgetFactories on _RewardBottomSheetState {
   Widget getBottomSheetCard() {
     return CustomCard(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getBottomSheetCardImageName(
-            imageURL: widget.imageURL,
-            rewardName: widget.rewardName,
+          Center(
+            child: getBottomSheetCardImageName(
+              imageURL: widget.imageURL,
+              rewardName: widget.rewardName,
+            ),
           ),
           SizedBox(height: 40),
           getDescription(descriptionText: widget.descriptionText),
@@ -62,6 +65,7 @@ extension _WidgetFactories on _RewardBottomSheetState {
     required String rewardName,
   }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomImage(
           imageURL: imageURL,

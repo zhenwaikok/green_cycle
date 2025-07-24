@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
+import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
 class ToRedeemTab extends StatefulWidget {
-  const ToRedeemTab({super.key});
+  const ToRedeemTab({super.key, required this.rewardList});
+
+  final List<RewardModel> rewardList;
 
   @override
   State<ToRedeemTab> createState() => _ToRedeemTabState();
@@ -15,17 +20,17 @@ class ToRedeemTab extends StatefulWidget {
 class _ToRedeemTabState extends State<ToRedeemTab> {
   @override
   Widget build(BuildContext context) {
-    return getToRedeemRewards();
+    return getToRedeemRewards(rewardList: widget.rewardList);
   }
 }
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ToRedeemTabState {
-  void showRewardBottomSheet() {
+  void showRewardBottomSheet({required RewardModel rewardDetails}) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return getBottomSheetCard();
+        return getBottomSheetCard(rewardDetails: rewardDetails);
       },
     );
   }
@@ -33,9 +38,9 @@ extension _Actions on _ToRedeemTabState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ToRedeemTabState {
-  Widget getToRedeemRewards() {
+  Widget getToRedeemRewards({required List<RewardModel> rewardList}) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: rewardList.length,
       itemBuilder: (context, index) {
         return Column(
           children: [
@@ -43,10 +48,16 @@ extension _WidgetFactories on _ToRedeemTabState {
               padding: _Styles.rewardPadding,
               child: Row(
                 children: [
-                  getRewardImage(),
+                  getRewardImage(
+                    imageURL: rewardList[index].rewardImageURL ?? '',
+                  ),
                   SizedBox(width: 10),
-                  getRewardDetails(),
-                  getClaimButton(),
+                  getRewardDetails(
+                    rewardName: rewardList[index].rewardName ?? '',
+                    pointsRequired:
+                        rewardList[index].pointsRequired?.toString() ?? '',
+                  ),
+                  getClaimButton(rewardID: rewardList[index].rewardID ?? 0),
                 ],
               ),
             ),
@@ -58,55 +69,65 @@ extension _WidgetFactories on _ToRedeemTabState {
     );
   }
 
-  Widget getClaimButton() {
+  Widget getClaimButton({required int rewardID}) {
     return SizedBox(
       width: _Styles.claimButtonSize,
       child: CustomButton(
         text: 'Claim',
         textColor: ColorManager.primary,
-        onPressed: showRewardBottomSheet,
+        onPressed: () async {
+          await context.read<RewardViewModel>().getRewardDetails(
+            rewardID: rewardID,
+          );
+
+          final rewardDetails = mounted
+              ? context.read<RewardViewModel>().rewardDetails
+              : RewardModel();
+
+          showRewardBottomSheet(rewardDetails: rewardDetails ?? RewardModel());
+        },
         backgroundColor: ColorManager.whiteColor,
         borderColor: ColorManager.primary,
       ),
     );
   }
 
-  Widget getRewardDetails() {
+  Widget getRewardDetails({
+    required String rewardName,
+    required String pointsRequired,
+  }) {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Reward Name',
+            rewardName,
             style: _Styles.rewardNameTextStyle,
             maxLines: _Styles.maxTextLines,
             overflow: TextOverflow.ellipsis,
           ),
           SizedBox(height: 10),
-          Text('123 points', style: _Styles.pointsTextStyle),
+          Text('$pointsRequired points', style: _Styles.pointsTextStyle),
         ],
       ),
     );
   }
 
-  Widget getRewardImage() {
+  Widget getRewardImage({required String imageURL}) {
     return CustomImage(
-      imageURL:
-          'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
+      imageURL: imageURL,
       imageSize: _Styles.rewardImageSize,
       borderRadius: _Styles.borderRadius,
     );
   }
 
-  Widget getBottomSheetCard() {
+  Widget getBottomSheetCard({required RewardModel rewardDetails}) {
     return RewardBottomSheet(
-      imageURL:
-          'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
-      rewardName: 'Reward name aslkdjklajdajjsd',
-      descriptionText:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
-      buttonText: 'Claim with xxx points',
+      imageURL: rewardDetails.rewardImageURL ?? '',
+      rewardName: rewardDetails.rewardName ?? '',
+      descriptionText: rewardDetails.rewardDescription ?? '',
+      buttonText: 'Claim with ${rewardDetails.pointsRequired} points',
       onPressed: () {},
     );
   }
