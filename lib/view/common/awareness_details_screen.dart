@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
-import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
-import 'package:green_cycle_fyp/view/common/loading_screen.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
@@ -28,21 +27,26 @@ class AwarenessDetailsScreen extends StatefulWidget {
   State<AwarenessDetailsScreen> createState() => _AwarenessDetailsScreenState();
 }
 
-class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
+class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
+    with ErrorHandlingMixin {
+  AwarenessModel _awarenessDetails = AwarenessModel();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AwarenessViewModel>().getAwarenessDetails(
-        awarenessID: widget.awarenessId,
-      );
+      initialLoad();
     });
+  }
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final awarenessVM = context.watch<AwarenessViewModel>();
-    final awarenessDetails = awarenessVM.awarenessDetails;
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Awareness Details',
@@ -57,21 +61,11 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
         ],
       ),
       body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            if (awarenessVM.response.status == ResponseStatus.loading) {
-              return LoadingScreen();
-            } else {
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: _Styles.screenPadding,
-                  child: getAwarenessDetails(
-                    awarenessModel: awarenessDetails ?? AwarenessModel(),
-                  ),
-                ),
-              );
-            }
-          },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: _Styles.screenPadding,
+            child: getAwarenessDetails(awarenessModel: _awarenessDetails),
+          ),
         ),
       ),
     );
@@ -80,6 +74,18 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _AwarenessDetailsScreenState {
+  Future<void> initialLoad() async {
+    final awarenessDetails = await tryLoad(
+      context,
+      () => context.read<AwarenessViewModel>().getAwarenessDetails(
+        awarenessID: widget.awarenessId,
+      ),
+    );
+    if (awarenessDetails != null) {
+      _setState(() => _awarenessDetails = awarenessDetails);
+    }
+  }
+
   void onBackButtonPressed() {
     context.router.maybePop();
   }
@@ -140,7 +146,7 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          awarenessModel.awarenessTitle ?? '',
+          awarenessModel.awarenessTitle ?? '-',
           style: _Styles.awarenessTitleTextStyle,
           textAlign: TextAlign.justify,
         ),
@@ -172,7 +178,7 @@ extension _WidgetFactories on _AwarenessDetailsScreenState {
         Text('Description:', style: _Styles.descTitleTextStyle),
         SizedBox(height: 5),
         Text(
-          awarenessModel.awarenessContent ?? '',
+          awarenessModel.awarenessContent ?? '-',
           style: _Styles.descTextStyle,
           textAlign: TextAlign.justify,
         ),

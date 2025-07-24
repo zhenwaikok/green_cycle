@@ -2,25 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ToRedeemTab extends StatefulWidget {
-  const ToRedeemTab({super.key, required this.rewardList});
+  const ToRedeemTab({
+    super.key,
+    required this.rewardList,
+    required this.isLoading,
+  });
 
   final List<RewardModel> rewardList;
+  final bool isLoading;
 
   @override
   State<ToRedeemTab> createState() => _ToRedeemTabState();
 }
 
-class _ToRedeemTabState extends State<ToRedeemTab> {
+class _ToRedeemTabState extends State<ToRedeemTab> with ErrorHandlingMixin {
+  RewardModel _rewardDetails = RewardModel();
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return getToRedeemRewards(rewardList: widget.rewardList);
+    return Skeletonizer(
+      enabled: widget.isLoading,
+      child: getToRedeemRewards(
+        rewardList: widget.isLoading
+            ? List.generate(5, (_) => RewardModel())
+            : widget.rewardList,
+      ),
+    );
   }
 }
 
@@ -53,9 +75,9 @@ extension _WidgetFactories on _ToRedeemTabState {
                   ),
                   SizedBox(width: 10),
                   getRewardDetails(
-                    rewardName: rewardList[index].rewardName ?? '',
+                    rewardName: rewardList[index].rewardName ?? '-',
                     pointsRequired:
-                        rewardList[index].pointsRequired?.toString() ?? '',
+                        rewardList[index].pointsRequired?.toString() ?? '0',
                   ),
                   getClaimButton(rewardID: rewardList[index].rewardID ?? 0),
                 ],
@@ -76,13 +98,16 @@ extension _WidgetFactories on _ToRedeemTabState {
         text: 'Claim',
         textColor: ColorManager.primary,
         onPressed: () async {
-          await context.read<RewardViewModel>().getRewardDetails(
-            rewardID: rewardID,
+          final rewardDetails = await tryLoad(
+            context,
+            () => context.read<RewardViewModel>().getRewardDetails(
+              rewardID: rewardID,
+            ),
           );
 
-          final rewardDetails = mounted
-              ? context.read<RewardViewModel>().rewardDetails
-              : RewardModel();
+          _setState(() {
+            _rewardDetails = rewardDetails ?? RewardModel();
+          });
 
           showRewardBottomSheet(rewardDetails: rewardDetails ?? RewardModel());
         },

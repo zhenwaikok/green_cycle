@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -22,19 +23,27 @@ class CustomerHomeScreen extends StatefulWidget {
   State<CustomerHomeScreen> createState() => _CustomerHomeScreenState();
 }
 
-class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
+class _CustomerHomeScreenState extends State<CustomerHomeScreen>
+    with ErrorHandlingMixin {
+  List<AwarenessModel> _awarenessList = [];
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AwarenessViewModel>().getAwarenessList();
+      initialLoad();
     });
+  }
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final awarenessVM = context.watch<AwarenessViewModel>();
-    final awarenessList = awarenessVM.awarenessList
+    final awarenessList = _awarenessList
       ..sort(
         (a, b) =>
             b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
@@ -78,6 +87,16 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CustomerHomeScreenState {
+  Future<void> initialLoad() async {
+    final awarenessList = await tryLoad(
+      context,
+      () => context.read<AwarenessViewModel>().getAwarenessList(),
+    );
+    if (awarenessList != null) {
+      _setState(() => _awarenessList = awarenessList);
+    }
+  }
+
   void onRequestPickupButtonPressed() {
     context.router.push(SelectLocationRoute());
   }

@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 
@@ -52,8 +53,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: 0);
     super.initState();
+    _pageController = PageController(initialPage: 0);
   }
 
   @override
@@ -113,7 +114,8 @@ extension _Actions on _OnboardingScreenState {
   }
 
   void onStartButtonPressed() {
-    context.router.push(LoginRoute());
+    SharedPreferenceHandler().putHasOnboarded(true);
+    context.router.replaceAll([LoginRoute()]);
   }
 }
 
@@ -191,24 +193,6 @@ extension _WidgetFactories on _OnboardingScreenState {
         onPressed: onStartButtonPressed,
       ),
     );
-    // return SizedBox(
-    //   height: _Styles.bottomStartButtonHeight,
-    //   width: _Styles.bottomStartButtonWidth,
-    //   child: ElevatedButton(
-    //     onPressed: onStartButtonPressed,
-    //     style: ElevatedButton.styleFrom(
-    //       shape: RoundedRectangleBorder(
-    //         borderRadius: BorderRadiusGeometry.circular(_Styles.borderRadius),
-    //       ),
-    //       backgroundColor: ColorManager.primary,
-    //     ),
-    //     child: Text(
-    //       'Get Started',
-    //       textAlign: TextAlign.center,
-    //       style: _Styles.getStartedTextStyle,
-    //     ),
-    //   ),
-    // );
   }
 
   Widget getDotIndicator() {

@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/widget/adaptive_alert_dialog.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
 import 'package:intl/intl.dart';
 
@@ -39,5 +41,29 @@ class WidgetUtil {
       ),
       barrierDismissible: dismissible,
     );
+  }
+
+  static Future<void> showDefaultErrorDialog(
+    BuildContext context,
+    String errorMessage,
+  ) async {
+    final List<Widget> actionBuilders = [
+      TextButton(
+        onPressed: () {
+          context.router.maybePop();
+        },
+        child: Text('OK'),
+      ),
+    ];
+    if (context.mounted) {
+      return showAdaptiveDialog<void>(
+        context: context,
+        builder: (context) => AdaptiveAlertDialog(
+          errorMessage: errorMessage,
+          actionBuilders: actionBuilders,
+        ),
+        useRootNavigator: false,
+      );
+    }
   }
 }
