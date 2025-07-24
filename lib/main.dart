@@ -1,26 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:green_cycle_fyp/constant/color_manager.dart';
-import 'package:green_cycle_fyp/constant/constants.dart';
-import 'package:green_cycle_fyp/router/router.dart';
-import 'package:provider/provider.dart';
+import 'package:green_cycle_fyp/utils/starter_handler.dart';
+import 'package:green_cycle_fyp/view/app.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    AppRouter router = AppRouter();
-    return MultiProvider(
-      providers: providerAssets(),
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        routerConfig: router.config(),
-        theme: ThemeData(scaffoldBackgroundColor: ColorManager.whiteColor),
-      ),
-    );
-  }
+void main() async {
+  await init();
+  runApp(const App());
 }

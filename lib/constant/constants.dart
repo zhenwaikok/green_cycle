@@ -1,3 +1,5 @@
+import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,10 @@ class APIValues {
 }
 
 List<SingleChildWidget> providerAssets() => [
-  ChangeNotifierProvider.value(value: AwarenessViewModel()),
-  ChangeNotifierProvider.value(value: RewardViewModel()),
+  ChangeNotifierProvider.value(
+    value: AwarenessViewModel(awarenessRepository: AwarenessRepository()),
+  ),
+  ChangeNotifierProvider.value(
+    value: RewardViewModel(rewardRepository: RewardRepository()),
+  ),
 ];

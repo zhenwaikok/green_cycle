@@ -10,3 +10,9 @@ class ErrorModel with _$ErrorModel {
   factory ErrorModel.fromJson(Map<String, dynamic> json) =>
       _$ErrorModelFromJson(json);
 }
+
+extension ErrorModelX on ErrorModel {
+  bool get isUrgentError {
+    return statusCode == 401 || statusCode == 500;
+  }
+}

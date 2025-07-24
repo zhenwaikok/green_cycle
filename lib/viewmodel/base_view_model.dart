@@ -1,22 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
+import 'package:green_cycle_fyp/utils/mixins/check_mounted_mixin.dart';
 
 /// A base class to unified all the required common fields and functions
 /// Inherited with ChangeNotifier for Provider State Management
 /// All inheriting classes will be able to access these values and features
-class BaseViewModel with ChangeNotifier {
-  /// response that view layer listening for data changes
-  /// view layer may perform data update or any Ui logic depends on response status
-  MyResponse response = MyResponse.initial();
-
-  /// Unified method to call Provider [notifyListeners()] to update [response] value.
-  void notify(MyResponse newResponse) {
-    response = newResponse;
-    notifyListeners();
+class BaseViewModel with ChangeNotifier, CheckMountedMixin {
+  /// A function that handles error responses from the API.
+  /// It will throw an exception if there are any errors.
+  /// Ensure to handle these exceptions with the [tryLoad] or [tryCatch] methods in the UI.
+  void checkError(MyResponse response) {
+    if (response.status == ResponseStatus.error) {
+      if (response.error != null && response.error is ErrorModel) {
+        ErrorModel error = response.error;
+        if (error.isUrgentError) {
+          throw UrgentErrorException(
+            error.message ??
+                'Oppss.. something went wrong. Please contact admin for assistance.',
+          );
+        }
+        throw NormalErrorException(
+          error.message ??
+              'Oppss.. something went wrong. Please contact admin for assistance.',
+        );
+      }
+      throw NormalErrorException(
+        'Oppss.. something went wrong. Please contact admin for assistance.',
+      );
+    }
   }
 
-  /// Reset [response] to mark the response as consumed.
-  void consumed() {
-    response = MyResponse.initial();
+  @override
+  void notifyListeners() {
+    if (mounted) {
+      super.notifyListeners();
+    }
   }
+}
+
+class UrgentErrorException implements Exception {
+  final String message;
+
+  UrgentErrorException(this.message);
+}
+
+class NormalErrorException implements Exception {
+  final String message;
+
+  NormalErrorException(this.message);
 }
