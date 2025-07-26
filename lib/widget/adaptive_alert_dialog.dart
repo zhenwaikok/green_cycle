@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/constant/color_manager.dart';
 
 class AdaptiveAlertDialog extends StatelessWidget {
   const AdaptiveAlertDialog({
@@ -13,6 +14,7 @@ class AdaptiveAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog.adaptive(
+      backgroundColor: ColorManager.whiteColor,
       title: Text(
         'Oops, something went wrong',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),

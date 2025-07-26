@@ -3,21 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => UserViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+        sharedPreferenceHandler: SharedPreferenceHandler(),
+      ),
+      child: _ProfileScreen(),
+    );
+  }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreen extends StatefulWidget {
+  @override
+  State<_ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<_ProfileScreen>
+    with ErrorHandlingMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +94,16 @@ extension _Actions on _ProfileScreenState {
 
   void onMyListingPressed() {
     context.router.push(MyListingRoute());
+  }
+
+  Future<void> onSignOutPressed() async {
+    final result = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().logout(),
+    );
+    if (result ?? false) {
+      if (mounted) context.router.replaceAll([LoginRoute()]);
+    }
   }
 }
 
@@ -187,10 +220,13 @@ extension _WidgetFactories on _ProfileScreenState {
           text: 'My Purchases',
           onTap: onMyPurchasesPressed,
         ),
-        CustomProfileRowElement(
-          icon: Icons.logout,
-          text: 'Sign Out',
-          isSignOut: true,
+        GestureDetector(
+          onTap: onSignOutPressed,
+          child: CustomProfileRowElement(
+            icon: Icons.logout,
+            text: 'Sign Out',
+            isSignOut: true,
+          ),
         ),
       ],
     );

@@ -52,7 +52,7 @@ class WidgetUtil {
         onPressed: () {
           context.router.maybePop();
         },
-        child: Text('OK'),
+        child: Text('OK', style: TextStyle(color: ColorManager.primary)),
       ),
     ];
     if (context.mounted) {

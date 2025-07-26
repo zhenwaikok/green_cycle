@@ -13,6 +13,8 @@ class CustomDropdown extends StatefulWidget {
     this.color,
     this.onChanged,
     this.needTitle = true,
+    this.validator,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
   });
 
   final String? title;
@@ -22,6 +24,8 @@ class CustomDropdown extends StatefulWidget {
   final List<String> items;
   final void Function(String?)? onChanged;
   final bool? needTitle;
+  final String? Function(String? value)? validator;
+  final AutovalidateMode autovalidateMode;
 
   @override
   State<CustomDropdown> createState() => _CustomDropdownState();
@@ -70,6 +74,7 @@ extension _WidgetFactories on _CustomDropdownState {
           .map((item) => DropdownMenuItem(value: item, child: Text(item)))
           .toList(),
       dropdownColor: ColorManager.whiteColor,
+      validator: widget.validator,
       decoration: InputDecoration(
         contentPadding: _Styles.contentPadding,
         enabledBorder: OutlineInputBorder(
@@ -88,6 +93,7 @@ extension _WidgetFactories on _CustomDropdownState {
         focusedErrorBorder: _Styles.outlineErrorInputBorder,
       ),
       onChanged: widget.onChanged,
+      autovalidateMode: widget.autovalidateMode,
     );
   }
 }

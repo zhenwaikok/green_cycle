@@ -9,7 +9,9 @@ class SharedPreferenceHandler {
   static SharedPreferences? _sharedPreferences;
 
   static const spUser = 'user';
+  static const spUserID = 'userID';
   static const spHasOnboarded = 'hasOnboarded';
+  static const spUserRole = 'userRole';
 
   /// Factory constructor that returns the single instance.
   factory SharedPreferenceHandler() {
@@ -17,6 +19,12 @@ class SharedPreferenceHandler {
   }
 
   SharedPreferenceHandler._internal();
+
+  Future<void> removeAllSP() async {
+    if (_sharedPreferences == null) return;
+
+    await Future.wait([_sharedPreferences!.remove(spUser)]);
+  }
 
   Future<void> initialize() async {
     _sharedPreferences ??= await SharedPreferences.getInstance();

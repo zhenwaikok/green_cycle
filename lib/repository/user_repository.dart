@@ -1,12 +1,58 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 
 class UserRepository {
-  UserServices get _userServices => UserServices();
+  UserRepository({
+    required this.sharePreferenceHandler,
+    required this.userServices,
+  });
+
+  final UserServices userServices;
+  final SharedPreferenceHandler sharePreferenceHandler;
+
+  bool get isLoggedIn => sharePreferenceHandler.getUser() != null;
+  UserModel get user => sharePreferenceHandler.getUser() ?? UserModel();
+
+  Future<MyResponse> signUpWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    final authRequestModel = AuthRequestModel(email: email, password: password);
+
+    final response = await userServices.signUpWithEmailPassword(
+      authRequestModel: authRequestModel,
+    );
+    return response;
+  }
+
+  Future<MyResponse> loginWithEmailPassword({
+    required String email,
+    required String password,
+  }) async {
+    final authRequestModel = AuthRequestModel(email: email, password: password);
+
+    final response = await userServices.loginWithEmailPassword(
+      authRequestModel: authRequestModel,
+    );
+
+    if (response.data is User) {
+      await getUserDetails(userID: (response.data as User).uid);
+    }
+    return response;
+  }
+
+  Future<MyResponse> logout() async {
+    final response = await userServices.logout();
+    await sharePreferenceHandler.removeAllSP();
+    return response;
+  }
 
   Future<MyResponse> getAllUsers() async {
-    final response = await _userServices.getAllUsers();
+    final response = await userServices.getAllUsers();
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
@@ -16,20 +62,24 @@ class UserRepository {
   }
 
   Future<MyResponse> insertUser({required UserModel userModel}) async {
-    final response = await _userServices.insertUser(userModel: userModel);
+    final response = await userServices.insertUser(userModel: userModel);
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
+      await sharePreferenceHandler.putUser(resultModel);
       return MyResponse.complete(resultModel);
     }
     return response;
   }
 
   Future<MyResponse> getUserDetails({required String userID}) async {
-    final response = await _userServices.getUserDetails(userID: userID);
+    final response = await userServices.getUserDetails(userID: userID);
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
+      await sharePreferenceHandler.putUser(resultModel);
+      UserModel? user = sharePreferenceHandler.getUser();
+      print('User Details: ${user?.toJson()}');
       return MyResponse.complete(resultModel);
     }
     return response;
@@ -39,7 +89,7 @@ class UserRepository {
     required String userID,
     required UserModel userModel,
   }) async {
-    final response = await _userServices.updateUser(
+    final response = await userServices.updateUser(
       userID: userID,
       userModel: userModel,
     );
@@ -52,7 +102,7 @@ class UserRepository {
   }
 
   Future<MyResponse> deleteUser({required String userID}) async {
-    final response = await _userServices.deleteUser(userID: userID);
+    final response = await userServices.deleteUser(userID: userID);
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);

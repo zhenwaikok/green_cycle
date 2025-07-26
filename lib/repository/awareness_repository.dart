@@ -3,10 +3,11 @@ import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
 
 class AwarenessRepository {
-  AwarenessServices get _awarenessServices => AwarenessServices();
+  AwarenessRepository({required this.awarenessServices});
+  AwarenessServices awarenessServices;
 
   Future<MyResponse> getAllAwareness() async {
-    final response = await _awarenessServices.getAllAwareness();
+    final response = await awarenessServices.getAllAwareness();
     print('Response from Awareness API: ${response.data}');
 
     if (response.data is List) {
@@ -21,7 +22,7 @@ class AwarenessRepository {
   Future<MyResponse> insertAwareness({
     required AwarenessModel awarenessModel,
   }) async {
-    final response = await _awarenessServices.insertAwareness(
+    final response = await awarenessServices.insertAwareness(
       awarenessModel: awarenessModel,
     );
 
@@ -33,7 +34,7 @@ class AwarenessRepository {
   }
 
   Future<MyResponse> getAwarenessDetails({required int awarenessID}) async {
-    final response = await _awarenessServices.getAwarenessDetails(
+    final response = await awarenessServices.getAwarenessDetails(
       awarenessID: awarenessID,
     );
 
@@ -48,7 +49,7 @@ class AwarenessRepository {
     required int awarenessID,
     required AwarenessModel awarenessModel,
   }) async {
-    final response = await _awarenessServices.updateAwareness(
+    final response = await awarenessServices.updateAwareness(
       awarenessID: awarenessID,
       awarenessModel: awarenessModel,
     );
@@ -61,7 +62,7 @@ class AwarenessRepository {
   }
 
   Future<MyResponse> deleteAwareness({required int awarenessID}) async {
-    final response = await _awarenessServices.deleteAwareness(
+    final response = await awarenessServices.deleteAwareness(
       awarenessID: awarenessID,
     );
 

@@ -1,7 +1,7 @@
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/reward_redemption/reward_redemption_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
-import 'package:green_cycle_fyp/services/base_services.dart';
+import 'package:green_cycle_fyp/services/api_base_services.dart';
 
 class RewardRedemptionServices extends BaseServices {
   Future<MyResponse> getAllRewardRedemptions() async {

@@ -1,9 +1,33 @@
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
-import 'package:green_cycle_fyp/services/base_services.dart';
+import 'package:green_cycle_fyp/services/api_base_services.dart';
+import 'package:green_cycle_fyp/services/firebase_base_services.dart';
 
-class UserServices extends BaseServices {
+class UserServices extends BaseServices with FirebaseBaseServices {
+  Future<MyResponse> signUpWithEmailPassword({
+    required AuthRequestModel authRequestModel,
+  }) {
+    return authenticate(
+      authType: AuthType.signUp,
+      requestBody: authRequestModel.toJson(),
+    );
+  }
+
+  Future<MyResponse> loginWithEmailPassword({
+    required AuthRequestModel authRequestModel,
+  }) {
+    return authenticate(
+      authType: AuthType.login,
+      requestBody: authRequestModel.toJson(),
+    );
+  }
+
+  Future<MyResponse> logout() {
+    return authenticate(authType: AuthType.logout);
+  }
+
   Future<MyResponse> getAllUsers() async {
     String path = '${apiUrl()}/User';
 

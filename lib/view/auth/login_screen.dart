@@ -1,24 +1,56 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => UserViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+        sharedPreferenceHandler: SharedPreferenceHandler(),
+      ),
+      child: _LoginScreen(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreen extends StatefulWidget {
+  @override
+  State<_LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<_LoginScreen> with ErrorHandlingMixin {
   final userRole = 'Customer';
   List<PageRouteInfo> routes = [];
   List<BottomNavigationBarItem> navBarItems = [];
+  final _formKey = GlobalKey<FormBuilderState>();
+  bool isPasswordObscure = true;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +60,17 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: _Styles.screenPadding,
             child: Center(
-              child: Column(
-                children: [
-                  getLogo(),
-                  SizedBox(height: 15),
-                  getTitle(),
-                  SizedBox(height: 30),
-                  getLogInForms(),
-                ],
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    getLogo(),
+                    SizedBox(height: 15),
+                    getTitle(),
+                    SizedBox(height: 30),
+                    getLogInForms(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -45,19 +80,49 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+// * ---------------------------- Helper ----------------------------
+extension _Helper on _LoginScreenState {
+  String get email =>
+      _formKey.currentState?.fields[LoginFormFieldsEnum.email.name]?.value
+          as String? ??
+      '';
+  String get password =>
+      _formKey.currentState?.fields[LoginFormFieldsEnum.password.name]?.value
+          as String? ??
+      '';
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _LoginScreenState {
-  void onSignInButtonPressed() {
-    //TODO: Implement sign-in logic
-
-    context.router.pushAndPopUntil(
-      CustomBottomNavBar(userRole: userRole),
-      predicate: (route) => false,
-    );
+  void onSignInButtonPressed() async {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<UserViewModel>().loginWithEmailPassword(
+              email: email,
+              password: password,
+            ),
+          ) ??
+          false;
+      if (result) {
+        if (mounted) {
+          context.router.replaceAll([CustomBottomNavBar(userRole: userRole)]);
+        }
+      } else {
+        print('Sign In Failed');
+      }
+    }
   }
 
   void onCreateAccountButtonPressed() {
     context.router.pushAndPopUntil(SignUpRoute(), predicate: (route) => false);
+  }
+
+  void togglePasswordVisibility() {
+    _setState(() {
+      isPasswordObscure = !isPasswordObscure;
+    });
   }
 }
 
@@ -116,6 +181,10 @@ extension _WidgetFactories on _LoginScreenState {
           title: 'Email Address',
           prefixIcon: Icon(Icons.email_outlined, color: ColorManager.greyColor),
           formName: LoginFormFieldsEnum.email.name,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.email(),
+          ]),
         ),
         SizedBox(height: 20),
         CustomTextField(
@@ -123,9 +192,27 @@ extension _WidgetFactories on _LoginScreenState {
           color: _Styles.loginFormFieldColor,
           title: 'Password',
           prefixIcon: Icon(Icons.lock_outline, color: ColorManager.greyColor),
+          suffixIcon: getTogglePasswordButton(),
+          isPassword: isPasswordObscure,
           formName: LoginFormFieldsEnum.password.name,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(
+              6,
+              errorText: 'Password must be at least 6 characters long',
+            ),
+          ]),
         ),
       ],
+    );
+  }
+
+  IconButton getTogglePasswordButton() {
+    return IconButton(
+      onPressed: () => togglePasswordVisibility(),
+      icon: isPasswordObscure
+          ? Icon(Icons.visibility_off)
+          : Icon(Icons.visibility),
     );
   }
 
