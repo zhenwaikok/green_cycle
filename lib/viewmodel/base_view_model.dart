@@ -12,18 +12,24 @@ class BaseViewModel with ChangeNotifier, CheckMountedMixin {
   /// Ensure to handle these exceptions with the [tryLoad] or [tryCatch] methods in the UI.
   void checkError(MyResponse response) {
     if (response.status == ResponseStatus.error) {
-      if (response.error != null && response.error is ErrorModel) {
-        ErrorModel error = response.error;
-        if (error.isUrgentError) {
-          throw UrgentErrorException(
+      if (response.error != null) {
+        if (response.error is ErrorModel) {
+          ErrorModel error = response.error;
+          if (error.isUrgentError) {
+            throw UrgentErrorException(
+              error.message ??
+                  'Oppss.. something went wrong. Please contact admin for assistance.',
+            );
+          }
+          throw NormalErrorException(
             error.message ??
                 'Oppss.. something went wrong. Please contact admin for assistance.',
           );
         }
-        throw NormalErrorException(
-          error.message ??
-              'Oppss.. something went wrong. Please contact admin for assistance.',
-        );
+      }
+
+      if (response.error is String) {
+        throw NormalErrorException(response.error as String);
       }
       throw NormalErrorException(
         'Oppss.. something went wrong. Please contact admin for assistance.',

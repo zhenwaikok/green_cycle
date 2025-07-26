@@ -2,7 +2,9 @@ enum LoginFormFieldsEnum { email, password }
 
 enum SignUpFormFieldsEnum {
   role,
-  name,
+  firstName,
+  lastName,
+  fullName,
   email,
   gender,
   phoneNum,

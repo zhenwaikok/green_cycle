@@ -84,7 +84,7 @@ mixin ErrorHandlingMixin {
     }
 
     // UNCOMMENT TO DEBUG ERROR
-    debugPrint('Error: $message\nStack Trace: $stackTrace');
+    debugPrint('Error: $message');
   }
 
   Future<void> _handleUrgentError(
@@ -102,6 +102,6 @@ mixin ErrorHandlingMixin {
       }
     }
     // UNCOMMENT TO DEBUG ERROR
-    debugPrint('Error: $message\nStack Trace: $stackTrace');
+    debugPrint('Error: $message');
   }
 }

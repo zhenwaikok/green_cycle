@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
@@ -19,8 +20,11 @@ class AwarenessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) =>
-          AwarenessViewModel(awarenessRepository: AwarenessRepository()),
+      create: (_) => AwarenessViewModel(
+        awarenessRepository: AwarenessRepository(
+          awarenessServices: AwarenessServices(),
+        ),
+      ),
       child: _AwarenessScreen(),
     );
   }

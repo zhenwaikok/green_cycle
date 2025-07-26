@@ -1,7 +1,7 @@
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
-import 'package:green_cycle_fyp/services/base_services.dart';
+import 'package:green_cycle_fyp/services/api_base_services.dart';
 
 class PurchasesServices extends BaseServices {
   Future<MyResponse> getAllPurchases() async {

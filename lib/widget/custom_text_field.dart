@@ -22,6 +22,8 @@ class CustomTextField extends StatefulWidget {
     required this.formName,
     this.needTitle = true,
     this.maxLines,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
+    this.isPassword = false,
   });
 
   final String formName;
@@ -29,16 +31,18 @@ class CustomTextField extends StatefulWidget {
   final Color? color;
   final String? title;
   final Icon? prefixIcon;
-  final Icon? suffixIcon;
+  final IconButton? suffixIcon;
   final void Function()? onTap;
   final void Function(String? value)? onChanged;
   final TextInputType? keyboardType;
-  final FormFieldValidator<String>? validator;
+  final String? Function(String? value)? validator;
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
   final bool? readonly;
   final bool? needTitle;
   final int? maxLines;
+  final AutovalidateMode autovalidateMode;
+  final bool? isPassword;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -83,9 +87,11 @@ extension _WidgetFactories on _CustomTextFieldState {
   Widget getTextField({required String name}) {
     return FormBuilderTextField(
       name: name,
-      maxLines: widget.maxLines,
+      obscureText: widget.isPassword ?? false,
+      maxLines: (widget.isPassword ?? false) ? 1 : widget.maxLines,
       onTap: widget.onTap,
       onChanged: widget.onChanged,
+      autovalidateMode: widget.autovalidateMode,
       keyboardType: widget.keyboardType ?? TextInputType.text,
       validator: widget.validator,
       inputFormatters: widget.inputFormatters,
