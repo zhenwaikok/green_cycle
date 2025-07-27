@@ -1,33 +1,75 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key, required this.selectedRole});
+class EditProfileScreen extends StatelessWidget {
+  const EditProfileScreen({
+    super.key,
+    required this.userRole,
+    required this.userID,
+  });
 
-  final String selectedRole;
+  final String userRole;
+  final String userID;
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => UserViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _EditProfileScreen(userRole: userRole, userID: userID),
+    );
+  }
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  final List<String> roles = ['Customer', 'Collector'];
-  final List<String> genders = ['Male', 'Female'];
+class _EditProfileScreen extends StatefulWidget {
+  const _EditProfileScreen({required this.userRole, required this.userID});
 
-  File? selectedImage;
+  final String userRole;
+  final String userID;
+
+  @override
+  State<_EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<_EditProfileScreen>
+    with ErrorHandlingMixin {
+  final roles = DropDownItems.roles;
+  final genders = DropDownItems.genders;
+  String? _phoneNumber;
+  File? _selectedImage;
+  UserModel? get userDetails => context.read<UserViewModel>().userDetails;
+
+  final _formKey = GlobalKey<FormBuilderState>();
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -36,7 +78,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialLoad(userID: widget.userID);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userDetails = context.select((UserViewModel vm) => vm.userDetails);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Edit Profile',
@@ -52,12 +104,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Padding(
             padding: _Styles.screenPadding,
             child: Center(
-              child: Column(
-                children: [
-                  getProfileImage(),
-                  SizedBox(height: 60),
-                  getProfileTextFields(),
-                ],
+              child: FormBuilder(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    if (userDetails != null) ...[
+                      getProfileImage(
+                        imageURL: userDetails.profileImageURL ?? '',
+                      ),
+                      SizedBox(height: 60),
+                      getProfileTextFields(userDetails: userDetails),
+                    ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -65,6 +124,58 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
+}
+
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _EditProfileScreenState {
+  File? get profileImageFile => _selectedImage;
+
+  String? get userRole => userDetails?.userRole;
+
+  String? get emailAddress => userDetails?.emailAddress;
+
+  String? get password => userDetails?.password;
+
+  String? get fullName => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.fullName.name]
+      ?.value;
+
+  String? get firstName => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.firstName.name]
+      ?.value;
+
+  String? get lastName => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.lastName.name]
+      ?.value;
+
+  String? get gender => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.gender.name]
+      ?.value;
+
+  String? get phoneNumber => _phoneNumber;
+
+  String? get address {
+    final value = _formKey
+        .currentState
+        ?.fields[EditProfileFormFieldsEnum.address.name]
+        ?.value;
+    return (value?.trim().isEmpty ?? true) ? null : value.trim();
+  }
+
+  String? get vehicleType => userDetails?.vehicleType;
+
+  String? get vehiclePlateNumber => userDetails?.vehiclePlateNumber;
+
+  String? get companyName => userDetails?.companyName;
+
+  String? get profileImageURL => userDetails?.profileImageURL;
+
+  bool get isApproved => userDetails?.isApproved ?? false;
+  DateTime get createdDate => userDetails?.createdDate ?? DateTime.now();
 }
 
 // * ---------------------------- Actions ----------------------------
@@ -80,22 +191,73 @@ extension _Actions on _EditProfileScreenState {
 
     if (pickedFile != null) {
       _setState(() {
-        selectedImage = File(pickedFile.path);
+        _selectedImage = File(pickedFile.path);
       });
+    }
+  }
+
+  Future<void> initialLoad({required String userID}) async {
+    await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getUserDetails(userID: userID),
+    );
+    _setState(() {
+      _phoneNumber = userDetails?.phoneNumber?.trim();
+    });
+  }
+
+  Future<void> onSaveButtonPressed() async {
+    final formValid = _formKey.currentState?.validate() ?? false;
+    if (formValid) {
+      print('form is valid');
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<UserViewModel>().updateUser(
+              userID: widget.userID,
+              firstName: firstName,
+              lastName: lastName,
+              gender: gender,
+              phoneNumber: phoneNumber,
+              address: address,
+              profileImage: profileImageFile,
+              emailAddress: emailAddress,
+              password: password,
+              userRole: userRole,
+              fullName: fullName,
+              vehicleType: vehicleType,
+              vehiclePlateNumber: vehiclePlateNumber,
+              companyName: companyName,
+              profileImageURL: profileImageURL,
+              isApproved: isApproved,
+              createdDate: createdDate,
+            ),
+          ) ??
+          false;
+
+      if (result) {
+        print('Profile updated successfully');
+        unawaited(
+          WidgetUtil.showSnackBar(text: 'Profile Updated Successfully'),
+        );
+        if (mounted) await context.router.maybePop(true);
+      } else {
+        print('Profile update failed');
+      }
+    } else {
+      print('update failed');
     }
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _EditProfileScreenState {
-  Widget getProfileImage() {
+  Widget getProfileImage({required String imageURL}) {
     return Stack(
       children: [
         CustomProfileImage(
-          imageFile: selectedImage,
-          imageURL: selectedImage == null
-              ? 'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D'
-              : null,
+          imageFile: _selectedImage,
+          imageURL: _selectedImage == null ? imageURL : null,
           imageSize: _Styles.imageSize,
         ),
         Positioned(
@@ -120,57 +282,72 @@ extension _WidgetFactories on _EditProfileScreenState {
     );
   }
 
-  Widget getProfileTextFields() {
+  Widget getProfileTextFields({required UserModel userDetails}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getCustomerNameTextField(),
+        getCustomerNameTextField(
+          fullName: userDetails.fullName ?? '',
+          firstName: userDetails.firstName ?? '',
+          lastName: userDetails.lastName ?? '',
+        ),
         SizedBox(height: 20),
-        getEmailText(),
+        getEmailText(email: userDetails.emailAddress ?? ''),
         SizedBox(height: 20),
-        getGenderDropdown(),
-        if (widget.selectedRole == 'Customer') ...[
+        getGenderDropdown(gender: userDetails.gender ?? ''),
+        if (widget.userRole == 'Customer') ...[
           SizedBox(height: 20),
-          getPhoneTextField(),
-          SizedBox(height: 10),
-          getAddressTextField(),
+          getPhoneTextField(phoneNumber: userDetails.phoneNumber ?? ''),
+          SizedBox(height: 20),
+          getAddressTextField(address: userDetails.address ?? ''),
         ],
-        if (widget.selectedRole == 'Collector') ...[
+        if (widget.userRole == 'Collector') ...[
           SizedBox(height: 20),
-          getCollectorAdditionalInfo(),
+          getCollectorAdditionalInfo(
+            vehicleNumber: userDetails.vehiclePlateNumber ?? '',
+            companyName: userDetails.companyName ?? '',
+            vehicleType: userDetails.vehicleType ?? '',
+          ),
         ],
       ],
     );
   }
 
-  Widget getGenderDropdown() {
+  Widget getGenderDropdown({required String gender}) {
     return CustomDropdown(
       formName: EditProfileFormFieldsEnum.gender.name,
       items: genders,
       title: 'Gender',
       fontSize: _Styles.editProfileFormFieldFontSize,
       color: _Styles.editProfileFormFieldColor,
+      initialValue: gender,
     );
   }
 
-  Widget getEmailText() {
+  Widget getEmailText({required String email}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Email Address', style: _Styles.titleTextStyle),
         SizedBox(height: 5),
-        Text('xxx@gmail.com', style: _Styles.valueTextStyle),
+        Text(email, style: _Styles.valueTextStyle),
       ],
     );
   }
 
-  Widget getCustomerNameTextField() {
-    if (widget.selectedRole != 'Customer') {
+  Widget getCustomerNameTextField({
+    required String fullName,
+    required String firstName,
+    required String lastName,
+  }) {
+    if (widget.userRole != 'Customer') {
       return CustomTextField(
         fontSize: _Styles.editProfileFormFieldFontSize,
         color: _Styles.editProfileFormFieldColor,
         title: 'Full Name',
-        formName: EditProfileFormFieldsEnum.name.name,
+        formName: EditProfileFormFieldsEnum.fullName.name,
+        initialValue: fullName,
+        validator: FormBuilderValidators.required(),
       );
     } else {
       return Row(
@@ -180,7 +357,9 @@ extension _WidgetFactories on _EditProfileScreenState {
               fontSize: _Styles.editProfileFormFieldFontSize,
               color: _Styles.editProfileFormFieldColor,
               title: 'First Name',
-              formName: EditProfileFormFieldsEnum.name.name,
+              formName: EditProfileFormFieldsEnum.firstName.name,
+              initialValue: firstName,
+              validator: FormBuilderValidators.required(),
             ),
           ),
           SizedBox(width: 25),
@@ -189,7 +368,9 @@ extension _WidgetFactories on _EditProfileScreenState {
               fontSize: _Styles.editProfileFormFieldFontSize,
               color: _Styles.editProfileFormFieldColor,
               title: 'Last Name',
-              formName: EditProfileFormFieldsEnum.name.name,
+              formName: EditProfileFormFieldsEnum.lastName.name,
+              initialValue: lastName,
+              validator: FormBuilderValidators.required(),
             ),
           ),
         ],
@@ -197,66 +378,96 @@ extension _WidgetFactories on _EditProfileScreenState {
     }
   }
 
-  Widget getPhoneTextField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Phone Number', style: _Styles.phoneNumTextStyle),
-        SizedBox(height: 10),
-        IntlPhoneField(
-          keyboardType: TextInputType.phone,
-          decoration: InputDecoration(
-            contentPadding: _Styles.contentPadding,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: ColorManager.greyColor,
-                width: _Styles.textFieldBorderWidth,
+  Widget getPhoneTextField({required String phoneNumber}) {
+    return FormBuilderField<String>(
+      name: EditProfileFormFieldsEnum.phoneNum.name,
+      initialValue: phoneNumber.isNotEmpty ? phoneNumber : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: FormBuilderValidators.compose([
+        FormBuilderValidators.required(),
+        (value) {
+          if (!RegexConstants.malaysianPhoneRegex.hasMatch(value ?? '')) {
+            return 'Invalid phone number, only 10 or 11 digits allowed';
+          }
+          return null;
+        },
+      ]),
+      builder: (FormFieldState<String> field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Phone Number', style: _Styles.phoneNumTextStyle),
+            const SizedBox(height: 10),
+            IntlPhoneField(
+              keyboardType: TextInputType.phone,
+              initialValue: phoneNumber,
+              decoration: InputDecoration(
+                contentPadding: _Styles.contentPadding,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: ColorManager.greyColor,
+                    width: _Styles.textFieldBorderWidth,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: ColorManager.greyColor,
+                    width: _Styles.textFieldBorderWidth,
+                  ),
+                ),
+                errorBorder: _Styles.outlineErrorInputBorder,
+                focusedErrorBorder: _Styles.outlineErrorInputBorder,
+                errorText: field.errorText,
               ),
+              disableLengthCheck: true,
+              countries: [countries.firstWhere((c) => c.code == 'MY')],
+              cursorColor: ColorManager.blackColor,
+              onChanged: (phone) {
+                _setState(() {
+                  _phoneNumber = phone.completeNumber.trim();
+                  field.didChange(_phoneNumber);
+                });
+              },
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: ColorManager.greyColor,
-                width: _Styles.textFieldBorderWidth,
-              ),
-            ),
-            errorBorder: _Styles.outlineErrorInputBorder,
-            focusedErrorBorder: _Styles.outlineErrorInputBorder,
-          ),
-          initialCountryCode: 'MY',
-          cursorColor: ColorManager.blackColor,
-          onChanged: (phone) {
-            //TODO: Handle phone number change
-          },
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
-  Widget getAddressTextField() {
+  Widget getAddressTextField({required String address}) {
     return CustomTextField(
       fontSize: _Styles.editProfileFormFieldFontSize,
       color: _Styles.editProfileFormFieldColor,
       title: 'Address',
       prefixIcon: Icon(Icons.location_on, color: ColorManager.greyColor),
       formName: EditProfileFormFieldsEnum.address.name,
+      initialValue: address,
     );
   }
 
-  Widget getCollectorAdditionalInfo() {
+  Widget getCollectorAdditionalInfo({
+    required String vehicleNumber,
+    required String companyName,
+    required String vehicleType,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getCollectorAdditionalInfoItem(
           title: 'Vehicle Plate Number',
-          value: 'WUS2222',
+          value: vehicleNumber,
         ),
         SizedBox(height: 20),
         getCollectorAdditionalInfoItem(
           title: 'Company/Organization',
-          value: 'E-waste Sdn Bhd',
+          value: companyName,
         ),
         SizedBox(height: 20),
-        getCollectorAdditionalInfoItem(title: 'Vehicle Type', value: 'Lorry'),
+        getCollectorAdditionalInfoItem(
+          title: 'Vehicle Type',
+          value: vehicleType,
+        ),
       ],
     );
   }
@@ -279,7 +490,7 @@ extension _WidgetFactories on _EditProfileScreenState {
     return CustomButton(
       text: 'Save',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: onSaveButtonPressed,
     );
   }
 }

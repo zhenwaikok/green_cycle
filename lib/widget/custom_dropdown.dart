@@ -15,6 +15,7 @@ class CustomDropdown extends StatefulWidget {
     this.needTitle = true,
     this.validator,
     this.autovalidateMode = AutovalidateMode.onUserInteraction,
+    this.initialValue,
   });
 
   final String? title;
@@ -22,6 +23,7 @@ class CustomDropdown extends StatefulWidget {
   final Color? color;
   final String formName;
   final List<String> items;
+  final String? initialValue;
   final void Function(String?)? onChanged;
   final bool? needTitle;
   final String? Function(String? value)? validator;
@@ -69,7 +71,9 @@ extension _WidgetFactories on _CustomDropdownState {
   Widget getDropdownField() {
     return FormBuilderDropdown(
       name: widget.formName,
-      initialValue: widget.items.isNotEmpty ? widget.items[0] : null,
+      initialValue:
+          widget.initialValue ??
+          (widget.items.isNotEmpty ? widget.items[0] : null),
       items: widget.items
           .map((item) => DropdownMenuItem(value: item, child: Text(item)))
           .toList(),

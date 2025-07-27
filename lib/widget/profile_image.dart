@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
+import 'package:green_cycle_fyp/constant/images_manager.dart';
 
 class CustomProfileImage extends StatelessWidget {
   const CustomProfileImage({
@@ -25,6 +26,8 @@ class CustomProfileImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(_Styles.borderRadius),
         child: imageFile != null
             ? Image.file(imageFile!, fit: BoxFit.cover)
+            : (imageURL == null || (imageURL?.isEmpty ?? false))
+            ? Image.asset(Images.profilePlaceHolderImage, fit: BoxFit.cover)
             : CachedNetworkImage(
                 imageUrl: imageURL ?? '',
                 placeholder: (context, url) => BlurHash(

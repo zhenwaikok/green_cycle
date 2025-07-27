@@ -58,6 +58,7 @@ class _SignUpScreenState extends State<_SignUpScreen> with ErrorHandlingMixin {
   @override
   void initState() {
     selectedRole = roles.first;
+    selectedGender = genders.first;
     super.initState();
   }
 
@@ -187,7 +188,7 @@ extension _Actions on _SignUpScreenState {
 
         if (result) {
           final userRole = mounted
-              ? context.read<UserViewModel>().user.userRole ?? ''
+              ? context.read<UserViewModel>().user?.userRole ?? ''
               : '';
           if (mounted) {
             unawaited(WidgetUtil.showSnackBar(text: 'Sign Up Successful'));

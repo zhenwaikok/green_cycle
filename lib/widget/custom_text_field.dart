@@ -24,6 +24,7 @@ class CustomTextField extends StatefulWidget {
     this.maxLines,
     this.autovalidateMode = AutovalidateMode.onUserInteraction,
     this.isPassword = false,
+    this.initialValue,
   });
 
   final String formName;
@@ -43,6 +44,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLines;
   final AutovalidateMode autovalidateMode;
   final bool? isPassword;
+  final String? initialValue;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -92,6 +94,7 @@ extension _WidgetFactories on _CustomTextFieldState {
       onTap: widget.onTap,
       onChanged: widget.onChanged,
       autovalidateMode: widget.autovalidateMode,
+      initialValue: widget.initialValue,
       keyboardType: widget.keyboardType ?? TextInputType.text,
       validator: widget.validator,
       inputFormatters: widget.inputFormatters,

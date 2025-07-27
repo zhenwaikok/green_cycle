@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
+import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
@@ -17,7 +18,7 @@ class UserRepository {
   final SharedPreferenceHandler sharePreferenceHandler;
 
   bool get isLoggedIn => sharePreferenceHandler.getUser() != null;
-  UserModel get user => sharePreferenceHandler.getUser() ?? UserModel();
+  UserModel? get user => sharePreferenceHandler.getUser();
 
   Future<MyResponse> signUpWithEmailPassword({
     required String email,
@@ -28,6 +29,10 @@ class UserRepository {
     final response = await userServices.signUpWithEmailPassword(
       authRequestModel: authRequestModel,
     );
+
+    if (response.data is User) {
+      await getUserDetails(userID: (response.data as User).uid);
+    }
     return response;
   }
 
@@ -80,8 +85,7 @@ class UserRepository {
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
       await sharePreferenceHandler.putUser(resultModel);
-      UserModel? user = sharePreferenceHandler.getUser();
-      print('User Details: ${user?.toJson()}');
+      sharePreferenceHandler.getUser();
       return MyResponse.complete(resultModel);
     }
     return response;
@@ -97,7 +101,8 @@ class UserRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = UserModel.fromJson(response.data);
+      final resultModel = ErrorModel.fromJson(response.data);
+      await getUserDetails(userID: userID);
       return MyResponse.complete(resultModel);
     }
     return response;

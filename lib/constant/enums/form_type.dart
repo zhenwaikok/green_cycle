@@ -24,7 +24,9 @@ enum ChangePassowrdFormFieldsEnum {
 
 enum EditProfileFormFieldsEnum {
   role,
-  name,
+  firstName,
+  lastName,
+  fullName,
   email,
   gender,
   phoneNum,

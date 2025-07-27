@@ -5,7 +5,7 @@ part 'error_model.g.dart';
 
 @freezed
 class ErrorModel with _$ErrorModel {
-  const factory ErrorModel({int? statusCode, String? message}) = _ErrorModel;
+  const factory ErrorModel({int? status, String? message}) = _ErrorModel;
 
   factory ErrorModel.fromJson(Map<String, dynamic> json) =>
       _$ErrorModelFromJson(json);
@@ -13,6 +13,6 @@ class ErrorModel with _$ErrorModel {
 
 extension ErrorModelX on ErrorModel {
   bool get isUrgentError {
-    return statusCode == 401 || statusCode == 500;
+    return status == 401 || status == 500;
   }
 }

@@ -12,7 +12,6 @@ import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
-import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
@@ -76,7 +75,7 @@ extension _Actions on _CollectorProfileScreenState {
 
   void onEditProfilePressed() {
     //TODO: Pass correct role ltr
-    context.router.push(EditProfileRoute(selectedRole: 'Collector'));
+    // context.router.push(EditProfileRoute(selectedRole: 'Collector'));
   }
 
   void onPickupHistoryPressed() {

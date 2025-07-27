@@ -41,7 +41,7 @@ extension _Actions on _InitScreenState {
           ? context.read<UserViewModel>().isLoggedIn
           : false;
       final userRole = mounted
-          ? context.read<UserViewModel>().user.userRole ?? ''
+          ? context.read<UserViewModel>().user?.userRole ?? ''
           : '';
 
       if (isLoggedIn) {
