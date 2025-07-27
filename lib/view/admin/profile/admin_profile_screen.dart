@@ -50,7 +50,7 @@ extension _Actions on _AdminProfileScreenState {
 
   void onEditProfilePressed() {
     //TODO: Pass correct role ltr
-    context.router.push(EditProfileRoute(selectedRole: 'Admin'));
+    // context.router.push(EditProfileRoute(selectedRole: 'Admin'));
   }
 }
 

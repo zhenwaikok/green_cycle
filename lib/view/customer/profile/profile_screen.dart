@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
@@ -23,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => UserViewModel(
+      create: (_) => UserViewModel(
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
@@ -42,7 +43,16 @@ class _ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<_ProfileScreen>
     with ErrorHandlingMixin {
   @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user =
+        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Profile', isBackButtonVisible: false),
       body: SafeArea(
@@ -51,11 +61,14 @@ class _ProfileScreenState extends State<_ProfileScreen>
             padding: _Styles.screenPadding,
             child: Column(
               children: [
-                getProfileDetails(),
+                getProfileDetails(user: user),
                 SizedBox(height: 25),
                 Divider(color: ColorManager.lightGreyColor),
                 SizedBox(height: 25),
-                getProfileCard(),
+                getProfileCard(
+                  userRole: user.userRole ?? '',
+                  userID: user.userID ?? '',
+                ),
               ],
             ),
           ),
@@ -75,9 +88,17 @@ extension _Actions on _ProfileScreenState {
     context.router.push(ChangePasswordRoute());
   }
 
-  void onEditProfilePressed() {
-    //TODO: Pass correct role ltr
-    context.router.push(EditProfileRoute(selectedRole: 'Customer'));
+  void onEditProfilePressed({
+    required String userRole,
+    required String userID,
+  }) async {
+    final result = await context.router.push(
+      EditProfileRoute(userRole: userRole, userID: userID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
   }
 
   void onPointsPressed() {
@@ -96,6 +117,17 @@ extension _Actions on _ProfileScreenState {
     context.router.push(MyListingRoute());
   }
 
+  Future<void> fetchData() async {
+    final user = context.read<UserViewModel>().user;
+
+    await tryCatch(
+      context,
+      () => context.read<UserViewModel>().getUserDetails(
+        userID: user?.userID ?? '',
+      ),
+    );
+  }
+
   Future<void> onSignOutPressed() async {
     final result = await tryLoad(
       context,
@@ -109,13 +141,12 @@ extension _Actions on _ProfileScreenState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ProfileScreenState {
-  Widget getProfileDetails() {
+  Widget getProfileDetails({required UserModel user}) {
     return Row(
       children: [
         CustomProfileImage(
-          imageURL:
-              'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
-          imageSize: 80.0,
+          imageURL: user.profileImageURL ?? '',
+          imageSize: _Styles.imageSize,
         ),
         SizedBox(width: 20),
         Expanded(
@@ -124,7 +155,7 @@ extension _WidgetFactories on _ProfileScreenState {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Username',
+                '${user.firstName ?? '-'} ${user.lastName ?? ''}',
                 style: _Styles.usernameTextStyle,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
@@ -138,7 +169,7 @@ extension _WidgetFactories on _ProfileScreenState {
     );
   }
 
-  Widget getProfileCard() {
+  Widget getProfileCard({required String userRole, required String userID}) {
     return CustomCard(
       padding: _Styles.customCardPadding,
       child: Column(
@@ -147,7 +178,7 @@ extension _WidgetFactories on _ProfileScreenState {
           getProfileCardTop(),
           SizedBox(height: 15),
           Divider(color: ColorManager.lightGreyColor),
-          getProfileCardBottom(),
+          getProfileCardBottom(userRole: userRole, userID: userID),
         ],
       ),
     );
@@ -197,13 +228,17 @@ extension _WidgetFactories on _ProfileScreenState {
     );
   }
 
-  Widget getProfileCardBottom() {
+  Widget getProfileCardBottom({
+    required String userRole,
+    required String userID,
+  }) {
     return Column(
       children: [
         CustomProfileRowElement(
           icon: Icons.person,
           text: 'Edit Profile',
-          onPressed: onEditProfilePressed,
+          onPressed: () =>
+              onEditProfilePressed(userRole: userRole, userID: userID),
         ),
         CustomProfileRowElement(
           icon: Icons.lock,
@@ -237,6 +272,7 @@ class _Styles {
 
   static const iconSize = 35.0;
   static const maxTextLines = 2;
+  static const imageSize = 80.0;
 
   static const customCardPadding = EdgeInsets.all(20);
 

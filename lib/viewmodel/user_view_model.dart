@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
-import 'package:green_cycle_fyp/model/network/my_response.dart';
+import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 
@@ -12,7 +11,10 @@ class UserViewModel extends BaseViewModel {
   final UserRepository userRepository;
 
   bool get isLoggedIn => userRepository.isLoggedIn;
-  UserModel get user => userRepository.user;
+  UserModel? get user => userRepository.user;
+
+  UserModel? _userDetails;
+  UserModel? get userDetails => _userDetails;
 
   Future<bool> signUpWithEmailPassword({
     required String email,
@@ -45,26 +47,24 @@ class UserViewModel extends BaseViewModel {
         );
 
         imageURL = response;
-        print('image url: $imageURL');
       }
-
       User user = response.data;
 
       userModel = UserModel(
         userID: user.uid,
         userRole: userRole,
-        fullName: fullName ?? '-',
-        firstName: firstName ?? '-',
-        lastName: lastName ?? '-',
+        fullName: fullName,
+        firstName: firstName,
+        lastName: lastName,
         emailAddress: email,
         gender: gender,
         phoneNumber: phoneNumber,
         password: password,
-        address: address ?? '-',
-        vehicleType: vehicleType ?? '-',
-        vehiclePlateNumber: vehiclePlateNumber ?? '-',
-        companyName: companyName ?? '-',
-        profileImageURL: imageURL ?? '-',
+        address: address,
+        vehicleType: vehicleType,
+        vehiclePlateNumber: vehiclePlateNumber,
+        companyName: companyName,
+        profileImageURL: imageURL,
         isApproved: false,
         createdDate: DateTime.now(),
       );
@@ -121,5 +121,75 @@ class UserViewModel extends BaseViewModel {
 
     checkError(response);
     return response.data;
+  }
+
+  Future<void> getUserDetails({required String userID}) async {
+    final response = await userRepository.getUserDetails(userID: userID);
+
+    if (response.data is UserModel) {
+      _userDetails = response.data;
+      notifyListeners();
+    }
+
+    checkError(response);
+  }
+
+  Future<bool> updateUser({
+    required String? userID,
+    required String? emailAddress,
+    required String? password,
+    required String? userRole,
+    required String? firstName,
+    required String? lastName,
+    required String? fullName,
+    required String? gender,
+    required String? phoneNumber,
+    required String? address,
+    required String? vehicleType,
+    required String? vehiclePlateNumber,
+    required String? companyName,
+    required bool? isApproved,
+    required DateTime? createdDate,
+    required String? profileImageURL,
+    File? profileImage,
+  }) async {
+    String? imageURL;
+    if (profileImage != null) {
+      final response = await uploadImage(
+        storageRef: 'ProfileImages',
+        image: profileImage,
+      );
+
+      imageURL = response;
+    }
+
+    String? newProfileImageURL = imageURL ?? profileImageURL;
+    print('New Profile Image URL: $newProfileImageURL');
+    UserModel usermodel = UserModel(
+      userID: userID,
+      userRole: userRole,
+      fullName: fullName,
+      firstName: firstName,
+      lastName: lastName,
+      emailAddress: emailAddress,
+      gender: gender,
+      phoneNumber: phoneNumber,
+      password: password,
+      address: address,
+      vehicleType: vehicleType,
+      vehiclePlateNumber: vehiclePlateNumber,
+      companyName: companyName,
+      profileImageURL: newProfileImageURL,
+      isApproved: isApproved ?? false,
+      createdDate: createdDate ?? DateTime.now(),
+    );
+
+    final response = await userRepository.updateUser(
+      userID: userID ?? '',
+      userModel: usermodel,
+    );
+
+    checkError(response);
+    return response.data is ErrorModel;
   }
 }

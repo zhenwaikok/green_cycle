@@ -21,7 +21,7 @@ ErrorModel _$ErrorModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$ErrorModel {
-  int? get statusCode => throw _privateConstructorUsedError;
+  int? get status => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
   /// Serializes this ErrorModel to a JSON map.
@@ -41,7 +41,7 @@ abstract class $ErrorModelCopyWith<$Res> {
     $Res Function(ErrorModel) then,
   ) = _$ErrorModelCopyWithImpl<$Res, ErrorModel>;
   @useResult
-  $Res call({int? statusCode, String? message});
+  $Res call({int? status, String? message});
 }
 
 /// @nodoc
@@ -58,12 +58,12 @@ class _$ErrorModelCopyWithImpl<$Res, $Val extends ErrorModel>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? statusCode = freezed, Object? message = freezed}) {
+  $Res call({Object? status = freezed, Object? message = freezed}) {
     return _then(
       _value.copyWith(
-            statusCode: freezed == statusCode
-                ? _value.statusCode
-                : statusCode // ignore: cast_nullable_to_non_nullable
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
                       as int?,
             message: freezed == message
                 ? _value.message
@@ -84,7 +84,7 @@ abstract class _$$ErrorModelImplCopyWith<$Res>
   ) = __$$ErrorModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? statusCode, String? message});
+  $Res call({int? status, String? message});
 }
 
 /// @nodoc
@@ -100,12 +100,12 @@ class __$$ErrorModelImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? statusCode = freezed, Object? message = freezed}) {
+  $Res call({Object? status = freezed, Object? message = freezed}) {
     return _then(
       _$ErrorModelImpl(
-        statusCode: freezed == statusCode
-            ? _value.statusCode
-            : statusCode // ignore: cast_nullable_to_non_nullable
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
                   as int?,
         message: freezed == message
             ? _value.message
@@ -119,19 +119,19 @@ class __$$ErrorModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ErrorModelImpl implements _ErrorModel {
-  const _$ErrorModelImpl({this.statusCode, this.message});
+  const _$ErrorModelImpl({this.status, this.message});
 
   factory _$ErrorModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ErrorModelImplFromJson(json);
 
   @override
-  final int? statusCode;
+  final int? status;
   @override
   final String? message;
 
   @override
   String toString() {
-    return 'ErrorModel(statusCode: $statusCode, message: $message)';
+    return 'ErrorModel(status: $status, message: $message)';
   }
 
   @override
@@ -139,14 +139,13 @@ class _$ErrorModelImpl implements _ErrorModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ErrorModelImpl &&
-            (identical(other.statusCode, statusCode) ||
-                other.statusCode == statusCode) &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, statusCode, message);
+  int get hashCode => Object.hash(runtimeType, status, message);
 
   /// Create a copy of ErrorModel
   /// with the given fields replaced by the non-null parameter values.
@@ -163,14 +162,14 @@ class _$ErrorModelImpl implements _ErrorModel {
 }
 
 abstract class _ErrorModel implements ErrorModel {
-  const factory _ErrorModel({final int? statusCode, final String? message}) =
+  const factory _ErrorModel({final int? status, final String? message}) =
       _$ErrorModelImpl;
 
   factory _ErrorModel.fromJson(Map<String, dynamic> json) =
       _$ErrorModelImpl.fromJson;
 
   @override
-  int? get statusCode;
+  int? get status;
   @override
   String? get message;
 

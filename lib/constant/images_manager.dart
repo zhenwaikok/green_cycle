@@ -11,4 +11,6 @@ class Images {
   static const marketplaceImage = 'assets/images/marketplace_image.png';
   static const customerHomeImage = 'assets/images/customer_home_image.png';
   static const requestPickupImage = 'assets/images/request_pickup_image.png';
+  static const profilePlaceHolderImage =
+      'assets/images/profile_placeholder.png';
 }

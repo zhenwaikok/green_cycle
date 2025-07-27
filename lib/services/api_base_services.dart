@@ -77,7 +77,7 @@ abstract class BaseServices {
       if (e is DioException && e.response?.data != null) {
         var processedError = ErrorModel.fromJson(
           e.response?.data,
-        ).copyWith(statusCode: e.response?.statusCode);
+        ).copyWith(status: e.response?.statusCode);
 
         print('API Call Error: ${processedError.message}');
 
@@ -101,10 +101,7 @@ abstract class BaseServices {
         print('Error calling API: $message');
 
         return MyResponse.error(
-          ErrorModel(
-            statusCode: e.response?.statusCode,
-            message: message,
-          ).toJson(),
+          ErrorModel(status: e.response?.statusCode, message: message).toJson(),
         );
       }
       return MyResponse.error(e.toString());

@@ -632,11 +632,16 @@ class EditListingRoute extends _i49.PageRouteInfo<void> {
 class EditProfileRoute extends _i49.PageRouteInfo<EditProfileRouteArgs> {
   EditProfileRoute({
     _i50.Key? key,
-    required String selectedRole,
+    required String userRole,
+    required String userID,
     List<_i49.PageRouteInfo>? children,
   }) : super(
          EditProfileRoute.name,
-         args: EditProfileRouteArgs(key: key, selectedRole: selectedRole),
+         args: EditProfileRouteArgs(
+           key: key,
+           userRole: userRole,
+           userID: userID,
+         ),
          initialChildren: children,
        );
 
@@ -648,22 +653,29 @@ class EditProfileRoute extends _i49.PageRouteInfo<EditProfileRouteArgs> {
       final args = data.argsAs<EditProfileRouteArgs>();
       return _i22.EditProfileScreen(
         key: args.key,
-        selectedRole: args.selectedRole,
+        userRole: args.userRole,
+        userID: args.userID,
       );
     },
   );
 }
 
 class EditProfileRouteArgs {
-  const EditProfileRouteArgs({this.key, required this.selectedRole});
+  const EditProfileRouteArgs({
+    this.key,
+    required this.userRole,
+    required this.userID,
+  });
 
   final _i50.Key? key;
 
-  final String selectedRole;
+  final String userRole;
+
+  final String userID;
 
   @override
   String toString() {
-    return 'EditProfileRouteArgs{key: $key, selectedRole: $selectedRole}';
+    return 'EditProfileRouteArgs{key: $key, userRole: $userRole, userID: $userID}';
   }
 }
 
