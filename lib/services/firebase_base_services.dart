@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 
@@ -35,6 +37,44 @@ mixin FirebaseBaseServices {
     } catch (e) {
       debugPrint(e.toString());
       return MyResponse.error('Unexpected error: $e');
+    }
+  }
+
+  Future<MyResponse> uploadImage({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    try {
+      final storageReference = FirebaseStorage.instance.ref();
+
+      if (images != null && images.isNotEmpty) {
+        List<String> imageUrls = [];
+        for (var img in images) {
+          String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+          final imageRef = storageReference.child('$storageRef/$fileName.jpg');
+          final uploadTask = await imageRef.putFile(img);
+          final downloadURL = await uploadTask.ref.getDownloadURL();
+          imageUrls.add(downloadURL);
+        }
+        return MyResponse.complete(imageUrls);
+      }
+
+      if (image != null) {
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        final imageRef = storageReference.child('$storageRef/$fileName.jpg');
+        final uploadTask = await imageRef.putFile(image);
+        final downloadURL = await uploadTask.ref.getDownloadURL();
+        return MyResponse.complete(downloadURL);
+      }
+
+      return MyResponse.error('No image provided for upload.');
+    } on FirebaseException catch (e) {
+      debugPrint(e.message);
+      return MyResponse.error('Firebase error: ${e.message}');
+    } catch (e) {
+      debugPrint('Image upload error: ${e.toString()}');
+      return MyResponse.error('Image upload failed: $e');
     }
   }
 

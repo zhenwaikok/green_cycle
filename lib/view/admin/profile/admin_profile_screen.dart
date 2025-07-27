@@ -98,12 +98,12 @@ extension _WidgetFactories on _AdminProfileScreenState {
         CustomProfileRowElement(
           icon: Icons.person,
           text: 'Edit Profile',
-          onTap: onEditProfilePressed,
+          onPressed: onEditProfilePressed,
         ),
         CustomProfileRowElement(
           icon: Icons.lock,
           text: 'Change Password',
-          onTap: onChangePasswordPressed,
+          onPressed: onChangePasswordPressed,
         ),
 
         CustomProfileRowElement(

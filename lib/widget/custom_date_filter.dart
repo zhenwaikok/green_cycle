@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class CustomDateRangeFilter extends StatefulWidget {
   const CustomDateRangeFilter({
@@ -58,8 +59,8 @@ extension _Actions on _CustomDateRangeFilterState {
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CustomDateRangeFilterState {
   Widget getDateFilter() {
-    return GestureDetector(
-      onTap: pickDateRange,
+    return TouchableOpacity(
+      onPressed: pickDateRange,
       child: IntrinsicWidth(
         child: Container(
           decoration: BoxDecoration(

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class PhotoPicker extends StatefulWidget {
   const PhotoPicker({
@@ -23,8 +24,8 @@ class PhotoPicker extends StatefulWidget {
 class _PhotoPickerState extends State<PhotoPicker> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: widget.onTap,
+    return TouchableOpacity(
+      onPressed: widget.onTap,
       child: Container(
         width: double.infinity,
         height: widget.selectedImage.path.isNotEmpty

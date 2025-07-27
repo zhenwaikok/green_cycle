@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class CheckoutScreen extends StatefulWidget {
@@ -100,7 +101,7 @@ extension _WidgetFactories on _CheckoutScreenState {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('Delivery Address', style: _Styles.greyTextStyle),
-        GestureDetector(child: Text('Edit', style: _Styles.editTextStyle)),
+        TouchableOpacity(child: Text('Edit', style: _Styles.editTextStyle)),
       ],
     );
   }

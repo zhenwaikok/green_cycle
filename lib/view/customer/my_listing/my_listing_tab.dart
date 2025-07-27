@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class MyListingTab extends StatelessWidget {
   const MyListingTab({
@@ -29,8 +30,8 @@ extension _Actions on MyListingTab {}
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on MyListingTab {
   Widget getMyListingCard() {
-    return GestureDetector(
-      onTap: onTap,
+    return TouchableOpacity(
+      onPressed: onTap,
       onLongPress: onLongPress,
       child: Padding(
         padding: _Styles.cardPadding,

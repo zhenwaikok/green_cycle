@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -11,6 +13,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -31,7 +34,6 @@ class SignUpScreen extends StatelessWidget {
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
         ),
-        sharedPreferenceHandler: SharedPreferenceHandler(),
       ),
       child: _SignUpScreen(),
     );
@@ -44,8 +46,8 @@ class _SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<_SignUpScreen> with ErrorHandlingMixin {
-  final List<String> roles = ['Customer', 'Collector'];
-  final List<String> genders = ['Male', 'Female'];
+  final roles = DropDownItems.roles;
+  final genders = DropDownItems.genders;
   String? selectedRole;
   String? selectedGender;
   String? _phoneNumber;
@@ -153,10 +155,21 @@ extension _Actions on _SignUpScreenState {
   }
 
   void onSignUpButtonPressed() async {
-    if (selectedRole == roles[1]) {
-      context.router.push(CollectorAdditionalSignupRoute());
+    final formValid = _formKey.currentState?.saveAndValidate() ?? false;
+
+    if (selectedRole == roles[1] && formValid) {
+      context.router.push(
+        CollectorAdditionalSignupRoute(
+          userRole: userRole,
+          fullName: fullName,
+          emailAddress: email,
+          gender: gender,
+          phoneNumber: phoneNumber,
+          password: password,
+        ),
+      );
     } else {
-      if (_formKey.currentState?.saveAndValidate() ?? false) {
+      if (formValid) {
         final result =
             await tryLoad(
               context,
@@ -177,10 +190,12 @@ extension _Actions on _SignUpScreenState {
               ? context.read<UserViewModel>().user.userRole ?? ''
               : '';
           if (mounted) {
-            context.router.replaceAll([CustomBottomNavBar(userRole: userRole)]);
+            unawaited(WidgetUtil.showSnackBar(text: 'Sign Up Successful'));
+
+            await context.router.replaceAll([
+              CustomBottomNavBar(userRole: userRole),
+            ]);
           }
-        } else {
-          print('Sign Up Failed');
         }
       }
     }

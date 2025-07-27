@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class AdminDashboardScreen extends StatefulWidget {
@@ -131,8 +132,8 @@ extension _WidgetFactories on _AdminDashboardScreenState {
     required String actionText,
     required void Function() onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
+    return TouchableOpacity(
+      onPressed: onTap,
       child: CustomCard(
         padding: _Styles.customCardPadding,
         backgroundColor: ColorManager.primary,

@@ -10,6 +10,7 @@ import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -115,8 +116,8 @@ extension _WidgetFactories on _AwarenessScreenState {
           children: [
             Padding(
               padding: _Styles.awarenessContentPadding,
-              child: GestureDetector(
-                onTap: () => onAwarenessCardPressed(
+              child: TouchableOpacity(
+                onPressed: () => onAwarenessCardPressed(
                   awarenessID: awarenessModel[index].awarenessID ?? 0,
                 ),
                 child: CustomAwarenessCard(

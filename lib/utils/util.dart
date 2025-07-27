@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/adaptive_alert_dialog.dart';
@@ -65,5 +66,19 @@ class WidgetUtil {
         useRootNavigator: false,
       );
     }
+  }
+
+  static Future<void> showSnackBar({required String text}) async {
+    await Fluttertoast.cancel();
+    const duration = 1;
+
+    await Fluttertoast.showToast(
+      msg: text,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: duration,
+      backgroundColor: ColorManager.blackColor.withValues(alpha: 0.5),
+      textColor: ColorManager.whiteColor,
+    );
   }
 }

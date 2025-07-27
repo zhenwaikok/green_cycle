@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class MyPickupTab extends StatefulWidget {
   const MyPickupTab({
@@ -37,7 +38,7 @@ extension _Actions on _MyPickupTabState {}
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MyPickupTabState {
   Widget getPickupCard() {
-    return GestureDetector(
+    return TouchableOpacity(
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(

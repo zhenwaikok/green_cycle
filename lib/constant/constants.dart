@@ -36,11 +36,18 @@ List<SingleChildWidget> providerAssets() => [
         sharePreferenceHandler: SharedPreferenceHandler(),
         userServices: UserServices(),
       ),
-      sharedPreferenceHandler: SharedPreferenceHandler(),
     ),
   ),
 ];
 
 class RegexConstants {
   static final malaysianPhoneRegex = RegExp(r'^(?:\+?60|0)1[0-46-9]\d{7,8}$');
+}
+
+class DropDownItems {
+  DropDownItems._();
+
+  static const List<String> vehicleTypes = ['Car', 'Truck', 'Van'];
+  static const List<String> roles = ['Customer', 'Collector'];
+  static const List<String> genders = ['Male', 'Female'];
 }

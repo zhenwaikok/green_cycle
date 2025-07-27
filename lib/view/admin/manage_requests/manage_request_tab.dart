@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class ManageRequestTab extends StatefulWidget {
   const ManageRequestTab({
@@ -32,8 +33,8 @@ extension _Actions on _ManageRequestTabState {}
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ManageRequestTabState {
   Widget getRequestCard() {
-    return GestureDetector(
-      onTap: widget.onTap,
+    return TouchableOpacity(
+      onPressed: widget.onTap,
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(

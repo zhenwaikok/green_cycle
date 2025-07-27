@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class CollectorHomeScreen extends StatefulWidget {
@@ -125,8 +126,8 @@ extension _WidgetFactories on _CollectorHomeScreenState {
   }
 
   Widget getAvailablePickupRequestSection() {
-    return GestureDetector(
-      onTap: onAvailablePickupRequestPressed,
+    return TouchableOpacity(
+      onPressed: onAvailablePickupRequestPressed,
       child: CustomCard(
         padding: _Styles.customCardPadding,
         child: Row(
@@ -210,7 +211,7 @@ extension _WidgetFactories on _CollectorHomeScreenState {
   }
 
   Widget getPickupCard() {
-    return GestureDetector(
+    return TouchableOpacity(
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
