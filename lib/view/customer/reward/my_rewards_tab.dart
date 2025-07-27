@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class MyRewardsTab extends StatefulWidget {
   const MyRewardsTab({super.key});
@@ -23,8 +24,8 @@ class _MyRewardsTabState extends State<MyRewardsTab> {
       ),
       itemCount: 10,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: showRewardBottomSheet,
+        return TouchableOpacity(
+          onPressed: showRewardBottomSheet,
           child: getMyRewards(),
         );
       },

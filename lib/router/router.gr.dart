@@ -341,18 +341,79 @@ class CheckoutRoute extends _i49.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i11.CollectorAdditionalSignupScreen]
-class CollectorAdditionalSignupRoute extends _i49.PageRouteInfo<void> {
-  const CollectorAdditionalSignupRoute({List<_i49.PageRouteInfo>? children})
-    : super(CollectorAdditionalSignupRoute.name, initialChildren: children);
+class CollectorAdditionalSignupRoute
+    extends _i49.PageRouteInfo<CollectorAdditionalSignupRouteArgs> {
+  CollectorAdditionalSignupRoute({
+    _i50.Key? key,
+    required String userRole,
+    required String fullName,
+    required String emailAddress,
+    required String gender,
+    required String phoneNumber,
+    required String password,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         CollectorAdditionalSignupRoute.name,
+         args: CollectorAdditionalSignupRouteArgs(
+           key: key,
+           userRole: userRole,
+           fullName: fullName,
+           emailAddress: emailAddress,
+           gender: gender,
+           phoneNumber: phoneNumber,
+           password: password,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'CollectorAdditionalSignupRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i11.CollectorAdditionalSignupScreen();
+      final args = data.argsAs<CollectorAdditionalSignupRouteArgs>();
+      return _i11.CollectorAdditionalSignupScreen(
+        key: args.key,
+        userRole: args.userRole,
+        fullName: args.fullName,
+        emailAddress: args.emailAddress,
+        gender: args.gender,
+        phoneNumber: args.phoneNumber,
+        password: args.password,
+      );
     },
   );
+}
+
+class CollectorAdditionalSignupRouteArgs {
+  const CollectorAdditionalSignupRouteArgs({
+    this.key,
+    required this.userRole,
+    required this.fullName,
+    required this.emailAddress,
+    required this.gender,
+    required this.phoneNumber,
+    required this.password,
+  });
+
+  final _i50.Key? key;
+
+  final String userRole;
+
+  final String fullName;
+
+  final String emailAddress;
+
+  final String gender;
+
+  final String phoneNumber;
+
+  final String password;
+
+  @override
+  String toString() {
+    return 'CollectorAdditionalSignupRouteArgs{key: $key, userRole: $userRole, fullName: $fullName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password}';
+  }
 }
 
 /// generated route for

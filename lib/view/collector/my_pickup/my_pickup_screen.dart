@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class MyPickupScreen extends StatefulWidget {
@@ -79,8 +80,8 @@ extension _WidgetFactories on _MyPickupScreenState {
     return ListView.builder(
       itemCount: 10,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: onRequestCardPressed,
+        return TouchableOpacity(
+          onPressed: onRequestCardPressed,
           child: MyPickupTab(
             statusBarColor: statusBarColor,
             status: status,

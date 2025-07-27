@@ -1,17 +1,15 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 
 class UserViewModel extends BaseViewModel {
-  UserViewModel({
-    required this.userRepository,
-    required this.sharedPreferenceHandler,
-  });
+  UserViewModel({required this.userRepository});
 
   final UserRepository userRepository;
-  final SharedPreferenceHandler sharedPreferenceHandler;
 
   bool get isLoggedIn => userRepository.isLoggedIn;
   UserModel get user => userRepository.user;
@@ -29,6 +27,7 @@ class UserViewModel extends BaseViewModel {
     String? vehicleType,
     String? vehiclePlateNumber,
     String? companyName,
+    File? profileImage,
   }) async {
     UserModel userModel;
 
@@ -38,6 +37,17 @@ class UserViewModel extends BaseViewModel {
     );
 
     if (response.data is User) {
+      String? imageURL;
+      if (profileImage != null) {
+        final response = await uploadImage(
+          storageRef: 'ProfileImages',
+          image: profileImage,
+        );
+
+        imageURL = response;
+        print('image url: $imageURL');
+      }
+
       User user = response.data;
 
       userModel = UserModel(
@@ -54,7 +64,7 @@ class UserViewModel extends BaseViewModel {
         vehicleType: vehicleType ?? '-',
         vehiclePlateNumber: vehiclePlateNumber ?? '-',
         companyName: companyName ?? '-',
-        profileImageURL: '-',
+        profileImageURL: imageURL ?? '-',
         isApproved: false,
         createdDate: DateTime.now(),
       );
@@ -96,5 +106,20 @@ class UserViewModel extends BaseViewModel {
     final response = await userRepository.insertUser(userModel: userModel);
     checkError(response);
     return response.data is UserModel;
+  }
+
+  Future<String> uploadImage({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    final response = await userRepository.uploadPhoto(
+      storageRef: storageRef,
+      image: image,
+      images: images,
+    );
+
+    checkError(response);
+    return response.data;
   }
 }

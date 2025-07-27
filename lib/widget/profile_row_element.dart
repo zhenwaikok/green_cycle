@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 class CustomProfileRowElement extends StatelessWidget {
   const CustomProfileRowElement({
@@ -8,20 +9,20 @@ class CustomProfileRowElement extends StatelessWidget {
     required this.icon,
     required this.text,
     this.isSignOut = false,
-    this.onTap,
+    this.onPressed,
   });
 
   final IconData icon;
   final String text;
   final bool? isSignOut;
-  final void Function()? onTap;
+  final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: _Styles.padding,
-      child: GestureDetector(
-        onTap: onTap,
+      child: TouchableOpacity(
+        onPressed: onPressed,
         child: Row(
           children: [
             Icon(

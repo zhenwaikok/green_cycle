@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
@@ -67,5 +69,13 @@ class UserServices extends BaseServices with FirebaseBaseServices {
     String path = '${apiUrl()}/User/$userID';
 
     return callAPI(httpMethod: HttpMethod.delete, path: path);
+  }
+
+  Future<MyResponse> uploadPhoto({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    return uploadImage(storageRef: storageRef, image: image, images: images);
   }
 }

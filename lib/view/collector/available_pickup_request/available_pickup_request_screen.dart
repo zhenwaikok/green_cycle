@@ -9,6 +9,7 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class AvailablePickupRequestScreen extends StatefulWidget {
@@ -100,8 +101,8 @@ extension _WidgetFactories on _AvailablePickupRequestScreenState {
   }
 
   Widget getAvailablePickupRequestItem() {
-    return GestureDetector(
-      onTap: onPickUpItemPressed,
+    return TouchableOpacity(
+      onPressed: onPickUpItemPressed,
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(

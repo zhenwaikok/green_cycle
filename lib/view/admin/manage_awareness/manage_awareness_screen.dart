@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class ManageAwarenessScreen extends StatefulWidget {
@@ -102,8 +103,8 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
           children: [
             Padding(
               padding: _Styles.awarenessContentPadding,
-              child: GestureDetector(
-                onTap: onAwarenessCardPressed,
+              child: TouchableOpacity(
+                onPressed: onAwarenessCardPressed,
                 child: CustomAwarenessCard(
                   imageURL:
                       'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',

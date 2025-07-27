@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_date_picker_field.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class SchedulePickupScreen extends StatefulWidget {
@@ -166,8 +167,8 @@ extension _WidgetFactories on _SchedulePickupScreenState {
   }) {
     final parts = timeRange.split(' - ');
 
-    return GestureDetector(
-      onTap: onTap,
+    return TouchableOpacity(
+      onPressed: onTap,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(_Styles.borderRadius),

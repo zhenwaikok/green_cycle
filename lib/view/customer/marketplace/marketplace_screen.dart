@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class MarketplaceScreen extends StatefulWidget {
@@ -109,8 +110,8 @@ extension _WidgetFactories on _MarketplaceScreenState {
   Widget getCategoryCard({required String text}) {
     return Padding(
       padding: _Styles.categoryCardPadding,
-      child: GestureDetector(
-        onTap: onCategoryCardPressed,
+      child: TouchableOpacity(
+        onPressed: onCategoryCardPressed,
         child: Container(
           padding: _Styles.categoriesPadding,
           decoration: BoxDecoration(
@@ -152,8 +153,8 @@ extension _WidgetFactories on _MarketplaceScreenState {
           ),
           itemCount: 7,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: onItemPressed,
+            return TouchableOpacity(
+              onPressed: onItemPressed,
               child: SecondHandItem(
                 imageURL:
                     'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',

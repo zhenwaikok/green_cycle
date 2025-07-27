@@ -13,6 +13,7 @@ import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
@@ -27,7 +28,6 @@ class ProfileScreen extends StatelessWidget {
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
         ),
-        sharedPreferenceHandler: SharedPreferenceHandler(),
       ),
       child: _ProfileScreen(),
     );
@@ -160,17 +160,17 @@ extension _WidgetFactories on _ProfileScreenState {
         getProfileElement(
           icon: Icons.card_giftcard_outlined,
           text: 'Rewards',
-          onTap: onRewardsPressed,
+          onPressed: onRewardsPressed,
         ),
         getProfileElement(
           icon: FontAwesomeIcons.coins,
           text: 'Points',
-          onTap: onPointsPressed,
+          onPressed: onPointsPressed,
         ),
         getProfileElement(
           icon: Icons.archive_rounded,
           text: 'My Listing',
-          onTap: onMyListingPressed,
+          onPressed: onMyListingPressed,
         ),
       ],
     );
@@ -179,10 +179,10 @@ extension _WidgetFactories on _ProfileScreenState {
   Widget getProfileElement({
     required IconData icon,
     required String text,
-    void Function()? onTap,
+    void Function()? onPressed,
   }) {
-    return GestureDetector(
-      onTap: onTap,
+    return TouchableOpacity(
+      onPressed: onPressed,
       child: Column(
         children: [
           Icon(icon, color: ColorManager.primary, size: _Styles.iconSize),
@@ -203,30 +203,28 @@ extension _WidgetFactories on _ProfileScreenState {
         CustomProfileRowElement(
           icon: Icons.person,
           text: 'Edit Profile',
-          onTap: onEditProfilePressed,
+          onPressed: onEditProfilePressed,
         ),
         CustomProfileRowElement(
           icon: Icons.lock,
           text: 'Change Password',
-          onTap: onChangePasswordPressed,
+          onPressed: onChangePasswordPressed,
         ),
         CustomProfileRowElement(
           icon: Icons.history,
           text: 'Completed Recycle',
-          onTap: onCompletedRequestPressed,
+          onPressed: onCompletedRequestPressed,
         ),
         CustomProfileRowElement(
           icon: Icons.shopping_bag,
           text: 'My Purchases',
-          onTap: onMyPurchasesPressed,
+          onPressed: onMyPurchasesPressed,
         ),
-        GestureDetector(
-          onTap: onSignOutPressed,
-          child: CustomProfileRowElement(
-            icon: Icons.logout,
-            text: 'Sign Out',
-            isSignOut: true,
-          ),
+        CustomProfileRowElement(
+          icon: Icons.logout,
+          text: 'Sign Out',
+          isSignOut: true,
+          onPressed: onSignOutPressed,
         ),
       ],
     );

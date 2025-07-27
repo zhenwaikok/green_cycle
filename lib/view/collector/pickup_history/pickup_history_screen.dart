@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/widget/custom_date_filter.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class PickupHistoryScreen extends StatefulWidget {
@@ -106,8 +107,8 @@ extension _WidgetFactories on _PickupHistoryScreenState {
   }
 
   Widget getRequestCard() {
-    return GestureDetector(
-      onTap: () {},
+    return TouchableOpacity(
+      onPressed: () {},
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(

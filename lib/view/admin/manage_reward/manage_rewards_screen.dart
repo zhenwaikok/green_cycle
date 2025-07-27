@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
 class ManageRewardsScreen extends StatefulWidget {
@@ -128,8 +129,8 @@ extension _WidgetFactories on _ManageRewardsScreenState {
       shrinkWrap: true,
       itemCount: 10,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: onRewardCardPressed,
+        return TouchableOpacity(
+          onPressed: onRewardCardPressed,
           child: getRewardCard(),
         );
       },

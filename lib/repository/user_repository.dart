@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
@@ -108,6 +110,19 @@ class UserRepository {
       final resultModel = UserModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
+    return response;
+  }
+
+  Future<MyResponse> uploadPhoto({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    final response = await userServices.uploadPhoto(
+      storageRef: storageRef,
+      image: image,
+      images: images,
+    );
     return response;
   }
 }

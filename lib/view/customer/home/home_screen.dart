@@ -13,6 +13,7 @@ import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
@@ -226,8 +227,8 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   }
 
   Widget getStartSellingSection() {
-    return GestureDetector(
-      onTap: onStartSellingButtonPressed,
+    return TouchableOpacity(
+      onPressed: onStartSellingButtonPressed,
       child: CustomCard(
         padding: _Styles.customCardPadding,
         child: Row(
@@ -289,8 +290,8 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   }
 
   Widget getRequestCard() {
-    return GestureDetector(
-      onTap: () {},
+    return TouchableOpacity(
+      onPressed: () {},
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
@@ -428,8 +429,8 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             padding: _Styles.productCardPadding,
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
-              child: GestureDetector(
-                onTap: () {},
+              child: TouchableOpacity(
+                onPressed: () {},
                 child: SecondHandItem(
                   imageURL:
                       'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
@@ -484,8 +485,8 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             padding: _Styles.productCardPadding,
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
-              child: GestureDetector(
-                onTap: () => onNewsCardPressed(
+              child: TouchableOpacity(
+                onPressed: () => onNewsCardPressed(
                   awarenessID: awarenessList[index].awarenessID ?? 0,
                 ),
                 child: SizedBox(

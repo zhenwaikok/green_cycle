@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -10,6 +12,7 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
@@ -27,7 +30,6 @@ class LoginScreen extends StatelessWidget {
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
         ),
-        sharedPreferenceHandler: SharedPreferenceHandler(),
       ),
       child: _LoginScreen(),
     );
@@ -107,10 +109,11 @@ extension _Actions on _LoginScreenState {
           false;
       if (result) {
         if (mounted) {
-          context.router.replaceAll([CustomBottomNavBar(userRole: userRole)]);
+          unawaited(WidgetUtil.showSnackBar(text: 'Sign In Successful'));
+          await context.router.replaceAll([
+            CustomBottomNavBar(userRole: userRole),
+          ]);
         }
-      } else {
-        print('Sign In Failed');
       }
     }
   }
