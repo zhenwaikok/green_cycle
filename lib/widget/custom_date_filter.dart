@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
@@ -78,13 +79,21 @@ extension _WidgetFactories on _CustomDateRangeFilterState {
 
   Widget getDateText() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           widget.selectedRange == null
               ? 'Date'
               : '${WidgetUtil.dateFormatter(widget.selectedRange?.start ?? DateTime.now())} - ${WidgetUtil.dateFormatter(widget.selectedRange?.end ?? DateTime.now())}',
+
+          style: _Styles.dateTextStyle,
         ),
-        Icon(Icons.arrow_drop_down),
+        SizedBox(width: 10),
+        Icon(
+          Icons.arrow_drop_down,
+          color: ColorManager.blackColor,
+          size: _Styles.iconSize,
+        ),
       ],
     );
   }
@@ -95,9 +104,16 @@ class _Styles {
   _Styles._();
 
   static const borderRadius = 10.0;
+  static const iconSize = 25.0;
 
   static const dateFilterPadding = EdgeInsets.symmetric(
     horizontal: 15,
     vertical: 10,
+  );
+
+  static const dateTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
   );
 }

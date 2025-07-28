@@ -33,7 +33,7 @@ mixin FirebaseBaseServices {
       }
     } on FirebaseAuthException catch (e) {
       debugPrint(e.message);
-      return MyResponse.error(_handleFirebaseAuthError(e));
+      return MyResponse.error(_handleFirebaseAuthError(e, false));
     } catch (e) {
       debugPrint(e.toString());
       return MyResponse.error('Unexpected error: $e');
@@ -78,7 +78,40 @@ mixin FirebaseBaseServices {
     }
   }
 
-  String _handleFirebaseAuthError(FirebaseAuthException e) {
+  Future<MyResponse> updatePassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final credential = EmailAuthProvider.credential(
+          email: user.email ?? '',
+          password: oldPassword,
+        );
+        final reauthenticated = await user.reauthenticateWithCredential(
+          credential,
+        );
+        if (reauthenticated.user != null) {
+          await user.updatePassword(newPassword);
+          return MyResponse.complete(true);
+        }
+      }
+      return MyResponse.error(false);
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.message);
+      return MyResponse.error(_handleFirebaseAuthError(e, true));
+    } catch (e) {
+      debugPrint('Update password error: ${e.toString()}');
+      return MyResponse.error('Unexpected error: $e');
+    }
+  }
+
+  String _handleFirebaseAuthError(
+    FirebaseAuthException e,
+    bool isUpdatePassword,
+  ) {
     switch (e.code) {
       case 'invalid-email':
         return 'Invalid email format';
@@ -93,7 +126,9 @@ mixin FirebaseBaseServices {
       case 'weak-password':
         return 'The password is too weak';
       case 'invalid-credential':
-        return 'Incorrect email or password';
+        return isUpdatePassword
+            ? 'Incorrect current password, please try again'
+            : 'Invalid email or password';
       default:
         return 'Authentication error: ${e.message}';
     }

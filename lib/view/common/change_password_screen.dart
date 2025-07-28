@@ -1,31 +1,57 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class ChangePasswordScreen extends StatefulWidget {
+class ChangePasswordScreen extends StatelessWidget {
   const ChangePasswordScreen({super.key});
 
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => UserViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _ChangePasswordScreen(),
+    );
+  }
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+class _ChangePasswordScreen extends StatefulWidget {
+  @override
+  State<_ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<_ChangePasswordScreen>
+    with ErrorHandlingMixin {
+  final _formKey = GlobalKey<FormBuilderState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: _Styles.screenPadding,
-        child: CustomButton(
-          text: 'Save',
-          textColor: ColorManager.whiteColor,
-          onPressed: () {},
-        ),
+        child: getSaveButton(),
       ),
       appBar: CustomAppBar(
         title: 'Change Password',
@@ -36,12 +62,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: SingleChildScrollView(
           child: Padding(
             padding: _Styles.screenPadding,
-            child: Column(
-              children: [
-                getChangePasswordLogoText(),
-                SizedBox(height: 40),
-                getPasswordTextFields(),
-              ],
+            child: FormBuilder(
+              key: _formKey,
+              child: Column(
+                children: [
+                  getChangePasswordLogoText(),
+                  SizedBox(height: 40),
+                  getPasswordTextFields(),
+                ],
+              ),
             ),
           ),
         ),
@@ -50,10 +79,46 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 }
 
+// * ---------------------------- Helper ----------------------------
+extension _Helpers on _ChangePasswordScreenState {
+  String get currentPassword => _formKey
+      .currentState
+      ?.fields[ChangePasswordFormFieldsEnum.currentPassword.name]
+      ?.value;
+
+  String get newPassword => _formKey
+      .currentState
+      ?.fields[ChangePasswordFormFieldsEnum.newPassword.name]
+      ?.value;
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ChangePasswordScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
+  }
+
+  void onSaveButtonPressed() async {
+    final formValid = _formKey.currentState?.saveAndValidate() ?? false;
+    if (formValid) {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<UserViewModel>().updateAccountPassword(
+              oldPassword: currentPassword,
+              newPassword: newPassword,
+            ),
+          ) ??
+          false;
+
+      if (result) {
+        print('Password changed successfully');
+        unawaited(
+          WidgetUtil.showSnackBar(text: 'Password changed successfully'),
+        );
+        if (mounted) await context.router.maybePop();
+      }
+    }
   }
 }
 
@@ -83,26 +148,55 @@ extension _WidgetFactories on _ChangePasswordScreenState {
           fontSize: 15,
           color: ColorManager.blackColor,
           title: 'Current Password',
-          formName: ChangePassowrdFormFieldsEnum.currentPassword.name,
+          formName: ChangePasswordFormFieldsEnum.currentPassword.name,
           prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(6),
+          ]),
         ),
         SizedBox(height: 20),
         CustomTextField(
           fontSize: 15,
           color: ColorManager.blackColor,
           title: 'New Password',
-          formName: ChangePassowrdFormFieldsEnum.newPassword.name,
+          formName: ChangePasswordFormFieldsEnum.newPassword.name,
           prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(6),
+          ]),
         ),
         SizedBox(height: 20),
         CustomTextField(
           fontSize: 15,
           color: ColorManager.blackColor,
           title: 'Confirm New Password',
-          formName: ChangePassowrdFormFieldsEnum.confirmNewPassword.name,
+          formName: ChangePasswordFormFieldsEnum.confirmNewPassword.name,
           prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            (value) {
+              final password = _formKey
+                  .currentState
+                  ?.fields[ChangePasswordFormFieldsEnum.newPassword.name]
+                  ?.value;
+              if (password != value) {
+                return 'Password does not match';
+              }
+              return null;
+            },
+          ]),
         ),
       ],
+    );
+  }
+
+  Widget getSaveButton() {
+    return CustomButton(
+      text: 'Save',
+      textColor: ColorManager.whiteColor,
+      onPressed: onSaveButtonPressed,
     );
   }
 }

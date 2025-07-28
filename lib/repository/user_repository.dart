@@ -130,4 +130,15 @@ class UserRepository {
     );
     return response;
   }
+
+  Future<MyResponse> updateAccountPassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final response = await userServices.updateAccountPassword(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    );
+    return response;
+  }
 }
