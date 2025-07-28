@@ -7,6 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
@@ -42,7 +43,6 @@ class _LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<_LoginScreen> with ErrorHandlingMixin {
-  final userRole = 'Customer';
   List<PageRouteInfo> routes = [];
   List<BottomNavigationBarItem> navBarItems = [];
   final _formKey = GlobalKey<FormBuilderState>();
@@ -98,20 +98,18 @@ extension _Helper on _LoginScreenState {
 extension _Actions on _LoginScreenState {
   void onSignInButtonPressed() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final result =
-          await tryLoad(
-            context,
-            () => context.read<UserViewModel>().loginWithEmailPassword(
-              email: email,
-              password: password,
-            ),
-          ) ??
-          false;
-      if (result) {
+      final userDetails = await tryLoad(
+        context,
+        () => context.read<UserViewModel>().loginWithEmailPassword(
+          email: email,
+          password: password,
+        ),
+      );
+      if (userDetails != null) {
         if (mounted) {
           unawaited(WidgetUtil.showSnackBar(text: 'Sign In Successful'));
           await context.router.replaceAll([
-            CustomBottomNavBar(userRole: userRole),
+            CustomBottomNavBar(userRole: userDetails.userRole ?? ''),
           ]);
         }
       }

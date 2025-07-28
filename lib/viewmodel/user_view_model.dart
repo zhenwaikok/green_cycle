@@ -78,7 +78,7 @@ class UserViewModel extends BaseViewModel {
     return false;
   }
 
-  Future<bool> loginWithEmailPassword({
+  Future<UserModel?> loginWithEmailPassword({
     required String email,
     required String password,
   }) async {
@@ -88,11 +88,12 @@ class UserViewModel extends BaseViewModel {
     );
 
     if (response.data is User) {
-      //get user details from API
+      await getUserDetails(userID: response.data.uid);
+      return _userDetails;
     }
 
     checkError(response);
-    return response.data is User;
+    return null;
   }
 
   Future<bool> logout() async {
@@ -106,21 +107,6 @@ class UserViewModel extends BaseViewModel {
     final response = await userRepository.insertUser(userModel: userModel);
     checkError(response);
     return response.data is UserModel;
-  }
-
-  Future<String> uploadImage({
-    required String storageRef,
-    File? image,
-    List<File>? images,
-  }) async {
-    final response = await userRepository.uploadPhoto(
-      storageRef: storageRef,
-      image: image,
-      images: images,
-    );
-
-    checkError(response);
-    return response.data;
   }
 
   Future<void> getUserDetails({required String userID}) async {
@@ -191,5 +177,58 @@ class UserViewModel extends BaseViewModel {
 
     checkError(response);
     return response.data is ErrorModel;
+  }
+
+  Future<String> uploadImage({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    final response = await userRepository.uploadPhoto(
+      storageRef: storageRef,
+      image: image,
+      images: images,
+    );
+
+    checkError(response);
+    return response.data;
+  }
+
+  Future<bool> updateAccountPassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    final updatePasswordResponse = await userRepository.updateAccountPassword(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    );
+
+    checkError(updatePasswordResponse);
+    print('updatePasswordResponse: ${updatePasswordResponse.data}');
+
+    if (updatePasswordResponse.data) {
+      final updateUserResponse = await updateUser(
+        userID: user?.userID,
+        emailAddress: user?.emailAddress,
+        password: newPassword,
+        userRole: user?.userRole,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        fullName: user?.fullName,
+        gender: user?.gender,
+        phoneNumber: user?.phoneNumber,
+        address: user?.address,
+        vehicleType: user?.vehicleType,
+        vehiclePlateNumber: user?.vehiclePlateNumber,
+        companyName: user?.companyName,
+        profileImageURL: user?.profileImageURL,
+        isApproved: user?.isApproved,
+        createdDate: user?.createdDate,
+      );
+
+      return updateUserResponse;
+    }
+
+    return false;
   }
 }

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
@@ -41,7 +42,18 @@ class _CollectorProfileScreen extends StatefulWidget {
 class _CollectorProfileScreenState extends State<_CollectorProfileScreen>
     with ErrorHandlingMixin {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user =
+        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Profile', isBackButtonVisible: false),
       body: SafeArea(
@@ -51,13 +63,20 @@ class _CollectorProfileScreenState extends State<_CollectorProfileScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getProfileDetails(),
+                getProfileDetails(
+                  imageURL: user.profileImageURL ?? '',
+                  fullName: user.fullName ?? '-',
+                  userRole: user.userRole ?? '-',
+                ),
                 SizedBox(height: 25),
                 Divider(color: ColorManager.lightGreyColor),
                 SizedBox(height: 25),
                 getCollectorStatsCard(),
                 SizedBox(height: 30),
-                getProfileCard(),
+                getProfileCard(
+                  userRole: user.userRole ?? '',
+                  userID: user.userID ?? '',
+                ),
               ],
             ),
           ),
@@ -73,9 +92,17 @@ extension _Actions on _CollectorProfileScreenState {
     context.router.push(ChangePasswordRoute());
   }
 
-  void onEditProfilePressed() {
-    //TODO: Pass correct role ltr
-    // context.router.push(EditProfileRoute(selectedRole: 'Collector'));
+  void onEditProfilePressed({
+    required String userRole,
+    required String userID,
+  }) async {
+    final result = await context.router.push(
+      EditProfileRoute(userRole: userRole, userID: userID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
   }
 
   void onPickupHistoryPressed() {
@@ -91,18 +118,29 @@ extension _Actions on _CollectorProfileScreenState {
       if (mounted) context.router.replaceAll([LoginRoute()]);
     }
   }
+
+  Future<void> fetchData() async {
+    final user = context.read<UserViewModel>().user;
+
+    await tryCatch(
+      context,
+      () => context.read<UserViewModel>().getUserDetails(
+        userID: user?.userID ?? '',
+      ),
+    );
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CollectorProfileScreenState {
-  Widget getProfileDetails() {
+  Widget getProfileDetails({
+    required String imageURL,
+    required String fullName,
+    required String userRole,
+  }) {
     return Row(
       children: [
-        CustomProfileImage(
-          imageURL:
-              'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
-          imageSize: 80.0,
-        ),
+        CustomProfileImage(imageURL: imageURL, imageSize: 80.0),
         SizedBox(width: 20),
         Expanded(
           child: Column(
@@ -110,13 +148,13 @@ extension _WidgetFactories on _CollectorProfileScreenState {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Username',
+                fullName,
                 style: _Styles.usernameTextStyle,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 15),
-              Text('Collector', style: _Styles.collectorTextStyle),
+              Text(userRole, style: _Styles.collectorTextStyle),
             ],
           ),
         ),
@@ -158,20 +196,24 @@ extension _WidgetFactories on _CollectorProfileScreenState {
     );
   }
 
-  Widget getProfileCard() {
+  Widget getProfileCard({required String userRole, required String userID}) {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      child: getProfileCardItems(),
+      child: getProfileCardItems(userRole: userRole, userID: userID),
     );
   }
 
-  Widget getProfileCardItems() {
+  Widget getProfileCardItems({
+    required String userRole,
+    required String userID,
+  }) {
     return Column(
       children: [
         CustomProfileRowElement(
           icon: Icons.person,
           text: 'Edit Profile',
-          onPressed: onEditProfilePressed,
+          onPressed: () =>
+              onEditProfilePressed(userRole: userRole, userID: userID),
         ),
         CustomProfileRowElement(
           icon: Icons.lock,

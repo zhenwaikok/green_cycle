@@ -78,4 +78,11 @@ class UserServices extends BaseServices with FirebaseBaseServices {
   }) async {
     return uploadImage(storageRef: storageRef, image: image, images: images);
   }
+
+  Future<MyResponse> updateAccountPassword({
+    required String oldPassword,
+    required String newPassword,
+  }) async {
+    return updatePassword(oldPassword: oldPassword, newPassword: newPassword);
+  }
 }

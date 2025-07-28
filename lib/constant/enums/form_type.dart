@@ -16,7 +16,7 @@ enum SignUpFormFieldsEnum {
   facePhoto,
 }
 
-enum ChangePassowrdFormFieldsEnum {
+enum ChangePasswordFormFieldsEnum {
   currentPassword,
   newPassword,
   confirmNewPassword,
