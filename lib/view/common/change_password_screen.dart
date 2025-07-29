@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
@@ -30,6 +31,9 @@ class ChangePasswordScreen extends StatelessWidget {
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
+        ),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _ChangePasswordScreen(),

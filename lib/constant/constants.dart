@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
@@ -25,6 +28,9 @@ List<SingleChildWidget> providerAssets() => [
       awarenessRepository: AwarenessRepository(
         awarenessServices: AwarenessServices(),
       ),
+      firebaseRepository: FirebaseRepository(
+        firebaseServices: FirebaseServices(),
+      ),
     ),
   ),
   ChangeNotifierProvider.value(
@@ -35,6 +41,9 @@ List<SingleChildWidget> providerAssets() => [
       userRepository: UserRepository(
         sharePreferenceHandler: SharedPreferenceHandler(),
         userServices: UserServices(),
+      ),
+      firebaseRepository: FirebaseRepository(
+        firebaseServices: FirebaseServices(),
       ),
     ),
   ),

@@ -2,13 +2,18 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/error/error_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 
 class UserViewModel extends BaseViewModel {
-  UserViewModel({required this.userRepository});
+  UserViewModel({
+    required this.userRepository,
+    required this.firebaseRepository,
+  });
 
   final UserRepository userRepository;
+  final FirebaseRepository firebaseRepository;
 
   bool get isLoggedIn => userRepository.isLoggedIn;
   UserModel? get user => userRepository.user;
@@ -184,7 +189,7 @@ class UserViewModel extends BaseViewModel {
     File? image,
     List<File>? images,
   }) async {
-    final response = await userRepository.uploadPhoto(
+    final response = await firebaseRepository.uploadPhoto(
       storageRef: storageRef,
       image: image,
       images: images,

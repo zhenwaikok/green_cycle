@@ -1,12 +1,21 @@
+import 'dart:io';
+
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 
 class AwarenessViewModel extends BaseViewModel {
-  AwarenessViewModel({required this.awarenessRepository});
+  AwarenessViewModel({
+    required this.awarenessRepository,
+    required this.firebaseRepository,
+  });
   final AwarenessRepository awarenessRepository;
+  final FirebaseRepository firebaseRepository;
 
-  AwarenessModel? awarenessDetails;
+  AwarenessModel? _awarenessDetails;
+  AwarenessModel? get awarenessDetails => _awarenessDetails;
 
   Future<List<AwarenessModel>> getAwarenessList() async {
     final response = await awarenessRepository.getAllAwareness();
@@ -20,49 +29,95 @@ class AwarenessViewModel extends BaseViewModel {
     return [];
   }
 
-  Future<AwarenessModel> getAwarenessDetails({required int awarenessID}) async {
+  Future<void> getAwarenessDetails({required int awarenessID}) async {
     final response = await awarenessRepository.getAwarenessDetails(
       awarenessID: awarenessID,
     );
     if (response.data is AwarenessModel) {
-      return response.data;
+      _awarenessDetails = response.data;
+      notifyListeners();
     }
 
     checkError(response);
-    return AwarenessModel();
   }
 
-  // Future<bool> addAwareness({
-  //   required String awarenessTitle,
-  //   required String awarenessContent,
-  // }) async {
-  //   notify(MyResponse.loading());
+  Future<bool> addAwareness({
+    required String awarenessTitle,
+    required String awarenessContent,
+    required File? image,
+  }) async {
+    String? imageURL;
+    final uploadImageResponse = await uploadImage(
+      storageRef: 'AwarenessImages',
+      image: image,
+    );
+    imageURL = uploadImageResponse;
 
-  //   try {
-  //     //upload image to firebase then get image url first
+    AwarenessModel awarenessModel = AwarenessModel(
+      awarenessTitle: awarenessTitle,
+      awarenessContent: awarenessContent,
+      awarenessImageURL: imageURL,
+      createdDate: DateTime.now(),
+    );
 
-  //     final response = await _awarenessRepository.insertAwareness(
-  //       awarenessModel: AwarenessModel(
-  //         awarenessImageURL: '',
-  //         awarenessTitle: awarenessTitle,
-  //         awarenessContent: awarenessContent,
-  //         createdDate: DateTime.now(),
-  //       ),
-  //     );
+    final response = await awarenessRepository.insertAwareness(
+      awarenessModel: awarenessModel,
+    );
 
-  //     if (response.data is AwarenessModel) {
-  //       notify(MyResponse.complete(response.data));
-  //       return true;
-  //     } else if (response.status == ResponseStatus.error) {
-  //       notify(MyResponse.error(response.error));
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     debugPrint('error: $e');
-  //     notify(MyResponse.error(e.toString()));
-  //     return false;
-  //   }
+    checkError(response);
+    return response.data is AwarenessModel;
+  }
 
-  //   return false;
-  // }
+  Future<bool> updateAwareness({
+    required int awarenessID,
+    required String awarenessTitle,
+    required String awarenessContent,
+    File? awarenessImage,
+  }) async {
+    String? imageURL;
+    if (awarenessImage != null) {
+      final response = await uploadImage(
+        storageRef: 'AwarenessImages',
+        image: awarenessImage,
+      );
+
+      imageURL = response;
+    }
+
+    String? newAwarenessImageURL =
+        imageURL ?? _awarenessDetails?.awarenessImageURL;
+
+    AwarenessModel awarenessModel = AwarenessModel(
+      awarenessID: awarenessID,
+      awarenessTitle: awarenessTitle,
+      awarenessContent: awarenessContent,
+      awarenessImageURL: newAwarenessImageURL,
+      createdDate: _awarenessDetails?.createdDate,
+    );
+
+    final response = await awarenessRepository.updateAwareness(
+      awarenessID: awarenessID,
+      awarenessModel: awarenessModel,
+    );
+
+    print('response: ${response.data}');
+
+    checkError(response);
+    return response.data is ErrorModel;
+  }
+
+  Future<String> uploadImage({
+    required String storageRef,
+    File? image,
+    List<File>? images,
+  }) async {
+    final response = await firebaseRepository.uploadPhoto(
+      storageRef: storageRef,
+      image: image,
+      images: images,
+    );
+
+    checkError(response);
+    return response.data;
+  }
 }

@@ -105,10 +105,15 @@ class AddOrEditAwarenessRoute
   AddOrEditAwarenessRoute({
     _i50.Key? key,
     required bool isEdit,
+    int? awarenessId,
     List<_i49.PageRouteInfo>? children,
   }) : super(
          AddOrEditAwarenessRoute.name,
-         args: AddOrEditAwarenessRouteArgs(key: key, isEdit: isEdit),
+         args: AddOrEditAwarenessRouteArgs(
+           key: key,
+           isEdit: isEdit,
+           awarenessId: awarenessId,
+         ),
          initialChildren: children,
        );
 
@@ -118,21 +123,31 @@ class AddOrEditAwarenessRoute
     name,
     builder: (data) {
       final args = data.argsAs<AddOrEditAwarenessRouteArgs>();
-      return _i1.AddOrEditAwarenessScreen(key: args.key, isEdit: args.isEdit);
+      return _i1.AddOrEditAwarenessScreen(
+        key: args.key,
+        isEdit: args.isEdit,
+        awarenessId: args.awarenessId,
+      );
     },
   );
 }
 
 class AddOrEditAwarenessRouteArgs {
-  const AddOrEditAwarenessRouteArgs({this.key, required this.isEdit});
+  const AddOrEditAwarenessRouteArgs({
+    this.key,
+    required this.isEdit,
+    this.awarenessId,
+  });
 
   final _i50.Key? key;
 
   final bool isEdit;
 
+  final int? awarenessId;
+
   @override
   String toString() {
-    return 'AddOrEditAwarenessRouteArgs{key: $key, isEdit: $isEdit}';
+    return 'AddOrEditAwarenessRouteArgs{key: $key, isEdit: $isEdit, awarenessId: $awarenessId}';
   }
 }
 

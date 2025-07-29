@@ -77,7 +77,7 @@ class WidgetUtil {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: duration,
-      backgroundColor: ColorManager.primary,
+      backgroundColor: ColorManager.blackColor.withValues(alpha: 0.5),
       textColor: ColorManager.whiteColor,
       fontSize: 15.0,
     );
