@@ -506,7 +506,9 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                           Text(
                             awarenessList[index].awarenessTitle ?? '',
                             style: _Styles.newsTitleTextStyle,
+                            maxLines: _Styles.maxTextLines,
                           ),
+                          SizedBox(height: 5),
                           Text(
                             WidgetUtil.dateFormatter(
                               awarenessList[index].createdDate ??
