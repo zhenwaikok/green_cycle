@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -8,8 +9,10 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
@@ -49,6 +52,9 @@ class CollectorAdditionalSignupScreen extends StatelessWidget {
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
+        ),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _CollectorAdditionalSignupScreen(
@@ -298,12 +304,11 @@ class _Styles {
     color: ColorManager.primary,
   );
 
-  static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);
-
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
   );
+  static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);
 
   static const errorTextPadding = EdgeInsets.only(top: 5);
 }

@@ -118,19 +118,6 @@ class UserRepository {
     return response;
   }
 
-  Future<MyResponse> uploadPhoto({
-    required String storageRef,
-    File? image,
-    List<File>? images,
-  }) async {
-    final response = await userServices.uploadPhoto(
-      storageRef: storageRef,
-      image: image,
-      images: images,
-    );
-    return response;
-  }
-
   Future<MyResponse> updateAccountPassword({
     required String oldPassword,
     required String newPassword,

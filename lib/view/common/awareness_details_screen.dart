@@ -29,8 +29,6 @@ class AwarenessDetailsScreen extends StatefulWidget {
 
 class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
     with ErrorHandlingMixin {
-  AwarenessModel _awarenessDetails = AwarenessModel();
-
   @override
   void initState() {
     super.initState();
@@ -39,14 +37,12 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
     });
   }
 
-  void _setState(VoidCallback fn) {
-    if (mounted) {
-      setState(fn);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final awarenessDetails = context.select(
+      (AwarenessViewModel vm) => vm.awarenessDetails,
+    );
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Awareness Details',
@@ -64,7 +60,9 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
         child: SingleChildScrollView(
           child: Padding(
             padding: _Styles.screenPadding,
-            child: getAwarenessDetails(awarenessModel: _awarenessDetails),
+            child: getAwarenessDetails(
+              awarenessModel: awarenessDetails ?? AwarenessModel(),
+            ),
           ),
         ),
       ),
@@ -75,23 +73,32 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _AwarenessDetailsScreenState {
   Future<void> initialLoad() async {
-    final awarenessDetails = await tryLoad(
+    await tryLoad(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessDetails(
         awarenessID: widget.awarenessId,
       ),
     );
-    if (awarenessDetails != null) {
-      _setState(() => _awarenessDetails = awarenessDetails);
-    }
   }
 
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(true);
   }
 
-  void onEditButtonPressed() {
-    context.router.push(AddOrEditAwarenessRoute(isEdit: true));
+  void onEditButtonPressed() async {
+    await context.router.maybePop();
+    final result = mounted
+        ? await context.router.push(
+            AddOrEditAwarenessRoute(
+              isEdit: true,
+              awarenessId: widget.awarenessId,
+            ),
+          )
+        : null;
+
+    if (result == true && mounted) {
+      initialLoad();
+    }
   }
 
   void onMoreButtonPressed() async {

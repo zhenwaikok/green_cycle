@@ -53,7 +53,11 @@ enum RequestForPickupFormFieldsEnum {
   conditionInfo,
 }
 
-enum AddEditAwarenessFormFieldsEnum { awarenessTitle, awarenessContent }
+enum AddEditAwarenessFormFieldsEnum {
+  awarenessTitle,
+  awarenessContent,
+  awarenessPhoto,
+}
 
 enum AddEditRewardFormFieldsEnum { rewardTitle, rewardDescription }
 

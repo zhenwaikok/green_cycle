@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
@@ -24,6 +27,9 @@ class AwarenessScreen extends StatelessWidget {
       create: (_) => AwarenessViewModel(
         awarenessRepository: AwarenessRepository(
           awarenessServices: AwarenessServices(),
+        ),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _AwarenessScreen(),
@@ -99,9 +105,13 @@ extension _Actions on _AwarenessScreenState {
   }
 
   void onAwarenessCardPressed({required int awarenessID}) {
-    //TODO: get user role from shared preferences
+    final user = context.read<UserViewModel>().user;
+
     context.router.push(
-      AwarenessDetailsRoute(userRole: 'Customer', awarenessId: awarenessID),
+      AwarenessDetailsRoute(
+        userRole: user?.userRole ?? '',
+        awarenessId: awarenessID,
+      ),
     );
   }
 }
