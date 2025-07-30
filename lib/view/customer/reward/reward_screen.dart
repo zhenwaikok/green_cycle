@@ -4,7 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/view/customer/reward/my_rewards_tab.dart';
 import 'package:green_cycle_fyp/view/customer/reward/toredeem_tab.dart';
@@ -21,7 +23,12 @@ class RewardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RewardViewModel(rewardRepository: RewardRepository()),
+      create: (_) => RewardViewModel(
+        rewardRepository: RewardRepository(),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+      ),
       child: _RewardScreen(),
     );
   }

@@ -1,27 +1,53 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
-class ManageRewardsScreen extends StatefulWidget {
+class ManageRewardsScreen extends StatelessWidget {
   const ManageRewardsScreen({super.key});
 
   @override
-  State<ManageRewardsScreen> createState() => _ManageRewardsScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => RewardViewModel(
+        rewardRepository: RewardRepository(),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+      ),
+      child: _ManageRewardsScreen(),
+    );
+  }
 }
 
-class _ManageRewardsScreenState extends State<ManageRewardsScreen> {
-  final List<String> sortByItems = ['All', 'Oldest', 'Latest'];
+class _ManageRewardsScreen extends StatefulWidget {
+  @override
+  State<_ManageRewardsScreen> createState() => _ManageRewardsScreenState();
+}
 
+class _ManageRewardsScreenState extends State<_ManageRewardsScreen>
+    with ErrorHandlingMixin {
+  final sortByItems = DropDownItems.sortByItems;
   String? selectedSort;
+  List<RewardModel> _rewardList = [];
+  bool _isLoading = true;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -31,8 +57,11 @@ class _ManageRewardsScreenState extends State<ManageRewardsScreen> {
 
   @override
   void initState() {
-    selectedSort = sortByItems.first;
     super.initState();
+    selectedSort = sortByItems.first;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialLoad();
+    });
   }
 
   @override
@@ -53,7 +82,17 @@ class _ManageRewardsScreenState extends State<ManageRewardsScreen> {
             children: [
               getSortBy(),
               SizedBox(height: 15),
-              Expanded(child: getRewardList()),
+              Expanded(
+                child: getRewardList(
+                  rewardList: _isLoading
+                      ? List.generate(
+                          5,
+                          (_) => RewardModel(rewardName: 'Loading...'),
+                        )
+                      : _rewardList,
+                  isLoading: _isLoading,
+                ),
+              ),
             ],
           ),
         ),
@@ -64,6 +103,27 @@ class _ManageRewardsScreenState extends State<ManageRewardsScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ManageRewardsScreenState {
+  Future<void> initialLoad() async {
+    final rewardList = await tryLoad(
+      context,
+      () => context.read<RewardViewModel>().getRewardList(),
+    );
+
+    _setState(() {
+      _isLoading = true;
+    });
+
+    if (rewardList != null) {
+      _setState(() {
+        _rewardList = rewardList;
+      });
+    }
+
+    _setState(() {
+      _isLoading = false;
+    });
+  }
+
   void onBackButtonPressed() {
     context.router.maybePop();
   }
@@ -90,18 +150,28 @@ extension _Actions on _ManageRewardsScreenState {
     );
   }
 
-  void onRewardCardPressed() async {
+  void onRewardCardPressed({required RewardModel rewardDetails}) async {
     showModalBottomSheet(
       backgroundColor: ColorManager.whiteColor,
       context: context,
+      isScrollControlled: true,
       builder: (context) {
-        return getRewardDetailsBottomSheet();
+        return getRewardDetailsBottomSheet(rewardDetails: rewardDetails);
       },
     );
   }
 
-  void onEditButtonPressed() {
-    context.router.push(AddOrEditRewardRoute(isEdit: true));
+  void onEditButtonPressed({required int rewardId}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      final result = await context.router.push(
+        AddOrEditRewardRoute(isEdit: true, rewardId: rewardId),
+      );
+
+      if (result == true && mounted) {
+        initialLoad();
+      }
+    }
   }
 }
 
@@ -124,61 +194,76 @@ extension _WidgetFactories on _ManageRewardsScreenState {
     );
   }
 
-  Widget getRewardList() {
+  Widget getRewardList({
+    required List<RewardModel> rewardList,
+    required bool isLoading,
+  }) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: 10,
+      itemCount: rewardList.length,
       itemBuilder: (context, index) {
         return TouchableOpacity(
-          onPressed: onRewardCardPressed,
-          child: getRewardCard(),
+          onPressed: () =>
+              onRewardCardPressed(rewardDetails: rewardList[index]),
+          child: getRewardCard(reward: rewardList[index], isLoading: isLoading),
         );
       },
     );
   }
 
-  Widget getRewardCard() {
+  Widget getRewardCard({required RewardModel reward, required bool isLoading}) {
     return Padding(
       padding: _Styles.cardPadding,
       child: CustomCard(
         padding: _Styles.customCardPadding,
-        child: Row(
-          children: [
-            getRewardImage(),
-            SizedBox(width: 20),
-            Expanded(child: getRewardDetails()),
-            SizedBox(width: 15),
-            IconButton(
-              onPressed: onDeleteButtonPressed,
-              icon: Icon(Icons.delete, color: ColorManager.redColor),
-            ),
-          ],
+        child: Skeletonizer(
+          enabled: isLoading,
+          child: Row(
+            children: [
+              getRewardImage(imageURL: reward.rewardImageURL ?? ''),
+              SizedBox(width: 20),
+              Expanded(
+                child: getRewardDetails(
+                  rewardName: reward.rewardName ?? '',
+                  pointsRequired: reward.pointsRequired ?? 0,
+                ),
+              ),
+              SizedBox(width: 15),
+              IconButton(
+                onPressed: onDeleteButtonPressed,
+                icon: Icon(Icons.delete, color: ColorManager.redColor),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget getRewardImage() {
+  Widget getRewardImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.imageSize,
       borderRadius: _Styles.imageBorderRadius,
-      imageURL:
-          'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
+      imageURL: imageURL,
     );
   }
 
-  Widget getRewardDetails() {
+  Widget getRewardDetails({
+    required String rewardName,
+    required int pointsRequired,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Reward Name',
+          rewardName,
           style: _Styles.rewardNameTextStyle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        SizedBox(height: 10),
         Text(
-          'Required: 100 pts',
+          'Required: $pointsRequired pts',
           style: _Styles.pointRequiredTextStyle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -198,7 +283,7 @@ extension _WidgetFactories on _ManageRewardsScreenState {
     );
   }
 
-  Widget getRewardDetailsBottomSheet() {
+  Widget getRewardDetailsBottomSheet({required RewardModel rewardDetails}) {
     return Padding(
       padding: _Styles.screenPadding,
       child: Column(
@@ -209,18 +294,20 @@ extension _WidgetFactories on _ManageRewardsScreenState {
             borderRadius: _Styles.imageBorderRadius,
             imageSize: _Styles.detailsImageSize,
             imageWidth: double.infinity,
-            imageURL:
-                'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
+            imageURL: rewardDetails.rewardImageURL ?? '',
           ),
           SizedBox(height: 15),
           Text(
-            'Reward Name asdasdasda',
+            rewardDetails.rewardName ?? '',
             style: _Styles.rewardDetailsNameTextStyle,
           ),
-          Text('150 pts required', style: _Styles.pointRequiredTextStyle),
+          Text(
+            '${rewardDetails.pointsRequired} pts required',
+            style: _Styles.pointRequiredTextStyle,
+          ),
           SizedBox(height: 20),
           Text(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+            rewardDetails.rewardDescription ?? '',
             style: _Styles.descriptionTextStyle,
             textAlign: TextAlign.justify,
           ),
@@ -235,7 +322,8 @@ extension _WidgetFactories on _ManageRewardsScreenState {
                   color: ColorManager.whiteColor,
                   size: _Styles.iconButtonSize,
                 ),
-                onPressed: onEditButtonPressed,
+                onPressed: () =>
+                    onEditButtonPressed(rewardId: rewardDetails.rewardID ?? 0),
               ),
               getBottomSheetActionButton(
                 color: ColorManager.redColor,

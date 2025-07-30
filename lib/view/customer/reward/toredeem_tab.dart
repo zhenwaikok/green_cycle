@@ -56,6 +56,20 @@ extension _Actions on _ToRedeemTabState {
       },
     );
   }
+
+  void onClaimButtonPressed(int rewardID) async {
+    final rewardDetails = await tryLoad(
+      context,
+      () =>
+          context.read<RewardViewModel>().getRewardDetails(rewardID: rewardID),
+    );
+
+    _setState(() {
+      _rewardDetails = rewardDetails ?? RewardModel();
+    });
+
+    showRewardBottomSheet(rewardDetails: _rewardDetails);
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -97,20 +111,7 @@ extension _WidgetFactories on _ToRedeemTabState {
       child: CustomButton(
         text: 'Claim',
         textColor: ColorManager.primary,
-        onPressed: () async {
-          final rewardDetails = await tryLoad(
-            context,
-            () => context.read<RewardViewModel>().getRewardDetails(
-              rewardID: rewardID,
-            ),
-          );
-
-          _setState(() {
-            _rewardDetails = rewardDetails ?? RewardModel();
-          });
-
-          showRewardBottomSheet(rewardDetails: _rewardDetails);
-        },
+        onPressed: () => onClaimButtonPressed(rewardID),
         backgroundColor: ColorManager.whiteColor,
         borderColor: ColorManager.primary,
       ),

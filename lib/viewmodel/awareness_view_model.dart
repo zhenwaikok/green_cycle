@@ -100,8 +100,6 @@ class AwarenessViewModel extends BaseViewModel {
       awarenessModel: awarenessModel,
     );
 
-    print('response: ${response.data}');
-
     checkError(response);
     return response.data is ErrorModel;
   }

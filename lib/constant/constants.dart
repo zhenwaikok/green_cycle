@@ -33,7 +33,12 @@ List<SingleChildWidget> providerAssets() => [
     ),
   ),
   ChangeNotifierProvider.value(
-    value: RewardViewModel(rewardRepository: RewardRepository()),
+    value: RewardViewModel(
+      rewardRepository: RewardRepository(),
+      firebaseRepository: FirebaseRepository(
+        firebaseServices: FirebaseServices(),
+      ),
+    ),
   ),
   ChangeNotifierProvider.value(
     value: UserViewModel(
@@ -58,4 +63,5 @@ class DropDownItems {
   static const List<String> vehicleTypes = ['Car', 'Truck', 'Van'];
   static const List<String> roles = ['Customer', 'Collector'];
   static const List<String> genders = ['Male', 'Female'];
+  static final List<String> sortByItems = ['All', 'Oldest', 'Latest'];
 }

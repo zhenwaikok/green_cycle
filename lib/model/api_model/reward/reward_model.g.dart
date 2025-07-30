@@ -16,6 +16,10 @@ _$RewardModelImpl _$$RewardModelImplFromJson(Map<String, dynamic> json) =>
       createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),
+      expiryDate: json['expiryDate'] == null
+          ? null
+          : DateTime.parse(json['expiryDate'] as String),
+      isActive: json['isActive'] as bool?,
     );
 
 Map<String, dynamic> _$$RewardModelImplToJson(_$RewardModelImpl instance) =>
@@ -26,4 +30,6 @@ Map<String, dynamic> _$$RewardModelImplToJson(_$RewardModelImpl instance) =>
       'pointsRequired': instance.pointsRequired,
       'rewardImageURL': instance.rewardImageURL,
       'createdDate': instance.createdDate?.toIso8601String(),
+      'expiryDate': instance.expiryDate?.toIso8601String(),
+      'isActive': instance.isActive,
     };
