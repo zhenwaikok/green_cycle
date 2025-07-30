@@ -97,7 +97,10 @@ class _ManageAwarenessScreenState extends State<_ManageAwarenessScreen>
                   enabled: _isLoading,
                   child: getAwarenessContent(
                     awarenessList: _isLoading
-                        ? List.generate(5, (_) => AwarenessModel())
+                        ? List.generate(
+                            5,
+                            (_) => AwarenessModel(awarenessTitle: 'Loading...'),
+                          )
                         : _awarenessList,
                   ),
                 ),

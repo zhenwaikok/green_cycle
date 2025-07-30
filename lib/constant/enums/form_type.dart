@@ -59,6 +59,11 @@ enum AddEditAwarenessFormFieldsEnum {
   awarenessPhoto,
 }
 
-enum AddEditRewardFormFieldsEnum { rewardTitle, rewardDescription }
+enum AddEditRewardFormFieldsEnum {
+  rewardPhoto,
+  rewardTitle,
+  rewardDescription,
+  rewardExpiryDate,
+}
 
 enum RejectCollectorFormFieldEnum { reason }

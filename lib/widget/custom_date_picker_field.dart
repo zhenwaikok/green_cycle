@@ -9,12 +9,14 @@ class CustomDatePickerField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.validator,
+    this.initialValue,
   });
 
   final String formName;
   final Icon? prefixIcon;
   final Icon? suffixIcon;
   final FormFieldValidator<DateTime>? validator;
+  final DateTime? initialValue;
 
   @override
   State<CustomDatePickerField> createState() => _CustomDatePickerFieldState();
@@ -45,7 +47,7 @@ extension _WidgetFactories on _CustomDatePickerFieldState {
       child: FormBuilderDateTimePicker(
         name: widget.formName,
         validator: widget.validator,
-        initialValue: DateTime.now(),
+        initialValue: widget.initialValue ?? DateTime.now(),
         inputType: InputType.date,
         decoration: InputDecoration(
           contentPadding: _Styles.contentPadding,

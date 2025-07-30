@@ -158,10 +158,15 @@ class AddOrEditRewardRoute
   AddOrEditRewardRoute({
     _i50.Key? key,
     required bool isEdit,
+    int? rewardId,
     List<_i49.PageRouteInfo>? children,
   }) : super(
          AddOrEditRewardRoute.name,
-         args: AddOrEditRewardRouteArgs(key: key, isEdit: isEdit),
+         args: AddOrEditRewardRouteArgs(
+           key: key,
+           isEdit: isEdit,
+           rewardId: rewardId,
+         ),
          initialChildren: children,
        );
 
@@ -171,21 +176,31 @@ class AddOrEditRewardRoute
     name,
     builder: (data) {
       final args = data.argsAs<AddOrEditRewardRouteArgs>();
-      return _i2.AddOrEditRewardScreen(key: args.key, isEdit: args.isEdit);
+      return _i2.AddOrEditRewardScreen(
+        key: args.key,
+        isEdit: args.isEdit,
+        rewardId: args.rewardId,
+      );
     },
   );
 }
 
 class AddOrEditRewardRouteArgs {
-  const AddOrEditRewardRouteArgs({this.key, required this.isEdit});
+  const AddOrEditRewardRouteArgs({
+    this.key,
+    required this.isEdit,
+    this.rewardId,
+  });
 
   final _i50.Key? key;
 
   final bool isEdit;
 
+  final int? rewardId;
+
   @override
   String toString() {
-    return 'AddOrEditRewardRouteArgs{key: $key, isEdit: $isEdit}';
+    return 'AddOrEditRewardRouteArgs{key: $key, isEdit: $isEdit, rewardId: $rewardId}';
   }
 }
 

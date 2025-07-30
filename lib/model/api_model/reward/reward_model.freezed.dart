@@ -27,6 +27,8 @@ mixin _$RewardModel {
   int? get pointsRequired => throw _privateConstructorUsedError;
   String? get rewardImageURL => throw _privateConstructorUsedError;
   DateTime? get createdDate => throw _privateConstructorUsedError;
+  DateTime? get expiryDate => throw _privateConstructorUsedError;
+  bool? get isActive => throw _privateConstructorUsedError;
 
   /// Serializes this RewardModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -52,6 +54,8 @@ abstract class $RewardModelCopyWith<$Res> {
     int? pointsRequired,
     String? rewardImageURL,
     DateTime? createdDate,
+    DateTime? expiryDate,
+    bool? isActive,
   });
 }
 
@@ -76,6 +80,8 @@ class _$RewardModelCopyWithImpl<$Res, $Val extends RewardModel>
     Object? pointsRequired = freezed,
     Object? rewardImageURL = freezed,
     Object? createdDate = freezed,
+    Object? expiryDate = freezed,
+    Object? isActive = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -103,6 +109,14 @@ class _$RewardModelCopyWithImpl<$Res, $Val extends RewardModel>
                 ? _value.createdDate
                 : createdDate // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
+            expiryDate: freezed == expiryDate
+                ? _value.expiryDate
+                : expiryDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            isActive: freezed == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool?,
           )
           as $Val,
     );
@@ -125,6 +139,8 @@ abstract class _$$RewardModelImplCopyWith<$Res>
     int? pointsRequired,
     String? rewardImageURL,
     DateTime? createdDate,
+    DateTime? expiryDate,
+    bool? isActive,
   });
 }
 
@@ -148,6 +164,8 @@ class __$$RewardModelImplCopyWithImpl<$Res>
     Object? pointsRequired = freezed,
     Object? rewardImageURL = freezed,
     Object? createdDate = freezed,
+    Object? expiryDate = freezed,
+    Object? isActive = freezed,
   }) {
     return _then(
       _$RewardModelImpl(
@@ -175,6 +193,14 @@ class __$$RewardModelImplCopyWithImpl<$Res>
             ? _value.createdDate
             : createdDate // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
+        expiryDate: freezed == expiryDate
+            ? _value.expiryDate
+            : expiryDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        isActive: freezed == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool?,
       ),
     );
   }
@@ -190,6 +216,8 @@ class _$RewardModelImpl implements _RewardModel {
     this.pointsRequired,
     this.rewardImageURL,
     this.createdDate,
+    this.expiryDate,
+    this.isActive,
   });
 
   factory _$RewardModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -207,10 +235,14 @@ class _$RewardModelImpl implements _RewardModel {
   final String? rewardImageURL;
   @override
   final DateTime? createdDate;
+  @override
+  final DateTime? expiryDate;
+  @override
+  final bool? isActive;
 
   @override
   String toString() {
-    return 'RewardModel(rewardID: $rewardID, rewardName: $rewardName, rewardDescription: $rewardDescription, pointsRequired: $pointsRequired, rewardImageURL: $rewardImageURL, createdDate: $createdDate)';
+    return 'RewardModel(rewardID: $rewardID, rewardName: $rewardName, rewardDescription: $rewardDescription, pointsRequired: $pointsRequired, rewardImageURL: $rewardImageURL, createdDate: $createdDate, expiryDate: $expiryDate, isActive: $isActive)';
   }
 
   @override
@@ -229,7 +261,11 @@ class _$RewardModelImpl implements _RewardModel {
             (identical(other.rewardImageURL, rewardImageURL) ||
                 other.rewardImageURL == rewardImageURL) &&
             (identical(other.createdDate, createdDate) ||
-                other.createdDate == createdDate));
+                other.createdDate == createdDate) &&
+            (identical(other.expiryDate, expiryDate) ||
+                other.expiryDate == expiryDate) &&
+            (identical(other.isActive, isActive) ||
+                other.isActive == isActive));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -242,6 +278,8 @@ class _$RewardModelImpl implements _RewardModel {
     pointsRequired,
     rewardImageURL,
     createdDate,
+    expiryDate,
+    isActive,
   );
 
   /// Create a copy of RewardModel
@@ -266,6 +304,8 @@ abstract class _RewardModel implements RewardModel {
     final int? pointsRequired,
     final String? rewardImageURL,
     final DateTime? createdDate,
+    final DateTime? expiryDate,
+    final bool? isActive,
   }) = _$RewardModelImpl;
 
   factory _RewardModel.fromJson(Map<String, dynamic> json) =
@@ -283,6 +323,10 @@ abstract class _RewardModel implements RewardModel {
   String? get rewardImageURL;
   @override
   DateTime? get createdDate;
+  @override
+  DateTime? get expiryDate;
+  @override
+  bool? get isActive;
 
   /// Create a copy of RewardModel
   /// with the given fields replaced by the non-null parameter values.

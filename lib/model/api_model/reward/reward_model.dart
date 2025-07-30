@@ -12,6 +12,8 @@ class RewardModel with _$RewardModel {
     int? pointsRequired,
     String? rewardImageURL,
     DateTime? createdDate,
+    DateTime? expiryDate,
+    bool? isActive,
   }) = _RewardModel;
 
   factory RewardModel.fromJson(Map<String, dynamic> json) =>

@@ -251,9 +251,9 @@ extension _WidgetFactories on _AddOrEditAwarenessScreenState {
       children: [
         getPhotoField(awarenessImageURL: null, isEdit: false),
         SizedBox(height: 25),
-        getAwarenessTitleField(awarenessTitle: null),
+        getAwarenessTitleField(),
         SizedBox(height: 25),
-        getAwarenessContentField(awarenessContent: null),
+        getAwarenessContentField(),
       ],
     );
   }
