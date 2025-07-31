@@ -86,7 +86,7 @@ extension _Actions on _AdminProfileScreenState {
       () => context.read<UserViewModel>().logout(),
     );
     if (result ?? false) {
-      if (mounted) context.router.replaceAll([LoginRoute()]);
+      if (mounted) await context.router.replaceAll([LoginRoute()]);
     }
   }
 }

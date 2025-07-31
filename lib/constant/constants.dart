@@ -64,4 +64,12 @@ class DropDownItems {
   static const List<String> roles = ['Customer', 'Collector'];
   static const List<String> genders = ['Male', 'Female'];
   static final List<String> sortByItems = ['All', 'Oldest', 'Latest'];
+  static final List<String> collectorManagementSortByItems = [
+    'All',
+    'Collector Name: A-Z',
+    'Collector Name: Z - A',
+    'Approved',
+    'Pending',
+    'Latest',
+  ];
 }

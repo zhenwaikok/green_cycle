@@ -25,6 +25,7 @@ class CustomTextField extends StatefulWidget {
     this.autovalidateMode = AutovalidateMode.onUserInteraction,
     this.isPassword = false,
     this.initialValue,
+    this.labelText,
   });
 
   final String formName;
@@ -45,6 +46,7 @@ class CustomTextField extends StatefulWidget {
   final AutovalidateMode autovalidateMode;
   final bool? isPassword;
   final String? initialValue;
+  final String? labelText;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -101,21 +103,14 @@ extension _WidgetFactories on _CustomTextFieldState {
       controller: widget.controller,
       readOnly: widget.readonly ?? false,
       decoration: InputDecoration(
+        labelText: widget.labelText,
+        labelStyle: _Styles.labelTextStyle,
         contentPadding: _Styles.contentPadding,
+        filled: true,
+        fillColor: ColorManager.lightGreyColor3,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ColorManager.greyColor,
-            width: _Styles.textFieldBorderWidth,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ColorManager.greyColor,
-            width: _Styles.textFieldBorderWidth,
-          ),
-        ),
+        border: OutlineInputBorder(borderSide: BorderSide.none),
         errorBorder: _Styles.outlineErrorInputBorder,
         focusedErrorBorder: _Styles.outlineErrorInputBorder,
       ),
@@ -127,8 +122,6 @@ extension _WidgetFactories on _CustomTextFieldState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const textFieldBorderWidth = 2.0;
 
   static const contentPadding = EdgeInsets.symmetric(
     horizontal: 10,
@@ -146,4 +139,9 @@ class _Styles {
   }) {
     return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color);
   }
+
+  static const labelTextStyle = TextStyle(
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
 }

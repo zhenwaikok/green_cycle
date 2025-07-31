@@ -184,7 +184,10 @@ extension _WidgetFactories on _LoginScreenState {
           fontSize: _Styles.loginFormFieldFontSize,
           color: _Styles.loginFormFieldColor,
           title: 'Email Address',
-          prefixIcon: Icon(Icons.email_outlined, color: ColorManager.greyColor),
+          prefixIcon: Icon(
+            Icons.email_outlined,
+            color: ColorManager.blackColor,
+          ),
           formName: LoginFormFieldsEnum.email.name,
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
@@ -196,7 +199,7 @@ extension _WidgetFactories on _LoginScreenState {
           fontSize: _Styles.loginFormFieldFontSize,
           color: _Styles.loginFormFieldColor,
           title: 'Password',
-          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.blackColor),
           suffixIcon: getTogglePasswordButton(),
           isPassword: isPasswordObscure,
           formName: LoginFormFieldsEnum.password.name,

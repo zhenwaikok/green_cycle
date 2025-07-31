@@ -179,7 +179,10 @@ extension _Helpers on _EditProfileScreenState {
 
   String? get profileImageURL => userDetails?.profileImageURL;
 
-  bool get isApproved => userDetails?.isApproved ?? false;
+  String get approvalStatus => userDetails?.approvalStatus ?? '';
+
+  String get accountRejectMessage => userDetails?.accountRejectMessage ?? '';
+
   DateTime get createdDate => userDetails?.createdDate ?? DateTime.now();
 }
 
@@ -214,7 +217,6 @@ extension _Actions on _EditProfileScreenState {
   Future<void> onSaveButtonPressed() async {
     final formValid = _formKey.currentState?.validate() ?? false;
     if (formValid) {
-      print('form is valid');
       final result =
           await tryLoad(
             context,
@@ -234,23 +236,21 @@ extension _Actions on _EditProfileScreenState {
               vehiclePlateNumber: vehiclePlateNumber,
               companyName: companyName,
               profileImageURL: profileImageURL,
-              isApproved: isApproved,
+              approvalStatus: approvalStatus,
+              accountRejectMessage: accountRejectMessage,
               createdDate: createdDate,
             ),
           ) ??
           false;
 
       if (result) {
-        print('Profile updated successfully');
         unawaited(
           WidgetUtil.showSnackBar(text: 'Profile Updated Successfully'),
         );
         if (mounted) await context.router.maybePop(true);
       } else {
-        print('Profile update failed');
+        unawaited(WidgetUtil.showSnackBar(text: 'Failed to update profile'));
       }
-    } else {
-      print('update failed');
     }
   }
 }
@@ -277,7 +277,7 @@ extension _WidgetFactories on _EditProfileScreenState {
               onPressed: onFacePhotoUploadPressed,
               icon: Icon(
                 Icons.camera_alt,
-                color: ColorManager.greyColor,
+                color: ColorManager.blackColor,
                 size: _Styles.cameraIconSize,
               ),
             ),
@@ -445,7 +445,7 @@ extension _WidgetFactories on _EditProfileScreenState {
       fontSize: _Styles.editProfileFormFieldFontSize,
       color: _Styles.editProfileFormFieldColor,
       title: 'Address',
-      prefixIcon: Icon(Icons.location_on, color: ColorManager.greyColor),
+      prefixIcon: Icon(Icons.location_on, color: ColorManager.blackColor),
       formName: EditProfileFormFieldsEnum.address.name,
       initialValue: address,
     );

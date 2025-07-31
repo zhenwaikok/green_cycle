@@ -19,7 +19,9 @@ class UserViewModel extends BaseViewModel {
   UserModel? get user => userRepository.user;
 
   UserModel? _userDetails;
+  List<UserModel> _userList = [];
   UserModel? get userDetails => _userDetails;
+  List<UserModel> get userList => _userList;
 
   Future<bool> signUpWithEmailPassword({
     required String email,
@@ -34,6 +36,7 @@ class UserViewModel extends BaseViewModel {
     String? vehicleType,
     String? vehiclePlateNumber,
     String? companyName,
+    String? accountRejectMessage,
     File? profileImage,
   }) async {
     UserModel userModel;
@@ -70,7 +73,8 @@ class UserViewModel extends BaseViewModel {
         vehiclePlateNumber: vehiclePlateNumber,
         companyName: companyName,
         profileImageURL: imageURL,
-        isApproved: false,
+        approvalStatus: 'Pending',
+        accountRejectMessage: accountRejectMessage,
         createdDate: DateTime.now(),
       );
 
@@ -114,8 +118,25 @@ class UserViewModel extends BaseViewModel {
     return response.data is UserModel;
   }
 
-  Future<void> getUserDetails({required String userID}) async {
-    final response = await userRepository.getUserDetails(userID: userID);
+  Future<void> getAllUsers() async {
+    final response = await userRepository.getAllUsers();
+
+    if (response.data is List<UserModel>) {
+      _userList = response.data;
+      notifyListeners();
+    }
+
+    checkError(response);
+  }
+
+  Future<void> getUserDetails({
+    required String userID,
+    bool? isApproveCollectorAccount,
+  }) async {
+    final response = await userRepository.getUserDetails(
+      userID: userID,
+      isApproveCollectorAccount: isApproveCollectorAccount,
+    );
 
     if (response.data is UserModel) {
       _userDetails = response.data;
@@ -126,23 +147,25 @@ class UserViewModel extends BaseViewModel {
   }
 
   Future<bool> updateUser({
-    required String? userID,
-    required String? emailAddress,
-    required String? password,
-    required String? userRole,
-    required String? firstName,
-    required String? lastName,
-    required String? fullName,
-    required String? gender,
-    required String? phoneNumber,
-    required String? address,
-    required String? vehicleType,
-    required String? vehiclePlateNumber,
-    required String? companyName,
-    required bool? isApproved,
-    required DateTime? createdDate,
-    required String? profileImageURL,
+    String? userID,
+    String? emailAddress,
+    String? password,
+    String? userRole,
+    String? firstName,
+    String? lastName,
+    String? fullName,
+    String? gender,
+    String? phoneNumber,
+    String? address,
+    String? vehicleType,
+    String? vehiclePlateNumber,
+    String? companyName,
+    String? approvalStatus,
+    String? accountRejectMessage,
+    DateTime? createdDate,
+    String? profileImageURL,
     File? profileImage,
+    bool? isApproveCollectorAccount,
   }) async {
     String? imageURL;
     if (profileImage != null) {
@@ -155,29 +178,55 @@ class UserViewModel extends BaseViewModel {
     }
 
     String? newProfileImageURL = imageURL ?? profileImageURL;
-    print('New Profile Image URL: $newProfileImageURL');
-    UserModel usermodel = UserModel(
-      userID: userID,
-      userRole: userRole,
-      fullName: fullName,
-      firstName: firstName,
-      lastName: lastName,
-      emailAddress: emailAddress,
-      gender: gender,
-      phoneNumber: phoneNumber,
-      password: password,
-      address: address,
-      vehicleType: vehicleType,
-      vehiclePlateNumber: vehiclePlateNumber,
-      companyName: companyName,
-      profileImageURL: newProfileImageURL,
-      isApproved: isApproved ?? false,
-      createdDate: createdDate ?? DateTime.now(),
-    );
+    UserModel usermodel = UserModel();
+
+    if (isApproveCollectorAccount == true) {
+      usermodel = UserModel(
+        userID: userDetails?.userID,
+        userRole: userDetails?.userRole,
+        fullName: userDetails?.fullName,
+        firstName: userDetails?.firstName,
+        lastName: userDetails?.lastName,
+        emailAddress: userDetails?.emailAddress,
+        gender: userDetails?.gender,
+        phoneNumber: userDetails?.phoneNumber,
+        password: userDetails?.password,
+        address: userDetails?.address,
+        vehicleType: userDetails?.vehicleType,
+        vehiclePlateNumber: userDetails?.vehiclePlateNumber,
+        companyName: userDetails?.companyName,
+        profileImageURL: userDetails?.profileImageURL,
+        approvalStatus: approvalStatus,
+        accountRejectMessage:
+            accountRejectMessage ?? userDetails?.accountRejectMessage,
+        createdDate: userDetails?.createdDate ?? DateTime.now(),
+      );
+    } else {
+      usermodel = UserModel(
+        userID: userID,
+        userRole: userRole,
+        fullName: fullName,
+        firstName: firstName,
+        lastName: lastName,
+        emailAddress: emailAddress,
+        gender: gender,
+        phoneNumber: phoneNumber,
+        password: password,
+        address: address,
+        vehicleType: vehicleType,
+        vehiclePlateNumber: vehiclePlateNumber,
+        companyName: companyName,
+        profileImageURL: newProfileImageURL,
+        approvalStatus: approvalStatus,
+        accountRejectMessage: accountRejectMessage,
+        createdDate: createdDate ?? DateTime.now(),
+      );
+    }
 
     final response = await userRepository.updateUser(
       userID: userID ?? '',
       userModel: usermodel,
+      isApproveCollectorAccount: isApproveCollectorAccount ?? false,
     );
 
     checkError(response);
@@ -227,7 +276,8 @@ class UserViewModel extends BaseViewModel {
         vehiclePlateNumber: user?.vehiclePlateNumber,
         companyName: user?.companyName,
         profileImageURL: user?.profileImageURL,
-        isApproved: user?.isApproved,
+        accountRejectMessage: user?.accountRejectMessage,
+        approvalStatus: user?.approvalStatus,
         createdDate: user?.createdDate,
       );
 

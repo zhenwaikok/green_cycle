@@ -59,9 +59,11 @@ class UserRepository {
   Future<MyResponse> getAllUsers() async {
     final response = await userServices.getAllUsers();
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = UserModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => UserModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }
@@ -77,13 +79,19 @@ class UserRepository {
     return response;
   }
 
-  Future<MyResponse> getUserDetails({required String userID}) async {
+  Future<MyResponse> getUserDetails({
+    required String userID,
+    bool? isApproveCollectorAccount,
+  }) async {
     final response = await userServices.getUserDetails(userID: userID);
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
-      await sharePreferenceHandler.putUser(resultModel);
-      sharePreferenceHandler.getUser();
+      if (isApproveCollectorAccount == null ||
+          isApproveCollectorAccount == false) {
+        await sharePreferenceHandler.putUser(resultModel);
+        sharePreferenceHandler.getUser();
+      }
       return MyResponse.complete(resultModel);
     }
     return response;
@@ -92,6 +100,7 @@ class UserRepository {
   Future<MyResponse> updateUser({
     required String userID,
     required UserModel userModel,
+    required bool isApproveCollectorAccount,
   }) async {
     final response = await userServices.updateUser(
       userID: userID,
@@ -100,7 +109,9 @@ class UserRepository {
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = ErrorModel.fromJson(response.data);
-      await getUserDetails(userID: userID);
+      if (!isApproveCollectorAccount) {
+        await getUserDetails(userID: userID);
+      }
       return MyResponse.complete(resultModel);
     }
     return response;

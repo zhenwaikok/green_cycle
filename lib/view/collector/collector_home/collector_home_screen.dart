@@ -308,7 +308,10 @@ extension _WidgetFactories on _CollectorHomeScreenState {
   }
 
   Widget getRequestStatus() {
-    return CustomStatusBar(text: 'On The Way', color: ColorManager.orangeColor);
+    return CustomStatusBar(
+      text: 'On The Way',
+      backgroundColor: ColorManager.orangeColor,
+    );
   }
 
   Widget getItemDetails() {

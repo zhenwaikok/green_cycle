@@ -129,7 +129,10 @@ extension _WidgetFactories on _MyPickupTabState {
   }
 
   Widget getRequestStatus() {
-    return CustomStatusBar(text: widget.status, color: widget.statusBarColor);
+    return CustomStatusBar(
+      text: widget.status,
+      backgroundColor: widget.statusBarColor,
+    );
   }
 
   Widget getItemDetails() {
