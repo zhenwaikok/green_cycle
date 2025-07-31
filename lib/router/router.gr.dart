@@ -448,18 +448,43 @@ class CollectorAdditionalSignupRouteArgs {
 
 /// generated route for
 /// [_i12.CollectorDetailsScreen]
-class CollectorDetailsRoute extends _i49.PageRouteInfo<void> {
-  const CollectorDetailsRoute({List<_i49.PageRouteInfo>? children})
-    : super(CollectorDetailsRoute.name, initialChildren: children);
+class CollectorDetailsRoute
+    extends _i49.PageRouteInfo<CollectorDetailsRouteArgs> {
+  CollectorDetailsRoute({
+    _i50.Key? key,
+    required String collectorID,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         CollectorDetailsRoute.name,
+         args: CollectorDetailsRouteArgs(key: key, collectorID: collectorID),
+         initialChildren: children,
+       );
 
   static const String name = 'CollectorDetailsRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i12.CollectorDetailsScreen();
+      final args = data.argsAs<CollectorDetailsRouteArgs>();
+      return _i12.CollectorDetailsScreen(
+        key: args.key,
+        collectorID: args.collectorID,
+      );
     },
   );
+}
+
+class CollectorDetailsRouteArgs {
+  const CollectorDetailsRouteArgs({this.key, required this.collectorID});
+
+  final _i50.Key? key;
+
+  final String collectorID;
+
+  @override
+  String toString() {
+    return 'CollectorDetailsRouteArgs{key: $key, collectorID: $collectorID}';
+  }
 }
 
 /// generated route for

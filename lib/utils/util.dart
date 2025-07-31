@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
@@ -21,6 +22,9 @@ class WidgetUtil {
     bool dismissible = true,
     bool needTextField = false,
     int? maxLines,
+    String? Function(String?)? validator,
+    GlobalKey<FormBuilderState>? formKey,
+    String? hintText,
   }) {
     return showDialog(
       context: context,
@@ -35,7 +39,17 @@ class WidgetUtil {
           style: TextStyle(fontWeight: FontWeightManager.bold, fontSize: 20),
         ),
         content: needTextField
-            ? CustomTextField(formName: formName ?? '', maxLines: maxLines)
+            ? FormBuilder(
+                key: formKey,
+                child: SizedBox(
+                  width: double.maxFinite,
+                  child: CustomTextField(
+                    formName: formName ?? '',
+                    validator: validator,
+                    labelText: hintText,
+                  ),
+                ),
+              )
             : Text(content ?? '', style: TextStyle(fontSize: 16)),
         actions: actions,
         backgroundColor: ColorManager.whiteColor,

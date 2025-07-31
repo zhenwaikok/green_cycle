@@ -9,7 +9,6 @@ class AwarenessRepository {
 
   Future<MyResponse> getAllAwareness() async {
     final response = await awarenessServices.getAllAwareness();
-    print('Response from Awareness API: ${response.data}');
 
     if (response.data is List) {
       final resultList = (response.data as List)

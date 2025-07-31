@@ -35,7 +35,8 @@ mixin _$UserModel {
   String? get vehiclePlateNumber => throw _privateConstructorUsedError;
   String? get companyName => throw _privateConstructorUsedError;
   String? get profileImageURL => throw _privateConstructorUsedError;
-  bool? get isApproved => throw _privateConstructorUsedError;
+  String? get approvalStatus => throw _privateConstructorUsedError;
+  String? get accountRejectMessage => throw _privateConstructorUsedError;
   DateTime? get createdDate => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
@@ -68,7 +69,8 @@ abstract class $UserModelCopyWith<$Res> {
     String? vehiclePlateNumber,
     String? companyName,
     String? profileImageURL,
-    bool? isApproved,
+    String? approvalStatus,
+    String? accountRejectMessage,
     DateTime? createdDate,
   });
 }
@@ -102,7 +104,8 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? vehiclePlateNumber = freezed,
     Object? companyName = freezed,
     Object? profileImageURL = freezed,
-    Object? isApproved = freezed,
+    Object? approvalStatus = freezed,
+    Object? accountRejectMessage = freezed,
     Object? createdDate = freezed,
   }) {
     return _then(
@@ -163,10 +166,14 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.profileImageURL
                 : profileImageURL // ignore: cast_nullable_to_non_nullable
                       as String?,
-            isApproved: freezed == isApproved
-                ? _value.isApproved
-                : isApproved // ignore: cast_nullable_to_non_nullable
-                      as bool?,
+            approvalStatus: freezed == approvalStatus
+                ? _value.approvalStatus
+                : approvalStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            accountRejectMessage: freezed == accountRejectMessage
+                ? _value.accountRejectMessage
+                : accountRejectMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
             createdDate: freezed == createdDate
                 ? _value.createdDate
                 : createdDate // ignore: cast_nullable_to_non_nullable
@@ -201,7 +208,8 @@ abstract class _$$UserModelImplCopyWith<$Res>
     String? vehiclePlateNumber,
     String? companyName,
     String? profileImageURL,
-    bool? isApproved,
+    String? approvalStatus,
+    String? accountRejectMessage,
     DateTime? createdDate,
   });
 }
@@ -234,7 +242,8 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? vehiclePlateNumber = freezed,
     Object? companyName = freezed,
     Object? profileImageURL = freezed,
-    Object? isApproved = freezed,
+    Object? approvalStatus = freezed,
+    Object? accountRejectMessage = freezed,
     Object? createdDate = freezed,
   }) {
     return _then(
@@ -295,10 +304,14 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.profileImageURL
             : profileImageURL // ignore: cast_nullable_to_non_nullable
                   as String?,
-        isApproved: freezed == isApproved
-            ? _value.isApproved
-            : isApproved // ignore: cast_nullable_to_non_nullable
-                  as bool?,
+        approvalStatus: freezed == approvalStatus
+            ? _value.approvalStatus
+            : approvalStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        accountRejectMessage: freezed == accountRejectMessage
+            ? _value.accountRejectMessage
+            : accountRejectMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
         createdDate: freezed == createdDate
             ? _value.createdDate
             : createdDate // ignore: cast_nullable_to_non_nullable
@@ -326,7 +339,8 @@ class _$UserModelImpl implements _UserModel {
     this.vehiclePlateNumber,
     this.companyName,
     this.profileImageURL,
-    this.isApproved,
+    this.approvalStatus,
+    this.accountRejectMessage,
     this.createdDate,
   });
 
@@ -362,13 +376,15 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String? profileImageURL;
   @override
-  final bool? isApproved;
+  final String? approvalStatus;
+  @override
+  final String? accountRejectMessage;
   @override
   final DateTime? createdDate;
 
   @override
   String toString() {
-    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address: $address, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, isApproved: $isApproved, createdDate: $createdDate)';
+    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address: $address, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, approvalStatus: $approvalStatus, accountRejectMessage: $accountRejectMessage, createdDate: $createdDate)';
   }
 
   @override
@@ -401,8 +417,10 @@ class _$UserModelImpl implements _UserModel {
                 other.companyName == companyName) &&
             (identical(other.profileImageURL, profileImageURL) ||
                 other.profileImageURL == profileImageURL) &&
-            (identical(other.isApproved, isApproved) ||
-                other.isApproved == isApproved) &&
+            (identical(other.approvalStatus, approvalStatus) ||
+                other.approvalStatus == approvalStatus) &&
+            (identical(other.accountRejectMessage, accountRejectMessage) ||
+                other.accountRejectMessage == accountRejectMessage) &&
             (identical(other.createdDate, createdDate) ||
                 other.createdDate == createdDate));
   }
@@ -425,7 +443,8 @@ class _$UserModelImpl implements _UserModel {
     vehiclePlateNumber,
     companyName,
     profileImageURL,
-    isApproved,
+    approvalStatus,
+    accountRejectMessage,
     createdDate,
   );
 
@@ -459,7 +478,8 @@ abstract class _UserModel implements UserModel {
     final String? vehiclePlateNumber,
     final String? companyName,
     final String? profileImageURL,
-    final bool? isApproved,
+    final String? approvalStatus,
+    final String? accountRejectMessage,
     final DateTime? createdDate,
   }) = _$UserModelImpl;
 
@@ -495,7 +515,9 @@ abstract class _UserModel implements UserModel {
   @override
   String? get profileImageURL;
   @override
-  bool? get isApproved;
+  String? get approvalStatus;
+  @override
+  String? get accountRejectMessage;
   @override
   DateTime? get createdDate;
 

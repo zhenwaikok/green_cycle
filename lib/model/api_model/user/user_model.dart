@@ -20,7 +20,8 @@ class UserModel with _$UserModel {
     String? vehiclePlateNumber,
     String? companyName,
     String? profileImageURL,
-    bool? isApproved,
+    String? approvalStatus,
+    String? accountRejectMessage,
     DateTime? createdDate,
   }) = _UserModel;
 

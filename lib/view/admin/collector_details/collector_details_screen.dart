@@ -1,24 +1,75 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
-import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/profile_image.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class CollectorDetailsScreen extends StatefulWidget {
-  const CollectorDetailsScreen({super.key});
+class CollectorDetailsScreen extends StatelessWidget {
+  const CollectorDetailsScreen({super.key, required this.collectorID});
 
-  @override
-  State<CollectorDetailsScreen> createState() => _CollectorDetailsScreenState();
-}
+  final String collectorID;
 
-class _CollectorDetailsScreenState extends State<CollectorDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => UserViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+      ),
+      child: _CollectorDetailsScreen(collectorID: collectorID),
+    );
+  }
+}
+
+class _CollectorDetailsScreen extends StatefulWidget {
+  @override
+  State<_CollectorDetailsScreen> createState() =>
+      _CollectorDetailsScreenState();
+
+  const _CollectorDetailsScreen({required this.collectorID});
+
+  final String collectorID;
+}
+
+class _CollectorDetailsScreenState extends State<_CollectorDetailsScreen>
+    with ErrorHandlingMixin {
+  final _formKey = GlobalKey<FormBuilderState>();
+
+  @override
+  void initState() {
+    super.initState();
+    initialLoad();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user =
+        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Collector Details',
@@ -32,13 +83,28 @@ class _CollectorDetailsScreenState extends State<CollectorDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getCollectorImage(),
+                getAccountStatusBar(approvalStatus: user.approvalStatus ?? ''),
+                SizedBox(height: 10),
+                if (user.approvalStatus == 'Rejected') ...[
+                  getRejectionMessage(
+                    rejectionMessage: user.accountRejectMessage ?? '',
+                  ),
+                  SizedBox(height: 20),
+                ],
+                getCollectorImage(imageURL: user.profileImageURL ?? ''),
                 SizedBox(height: 20),
-                getCollectorNameOrganization(),
+                getCollectorNameOrganization(
+                  collectorName: user.fullName ?? '-',
+                  companyName: user.companyName ?? '-',
+                ),
                 SizedBox(height: 60),
-                getCollectorDetails(),
-                SizedBox(height: 40),
-                getRejectApproveButton(),
+                getCollectorDetails(user: user),
+                if (user.approvalStatus != 'Approved') ...[
+                  SizedBox(height: 40),
+                  getRejectApproveButton(
+                    approvalStatus: user.approvalStatus ?? '',
+                  ),
+                ],
               ],
             ),
           ),
@@ -48,10 +114,30 @@ class _CollectorDetailsScreenState extends State<CollectorDetailsScreen> {
   }
 }
 
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _CollectorDetailsScreenState {
+  String get accountRejectMessage =>
+      _formKey
+          .currentState
+          ?.fields[RejectCollectorFormFieldEnum.reason.name]
+          ?.value ??
+      '';
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CollectorDetailsScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
+  }
+
+  Future<void> initialLoad() async {
+    await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getUserDetails(
+        userID: widget.collectorID,
+        isApproveCollectorAccount: true,
+      ),
+    );
   }
 
   void onApproveButtonPressed() {
@@ -60,8 +146,14 @@ extension _Actions on _CollectorDetailsScreenState {
       title: 'Approval Confirmation',
       content: 'Are you sure to approve this collector\'s profile?',
       actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Submit'),
+        getAlertDialogTextButton(
+          onPressed: onBackButtonPressed,
+          text: 'Cancel',
+        ),
+        getAlertDialogTextButton(
+          onPressed: onApproveSubmitPressed,
+          text: 'Submit',
+        ),
       ],
     );
   }
@@ -69,63 +161,154 @@ extension _Actions on _CollectorDetailsScreenState {
   void onDeleteButtonPressed() {
     WidgetUtil.showAlertDialog(
       context,
-      title: 'Please provide reason for rejecting this collector',
+      title: 'Rejection Reason',
       maxLines: _Styles.maxLines,
       needTextField: true,
       formName: RejectCollectorFormFieldEnum.reason.name,
+      validator: FormBuilderValidators.required(),
+      hintText: 'Reason',
+      formKey: _formKey,
       actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Submit'),
+        getAlertDialogTextButton(
+          onPressed: onBackButtonPressed,
+          text: 'Cancel',
+        ),
+        getAlertDialogTextButton(
+          onPressed: () =>
+              onRejectSubmitPressed(rejectMessage: accountRejectMessage),
+          text: 'Submit',
+        ),
       ],
     );
+  }
+
+  Future<void> onRejectSubmitPressed({required String rejectMessage}) async {
+    final formValid = _formKey.currentState?.saveAndValidate() ?? false;
+
+    if (formValid) {
+      await context.router.maybePop();
+      final result = mounted
+          ? await tryLoad(
+              context,
+              () => context.read<UserViewModel>().updateUser(
+                userID: widget.collectorID,
+                isApproveCollectorAccount: true,
+                approvalStatus: 'Rejected',
+                accountRejectMessage: rejectMessage,
+              ),
+            )
+          : null;
+
+      if (result ?? false) {
+        unawaited(
+          WidgetUtil.showSnackBar(
+            text: 'Rejected collector profile successfully',
+          ),
+        );
+        if (mounted) {
+          await context.router.maybePop(true);
+        }
+      } else {
+        unawaited(
+          WidgetUtil.showSnackBar(text: 'Failed to reject collector profile'),
+        );
+      }
+    }
+  }
+
+  Future<void> onApproveSubmitPressed() async {
+    await context.router.maybePop();
+    final result = mounted
+        ? await tryLoad(
+            context,
+            () => context.read<UserViewModel>().updateUser(
+              userID: widget.collectorID,
+              isApproveCollectorAccount: true,
+              approvalStatus: 'Approved',
+            ),
+          )
+        : null;
+
+    if (result ?? false) {
+      WidgetUtil.showSnackBar(text: 'Approved collector profile successfully');
+      if (mounted) {
+        context.router.maybePop(true);
+      }
+    } else {
+      WidgetUtil.showSnackBar(text: 'Failed to approve collector profile');
+    }
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CollectorDetailsScreenState {
-  Widget getCollectorImage() {
+  Widget getAccountStatusBar({required String approvalStatus}) {
+    final statusStyles = {
+      'Approved': ColorManager.primary,
+      'Pending': ColorManager.orangeColor,
+      'Rejected': ColorManager.redColor,
+    };
+
+    return CustomStatusBar(
+      text: approvalStatus,
+      backgroundColor: statusStyles[approvalStatus],
+    );
+  }
+
+  Widget getRejectionMessage({required String rejectionMessage}) {
+    return Text(
+      ' Reason: $rejectionMessage',
+      style: _Styles.rejectionMessageTextStyle,
+    );
+  }
+
+  Widget getCollectorImage({required String imageURL}) {
     return Center(
-      child: CustomImage(
+      child: CustomProfileImage(
         imageSize: _Styles.imageSize,
-        borderRadius: _Styles.borderRadius,
-        imageURL:
-            'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
+        imageURL: imageURL,
       ),
     );
   }
 
-  Widget getCollectorNameOrganization() {
+  Widget getCollectorNameOrganization({
+    required String collectorName,
+    required String companyName,
+  }) {
     return Center(
       child: Column(
         children: [
-          Text('Collector Name', style: _Styles.collectorNameTextStyle),
-          Text('Company/Organization', style: _Styles.companyTextStyle),
+          Text(collectorName, style: _Styles.collectorNameTextStyle),
+          Text(companyName, style: _Styles.companyTextStyle),
         ],
       ),
     );
   }
 
-  Widget getCollectorDetails() {
+  Widget getCollectorDetails({required UserModel user}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getTitleDescription(
           title: 'Email Address',
-          description: 'xxx@gmail.com',
+          description: user.emailAddress ?? '-',
         ),
         SizedBox(height: 30),
-        getTitleDescription(title: 'Gender', description: 'Male'),
+        getTitleDescription(title: 'Gender', description: user.gender ?? '-'),
         SizedBox(height: 30),
         getTitleDescription(
           title: 'Phone Number',
-          description: '+601919162626',
+          description: user.phoneNumber ?? '-',
         ),
         SizedBox(height: 30),
-        getTitleDescription(title: 'Vehicle Type', description: 'Van'),
+        getTitleDescription(
+          title: 'Vehicle Type',
+          description: user.vehicleType ?? '-',
+        ),
         SizedBox(height: 30),
         getTitleDescription(
           title: 'Vehicle Plate Number',
-          description: 'WWX 4451',
+          description: user.vehiclePlateNumber ?? '-',
         ),
       ],
     );
@@ -144,40 +327,59 @@ extension _WidgetFactories on _CollectorDetailsScreenState {
     );
   }
 
-  Widget getRejectApproveButton() {
+  Widget getRejectApproveButton({required String approvalStatus}) {
+    final isRejected = approvalStatus == 'Rejected';
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.4,
-          child: CustomButton(
-            text: 'Reject',
-            textColor: ColorManager.redColor,
-            onPressed: onDeleteButtonPressed,
-            borderColor: ColorManager.redColor,
-            backgroundColor: ColorManager.whiteColor,
-            icon: Icon(
-              Icons.close,
-              color: ColorManager.redColor,
-              size: _Styles.iconSize,
+        if (!isRejected) ...[
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: CustomButton(
+              text: 'Reject',
+              textColor: ColorManager.redColor,
+              onPressed: onDeleteButtonPressed,
+              borderColor: ColorManager.redColor,
+              backgroundColor: ColorManager.whiteColor,
+              icon: Icon(
+                Icons.close,
+                color: ColorManager.redColor,
+                size: _Styles.iconSize,
+              ),
             ),
           ),
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.4,
-          child: CustomButton(
-            text: 'Approve',
-            textColor: ColorManager.primary,
-            onPressed: onApproveButtonPressed,
-            borderColor: ColorManager.primary,
-            backgroundColor: ColorManager.whiteColor,
-            icon: Icon(
-              Icons.check_rounded,
-              color: ColorManager.primary,
-              size: _Styles.iconSize,
-            ),
-          ),
-        ),
+        ],
+        isRejected
+            ? Expanded(
+                child: CustomButton(
+                  text: 'Approve',
+                  textColor: ColorManager.primary,
+                  onPressed: onApproveButtonPressed,
+                  borderColor: ColorManager.primary,
+                  backgroundColor: ColorManager.whiteColor,
+                  icon: Icon(
+                    Icons.check_rounded,
+                    color: ColorManager.primary,
+                    size: _Styles.iconSize,
+                  ),
+                ),
+              )
+            : SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: CustomButton(
+                  text: 'Approve',
+                  textColor: ColorManager.primary,
+                  onPressed: onApproveButtonPressed,
+                  borderColor: ColorManager.primary,
+                  backgroundColor: ColorManager.whiteColor,
+                  icon: Icon(
+                    Icons.check_rounded,
+                    color: ColorManager.primary,
+                    size: _Styles.iconSize,
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -199,7 +401,6 @@ class _Styles {
   _Styles._();
 
   static const imageSize = 130.0;
-  static const borderRadius = 70.0;
   static const iconSize = 25.0;
   static const maxLines = 6;
 
@@ -240,5 +441,11 @@ class _Styles {
     fontSize: 13,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.primary,
+  );
+
+  static const rejectionMessageTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.redColor,
   );
 }

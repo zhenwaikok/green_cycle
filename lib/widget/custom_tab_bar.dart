@@ -42,6 +42,7 @@ extension _WidgetFactories on _CustomTabBarState {
         labelStyle: _Styles.tabLabelTextStyle,
         labelPadding: _Styles.tabBarLabelPadding,
         dividerColor: Colors.transparent,
+        overlayColor: _Styles.overlayColor,
       ),
     );
   }
@@ -51,12 +52,16 @@ extension _WidgetFactories on _CustomTabBarState {
 class _Styles {
   _Styles._();
 
-  static const tabBarBorderRadius = 10.0;
+  static const tabBarBorderRadius = 30.0;
 
-  static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 10);
+  static const tabBarLabelPadding = EdgeInsets.symmetric(vertical: 8);
 
   static const tabLabelTextStyle = TextStyle(
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
+  );
+
+  static final overlayColor = WidgetStateProperty.all<Color>(
+    Colors.transparent,
   );
 }

@@ -43,6 +43,7 @@ extension _Actions on _InitScreenState {
       final userRole = mounted
           ? context.read<UserViewModel>().user?.userRole ?? ''
           : '';
+      print('User Role: $userRole');
 
       if (isLoggedIn) {
         if (mounted) {

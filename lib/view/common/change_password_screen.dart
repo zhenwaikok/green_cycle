@@ -153,7 +153,7 @@ extension _WidgetFactories on _ChangePasswordScreenState {
           color: ColorManager.blackColor,
           title: 'Current Password',
           formName: ChangePasswordFormFieldsEnum.currentPassword.name,
-          prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock, color: ColorManager.blackColor),
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
             FormBuilderValidators.minLength(6),
@@ -165,7 +165,7 @@ extension _WidgetFactories on _ChangePasswordScreenState {
           color: ColorManager.blackColor,
           title: 'New Password',
           formName: ChangePasswordFormFieldsEnum.newPassword.name,
-          prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock, color: ColorManager.blackColor),
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
             FormBuilderValidators.minLength(6),
@@ -177,7 +177,7 @@ extension _WidgetFactories on _ChangePasswordScreenState {
           color: ColorManager.blackColor,
           title: 'Confirm New Password',
           formName: ChangePasswordFormFieldsEnum.confirmNewPassword.name,
-          prefixIcon: Icon(Icons.lock, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock, color: ColorManager.blackColor),
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
             (value) {
