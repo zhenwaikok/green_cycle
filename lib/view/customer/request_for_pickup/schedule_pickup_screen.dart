@@ -1,30 +1,42 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_date_picker_field.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class SchedulePickupScreen extends StatefulWidget {
-  const SchedulePickupScreen({super.key});
+class SchedulePickupScreen extends StatelessWidget {
+  const SchedulePickupScreen({super.key, required this.isEdit});
+
+  final bool isEdit;
 
   @override
-  State<SchedulePickupScreen> createState() => _SchedulePickupScreenState();
+  Widget build(BuildContext context) {
+    return _SchedulePickupScreen(isEdit: isEdit);
+  }
 }
 
-class _SchedulePickupScreenState extends State<SchedulePickupScreen> {
-  List<String> pickUpTimeOptions = [
-    '8:00 AM - 10:00 AM',
-    '10:00 AM - 12:00 PM',
-    '12:00 PM - 2:00 PM',
-    '2:00 PM - 4:00 PM',
-    '4:00 PM - 6:00 PM',
-  ];
+class _SchedulePickupScreen extends StatefulWidget {
+  const _SchedulePickupScreen({required this.isEdit});
+
+  final bool isEdit;
+  @override
+  State<_SchedulePickupScreen> createState() => _SchedulePickupScreenState();
+}
+
+class _SchedulePickupScreenState extends State<_SchedulePickupScreen> {
+  final _formkey = GlobalKey<FormBuilderState>();
+  final pickUpTimeOptions = DropDownItems.pickUpTimeOptions;
 
   int selectedPickUpTimeOptionIndex = 0;
 
@@ -32,6 +44,12 @@ class _SchedulePickupScreenState extends State<SchedulePickupScreen> {
     if (mounted) {
       setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
   }
 
   @override
@@ -44,27 +62,41 @@ class _SchedulePickupScreenState extends State<SchedulePickupScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: _Styles.screenPadding,
-        child: getNextButton(),
+        child: getNextButton(isEdit: widget.isEdit),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getTitle(),
-                SizedBox(height: 35),
-                getPickupDateSection(),
-                SizedBox(height: 25),
-                getPickupTimeSection(),
-              ],
+            child: FormBuilder(
+              key: _formkey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getTitle(),
+                  SizedBox(height: 35),
+                  getPickupDateSection(),
+                  SizedBox(height: 25),
+                  getPickupTimeSection(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _SchedulePickupScreenState {
+  DateTime get pickupDate => _formkey
+      .currentState
+      ?.fields[RequestForPickupFormFieldsEnum.pickupDate.name]
+      ?.value;
+
+  String get pickupTimeRange =>
+      DropDownItems.pickUpTimeOptions[selectedPickUpTimeOptionIndex];
 }
 
 // * ---------------------------- Actions ----------------------------
@@ -79,8 +111,26 @@ extension _Actions on _SchedulePickupScreenState {
     });
   }
 
-  void onNextButtonPressed() {
-    context.router.push(RequestItemDetailsRoute());
+  void onNextButtonPressed({required bool isEdit}) {
+    context.read<PickupRequestViewModel>().updatePickupDateAndTime(
+      pickupDate: pickupDate,
+      pickupTimeRange: pickupTimeRange,
+    );
+    if (isEdit) {
+      WidgetUtil.showSnackBar(text: 'Updated successfully');
+      context.router.maybePop();
+    } else {
+      context.router.push(RequestItemDetailsRoute(isEdit: false));
+    }
+  }
+
+  void loadData() {
+    final vm = context.read<PickupRequestViewModel>();
+    if (vm.pickupTimeRange != null) {
+      selectedPickUpTimeOptionIndex = pickUpTimeOptions.indexOf(
+        vm.pickupTimeRange ?? '',
+      );
+    }
   }
 }
 
@@ -101,6 +151,7 @@ extension _WidgetFactories on _SchedulePickupScreenState {
   }
 
   Widget getPickupDateSection() {
+    final vm = context.read<PickupRequestViewModel>();
     return Column(
       children: [
         getSectionTitle(
@@ -115,6 +166,7 @@ extension _WidgetFactories on _SchedulePickupScreenState {
             color: ColorManager.greyColor,
             size: _Styles.datePickerIconSize,
           ),
+          initialValue: vm.pickupDate,
         ),
       ],
     );
@@ -170,6 +222,8 @@ extension _WidgetFactories on _SchedulePickupScreenState {
     return TouchableOpacity(
       onPressed: onTap,
       child: Container(
+        width: _Styles.pickupTimeCardSize,
+        height: _Styles.pickupTimeCardSize,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(_Styles.borderRadius),
           border: isSelected == true
@@ -197,11 +251,11 @@ extension _WidgetFactories on _SchedulePickupScreenState {
     );
   }
 
-  Widget getNextButton() {
+  Widget getNextButton({required bool isEdit}) {
     return CustomButton(
-      text: 'Next',
+      text: isEdit ? 'Update' : 'Next',
       textColor: ColorManager.whiteColor,
-      onPressed: onNextButtonPressed,
+      onPressed: () => onNextButtonPressed(isEdit: isEdit),
       backgroundColor: ColorManager.primary,
     );
   }
@@ -214,6 +268,7 @@ class _Styles {
   static const sectionIconSize = 30.0;
   static const datePickerIconSize = 20.0;
   static const borderRadius = 5.0;
+  static const pickupTimeCardSize = 100.0;
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,

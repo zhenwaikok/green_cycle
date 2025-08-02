@@ -1065,18 +1065,40 @@ class RequestDetailsRoute extends _i49.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i42.RequestItemDetailsScreen]
-class RequestItemDetailsRoute extends _i49.PageRouteInfo<void> {
-  const RequestItemDetailsRoute({List<_i49.PageRouteInfo>? children})
-    : super(RequestItemDetailsRoute.name, initialChildren: children);
+class RequestItemDetailsRoute
+    extends _i49.PageRouteInfo<RequestItemDetailsRouteArgs> {
+  RequestItemDetailsRoute({
+    _i50.Key? key,
+    required bool isEdit,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         RequestItemDetailsRoute.name,
+         args: RequestItemDetailsRouteArgs(key: key, isEdit: isEdit),
+         initialChildren: children,
+       );
 
   static const String name = 'RequestItemDetailsRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i42.RequestItemDetailsScreen();
+      final args = data.argsAs<RequestItemDetailsRouteArgs>();
+      return _i42.RequestItemDetailsScreen(key: args.key, isEdit: args.isEdit);
     },
   );
+}
+
+class RequestItemDetailsRouteArgs {
+  const RequestItemDetailsRouteArgs({this.key, required this.isEdit});
+
+  final _i50.Key? key;
+
+  final bool isEdit;
+
+  @override
+  String toString() {
+    return 'RequestItemDetailsRouteArgs{key: $key, isEdit: $isEdit}';
+  }
 }
 
 /// generated route for
@@ -1129,34 +1151,76 @@ class RewardRoute extends _i49.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i46.SchedulePickupScreen]
-class SchedulePickupRoute extends _i49.PageRouteInfo<void> {
-  const SchedulePickupRoute({List<_i49.PageRouteInfo>? children})
-    : super(SchedulePickupRoute.name, initialChildren: children);
+class SchedulePickupRoute extends _i49.PageRouteInfo<SchedulePickupRouteArgs> {
+  SchedulePickupRoute({
+    _i50.Key? key,
+    required bool isEdit,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         SchedulePickupRoute.name,
+         args: SchedulePickupRouteArgs(key: key, isEdit: isEdit),
+         initialChildren: children,
+       );
 
   static const String name = 'SchedulePickupRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i46.SchedulePickupScreen();
+      final args = data.argsAs<SchedulePickupRouteArgs>();
+      return _i46.SchedulePickupScreen(key: args.key, isEdit: args.isEdit);
     },
   );
 }
 
+class SchedulePickupRouteArgs {
+  const SchedulePickupRouteArgs({this.key, required this.isEdit});
+
+  final _i50.Key? key;
+
+  final bool isEdit;
+
+  @override
+  String toString() {
+    return 'SchedulePickupRouteArgs{key: $key, isEdit: $isEdit}';
+  }
+}
+
 /// generated route for
 /// [_i47.SelectLocationScreen]
-class SelectLocationRoute extends _i49.PageRouteInfo<void> {
-  const SelectLocationRoute({List<_i49.PageRouteInfo>? children})
-    : super(SelectLocationRoute.name, initialChildren: children);
+class SelectLocationRoute extends _i49.PageRouteInfo<SelectLocationRouteArgs> {
+  SelectLocationRoute({
+    _i50.Key? key,
+    required bool isEdit,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         SelectLocationRoute.name,
+         args: SelectLocationRouteArgs(key: key, isEdit: isEdit),
+         initialChildren: children,
+       );
 
   static const String name = 'SelectLocationRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i47.SelectLocationScreen();
+      final args = data.argsAs<SelectLocationRouteArgs>();
+      return _i47.SelectLocationScreen(key: args.key, isEdit: args.isEdit);
     },
   );
+}
+
+class SelectLocationRouteArgs {
+  const SelectLocationRouteArgs({this.key, required this.isEdit});
+
+  final _i50.Key? key;
+
+  final bool isEdit;
+
+  @override
+  String toString() {
+    return 'SelectLocationRouteArgs{key: $key, isEdit: $isEdit}';
+  }
 }
 
 /// generated route for

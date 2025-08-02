@@ -1,22 +1,40 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
-import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class RequestSummaryScreen extends StatefulWidget {
+class RequestSummaryScreen extends StatelessWidget {
   const RequestSummaryScreen({super.key});
 
   @override
-  State<RequestSummaryScreen> createState() => _RequestSummaryScreenState();
+  Widget build(BuildContext context) {
+    return _RequestSummaryScreen();
+  }
 }
 
-class _RequestSummaryScreenState extends State<RequestSummaryScreen> {
+class _RequestSummaryScreen extends StatefulWidget {
+  @override
+  State<_RequestSummaryScreen> createState() => _RequestSummaryScreenState();
+}
+
+class _RequestSummaryScreenState extends State<_RequestSummaryScreen>
+    with ErrorHandlingMixin {
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<PickupRequestViewModel>();
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Request Summary',
@@ -36,11 +54,23 @@ class _RequestSummaryScreenState extends State<RequestSummaryScreen> {
               children: [
                 getTitle(),
                 SizedBox(height: 35),
-                getPickupLocationSection(),
+                getPickupLocationSection(
+                  pickupLocation: vm.pickupLocation ?? '-',
+                  remarks: vm.remarks,
+                ),
                 SizedBox(height: 25),
-                getPickupDateTimeSection(),
+                getPickupDateTimeSection(
+                  pickupDate: vm.pickupDate ?? DateTime.now(),
+                  pickupTimeRange: vm.pickupTimeRange ?? '',
+                ),
                 SizedBox(height: 25),
-                getItemDetailsSection(),
+                getItemDetailsSection(
+                  itemImages: vm.pickupItemImages,
+                  itemDescription: vm.pickupItemDescription ?? '-',
+                  category: vm.pickupItemCategory ?? '-',
+                  quantity: vm.pickupItemQuantity ?? 0,
+                  condition: vm.pickupItemCondition ?? '-',
+                ),
               ],
             ),
           ),
@@ -54,6 +84,34 @@ class _RequestSummaryScreenState extends State<RequestSummaryScreen> {
 extension _Actions on _RequestSummaryScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
+  }
+
+  void onEditPickupLocationPressed() {
+    context.router.push(SelectLocationRoute(isEdit: true));
+  }
+
+  void onEditPickupDateAndTimePressed() {
+    context.router.push(SchedulePickupRoute(isEdit: true));
+  }
+
+  void onEditItemDetailsPressed() {
+    context.router.push(RequestItemDetailsRoute(isEdit: true));
+  }
+
+  Future<void> onConfirmRequestButtonPressed() async {
+    final vm = context.read<PickupRequestViewModel>();
+    final result =
+        await tryLoad(context, () => vm.insertPickupRequest()) ?? false;
+    if (result) {
+      unawaited(
+        WidgetUtil.showSnackBar(text: 'Request submitted successfully'),
+      );
+      if (mounted) {
+        context.router.popUntil((route) => route.isFirst);
+      }
+    } else {
+      unawaited(WidgetUtil.showSnackBar(text: 'Failed to submit request'));
+    }
   }
 }
 
@@ -73,12 +131,51 @@ extension _WidgetFactories on _RequestSummaryScreenState {
     );
   }
 
-  Widget getPickupLocationSection() {
+  Widget getPickupLocationSection({
+    required String pickupLocation,
+    required String? remarks,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getSectionTitle(title: 'Pickup Location', onPressed: () {}),
+        getSectionTitle(
+          title: 'Pickup Location',
+          onPressed: onEditPickupLocationPressed,
+        ),
         Text(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+          pickupLocation,
+          style: _Styles.blackTextStyle,
+          textAlign: TextAlign.justify,
+        ),
+        remarks != null && remarks.isNotEmpty
+            ? Column(
+                children: [
+                  SizedBox(height: 5),
+                  Text(
+                    '**Remarks: $remarks',
+                    style: _Styles.smallGreyTextStyle,
+                    textAlign: TextAlign.justify,
+                  ),
+                ],
+              )
+            : SizedBox.shrink(),
+      ],
+    );
+  }
+
+  Widget getPickupDateTimeSection({
+    required DateTime pickupDate,
+    required String pickupTimeRange,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getSectionTitle(
+          title: 'Pickup Date & Time',
+          onPressed: onEditPickupDateAndTimePressed,
+        ),
+        Text(
+          '${WidgetUtil.dateFormatter(pickupDate)}, $pickupTimeRange',
           style: _Styles.blackTextStyle,
           textAlign: TextAlign.justify,
         ),
@@ -86,43 +183,49 @@ extension _WidgetFactories on _RequestSummaryScreenState {
     );
   }
 
-  Widget getPickupDateTimeSection() {
+  Widget getItemDetailsSection({
+    required List<ImageFile> itemImages,
+    required String itemDescription,
+    required String category,
+    required int quantity,
+    required String condition,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getSectionTitle(title: 'Pickup Date & Time', onPressed: () {}),
-        Text(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
-          style: _Styles.blackTextStyle,
-          textAlign: TextAlign.justify,
+        getSectionTitle(
+          title: 'Item Details',
+          onPressed: onEditItemDetailsPressed,
         ),
-      ],
-    );
-  }
-
-  Widget getItemDetailsSection() {
-    return Column(
-      children: [
-        getSectionTitle(title: 'Item Details', onPressed: () {}),
         SizedBox(height: 10),
-        //TODO: Pass image list later
         Row(
           children: [
             ...List.generate(
-              3,
+              itemImages.length,
               (index) => Padding(
                 padding: _Styles.itemImagePadding,
-                child: CustomImage(
-                  imageSize: _Styles.itemImageSize,
-                  borderRadius: _Styles.itemImageBorderRadius,
-                  imageURL:
-                      'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    _Styles.itemImageBorderRadius,
+                  ),
+                  child: Image.file(
+                    File(itemImages[index].path ?? ''),
+                    width: _Styles.itemImageSize,
+                    height: _Styles.itemImageSize,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
           ],
         ),
         SizedBox(height: 15),
-        getItemDescription(),
+        getItemDescription(
+          itemDescription: itemDescription,
+          category: category,
+          quantity: quantity,
+          condition: condition,
+        ),
       ],
     );
   }
@@ -147,28 +250,33 @@ extension _WidgetFactories on _RequestSummaryScreenState {
     );
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({
+    required String itemDescription,
+    required String category,
+    required int quantity,
+    required String condition,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getItemDescriptionText(
           itemTitle: 'Item Description: ',
-          itemDescription: 'xxxxx',
+          itemDescription: itemDescription,
         ),
         SizedBox(height: 15),
         getItemDescriptionText(
           itemTitle: 'Category: ',
-          itemDescription: 'xxxxx',
+          itemDescription: category,
         ),
         SizedBox(height: 15),
         getItemDescriptionText(
           itemTitle: 'Quantity: ',
-          itemDescription: 'xxxxx',
+          itemDescription: quantity.toString(),
         ),
         SizedBox(height: 15),
         getItemDescriptionText(
           itemTitle: 'Condition & Usage Info: ',
-          itemDescription: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+          itemDescription: condition,
         ),
       ],
     );
@@ -193,7 +301,7 @@ extension _WidgetFactories on _RequestSummaryScreenState {
     return CustomButton(
       text: 'Confirm Request',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: onConfirmRequestButtonPressed,
       backgroundColor: ColorManager.primary,
     );
   }
@@ -204,7 +312,7 @@ class _Styles {
   _Styles._();
 
   static const editIconSize = 25.0;
-  static const itemImageSize = 100.0;
+  static const itemImageSize = 110.0;
   static const itemImageBorderRadius = 10.0;
 
   static const screenPadding = EdgeInsets.symmetric(
@@ -228,6 +336,12 @@ class _Styles {
 
   static const greyTextStyle = TextStyle(
     fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.greyColor,
+  );
+
+  static const smallGreyTextStyle = TextStyle(
+    fontSize: 12,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,
   );

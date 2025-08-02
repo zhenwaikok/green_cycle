@@ -258,7 +258,6 @@ class UserViewModel extends BaseViewModel {
     );
 
     checkError(updatePasswordResponse);
-    print('updatePasswordResponse: ${updatePasswordResponse.data}');
 
     if (updatePasswordResponse.data) {
       final updateUserResponse = await updateUser(

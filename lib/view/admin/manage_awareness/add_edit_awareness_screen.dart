@@ -88,7 +88,6 @@ class _AddOrEditAwarenessScreenState extends State<_AddOrEditAwarenessScreen>
     final awarenessDetails = context.select(
       (AwarenessViewModel vm) => vm.awarenessDetails,
     );
-    print('awarenessDetails: $awarenessDetails');
 
     return Scaffold(
       appBar: CustomAppBar(

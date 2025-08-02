@@ -12,7 +12,7 @@ abstract class BaseServices {
   }
 
   static BaseServices? _instance;
-  static String? hostUrl = APIValues.hostUrl;
+  static String? hostUrl = EnvValues.hostUrl;
   String apiUrl() => hostUrl ?? '';
 
   Dio? _dio;
@@ -54,6 +54,7 @@ abstract class BaseServices {
           response = await dio?.get(path);
           break;
         case HttpMethod.post:
+          print('calling post');
           response = await dio?.post(path, data: postBody);
           break;
         case HttpMethod.put:
@@ -78,6 +79,8 @@ abstract class BaseServices {
         var processedError = ErrorModel.fromJson(
           e.response?.data,
         ).copyWith(status: e.response?.statusCode);
+
+        print('error: ${e.response?.data}');
 
         print('API Call Error: ${processedError.message}');
 

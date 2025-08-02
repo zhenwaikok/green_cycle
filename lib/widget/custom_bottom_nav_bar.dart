@@ -25,6 +25,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         return Scaffold(
           body: child,
           bottomNavigationBar: SafeArea(
+            bottom: false,
             child: Container(
               decoration: BoxDecoration(
                 color: ColorManager.whiteColor,

@@ -58,6 +58,8 @@ dependencies:
 
   #Google Map
   google_maps_flutter: ^2.12.3
+  google_places_flutter: ^2.1.0
+  geolocator: ^14.0.2
 
   #Data
   dio: ^5.7.0

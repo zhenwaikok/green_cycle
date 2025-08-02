@@ -6,7 +6,6 @@ import 'package:green_cycle_fyp/services/api_base_services.dart';
 class AwarenessServices extends BaseServices {
   Future<MyResponse> getAllAwareness() async {
     String path = '${apiUrl()}/Awareness';
-    print('Calling Awareness API: $path');
 
     return callAPI(httpMethod: HttpMethod.get, path: path);
   }

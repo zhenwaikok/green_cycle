@@ -99,7 +99,7 @@ extension _Actions on _CustomerHomeScreenState {
   }
 
   void onRequestPickupButtonPressed() {
-    context.router.push(SelectLocationRoute());
+    context.router.push(SelectLocationRoute(isEdit: false));
   }
 
   void onShowAllButtonPressed() {
