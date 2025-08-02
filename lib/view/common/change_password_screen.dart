@@ -102,7 +102,7 @@ extension _Actions on _ChangePasswordScreenState {
     context.router.maybePop();
   }
 
-  void onSaveButtonPressed() async {
+  Future<void> onSaveButtonPressed() async {
     final formValid = _formKey.currentState?.saveAndValidate() ?? false;
     if (formValid) {
       final result =

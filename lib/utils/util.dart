@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -6,7 +8,9 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/adaptive_alert_dialog.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 
 class WidgetUtil {
   static String dateFormatter(DateTime date) {
@@ -95,5 +99,23 @@ class WidgetUtil {
       textColor: ColorManager.whiteColor,
       fontSize: 15.0,
     );
+  }
+
+  static ImageFile convertToImageFile(XFile file) {
+    return ImageFile(
+      UniqueKey().toString(),
+      name: file.name,
+      extension: file.path.split('.').last,
+      bytes: File(file.path).readAsBytesSync(),
+      path: file.path,
+    );
+  }
+
+  static Future<List<XFile>> pickMultipleImages({
+    required List<XFile> images,
+  }) async {
+    final ImagePicker imagePicker = ImagePicker();
+    images = await imagePicker.pickMultiImage();
+    return images;
   }
 }

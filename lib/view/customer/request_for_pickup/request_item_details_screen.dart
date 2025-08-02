@@ -1,11 +1,14 @@
-import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -13,58 +16,43 @@ import 'package:green_cycle_fyp/widget/custom_text_field.dart';
 import 'package:green_cycle_fyp/widget/item_photo_add_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class RequestItemDetailsScreen extends StatefulWidget {
-  const RequestItemDetailsScreen({super.key});
+class RequestItemDetailsScreen extends StatelessWidget {
+  const RequestItemDetailsScreen({super.key, required this.isEdit});
+
+  final bool isEdit;
 
   @override
-  State<RequestItemDetailsScreen> createState() =>
+  Widget build(BuildContext context) {
+    return _RequestItemDetailsScreen(isEdit: isEdit);
+  }
+}
+
+class _RequestItemDetailsScreen extends StatefulWidget {
+  const _RequestItemDetailsScreen({required this.isEdit});
+
+  final bool isEdit;
+
+  @override
+  State<_RequestItemDetailsScreen> createState() =>
       _RequestItemDetailsScreenState();
 }
 
-class _RequestItemDetailsScreenState extends State<RequestItemDetailsScreen> {
+class _RequestItemDetailsScreenState extends State<_RequestItemDetailsScreen> {
   late MultiImagePickerController controller;
+  List<XFile> images = [];
 
-  final List<String> categoryItems = [
-    'Large Household Appliances',
-    'Small Household Appliances',
-    'Consumer Electronics',
-    'Information & Communication Technology (ICT)',
-    'Lighting Equipment',
-    'Batteries & Accumulators',
-    'Electrical & Electronic Tools',
-    'Medical Devices',
-    'Monitoring & Control Instruments',
-  ];
-  //TODO: Put this 2 methods in to VM later
-  Future<List<XFile>> pickMultipleImages(int pickCount) async {
-    final ImagePicker imagePicker = ImagePicker();
-    final List<XFile> images = await imagePicker.pickMultiImage();
-    return images;
-  }
+  final _formkey = GlobalKey<FormBuilderState>();
 
-  //TODO: Put this 2 methods in to VM later
-  ImageFile convertToImageFile(XFile file) {
-    return ImageFile(
-      UniqueKey().toString(),
-      name: file.name,
-      extension: file.path.split('.').last,
-      bytes: File(file.path).readAsBytesSync(),
-    );
-  }
+  final categoryItems = DropDownItems.pickupRequestCategoryItems;
 
   @override
   void initState() {
-    controller = MultiImagePickerController(
-      maxImages: 3,
-      picker: (int pickCount, Object? params) async {
-        final pickedImages = await pickMultipleImages(pickCount);
-
-        return pickedImages.map((e) => convertToImageFile(e)).toList();
-      },
-    );
     super.initState();
+    imageControllerSetup();
+    loadData();
   }
 
   @override
@@ -75,6 +63,8 @@ class _RequestItemDetailsScreenState extends State<RequestItemDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.select((PickupRequestViewModel vm) => vm);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Item Details',
@@ -83,27 +73,36 @@ class _RequestItemDetailsScreenState extends State<RequestItemDetailsScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: _Styles.screenPadding,
-        child: getNextButton(),
+        child: getNextButton(isEdit: widget.isEdit),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getTitle(),
-                SizedBox(height: 35),
-                getItemPhotoField(),
-                SizedBox(height: 10),
-                getItemDescriptionSection(),
-                SizedBox(height: 25),
-                getCategorySection(),
-                SizedBox(height: 25),
-                getQuantitySection(),
-                SizedBox(height: 25),
-                getConditionInfoSection(),
-              ],
+            child: FormBuilder(
+              key: _formkey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getTitle(),
+                  SizedBox(height: 35),
+                  getItemPhotoField(),
+                  SizedBox(height: 25),
+                  getItemDescriptionSection(
+                    itemDescription: vm.pickupItemDescription ?? '',
+                  ),
+                  SizedBox(height: 25),
+                  getCategorySection(
+                    itemCategory: vm.pickupItemCategory ?? categoryItems.first,
+                  ),
+                  SizedBox(height: 25),
+                  getQuantitySection(quantity: vm.pickupItemQuantity ?? 1),
+                  SizedBox(height: 25),
+                  getConditionInfoSection(
+                    conditionInfo: vm.pickupItemCondition ?? '',
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -112,14 +111,97 @@ class _RequestItemDetailsScreenState extends State<RequestItemDetailsScreen> {
   }
 }
 
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _RequestItemDetailsScreenState {
+  List<ImageFile> get itemImages => controller.images.toList();
+
+  String get itemDescription => _formkey
+      .currentState
+      ?.fields[RequestForPickupFormFieldsEnum.itemDescription.name]
+      ?.value;
+
+  String get itemCategory => _formkey
+      .currentState
+      ?.fields[RequestForPickupFormFieldsEnum.category.name]
+      ?.value;
+
+  int get itemQuantity =>
+      int.tryParse(
+        _formkey
+            .currentState
+            ?.fields[RequestForPickupFormFieldsEnum.quantity.name]
+            ?.value,
+      ) ??
+      0;
+
+  String get itemCondition => _formkey
+      .currentState
+      ?.fields[RequestForPickupFormFieldsEnum.conditionInfo.name]
+      ?.value;
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _RequestItemDetailsScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
   }
 
-  void onNextButtonPressed() {
-    context.router.push(RequestSummaryRoute());
+  void loadData() {
+    final vm = context.read<PickupRequestViewModel>();
+    if (vm.pickupItemImages.isNotEmpty) {
+      controller.images = vm.pickupItemImages;
+    }
+  }
+
+  void onNextButtonPressed({required bool isEdit}) {
+    final formValid = _formkey.currentState?.saveAndValidate() ?? false;
+
+    if (formValid) {
+      context.read<PickupRequestViewModel>().updatePickupItemDetails(
+        pickupItemImages: itemImages,
+        pickupItemDescription: itemDescription,
+        pickupItemCategory: itemCategory,
+        pickupItemQuantity: itemQuantity,
+        pickupItemCondition: itemCondition,
+      );
+      if (isEdit) {
+        WidgetUtil.showSnackBar(text: 'Updated successfully');
+        context.router.maybePop();
+      } else {
+        context.router.push(RequestSummaryRoute());
+      }
+    }
+  }
+
+  void imageControllerSetup() {
+    controller = MultiImagePickerController(
+      maxImages: 3,
+      picker: (int pickCount, Object? params) async {
+        final pickedImages = await WidgetUtil.pickMultipleImages(
+          images: images,
+        );
+
+        if (pickedImages.length > pickCount) {
+          WidgetUtil.showSnackBar(
+            text:
+                'You can only select up to ${controller.maxImages - controller.images.length} image(s).',
+          );
+        }
+
+        return pickedImages
+            .map((e) => WidgetUtil.convertToImageFile(e))
+            .toList();
+      },
+    );
+  }
+
+  void imagesChanged(FormFieldState<List<XFile>> field) {
+    controller.removeListener(() {});
+    controller.addListener(() {
+      final currentImages = controller.images;
+      print('Current Images: $currentImages');
+      field.didChange(currentImages.map((e) => XFile(e.path ?? '')).toList());
+    });
   }
 }
 
@@ -140,19 +222,45 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
   }
 
   Widget getItemPhotoField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Item Photo(s)', style: _Styles.sectionTitleTextStyle),
-        SizedBox(height: 10),
-        getMultiImagePickerView(context: context),
-      ],
+    return FormBuilderField<List<XFile>>(
+      name: RequestForPickupFormFieldsEnum.itemPhotos.name,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) {
+        if (controller.images.isEmpty) {
+          return '  This field cannot be empty.';
+        }
+        return null;
+      },
+      builder: (field) {
+        imagesChanged(field);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Item Photo(s)', style: _Styles.sectionTitleTextStyle),
+            Text('Note: Maximum 3 photos', style: _Styles.noteTextStyle),
+            SizedBox(height: 10),
+            getMultiImagePickerView(context: context),
+            if (field.hasError)
+              Padding(
+                padding: _Styles.errorTextPadding,
+                child: Text(
+                  field.errorText ?? '',
+                  style: _Styles.errorTextStyle,
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 
   Widget getMultiImagePickerView({required BuildContext context}) {
+    final hasImages = controller.images.isNotEmpty;
+
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.15,
+      height: hasImages
+          ? MediaQuery.of(context).size.height * 0.13
+          : MediaQuery.of(context).size.height * 0.11,
       child: MultiImagePickerView(
         controller: controller,
         builder: (context, ImageFile imageFile) {
@@ -180,40 +288,45 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
     return InkWell(onTap: controller.pickImages, child: ItemPhotoAddButton());
   }
 
-  Widget getItemDescriptionSection() {
+  Widget getItemDescriptionSection({required String itemDescription}) {
     return getSectionTextField(
       title: 'Item Description (Eg: Brand, Model and etc)',
       formName: RequestForPickupFormFieldsEnum.itemDescription.name,
       icon: Icons.description,
+      initialValue: itemDescription,
     );
   }
 
-  Widget getCategorySection() {
+  Widget getCategorySection({required String itemCategory}) {
     return Column(
       children: [
         getSectionTitle(title: 'Category', icon: Icons.category_outlined),
         CustomDropdown(
           formName: RequestForPickupFormFieldsEnum.category.name,
           items: categoryItems,
+          validator: FormBuilderValidators.required(),
+          initialValue: itemCategory,
         ),
       ],
     );
   }
 
-  Widget getQuantitySection() {
+  Widget getQuantitySection({required int quantity}) {
     return getSectionTextField(
       title: 'Quantity',
       formName: RequestForPickupFormFieldsEnum.quantity.name,
       icon: Icons.pie_chart,
       keyboardType: TextInputType.number,
+      initialValue: quantity.toString(),
     );
   }
 
-  Widget getConditionInfoSection() {
+  Widget getConditionInfoSection({required String conditionInfo}) {
     return getSectionTextField(
       title: 'Condition & Usage Info (Condition, Year of Usage and etc)',
       formName: RequestForPickupFormFieldsEnum.conditionInfo.name,
       icon: Icons.info,
+      initialValue: conditionInfo,
     );
   }
 
@@ -222,6 +335,7 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
     required String formName,
     required IconData icon,
     TextInputType? keyboardType,
+    String? initialValue,
   }) {
     return Column(
       children: [
@@ -233,6 +347,8 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
           formName: formName,
           needTitle: false,
           keyboardType: keyboardType,
+          validator: FormBuilderValidators.required(),
+          initialValue: initialValue,
         ),
       ],
     );
@@ -255,11 +371,11 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
     );
   }
 
-  Widget getNextButton() {
+  Widget getNextButton({required bool isEdit}) {
     return CustomButton(
-      text: 'Next',
+      text: isEdit ? 'Update' : 'Next',
       textColor: ColorManager.whiteColor,
-      onPressed: onNextButtonPressed,
+      onPressed: () => onNextButtonPressed(isEdit: isEdit),
       backgroundColor: ColorManager.primary,
     );
   }
@@ -296,4 +412,14 @@ class _Styles {
     fontWeight: FontWeightManager.bold,
     color: ColorManager.primary,
   );
+
+  static const noteTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.greyColor,
+  );
+
+  static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);
+
+  static const errorTextPadding = EdgeInsets.only(top: 5);
 }
