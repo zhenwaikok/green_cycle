@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -12,14 +13,40 @@ import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 
 @RoutePage()
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  Widget build(BuildContext context) {
+    return _CartScreen();
+  }
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreen extends BaseStatefulPage {
+  @override
+  State<_CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends BaseStatefulState<_CartScreen> {
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Cart',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets defaultPadding() {
+    return _Styles.screenPadding;
+  }
+
+  @override
+  Widget body() {
+    return getCartList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

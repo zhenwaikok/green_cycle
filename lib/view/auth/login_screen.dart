@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -12,9 +11,9 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
@@ -41,12 +40,12 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class _LoginScreen extends StatefulWidget {
+class _LoginScreen extends BaseStatefulPage {
   @override
   State<_LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<_LoginScreen> with ErrorHandlingMixin {
+class _LoginScreenState extends BaseStatefulState<_LoginScreen> {
   List<PageRouteInfo> routes = [];
   List<BottomNavigationBarItem> navBarItems = [];
   final _formKey = GlobalKey<FormBuilderState>();
@@ -59,26 +58,24 @@ class _LoginScreenState extends State<_LoginScreen> with ErrorHandlingMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Center(
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    getLogo(),
-                    SizedBox(height: 15),
-                    getTitle(),
-                    SizedBox(height: 30),
-                    getLogInForms(),
-                  ],
-                ),
-              ),
-            ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Center(
+      child: SingleChildScrollView(
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              getLogo(),
+              SizedBox(height: 15),
+              getTitle(),
+              SizedBox(height: 30),
+              getLogInForms(),
+            ],
           ),
         ),
       ),
@@ -302,11 +299,6 @@ class _Styles {
 
   static final forgotPasswordButtonStyle = ButtonStyle(
     overlayColor: WidgetStateProperty.all(Colors.transparent),
-  );
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
   );
 
   static const createAccTextStyle = TextStyle(

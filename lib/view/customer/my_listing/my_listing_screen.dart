@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
@@ -11,14 +12,21 @@ import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
-class MyListingScreen extends StatefulWidget {
+class MyListingScreen extends StatelessWidget {
   const MyListingScreen({super.key});
 
   @override
-  State<MyListingScreen> createState() => _MyListingScreenState();
+  Widget build(BuildContext context) {
+    return _MyListingScreen();
+  }
 }
 
-class _MyListingScreenState extends State<MyListingScreen> {
+class _MyListingScreen extends BaseStatefulPage {
+  @override
+  State<_MyListingScreen> createState() => _MyListingScreenState();
+}
+
+class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
   final List<String> sortByItems = [
     'All',
     'Ascending Name',
@@ -42,38 +50,40 @@ class _MyListingScreenState extends State<MyListingScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'My Listing',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'My Listing',
-          isBackButtonVisible: true,
-          onPressed: onBackButtonPressed,
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          getSortBy(),
+          SizedBox(height: 20),
+          getTabBar(),
+          SizedBox(height: 15),
+          Expanded(
+            child: TabBarView(
               children: [
-                getSortBy(),
-                SizedBox(height: 20),
-                getTabBar(),
-                SizedBox(height: 15),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      getMyListingList(listingStatus: ''),
-                      getMyListingList(listingStatus: 'Active'),
-                      getMyListingList(listingStatus: 'Sold'),
-                    ],
-                  ),
-                ),
+                getMyListingList(listingStatus: ''),
+                getMyListingList(listingStatus: 'Active'),
+                getMyListingList(listingStatus: 'Sold'),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

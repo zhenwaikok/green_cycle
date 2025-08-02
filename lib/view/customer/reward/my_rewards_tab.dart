@@ -1,21 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
-class MyRewardsTab extends StatefulWidget {
+class MyRewardsTab extends BaseStatefulPage {
   const MyRewardsTab({super.key});
 
   @override
   State<MyRewardsTab> createState() => _MyRewardsTabState();
 }
 
-class _MyRewardsTabState extends State<MyRewardsTab> {
+class _MyRewardsTabState extends BaseStatefulState<MyRewardsTab> {
   @override
-  Widget build(BuildContext context) {
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

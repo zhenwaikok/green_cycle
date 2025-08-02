@@ -5,8 +5,8 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -17,15 +17,14 @@ import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class CustomerHomeScreen extends StatefulWidget {
+class CustomerHomeScreen extends BaseStatefulPage {
   const CustomerHomeScreen({super.key});
 
   @override
   State<CustomerHomeScreen> createState() => _CustomerHomeScreenState();
 }
 
-class _CustomerHomeScreenState extends State<CustomerHomeScreen>
-    with ErrorHandlingMixin {
+class _CustomerHomeScreenState extends BaseStatefulState<CustomerHomeScreen> {
   List<AwarenessModel> _awarenessList = [];
 
   @override
@@ -43,7 +42,17 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     final awarenessList = _awarenessList
       ..sort(
         (a, b) =>
@@ -51,36 +60,32 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen>
       );
     final latest5AwarenessList = awarenessList.take(2).toList();
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              getTopBarInfo(),
-              Transform.translate(
-                offset: const Offset(0, -40),
-                child: Padding(
-                  padding: _Styles.requestContainerPadding,
-                  child: getRequestPickupCard(),
-                ),
-              ),
-              Padding(
-                padding: _Styles.screenPadding,
-                child: Column(
-                  children: [
-                    getStartSellingSection(),
-                    SizedBox(height: 40),
-                    getRequestList(),
-                    SizedBox(height: 30),
-                    getMarketplaceSection(),
-                    SizedBox(height: 30),
-                    getWhatNewSection(awarenessList: latest5AwarenessList),
-                  ],
-                ),
-              ),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          getTopBarInfo(),
+          Transform.translate(
+            offset: const Offset(0, -40),
+            child: Padding(
+              padding: _Styles.requestContainerPadding,
+              child: getRequestPickupCard(),
+            ),
           ),
-        ),
+          Padding(
+            padding: _Styles.screenPadding,
+            child: Column(
+              children: [
+                getStartSellingSection(),
+                SizedBox(height: 40),
+                getRequestList(),
+                SizedBox(height: 30),
+                getMarketplaceSection(),
+                SizedBox(height: 30),
+                getWhatNewSection(awarenessList: latest5AwarenessList),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

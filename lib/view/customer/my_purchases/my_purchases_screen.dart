@@ -1,48 +1,58 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/my_purchases/my_purchases_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
-class MyPurchasesScreen extends StatefulWidget {
+class MyPurchasesScreen extends StatelessWidget {
   const MyPurchasesScreen({super.key});
 
   @override
-  State<MyPurchasesScreen> createState() => _MyPurchasesScreenState();
+  Widget build(BuildContext context) {
+    return _MyPurchasesScreen();
+  }
 }
 
-class _MyPurchasesScreenState extends State<MyPurchasesScreen> {
+class _MyPurchasesScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
+  State<_MyPurchasesScreen> createState() => _MyPurchasesScreenState();
+}
+
+class _MyPurchasesScreenState extends BaseStatefulState<_MyPurchasesScreen> {
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'My Purchases',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 3,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'My Purchases',
-          isBackButtonVisible: true,
-          onPressed: onBackButtonPressed,
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
+      child: Column(
+        children: [
+          getTabBar(),
+          SizedBox(height: 15),
+          Expanded(
+            child: TabBarView(
               children: [
-                getTabBar(),
-                SizedBox(height: 15),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      getPurchasesList(purchaseStatus: ''),
-                      getPurchasesList(purchaseStatus: 'Shipped'),
-                      getPurchasesList(purchaseStatus: 'Completed'),
-                    ],
-                  ),
-                ),
+                getPurchasesList(purchaseStatus: ''),
+                getPurchasesList(purchaseStatus: 'Shipped'),
+                getPurchasesList(purchaseStatus: 'Completed'),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

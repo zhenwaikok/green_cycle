@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/services/awareness_services.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
@@ -13,7 +17,7 @@ import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:provider/provider.dart';
 
 @RoutePage()
-class AwarenessDetailsScreen extends StatefulWidget {
+class AwarenessDetailsScreen extends StatelessWidget {
   const AwarenessDetailsScreen({
     super.key,
     required this.userRole,
@@ -22,13 +26,41 @@ class AwarenessDetailsScreen extends StatefulWidget {
 
   final String userRole;
   final int awarenessId;
-
   @override
-  State<AwarenessDetailsScreen> createState() => _AwarenessDetailsScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AwarenessViewModel(
+        awarenessRepository: AwarenessRepository(
+          awarenessServices: AwarenessServices(),
+        ),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+      ),
+      child: _AwarenessDetailsScreen(
+        userRole: userRole,
+        awarenessId: awarenessId,
+      ),
+    );
+  }
 }
 
-class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
-    with ErrorHandlingMixin {
+class _AwarenessDetailsScreen extends BaseStatefulPage {
+  const _AwarenessDetailsScreen({
+    required this.userRole,
+    required this.awarenessId,
+  });
+
+  final String userRole;
+  final int awarenessId;
+
+  @override
+  State<_AwarenessDetailsScreen> createState() =>
+      _AwarenessDetailsScreenState();
+}
+
+class _AwarenessDetailsScreenState
+    extends BaseStatefulState<_AwarenessDetailsScreen> {
   @override
   void initState() {
     super.initState();
@@ -38,33 +70,30 @@ class _AwarenessDetailsScreenState extends State<AwarenessDetailsScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Awareness Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+      actions: [
+        if (widget.userRole == 'Admin')
+          IconButton(
+            onPressed: onMoreButtonPressed,
+            icon: Icon(Icons.more_horiz, color: ColorManager.whiteColor),
+          ),
+      ],
+    );
+  }
+
+  @override
+  Widget body() {
     final awarenessDetails = context.select(
       (AwarenessViewModel vm) => vm.awarenessDetails,
     );
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Awareness Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-        actions: [
-          if (widget.userRole == 'Admin')
-            IconButton(
-              onPressed: onMoreButtonPressed,
-              icon: Icon(Icons.more_horiz, color: ColorManager.whiteColor),
-            ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: getAwarenessDetails(
-              awarenessModel: awarenessDetails ?? AwarenessModel(),
-            ),
-          ),
-        ),
+    return SingleChildScrollView(
+      child: getAwarenessDetails(
+        awarenessModel: awarenessDetails ?? AwarenessModel(),
       ),
     );
   }

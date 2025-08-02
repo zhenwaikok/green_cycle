@@ -14,9 +14,9 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -56,7 +56,7 @@ class EditProfileScreen extends StatelessWidget {
   }
 }
 
-class _EditProfileScreen extends StatefulWidget {
+class _EditProfileScreen extends BaseStatefulPage {
   const _EditProfileScreen({required this.userRole, required this.userID});
 
   final String userRole;
@@ -66,8 +66,7 @@ class _EditProfileScreen extends StatefulWidget {
   State<_EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<_EditProfileScreen>
-    with ErrorHandlingMixin {
+class _EditProfileScreenState extends BaseStatefulState<_EditProfileScreen> {
   final roles = DropDownItems.roles;
   final genders = DropDownItems.genders;
   String? _phoneNumber;
@@ -91,39 +90,35 @@ class _EditProfileScreenState extends State<_EditProfileScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Edit Profile',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getButton();
+  }
+
+  @override
+  Widget body() {
     final userDetails = context.select((UserViewModel vm) => vm.userDetails);
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Edit Profile',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getButton(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Center(
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    if (userDetails != null) ...[
-                      getProfileImage(
-                        imageURL: userDetails.profileImageURL ?? '',
-                      ),
-                      SizedBox(height: 60),
-                      getProfileTextFields(userDetails: userDetails),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+    return SingleChildScrollView(
+      child: Center(
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              if (userDetails != null) ...[
+                getProfileImage(imageURL: userDetails.profileImageURL ?? ''),
+                SizedBox(height: 60),
+                getProfileTextFields(userDetails: userDetails),
+              ],
+            ],
           ),
         ),
       ),
@@ -510,11 +505,6 @@ class _Styles {
   static const editProfileFormFieldFontSize = 16.0;
   static const editProfileFormFieldColor = ColorManager.blackColor;
   static const textFieldBorderWidth = 2.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static final outlineErrorInputBorder = OutlineInputBorder(
     borderSide: const BorderSide(color: ColorManager.redColor),

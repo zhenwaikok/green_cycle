@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -11,17 +12,25 @@ import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
 
 @RoutePage()
-class RequestDetailsScreen extends StatefulWidget {
+class RequestDetailsScreen extends StatelessWidget {
   const RequestDetailsScreen({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return _RequestDetailsScreen();
+  }
+}
+
+class _RequestDetailsScreen extends BaseStatefulPage {
   // TODO: Replace with actual request status later
   final bool isAccepted = true;
 
   @override
-  State<RequestDetailsScreen> createState() => _RequestDetailsScreenState();
+  State<_RequestDetailsScreen> createState() => _RequestDetailsScreenState();
 }
 
-class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
+class _RequestDetailsScreenState
+    extends BaseStatefulState<_RequestDetailsScreen> {
   final List<String> imgItems = [
     'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
     'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
@@ -37,36 +46,45 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Request Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-        actions: [getDeleteButton()],
-      ),
-      bottomNavigationBar: widget.isAccepted
-          ? SafeArea(child: getTrackLocatorButton())
-          : null,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getRequestStatus(),
-                SizedBox(height: 10),
-                getImageSlider(),
-                SizedBox(height: 10),
-                getDotIndicator(),
-                SizedBox(height: 20),
-                getRequestDetails(),
-                getNote(),
-              ],
-            ),
-          ),
-        ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Request Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+      actions: [getDeleteButton()],
+    );
+  }
+
+  @override
+  Widget? bottomNavigationBar() {
+    return widget.isAccepted ? getTrackLocatorButton() : null;
+  }
+
+  @override
+  bool bottomSafeAreaEnabled() {
+    return false;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getRequestStatus(),
+          SizedBox(height: 10),
+          getImageSlider(),
+          SizedBox(height: 10),
+          getDotIndicator(),
+          SizedBox(height: 20),
+          getRequestDetails(),
+          getNote(),
+        ],
       ),
     );
   }

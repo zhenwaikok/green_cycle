@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -10,7 +10,7 @@ import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ToRedeemTab extends StatefulWidget {
+class ToRedeemTab extends BaseStatefulPage {
   const ToRedeemTab({
     super.key,
     required this.rewardList,
@@ -24,7 +24,7 @@ class ToRedeemTab extends StatefulWidget {
   State<ToRedeemTab> createState() => _ToRedeemTabState();
 }
 
-class _ToRedeemTabState extends State<ToRedeemTab> with ErrorHandlingMixin {
+class _ToRedeemTabState extends BaseStatefulState<ToRedeemTab> {
   RewardModel _rewardDetails = RewardModel();
 
   void _setState(VoidCallback fn) {
@@ -34,12 +34,12 @@ class _ToRedeemTabState extends State<ToRedeemTab> with ErrorHandlingMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget body() {
     return Skeletonizer(
       enabled: widget.isLoading,
       child: getToRedeemRewards(
         rewardList: widget.isLoading
-            ? List.generate(5, (_) => RewardModel())
+            ? List.generate(5, (_) => RewardModel(rewardName: 'Loading...'))
             : widget.rewardList,
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
@@ -10,43 +11,64 @@ import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class MarketplaceScreen extends StatefulWidget {
+class MarketplaceScreen extends StatelessWidget {
   const MarketplaceScreen({super.key});
 
   @override
-  State<MarketplaceScreen> createState() => _MarketplaceScreenState();
+  Widget build(BuildContext context) {
+    return _MarketplaceScreen();
+  }
 }
 
-class _MarketplaceScreenState extends State<MarketplaceScreen> {
+class _MarketplaceScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: CustomFloatingActionButton(
-        icon: Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
-        onPressed: onCartPressed,
-        heroTag: 'marketplace_fab',
-      ),
-      appBar: CustomAppBar(
-        title: 'Secondhand Marketplace',
-        isBackButtonVisible: false,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getStartSellingButton(),
-                SizedBox(height: 20),
-                CustomSearchBar(hintText: 'Search here'),
-                SizedBox(height: 25),
-                getCategoriesSection(),
-                SizedBox(height: 25),
-                getRecommendSection(),
-              ],
-            ),
-          ),
+  State<_MarketplaceScreen> createState() => _MarketplaceScreenState();
+}
+
+class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
+  @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Secondhand Marketplace',
+      isBackButtonVisible: false,
+    );
+  }
+
+  @override
+  Widget floatingActionButton() {
+    return CustomFloatingActionButton(
+      icon: Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
+      onPressed: onCartPressed,
+      heroTag: 'marketplace_fab',
+    );
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: _Styles.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getStartSellingButton(),
+            SizedBox(height: 20),
+            CustomSearchBar(hintText: 'Search here'),
+            SizedBox(height: 25),
+            getCategoriesSection(),
+            SizedBox(height: 25),
+            getRecommendSection(),
+          ],
         ),
       ),
     );

@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -30,7 +31,7 @@ class RequestItemDetailsScreen extends StatelessWidget {
   }
 }
 
-class _RequestItemDetailsScreen extends StatefulWidget {
+class _RequestItemDetailsScreen extends BaseStatefulPage {
   const _RequestItemDetailsScreen({required this.isEdit});
 
   final bool isEdit;
@@ -40,7 +41,8 @@ class _RequestItemDetailsScreen extends StatefulWidget {
       _RequestItemDetailsScreenState();
 }
 
-class _RequestItemDetailsScreenState extends State<_RequestItemDetailsScreen> {
+class _RequestItemDetailsScreenState
+    extends BaseStatefulState<_RequestItemDetailsScreen> {
   late MultiImagePickerController controller;
   List<XFile> images = [];
 
@@ -62,49 +64,46 @@ class _RequestItemDetailsScreenState extends State<_RequestItemDetailsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final vm = context.select((PickupRequestViewModel vm) => vm);
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Item Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Item Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getNextButton(isEdit: widget.isEdit),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: FormBuilder(
-              key: _formkey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getTitle(),
-                  SizedBox(height: 35),
-                  getItemPhotoField(),
-                  SizedBox(height: 25),
-                  getItemDescriptionSection(
-                    itemDescription: vm.pickupItemDescription ?? '',
-                  ),
-                  SizedBox(height: 25),
-                  getCategorySection(
-                    itemCategory: vm.pickupItemCategory ?? categoryItems.first,
-                  ),
-                  SizedBox(height: 25),
-                  getQuantitySection(quantity: vm.pickupItemQuantity ?? 1),
-                  SizedBox(height: 25),
-                  getConditionInfoSection(
-                    conditionInfo: vm.pickupItemCondition ?? '',
-                  ),
-                ],
-              ),
+  @override
+  Widget bottomNavigationBar() {
+    return getNextButton(isEdit: widget.isEdit);
+  }
+
+  @override
+  Widget body() {
+    final vm = context.select((PickupRequestViewModel vm) => vm);
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formkey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getTitle(),
+            SizedBox(height: 35),
+            getItemPhotoField(),
+            SizedBox(height: 25),
+            getItemDescriptionSection(
+              itemDescription: vm.pickupItemDescription ?? '',
             ),
-          ),
+            SizedBox(height: 25),
+            getCategorySection(
+              itemCategory: vm.pickupItemCategory ?? categoryItems.first,
+            ),
+            SizedBox(height: 25),
+            getQuantitySection(quantity: vm.pickupItemQuantity ?? 1),
+            SizedBox(height: 25),
+            getConditionInfoSection(
+              conditionInfo: vm.pickupItemCondition ?? '',
+            ),
+          ],
         ),
       ),
     );
@@ -387,11 +386,6 @@ class _Styles {
 
   static const iconSize = 30.0;
   static const maxTextLines = 2;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const closeButtonPadding = EdgeInsets.all(3);
 

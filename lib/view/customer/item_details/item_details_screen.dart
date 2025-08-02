@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -10,14 +11,21 @@ import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
 
 @RoutePage()
-class ItemDetailsScreen extends StatefulWidget {
+class ItemDetailsScreen extends StatelessWidget {
   const ItemDetailsScreen({super.key});
 
   @override
-  State<ItemDetailsScreen> createState() => _ItemDetailsScreenState();
+  Widget build(BuildContext context) {
+    return _ItemDetailsScreen();
+  }
 }
 
-class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
+class _ItemDetailsScreen extends BaseStatefulPage {
+  @override
+  State<_ItemDetailsScreen> createState() => _ItemDetailsScreenState();
+}
+
+class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
   final List<String> imgItems = [
     'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
     'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
@@ -33,39 +41,51 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: SafeArea(child: getAddToCartButton()),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getAddToCartButton();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              getItemImageSlider(),
+              Positioned(top: 15, left: 15, child: getBackButton()),
+            ],
+          ),
+          SizedBox(height: 10),
+          getDotIndicator(),
+          Padding(
+            padding: _Styles.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getItemImageSlider(),
-                Positioned(top: 15, left: 15, child: getBackButton()),
+                getConditionAndPosted(),
+                SizedBox(height: 20),
+                getItemNamePrice(),
+                getDivider(),
+                getItemCategory(),
+                getDivider(),
+                getItemDescription(),
+                getDivider(),
+                getSellerDetails(),
               ],
             ),
-            SizedBox(height: 10),
-            getDotIndicator(),
-            Padding(
-              padding: _Styles.screenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getConditionAndPosted(),
-                  SizedBox(height: 20),
-                  getItemNamePrice(),
-                  getDivider(),
-                  getItemCategory(),
-                  getDivider(),
-                  getItemDescription(),
-                  getDivider(),
-                  getSellerDetails(),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

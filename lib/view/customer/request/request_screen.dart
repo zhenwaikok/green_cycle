@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
@@ -13,14 +14,21 @@ import 'package:green_cycle_fyp/widget/search_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class RequestScreen extends StatefulWidget {
+class RequestScreen extends StatelessWidget {
   const RequestScreen({super.key});
 
   @override
-  State<RequestScreen> createState() => _RequestScreenState();
+  Widget build(BuildContext context) {
+    return _RequestScreen();
+  }
 }
 
-class _RequestScreenState extends State<RequestScreen> {
+class _RequestScreen extends BaseStatefulPage {
+  @override
+  State<_RequestScreen> createState() => _RequestScreenState();
+}
+
+class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
   final List<String> requestItems = ['All Requests', 'Accepted', 'Pending'];
 
   String? selectedValue;
@@ -38,28 +46,42 @@ class _RequestScreenState extends State<RequestScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: CustomFloatingActionButton(
-        icon: Icon(Icons.add, color: ColorManager.whiteColor),
-        onPressed: () {},
-        heroTag: 'request_fab',
-      ),
-      appBar: CustomAppBar(title: 'Request', isBackButtonVisible: false),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getSearchBar(),
-              SizedBox(height: 15),
-              getFilterOption(),
-              SizedBox(height: 20),
-              Expanded(child: getRequestList()),
-            ],
-          ),
-        ),
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'Request', isBackButtonVisible: false);
+  }
+
+  @override
+  Widget floatingActionButton() {
+    return CustomFloatingActionButton(
+      icon: Icon(Icons.add, color: ColorManager.whiteColor),
+      onPressed: () {},
+      heroTag: 'request_fab',
+    );
+  }
+
+  @override
+  Widget body() {
+    return Padding(
+      padding: _Styles.screenPadding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getSearchBar(),
+          SizedBox(height: 15),
+          getFilterOption(),
+          SizedBox(height: 20),
+          Expanded(child: getRequestList()),
+        ],
       ),
     );
   }

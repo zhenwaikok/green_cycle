@@ -13,9 +13,9 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -68,7 +68,7 @@ class CollectorAdditionalSignupScreen extends StatelessWidget {
   }
 }
 
-class _CollectorAdditionalSignupScreen extends StatefulWidget {
+class _CollectorAdditionalSignupScreen extends BaseStatefulPage {
   @override
   State<_CollectorAdditionalSignupScreen> createState() =>
       _CollectorAdditionalSignupScreenState();
@@ -91,48 +91,43 @@ class _CollectorAdditionalSignupScreen extends StatefulWidget {
 }
 
 class _CollectorAdditionalSignupScreenState
-    extends State<_CollectorAdditionalSignupScreen>
-    with ErrorHandlingMixin {
+    extends BaseStatefulState<_CollectorAdditionalSignupScreen> {
   final vehicleTypes = DropDownItems.vehicleTypes;
   final _formkey = GlobalKey<FormBuilderState>();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Collector Additional Info',
-        onPressed: backButtonPressed,
-        isBackButtonVisible: true,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getButton(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Center(
-              child: FormBuilder(
-                key: _formkey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    getVehicleTypeDropdown(),
-                    SizedBox(height: 20),
-                    getVehiclePlateNumberTextField(),
-                    SizedBox(height: 20),
-                    getCompanyTextField(),
-                    SizedBox(height: 20),
-                    getFacePhotoField(),
-                  ],
-                ),
-              ),
-            ),
-          ),
+  Widget body() {
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formkey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getVehicleTypeDropdown(),
+            SizedBox(height: 20),
+            getVehiclePlateNumberTextField(),
+            SizedBox(height: 20),
+            getCompanyTextField(),
+            SizedBox(height: 20),
+            getFacePhotoField(),
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Collector Additional Info',
+      onPressed: backButtonPressed,
+      isBackButtonVisible: true,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getButton();
   }
 }
 
@@ -303,10 +298,6 @@ class _Styles {
     color: ColorManager.primary,
   );
 
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
   static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);
 
   static const errorTextPadding = EdgeInsets.only(top: 5);

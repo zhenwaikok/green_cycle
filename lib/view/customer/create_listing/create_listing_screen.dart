@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -14,14 +14,22 @@ import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 
 @RoutePage()
-class CreateListingScreen extends StatefulWidget {
+class CreateListingScreen extends StatelessWidget {
   const CreateListingScreen({super.key});
 
   @override
-  State<CreateListingScreen> createState() => _CreateListingScreenState();
+  Widget build(BuildContext context) {
+    return _CreateListingScreen();
+  }
 }
 
-class _CreateListingScreenState extends State<CreateListingScreen> {
+class _CreateListingScreen extends BaseStatefulPage {
+  @override
+  State<_CreateListingScreen> createState() => _CreateListingScreenState();
+}
+
+class _CreateListingScreenState
+    extends BaseStatefulState<_CreateListingScreen> {
   late MultiImagePickerController controller;
 
   final List<String> conditionItems = [
@@ -80,29 +88,29 @@ class _CreateListingScreenState extends State<CreateListingScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Create Listing',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getItemListingTitleDescription(),
-                SizedBox(height: 20),
-                getListingTextFields(),
-                SizedBox(height: 50),
-                getSubmitButton(),
-              ],
-            ),
-          ),
-        ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Create Listing',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getSubmitButton();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getItemListingTitleDescription(),
+          SizedBox(height: 20),
+          getListingTextFields(),
+        ],
       ),
     );
   }
@@ -232,12 +240,6 @@ class _Styles {
 
   static const createListingFormFieldFontSize = 18.0;
   static const createListingFormFieldColor = ColorManager.primary;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
-
   static const closeButtonPadding = EdgeInsets.all(3);
 
   static const itemListingTitleTextStyle = TextStyle(
