@@ -1,5 +1,5 @@
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/reward_services.dart';
 
@@ -50,7 +50,7 @@ class RewardRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = ErrorModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

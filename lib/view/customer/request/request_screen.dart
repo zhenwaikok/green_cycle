@@ -1,17 +1,30 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class RequestScreen extends StatelessWidget {
@@ -19,7 +32,19 @@ class RequestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _RequestScreen();
+    return ChangeNotifierProvider(
+      create: (_) => PickupRequestViewModel(
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+        pickupRequestRepository: PickupRequestRepository(),
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _RequestScreen(),
+    );
   }
 }
 
@@ -29,20 +54,30 @@ class _RequestScreen extends BaseStatefulPage {
 }
 
 class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
-  final List<String> requestItems = ['All Requests', 'Accepted', 'Pending'];
-
+  final requestItems = DropDownItems.requestDropdownItems;
   String? selectedValue;
+  bool _isLoading = true;
+  late final tabsRouter = AutoTabsRouter.of(context);
+  List<PickupRequestModel> filteredPickupRequestList = [];
+  TextEditingController searchController = TextEditingController();
+  String? searchQuery;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tabsRouter.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    tabsRouter.removeListener(_onTabChanged);
+    super.dispose();
+  }
 
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
     }
-  }
-
-  @override
-  void initState() {
-    selectedValue = requestItems.first;
-    super.initState();
   }
 
   @override
@@ -71,6 +106,11 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
 
   @override
   Widget body() {
+    filteredPickupRequestList = context.select(
+      (PickupRequestViewModel vm) =>
+          vm.pickupRequestList.where(isMatch).toList(),
+    );
+
     return Padding(
       padding: _Styles.screenPadding,
       child: Column(
@@ -80,30 +120,117 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
           SizedBox(height: 15),
           getFilterOption(),
           SizedBox(height: 20),
-          Expanded(child: getRequestList()),
+          Expanded(
+            child: filteredPickupRequestList.isEmpty
+                ? Center(child: NoDataAvailableLabel())
+                : getRequestList(
+                    pickupRequestList: _isLoading
+                        ? List.generate(
+                            5,
+                            (index) => PickupRequestModel(
+                              pickupRequestID: 'Loading...',
+                              pickupItemDescription: 'Loading...',
+                              pickupItemCategory: 'Loading...',
+                            ),
+                          )
+                        : filteredPickupRequestList,
+                    isLoading: _isLoading,
+                  ),
+          ),
         ],
       ),
     );
   }
 }
 
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _RequestScreenState {
+  bool isMatch(PickupRequestModel request) {
+    final query = searchQuery?.toLowerCase().trim() ?? '';
+
+    final matchesSearch =
+        query.isEmpty ||
+        (request.pickupItemDescription?.toLowerCase().contains(query) ??
+            false) ||
+        (request.pickupItemCategory?.toLowerCase().contains(query) ?? false) ||
+        (request.pickupRequestID?.toLowerCase().contains(query) ?? false);
+
+    final matchesFilter =
+        selectedValue == null ||
+        selectedValue == requestItems.first ||
+        request.pickupRequestStatus == selectedValue;
+
+    return matchesSearch && matchesFilter;
+  }
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _RequestScreenState {
+  void _onTabChanged() {
+    if (tabsRouter.activeIndex == 1) {
+      fetchData();
+      _setState(() {
+        selectedValue = requestItems.first;
+        removeSearchText();
+      });
+    }
+  }
+
+  void removeSearchText() {
+    _setState(() {
+      searchQuery = null;
+      searchController.clear();
+    });
+  }
+
   void onFilterChanged(String? value) {
     _setState(() {
       selectedValue = value;
     });
   }
 
-  void onRequestCardPressed() {
-    context.router.push(RequestDetailsRoute());
+  void onSearchChanged(String? value) {
+    _setState(() {
+      searchQuery = value;
+    });
+  }
+
+  void onRequestCardPressed({required String pickupRequestID}) async {
+    final result = await context.router.push(
+      RequestDetailsRoute(pickupRequestID: pickupRequestID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
+  }
+
+  Future<void> fetchData() async {
+    _setState(() {
+      _isLoading = true;
+    });
+    await tryLoad(
+      context,
+      () =>
+          context.read<PickupRequestViewModel>().getPickupRequestsWithUserID(),
+    );
+    _setState(() {
+      _isLoading = false;
+    });
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _RequestScreenState {
   Widget getSearchBar() {
-    return CustomSearchBar(hintText: 'Search request here');
+    return CustomSearchBar(
+      controller: searchController,
+      onChanged: (value) {
+        onSearchChanged(value);
+      },
+      onPressed: removeSearchText,
+      hintText: 'Search request here',
+    );
   }
 
   Widget getFilterOption() {
@@ -118,47 +245,85 @@ extension _WidgetFactories on _RequestScreenState {
     );
   }
 
-  Widget getRequestList() {
+  Widget getRequestList({
+    required List<PickupRequestModel> pickupRequestList,
+    required bool isLoading,
+  }) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: pickupRequestList.length,
       itemBuilder: (context, index) {
-        return getRequestCard();
+        return getRequestCard(
+          isLoading: isLoading,
+          requestID: pickupRequestList[index].pickupRequestID ?? '',
+          pickupItemImageURL:
+              pickupRequestList[index].pickupItemImageURL?.first ?? '',
+          itemDescription: pickupRequestList[index].pickupItemDescription ?? '',
+          category: pickupRequestList[index].pickupItemCategory ?? '',
+          quantity: pickupRequestList[index].pickupItemQuantity ?? 0,
+          pickupDate: pickupRequestList[index].pickupDate ?? DateTime.now(),
+          pickupTimeRange: pickupRequestList[index].pickupTimeRange ?? '',
+          status: pickupRequestList[index].pickupRequestStatus ?? '',
+        );
       },
     );
   }
 
-  Widget getRequestCard() {
+  Widget getRequestCard({
+    required String requestID,
+    required String pickupItemImageURL,
+    required String itemDescription,
+    required String category,
+    required int quantity,
+    required DateTime pickupDate,
+    required String pickupTimeRange,
+    required String status,
+    required bool isLoading,
+  }) {
     return TouchableOpacity(
-      onPressed: onRequestCardPressed,
+      onPressed: () => onRequestCardPressed(pickupRequestID: requestID),
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getRequestID(),
-                  getRequestStatus(status: 'Pending'),
-                ],
-              ),
-              getDivider(),
-              getItemDetails(),
-              getDivider(),
-              getRequestDetails(),
-            ],
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getRequestID(requestID: requestID),
+                    getRequestStatus(status: status),
+                  ],
+                ),
+                getDivider(),
+                getItemDetails(
+                  pickupItemImageURL: pickupItemImageURL,
+                  itemDescription: itemDescription,
+                  category: category,
+                  quantity: quantity,
+                ),
+                getDivider(),
+                getPickupDateDetails(
+                  pickupDate: pickupDate,
+                  pickupTimeRange: pickupTimeRange,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget getRequestDetails() {
+  Widget getPickupDateDetails({
+    required DateTime pickupDate,
+    required String pickupTimeRange,
+  }) {
     return Text(
-      'Requested: 29/4/2025, 11:22 PM',
+      'Pickup Date: ${WidgetUtil.dateFormatter(pickupDate)}, $pickupTimeRange',
       style: _Styles.completedTextStyle,
     );
   }
@@ -170,40 +335,56 @@ extension _WidgetFactories on _RequestScreenState {
     );
   }
 
-  Widget getRequestID() {
+  Widget getRequestID({required String requestID}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Request ID', style: _Styles.requestIDTitleTextStyle),
-        Text('#REQ13113', style: _Styles.requestIDTextStyle),
+        Text('#$requestID', style: _Styles.requestIDTextStyle),
       ],
     );
   }
 
   Widget getRequestStatus({required String status}) {
-    return CustomStatusBar(text: status);
+    Color color = WidgetUtil.getPickupRequestStatusColor(status);
+
+    return CustomStatusBar(text: status, backgroundColor: color);
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({
+    required String pickupItemImageURL,
+    required String itemDescription,
+    required String category,
+    required int quantity,
+  }) {
     return Row(
       children: [
-        getItemImage(),
+        getItemImage(pickupItemImageURL: pickupItemImageURL),
         SizedBox(width: 15),
-        Expanded(child: getItemDescription()),
+        Expanded(
+          child: getItemDescription(
+            pickupItemDescription: itemDescription,
+            category: category,
+            quantity: quantity,
+          ),
+        ),
       ],
     );
   }
 
-  Widget getItemImage() {
+  Widget getItemImage({required String pickupItemImageURL}) {
     return CustomImage(
       imageSize: _Styles.imageSize,
-      imageURL:
-          'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+      imageURL: pickupItemImageURL,
       borderRadius: _Styles.imageBorderRadius,
     );
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({
+    required String pickupItemDescription,
+    required String category,
+    required int quantity,
+  }) {
     return SizedBox(
       height: _Styles.imageSize,
       child: Column(
@@ -214,15 +395,18 @@ extension _WidgetFactories on _RequestScreenState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item Descriptionsas0',
+                pickupItemDescription,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
                 style: _Styles.itemDescriptionTextStyle,
               ),
-              Text('Category', style: _Styles.itemDescriptionTextStyle),
+              Text(category, style: _Styles.itemDescriptionTextStyle),
             ],
           ),
-          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+          Text(
+            'Quantity: ${quantity.toString()}',
+            style: _Styles.quantityTextStyle,
+          ),
         ],
       ),
     );

@@ -17,6 +17,27 @@ class WidgetUtil {
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
+  static String dateTimeFormatter(DateTime date) {
+    return DateFormat('dd/MM/yyyy, h:mm a').format(date);
+  }
+
+  static Color getPickupRequestStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return ColorManager.yellowColor;
+      case 'completed':
+        return ColorManager.primary;
+      case 'in progress':
+        return ColorManager.orangeColor;
+      case 'accepted':
+        return ColorManager.blueColor;
+      case 'arrived':
+        return ColorManager.purpleColor;
+      default:
+        return ColorManager.primary;
+    }
+  }
+
   static Future<T?> showAlertDialog<T>(
     BuildContext context, {
     required String? title,

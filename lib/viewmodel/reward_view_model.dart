@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
@@ -110,7 +110,7 @@ class RewardViewModel extends BaseViewModel {
     );
 
     checkError(updateRewardResponse);
-    return updateRewardResponse.data is ErrorModel;
+    return updateRewardResponse.data is ApiResponseModel;
   }
 
   Future<String> uploadImage({

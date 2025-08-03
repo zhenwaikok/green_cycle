@@ -1,3 +1,4 @@
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/pickup_request_services.dart';
@@ -8,9 +9,11 @@ class PickupRequestRepository {
   Future<MyResponse> getAllPickupRequests() async {
     final response = await _pickupRequestServices.getAllPickupRequests();
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = PickupRequestModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => PickupRequestModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }
@@ -36,9 +39,11 @@ class PickupRequestRepository {
       userID: userID,
     );
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = PickupRequestModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => PickupRequestModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }
@@ -49,6 +54,8 @@ class PickupRequestRepository {
     final response = await _pickupRequestServices.getPickupRequestDetails(
       requestID: requestID,
     );
+
+    print('response: ${response.data}');
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = PickupRequestModel.fromJson(response.data);
@@ -79,7 +86,7 @@ class PickupRequestRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = PickupRequestModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

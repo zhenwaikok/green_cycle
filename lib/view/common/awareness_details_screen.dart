@@ -91,10 +91,12 @@ class _AwarenessDetailsScreenState
       (AwarenessViewModel vm) => vm.awarenessDetails,
     );
 
+    if (awarenessDetails == null) {
+      return SizedBox.shrink();
+    }
+
     return SingleChildScrollView(
-      child: getAwarenessDetails(
-        awarenessModel: awarenessDetails ?? AwarenessModel(),
-      ),
+      child: getAwarenessDetails(awarenessModel: awarenessDetails),
     );
   }
 }

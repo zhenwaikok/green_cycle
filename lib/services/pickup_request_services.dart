@@ -35,6 +35,8 @@ class PickupRequestServices extends BaseServices {
   }) async {
     String path = '${apiUrl()}/PickupRequest/$requestID';
 
+    print('Path: $path');
+
     return callAPI(httpMethod: HttpMethod.get, path: path);
   }
 

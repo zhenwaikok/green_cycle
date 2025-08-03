@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/utils/mixins/check_mounted_mixin.dart';
 
@@ -13,8 +13,8 @@ class BaseViewModel with ChangeNotifier, CheckMountedMixin {
   void checkError(MyResponse response) {
     if (response.status == ResponseStatus.error) {
       if (response.error != null) {
-        if (response.error is ErrorModel) {
-          ErrorModel error = response.error;
+        if (response.error is ApiResponseModel) {
+          ApiResponseModel error = response.error;
           if (error.isUrgentError) {
             throw UrgentErrorException(
               error.message ??

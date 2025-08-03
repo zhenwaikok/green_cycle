@@ -13,4 +13,5 @@ class Images {
   static const requestPickupImage = 'assets/images/request_pickup_image.png';
   static const profilePlaceHolderImage =
       'assets/images/profile_placeholder.png';
+  static const noDataImage = 'assets/images/not_found_image.png';
 }
