@@ -13,9 +13,9 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -45,12 +45,12 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class _SignUpScreen extends StatefulWidget {
+class _SignUpScreen extends BaseStatefulPage {
   @override
   State<_SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<_SignUpScreen> with ErrorHandlingMixin {
+class _SignUpScreenState extends BaseStatefulState<_SignUpScreen> {
   final roles = DropDownItems.roles;
   final genders = DropDownItems.genders;
   String? selectedRole;
@@ -74,26 +74,24 @@ class _SignUpScreenState extends State<_SignUpScreen> with ErrorHandlingMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Center(
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    getLogo(),
-                    SizedBox(height: 15),
-                    getTitle(),
-                    SizedBox(height: 30),
-                    getSignUpForms(),
-                  ],
-                ),
-              ),
-            ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Center(
+      child: SingleChildScrollView(
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              getLogo(),
+              SizedBox(height: 15),
+              getTitle(),
+              SizedBox(height: 30),
+              getSignUpForms(),
+            ],
           ),
         ),
       ),
@@ -543,11 +541,6 @@ class _Styles {
     fontSize: signUpFormFieldFontSize,
     fontWeight: FontWeightManager.bold,
     color: signUpFormFieldColor,
-  );
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
   );
 
   static const alreadyHaveAccTextStyle = TextStyle(

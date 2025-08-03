@@ -11,9 +11,9 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -41,42 +41,40 @@ class ChangePasswordScreen extends StatelessWidget {
   }
 }
 
-class _ChangePasswordScreen extends StatefulWidget {
+class _ChangePasswordScreen extends BaseStatefulPage {
   @override
   State<_ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
 
-class _ChangePasswordScreenState extends State<_ChangePasswordScreen>
-    with ErrorHandlingMixin {
+class _ChangePasswordScreenState
+    extends BaseStatefulState<_ChangePasswordScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getSaveButton(),
-      ),
-      appBar: CustomAppBar(
-        title: 'Change Password',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                children: [
-                  getChangePasswordLogoText(),
-                  SizedBox(height: 40),
-                  getPasswordTextFields(),
-                ],
-              ),
-            ),
-          ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Change Password',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getSaveButton();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKey,
+        child: Column(
+          children: [
+            getChangePasswordLogoText(),
+            SizedBox(height: 40),
+            getPasswordTextFields(),
+          ],
         ),
       ),
     );
@@ -210,11 +208,6 @@ class _Styles {
   _Styles._();
 
   static const logoSize = 200.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const descTextStyle = TextStyle(
     fontSize: 15,

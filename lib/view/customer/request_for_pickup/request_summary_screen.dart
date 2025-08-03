@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -24,57 +24,55 @@ class RequestSummaryScreen extends StatelessWidget {
   }
 }
 
-class _RequestSummaryScreen extends StatefulWidget {
+class _RequestSummaryScreen extends BaseStatefulPage {
   @override
   State<_RequestSummaryScreen> createState() => _RequestSummaryScreenState();
 }
 
-class _RequestSummaryScreenState extends State<_RequestSummaryScreen>
-    with ErrorHandlingMixin {
+class _RequestSummaryScreenState
+    extends BaseStatefulState<_RequestSummaryScreen> {
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Request Summary',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getConfirmRequestButton();
+  }
+
+  @override
+  Widget body() {
     final vm = context.watch<PickupRequestViewModel>();
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Request Summary',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getConfirmRequestButton(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getTitle(),
-                SizedBox(height: 35),
-                getPickupLocationSection(
-                  pickupLocation: vm.pickupLocation ?? '-',
-                  remarks: vm.remarks,
-                ),
-                SizedBox(height: 25),
-                getPickupDateTimeSection(
-                  pickupDate: vm.pickupDate ?? DateTime.now(),
-                  pickupTimeRange: vm.pickupTimeRange ?? '',
-                ),
-                SizedBox(height: 25),
-                getItemDetailsSection(
-                  itemImages: vm.pickupItemImages,
-                  itemDescription: vm.pickupItemDescription ?? '-',
-                  category: vm.pickupItemCategory ?? '-',
-                  quantity: vm.pickupItemQuantity ?? 0,
-                  condition: vm.pickupItemCondition ?? '-',
-                ),
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getTitle(),
+          SizedBox(height: 35),
+          getPickupLocationSection(
+            pickupLocation: vm.pickupLocation ?? '-',
+            remarks: vm.remarks,
           ),
-        ),
+          SizedBox(height: 25),
+          getPickupDateTimeSection(
+            pickupDate: vm.pickupDate ?? DateTime.now(),
+            pickupTimeRange: vm.pickupTimeRange ?? '',
+          ),
+          SizedBox(height: 25),
+          getItemDetailsSection(
+            itemImages: vm.pickupItemImages,
+            itemDescription: vm.pickupItemDescription ?? '-',
+            category: vm.pickupItemCategory ?? '-',
+            quantity: vm.pickupItemQuantity ?? 0,
+            condition: vm.pickupItemCondition ?? '-',
+          ),
+        ],
       ),
     );
   }
@@ -314,12 +312,6 @@ class _Styles {
   static const editIconSize = 25.0;
   static const itemImageSize = 110.0;
   static const itemImageBorderRadius = 10.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
-
   static const itemImagePadding = EdgeInsets.only(right: 10);
 
   static const titleTextStyle = TextStyle(

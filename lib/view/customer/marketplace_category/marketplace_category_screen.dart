@@ -2,22 +2,35 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 
 @RoutePage()
-class MarketplaceCategoryScreen extends StatefulWidget {
+class MarketplaceCategoryScreen extends StatelessWidget {
   const MarketplaceCategoryScreen({super.key, required this.category});
 
   final String category;
 
   @override
-  State<MarketplaceCategoryScreen> createState() =>
+  Widget build(BuildContext context) {
+    return _MarketplaceCategoryScreen(category: category);
+  }
+}
+
+class _MarketplaceCategoryScreen extends BaseStatefulPage {
+  const _MarketplaceCategoryScreen({required this.category});
+
+  final String category;
+
+  @override
+  State<_MarketplaceCategoryScreen> createState() =>
       _MarketplaceCategoryScreenState();
 }
 
-class _MarketplaceCategoryScreenState extends State<MarketplaceCategoryScreen> {
+class _MarketplaceCategoryScreenState
+    extends BaseStatefulState<_MarketplaceCategoryScreen> {
   final List<String> sortByItems = [
     'All',
     'Name: A-Z',
@@ -51,25 +64,22 @@ class _MarketplaceCategoryScreenState extends State<MarketplaceCategoryScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: widget.category,
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            children: [
-              getFilterOptions(),
-              SizedBox(height: 35),
-              Expanded(child: getCategoryItems()),
-            ],
-          ),
-        ),
-      ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: widget.category,
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
+    return Column(
+      children: [
+        getFilterOptions(),
+        SizedBox(height: 35),
+        Expanded(child: getCategoryItems()),
+      ],
     );
   }
 }
@@ -165,11 +175,6 @@ extension _WidgetFactories on _MarketplaceCategoryScreenState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const itemPadding = EdgeInsets.all(5);
 

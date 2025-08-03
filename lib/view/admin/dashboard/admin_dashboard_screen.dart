@@ -3,19 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class AdminDashboardScreen extends StatefulWidget {
+class AdminDashboardScreen extends StatelessWidget {
   const AdminDashboardScreen({super.key});
 
   @override
-  State<AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+  Widget build(BuildContext context) {
+    return _AdminDashboardScreen();
+  }
 }
 
-class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+class _AdminDashboardScreen extends BaseStatefulPage {
+  @override
+  State<_AdminDashboardScreen> createState() => _AdminDashboardScreenState();
+}
+
+class _AdminDashboardScreenState
+    extends BaseStatefulState<_AdminDashboardScreen> {
   final List<String> dashboardCardTitle = [
     'Total Collectors',
     'Total Users',
@@ -24,25 +33,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(title: 'Dashboard', isBackButtonVisible: false),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getWelcomeMessage(),
-                SizedBox(height: 35),
-                getDashboarDetails(),
-                SizedBox(height: 30),
-                getQuickActionSection(),
-              ],
-            ),
-          ),
-        ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'Admin Dashboard', isBackButtonVisible: false);
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getWelcomeMessage(),
+          SizedBox(height: 35),
+          getDashboarDetails(),
+          SizedBox(height: 30),
+          getQuickActionSection(),
+        ],
       ),
     );
   }
@@ -167,11 +178,6 @@ class _Styles {
 
   static const actionIconSize = 35.0;
   static const arrowIconSize = 20.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const customCardPadding = EdgeInsets.all(10);
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -11,14 +12,21 @@ import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  Widget build(BuildContext context) {
+    return _CheckoutScreen();
+  }
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreen extends BaseStatefulPage {
+  @override
+  State<_CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends BaseStatefulState<_CheckoutScreen> {
   List<String> paymentOptions = ["FPX", 'Debit/Credit Card'];
 
   String? selectedPaymentOption;
@@ -36,30 +44,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: getBottomSheet(),
-      appBar: CustomAppBar(
-        title: 'Checkout',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getDeliveryDetailsSection(),
-                SizedBox(height: 35),
-                getCartItems(),
-                SizedBox(height: 25),
-                getPaymentOptionSection(),
-              ],
-            ),
-          ),
-        ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Checkout',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getBottomSheet();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getDeliveryDetailsSection(),
+          SizedBox(height: 35),
+          getCartItems(),
+          SizedBox(height: 25),
+          getPaymentOptionSection(),
+        ],
       ),
     );
   }
@@ -300,11 +314,6 @@ class _Styles {
   static const itemImageBorderRadius = 5.0;
   static const maxTextLines = 2;
   static const paymentOptionIconSize = 60.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const bottomSheetPadding = EdgeInsets.all(20);
 

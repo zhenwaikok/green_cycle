@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -10,34 +11,50 @@ import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class CollectorHomeScreen extends StatefulWidget {
+class CollectorHomeScreen extends StatelessWidget {
   const CollectorHomeScreen({super.key});
 
   @override
-  State<CollectorHomeScreen> createState() => _CollectorHomeScreenState();
+  Widget build(BuildContext context) {
+    return _CollectorHomeScreen();
+  }
 }
 
-class _CollectorHomeScreenState extends State<CollectorHomeScreen> {
+class _CollectorHomeScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            getTopBarInfo(),
-            Padding(
-              padding: _Styles.screenPadding,
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
-                  getAvailablePickupRequestSection(),
-                  SizedBox(height: 30),
-                  getOngoingPickupRequestSection(),
-                ],
-              ),
+  State<_CollectorHomeScreen> createState() => _CollectorHomeScreenState();
+}
+
+class _CollectorHomeScreenState
+    extends BaseStatefulState<_CollectorHomeScreen> {
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          getTopBarInfo(),
+          Padding(
+            padding: _Styles.screenPadding,
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                getAvailablePickupRequestSection(),
+                SizedBox(height: 30),
+                getOngoingPickupRequestSection(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

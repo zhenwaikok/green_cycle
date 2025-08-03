@@ -1,3 +1,4 @@
+import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
@@ -8,6 +9,7 @@ import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/view/onboarding_screen.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
@@ -108,5 +110,30 @@ class DropDownItems {
     '12:00 PM - 2:00 PM',
     '2:00 PM - 4:00 PM',
     '4:00 PM - 6:00 PM',
+  ];
+}
+
+class OnboardData {
+  OnboardData._();
+
+  static final List<OnBoard> onboardData = [
+    OnBoard(
+      image: Images.onboarding1,
+      title: 'Dispose E-Waste Responsibly',
+      description:
+          'Electronic waste is harmful to the environment if not recycled properly. Our app helps you dispose of gadgets, appliances, and batteries the right way — with just a few taps.',
+    ),
+    OnBoard(
+      image: Images.onboarding2,
+      title: 'Simple, Seamless, Sustainable',
+      description:
+          'Book a pickup, track your collector in real-time, and let us do the rest. Whether you are a user or a collector, we make e-waste recycling easy and efficient.',
+    ),
+    OnBoard(
+      image: Images.onboarding3,
+      title: 'You Make a Difference',
+      description:
+          'Every pickup reduces toxic waste and protects our planet. Join us in building a cleaner, greener future!',
+    ),
   ];
 }

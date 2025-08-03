@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/points_transaction_card.dart';
 
-class EarnedPointsTab extends StatefulWidget {
+class EarnedPointsTab extends BaseStatefulPage {
   const EarnedPointsTab({super.key});
 
   @override
   State<EarnedPointsTab> createState() => _EarnedPointsTabState();
 }
 
-class _EarnedPointsTabState extends State<EarnedPointsTab> {
+class _EarnedPointsTabState extends BaseStatefulState<EarnedPointsTab> {
   @override
-  Widget build(BuildContext context) {
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return getEarnedPointsList();
   }
 }

@@ -7,8 +7,8 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -37,13 +37,12 @@ class AwarenessScreen extends StatelessWidget {
   }
 }
 
-class _AwarenessScreen extends StatefulWidget {
+class _AwarenessScreen extends BaseStatefulPage {
   @override
   State<_AwarenessScreen> createState() => _AwarenessScreenState();
 }
 
-class _AwarenessScreenState extends State<_AwarenessScreen>
-    with ErrorHandlingMixin {
+class _AwarenessScreenState extends BaseStatefulState<_AwarenessScreen> {
   List<AwarenessModel> _awarenessList = [];
   bool _isLoading = true;
 
@@ -62,25 +61,30 @@ class _AwarenessScreenState extends State<_AwarenessScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Awareness Feed',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Skeletonizer(
-            enabled: _isLoading,
-            child: getAwarenessContent(
-              awarenessModel: _isLoading
-                  ? List.generate(5, (_) => AwarenessModel())
-                  : _awarenessList,
-            ),
-          ),
-        ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Awareness Feed',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
+    return Skeletonizer(
+      enabled: _isLoading,
+      child: getAwarenessContent(
+        awarenessModel: _isLoading
+            ? List.generate(
+                5,
+                (_) => AwarenessModel(awarenessTitle: 'Loading...'),
+              )
+            : _awarenessList,
       ),
     );
   }
@@ -90,7 +94,7 @@ class _AwarenessScreenState extends State<_AwarenessScreen>
 extension _Actions on _AwarenessScreenState {
   Future<void> initialLoad() async {
     _setState(() => _isLoading = true);
-    final awarenessList = await tryCatch(
+    final awarenessList = await tryLoad(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessList(),
     );
@@ -151,11 +155,5 @@ extension _WidgetFactories on _AwarenessScreenState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
-
   static const awarenessContentPadding = EdgeInsets.symmetric(vertical: 15);
 }

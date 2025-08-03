@@ -14,8 +14,8 @@ import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -39,7 +39,7 @@ class SelectLocationScreen extends StatelessWidget {
   }
 }
 
-class _SelectLocationScreen extends StatefulWidget {
+class _SelectLocationScreen extends BaseStatefulPage {
   const _SelectLocationScreen({required this.isEdit});
 
   final bool isEdit;
@@ -48,8 +48,8 @@ class _SelectLocationScreen extends StatefulWidget {
   State<_SelectLocationScreen> createState() => _SelectLocationScreenState();
 }
 
-class _SelectLocationScreenState extends State<_SelectLocationScreen>
-    with ErrorHandlingMixin {
+class _SelectLocationScreenState
+    extends BaseStatefulState<_SelectLocationScreen> {
   final _formkey = GlobalKey<FormBuilderState>();
   final searchController = TextEditingController();
   final Completer<GoogleMapController> _controller =
@@ -76,35 +76,47 @@ class _SelectLocationScreenState extends State<_SelectLocationScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Select Location',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getTitle(),
-              Expanded(child: getGoogleMap()),
-            ],
-          ),
-          getBottomDraggableScrollableSheet(
-            searchController: searchController,
-            googleAPIkey: googleAPIKey,
-            formKey: _formkey,
-            isEdit: widget.isEdit,
-          ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + kToolbarHeight + 60,
-            right: 10,
-            child: getMyCurrentLocationButton(),
-          ),
-        ],
-      ),
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Select Location',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getTitle(),
+            Expanded(child: getGoogleMap()),
+          ],
+        ),
+        getBottomDraggableScrollableSheet(
+          searchController: searchController,
+          googleAPIkey: googleAPIKey,
+          formKey: _formkey,
+          isEdit: widget.isEdit,
+        ),
+        Positioned(
+          top: MediaQuery.of(context).padding.top + kToolbarHeight + 60,
+          right: 10,
+          child: getMyCurrentLocationButton(),
+        ),
+      ],
     );
   }
 }

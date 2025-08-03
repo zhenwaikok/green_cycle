@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_date_filter.dart';
@@ -9,14 +10,23 @@ import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 
 @RoutePage()
-class CompletedRequestScreen extends StatefulWidget {
+class CompletedRequestScreen extends StatelessWidget {
   const CompletedRequestScreen({super.key});
 
   @override
-  State<CompletedRequestScreen> createState() => _CompletedRequestScreenState();
+  Widget build(BuildContext context) {
+    return _CompletedRequestScreen();
+  }
 }
 
-class _CompletedRequestScreenState extends State<CompletedRequestScreen> {
+class _CompletedRequestScreen extends BaseStatefulPage {
+  @override
+  State<_CompletedRequestScreen> createState() =>
+      _CompletedRequestScreenState();
+}
+
+class _CompletedRequestScreenState
+    extends BaseStatefulState<_CompletedRequestScreen> {
   DateTimeRange? selectedRange;
 
   void _setState(VoidCallback fn) {
@@ -26,31 +36,33 @@ class _CompletedRequestScreenState extends State<CompletedRequestScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Completed Request',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomSearchBar(hintText: 'Search request here'),
-              SizedBox(height: 20),
-              CustomDateRangeFilter(
-                selectedRange: selectedRange,
-                onDateRangeChanged: onDateRangeChanged,
-              ),
-              SizedBox(height: 30),
-              Expanded(child: getCompletedRequestList()),
-            ],
-          ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Completed Request',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomSearchBar(hintText: 'Search request here'),
+        SizedBox(height: 20),
+        CustomDateRangeFilter(
+          selectedRange: selectedRange,
+          onDateRangeChanged: onDateRangeChanged,
         ),
-      ),
+        SizedBox(height: 30),
+        Expanded(child: getCompletedRequestList()),
+      ],
     );
   }
 }
@@ -174,10 +186,6 @@ class _Styles {
   static const imageSize = 100.0;
   static const imageBorderRadius = 5.0;
   static const maxTextLines = 2;
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
 

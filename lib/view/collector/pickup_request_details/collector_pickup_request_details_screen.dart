@@ -6,6 +6,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -17,18 +18,29 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
-class CollectorPickupRequestDetailsScreen extends StatefulWidget {
+class CollectorPickupRequestDetailsScreen extends StatelessWidget {
   const CollectorPickupRequestDetailsScreen({super.key, this.requestStatus});
 
   final String? requestStatus;
 
   @override
-  State<CollectorPickupRequestDetailsScreen> createState() =>
+  Widget build(BuildContext context) {
+    return _CollectorPickupRequestDetailsScreen(requestStatus: requestStatus);
+  }
+}
+
+class _CollectorPickupRequestDetailsScreen extends BaseStatefulPage {
+  const _CollectorPickupRequestDetailsScreen({this.requestStatus});
+
+  final String? requestStatus;
+
+  @override
+  State<_CollectorPickupRequestDetailsScreen> createState() =>
       _CollectorPickupRequestDetailsScreenState();
 }
 
 class _CollectorPickupRequestDetailsScreenState
-    extends State<CollectorPickupRequestDetailsScreen> {
+    extends BaseStatefulState<_CollectorPickupRequestDetailsScreen> {
   final List<String> imgItems = [
     'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
     'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
@@ -44,35 +56,33 @@ class _CollectorPickupRequestDetailsScreenState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Pickup Request Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getButtonBasedOnStatus(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getRequestIdAndStatus(),
-                SizedBox(height: 10),
-                getImageSlider(),
-                SizedBox(height: 10),
-                getDotIndicator(),
-                SizedBox(height: 20),
-                getRequestDetails(),
-              ],
-            ),
-          ),
-        ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Pickup Request Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getButtonBasedOnStatus();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getRequestIdAndStatus(),
+          SizedBox(height: 10),
+          getImageSlider(),
+          SizedBox(height: 10),
+          getDotIndicator(),
+          SizedBox(height: 20),
+          getRequestDetails(),
+        ],
       ),
     );
   }
@@ -388,10 +398,6 @@ class _Styles {
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
   static const containerMargin = EdgeInsets.symmetric(horizontal: 5);
 
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
   static const greenTextStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeightManager.bold,

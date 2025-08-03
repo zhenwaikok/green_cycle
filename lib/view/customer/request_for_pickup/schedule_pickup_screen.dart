@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -26,7 +27,7 @@ class SchedulePickupScreen extends StatelessWidget {
   }
 }
 
-class _SchedulePickupScreen extends StatefulWidget {
+class _SchedulePickupScreen extends BaseStatefulPage {
   const _SchedulePickupScreen({required this.isEdit});
 
   final bool isEdit;
@@ -34,7 +35,8 @@ class _SchedulePickupScreen extends StatefulWidget {
   State<_SchedulePickupScreen> createState() => _SchedulePickupScreenState();
 }
 
-class _SchedulePickupScreenState extends State<_SchedulePickupScreen> {
+class _SchedulePickupScreenState
+    extends BaseStatefulState<_SchedulePickupScreen> {
   final _formkey = GlobalKey<FormBuilderState>();
   final pickUpTimeOptions = DropDownItems.pickUpTimeOptions;
 
@@ -53,35 +55,33 @@ class _SchedulePickupScreenState extends State<_SchedulePickupScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Schedule Pickup',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getNextButton(isEdit: widget.isEdit),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: FormBuilder(
-              key: _formkey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getTitle(),
-                  SizedBox(height: 35),
-                  getPickupDateSection(),
-                  SizedBox(height: 25),
-                  getPickupTimeSection(),
-                ],
-              ),
-            ),
-          ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Schedule Pickup',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getNextButton(isEdit: widget.isEdit);
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formkey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getTitle(),
+            SizedBox(height: 35),
+            getPickupDateSection(),
+            SizedBox(height: 25),
+            getPickupTimeSection(),
+          ],
         ),
       ),
     );
@@ -269,11 +269,6 @@ class _Styles {
   static const datePickerIconSize = 20.0;
   static const borderRadius = 5.0;
   static const pickupTimeCardSize = 100.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const titleTextStyle = TextStyle(
     fontSize: 18,

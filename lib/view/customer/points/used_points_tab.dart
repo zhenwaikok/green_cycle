@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/points_transaction_card.dart';
 
-class UsedPointsTab extends StatefulWidget {
+class UsedPointsTab extends BaseStatefulPage {
   const UsedPointsTab({super.key});
 
   @override
   State<UsedPointsTab> createState() => _UsedPointsTabState();
 }
 
-class _UsedPointsTabState extends State<UsedPointsTab> {
+class _UsedPointsTabState extends BaseStatefulState<UsedPointsTab> {
   @override
-  Widget build(BuildContext context) {
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return getUsedPointsList();
   }
 }

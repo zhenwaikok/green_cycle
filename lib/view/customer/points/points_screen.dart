@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/points/earned_points_tab.dart';
 import 'package:green_cycle_fyp/view/customer/points/used_points_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -10,41 +11,56 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 
 @RoutePage()
-class PointsScreen extends StatefulWidget {
+class PointsScreen extends StatelessWidget {
   const PointsScreen({super.key});
 
   @override
-  State<PointsScreen> createState() => _PointsScreenState();
+  Widget build(BuildContext context) {
+    return _PointsScreen();
+  }
 }
 
-class _PointsScreenState extends State<PointsScreen> {
+class _PointsScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
+  State<_PointsScreen> createState() => _PointsScreenState();
+}
+
+class _PointsScreenState extends BaseStatefulState<_PointsScreen> {
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Points',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Points',
-          isBackButtonVisible: true,
-          onPressed: onBackButtonPressed,
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              children: [
-                getCurrentPoints(),
-                SizedBox(height: 20),
-                getTabBar(),
-                SizedBox(height: 15),
-                Expanded(
-                  child: TabBarView(
-                    children: [EarnedPointsTab(), UsedPointsTab()],
-                  ),
-                ),
-              ],
+      child: Padding(
+        padding: _Styles.screenPadding,
+        child: Column(
+          children: [
+            getCurrentPoints(),
+            SizedBox(height: 20),
+            getTabBar(),
+            SizedBox(height: 15),
+            Expanded(
+              child: TabBarView(children: [EarnedPointsTab(), UsedPointsTab()]),
             ),
-          ),
+          ],
         ),
       ),
     );

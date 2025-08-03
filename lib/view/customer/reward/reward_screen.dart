@@ -7,7 +7,7 @@ import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/reward/my_rewards_tab.dart';
 import 'package:green_cycle_fyp/view/customer/reward/toredeem_tab.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
@@ -34,12 +34,12 @@ class RewardScreen extends StatelessWidget {
   }
 }
 
-class _RewardScreen extends StatefulWidget {
+class _RewardScreen extends BaseStatefulPage {
   @override
   State<_RewardScreen> createState() => _RewardSreenState();
 }
 
-class _RewardSreenState extends State<_RewardScreen> with ErrorHandlingMixin {
+class _RewardSreenState extends BaseStatefulState<_RewardScreen> {
   List<RewardModel> _rewardList = [];
   bool _isLoading = true;
 
@@ -58,38 +58,42 @@ class _RewardSreenState extends State<_RewardScreen> with ErrorHandlingMixin {
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Rewards',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets defaultPadding() {
+    return _Styles.screenPadding;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Rewards',
-          isBackButtonVisible: true,
-          onPressed: onBackButtonPressed,
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
+      child: Column(
+        children: [
+          getCurrentPoints(),
+          SizedBox(height: 20),
+          getTabBar(),
+          Expanded(
+            child: TabBarView(
               children: [
-                getCurrentPoints(),
-                SizedBox(height: 20),
-                getTabBar(),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      ToRedeemTab(
-                        rewardList: _rewardList,
-                        isLoading: _isLoading,
-                      ),
-                      MyRewardsTab(),
-                    ],
-                  ),
-                ),
+                ToRedeemTab(rewardList: _rewardList, isLoading: _isLoading),
+                MyRewardsTab(),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -99,7 +103,7 @@ class _RewardSreenState extends State<_RewardScreen> with ErrorHandlingMixin {
 extension _Actions on _RewardSreenState {
   Future<void> initialLoad() async {
     _setState(() => _isLoading = true);
-    final rewardList = await tryCatch(
+    final rewardList = await tryLoad(
       context,
       () => context.read<RewardViewModel>().getRewardList(),
     );

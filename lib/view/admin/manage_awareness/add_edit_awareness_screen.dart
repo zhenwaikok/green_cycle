@@ -13,8 +13,8 @@ import 'package:green_cycle_fyp/repository/awareness_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -55,7 +55,7 @@ class AddOrEditAwarenessScreen extends StatelessWidget {
   }
 }
 
-class _AddOrEditAwarenessScreen extends StatefulWidget {
+class _AddOrEditAwarenessScreen extends BaseStatefulPage {
   const _AddOrEditAwarenessScreen({
     required this.isEdit,
     required this.awarenessId,
@@ -69,8 +69,8 @@ class _AddOrEditAwarenessScreen extends StatefulWidget {
       _AddOrEditAwarenessScreenState();
 }
 
-class _AddOrEditAwarenessScreenState extends State<_AddOrEditAwarenessScreen>
-    with ErrorHandlingMixin {
+class _AddOrEditAwarenessScreenState
+    extends BaseStatefulState<_AddOrEditAwarenessScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
@@ -84,47 +84,43 @@ class _AddOrEditAwarenessScreenState extends State<_AddOrEditAwarenessScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: widget.isEdit ? 'Edit Awareness Content' : 'Add Awareness Content',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget bottomNavigationBar() {
+    return getAddButton();
+  }
+
+  @override
+  Widget body() {
     final awarenessDetails = context.select(
       (AwarenessViewModel vm) => vm.awarenessDetails,
     );
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: widget.isEdit
-            ? 'Edit Awareness Content'
-            : 'Add Awareness Content',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getAddButton(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!widget.isEdit) ...[
-                    getTitleDescription(),
-                    SizedBox(height: 35),
-                    getAddAwarenessField(),
-                  ],
-                  if (awarenessDetails != null && widget.isEdit) ...[
-                    getEditAwarenessField(
-                      awarenessDetails: awarenessDetails,
-                      isEdit: widget.isEdit,
-                    ),
-                  ],
-                ],
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!widget.isEdit) ...[
+              getTitleDescription(),
+              SizedBox(height: 35),
+              getAddAwarenessField(),
+            ],
+            if (awarenessDetails != null && widget.isEdit) ...[
+              getEditAwarenessField(
+                awarenessDetails: awarenessDetails,
+                isEdit: widget.isEdit,
               ),
-            ),
-          ),
+            ],
+          ],
         ),
       ),
     );
@@ -380,11 +376,6 @@ class _Styles {
     fontSize: 18,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.primary,
-  );
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
   );
 
   static const titleTextStyle = TextStyle(

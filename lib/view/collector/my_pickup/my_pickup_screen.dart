@@ -2,55 +2,65 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_tab.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class MyPickupScreen extends StatefulWidget {
+class MyPickupScreen extends StatelessWidget {
   const MyPickupScreen({super.key});
 
   @override
-  State<MyPickupScreen> createState() => _MyPickupScreenState();
+  Widget build(BuildContext context) {
+    return _MyPickupScreen();
+  }
 }
 
-class _MyPickupScreenState extends State<MyPickupScreen> {
+class _MyPickupScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
+  State<_MyPickupScreen> createState() => _MyPickupScreenState();
+}
+
+class _MyPickupScreenState extends BaseStatefulState<_MyPickupScreen> {
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'My Pickup', isBackButtonVisible: false);
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        appBar: CustomAppBar(title: 'My Pickup', isBackButtonVisible: false),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          getTabBar(),
+          SizedBox(height: 10),
+          Expanded(
+            child: TabBarView(
               children: [
-                getTabBar(),
-                SizedBox(height: 10),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      getPickupList(
-                        status: 'On The Way',
-                        statusBarColor: ColorManager.orangeColor,
-                        buttonText: 'Arrived',
-                        onPressed: () {},
-                      ),
-                      getPickupList(
-                        status: 'Accepted',
-                        buttonText: 'On My Way',
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
+                getPickupList(
+                  status: 'On The Way',
+                  statusBarColor: ColorManager.orangeColor,
+                  buttonText: 'Arrived',
+                  onPressed: () {},
+                ),
+                getPickupList(
+                  status: 'Accepted',
+                  buttonText: 'On My Way',
+                  onPressed: () {},
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -92,14 +102,4 @@ extension _WidgetFactories on _MyPickupScreenState {
       },
     );
   }
-}
-
-// * ----------------------------- Styles -----------------------------
-class _Styles {
-  _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 }
