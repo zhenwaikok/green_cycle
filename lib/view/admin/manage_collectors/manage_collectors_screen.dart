@@ -9,8 +9,8 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -42,14 +42,14 @@ class ManageCollectorsScreen extends StatelessWidget {
   }
 }
 
-class _ManageCollectorsScreen extends StatefulWidget {
+class _ManageCollectorsScreen extends BaseStatefulPage {
   @override
   State<_ManageCollectorsScreen> createState() =>
       _ManageCollectorsScreenState();
 }
 
-class _ManageCollectorsScreenState extends State<_ManageCollectorsScreen>
-    with AutoRouteAware, ErrorHandlingMixin {
+class _ManageCollectorsScreenState
+    extends BaseStatefulState<_ManageCollectorsScreen> {
   final sortByItems = DropDownItems.collectorManagementSortByItems;
   String? selectedSort;
   bool _isLoading = true;
@@ -74,42 +74,43 @@ class _ManageCollectorsScreenState extends State<_ManageCollectorsScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Collectors Management',
+      isBackButtonVisible: false,
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     final userList = context
         .select((UserViewModel vm) => vm.userList)
         .where((user) => user.userRole == 'Collector')
         .toList();
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Collectors Management',
-        isBackButtonVisible: false,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getSortBy(),
-              SizedBox(height: 15),
-              Expanded(
-                child: getCollectorList(
-                  userList: _isLoading
-                      ? List.generate(
-                          5,
-                          (index) => UserModel(
-                            fullName: 'Loading...',
-                            companyName: 'Loading...',
-                          ),
-                        )
-                      : userList,
-                ),
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getSortBy(),
+        SizedBox(height: 15),
+        Expanded(
+          child: getCollectorList(
+            userList: _isLoading
+                ? List.generate(
+                    5,
+                    (index) => UserModel(
+                      fullName: 'Loading...',
+                      companyName: 'Loading...',
+                    ),
+                  )
+                : userList,
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -261,11 +262,6 @@ class _Styles {
 
   static const imageSize = 60.0;
   static const imageBorderRadius = 40.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const customCardPadding = EdgeInsets.all(10);
   static const cardPadding = EdgeInsets.symmetric(vertical: 5);

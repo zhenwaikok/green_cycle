@@ -12,9 +12,9 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -45,7 +45,7 @@ class CollectorDetailsScreen extends StatelessWidget {
   }
 }
 
-class _CollectorDetailsScreen extends StatefulWidget {
+class _CollectorDetailsScreen extends BaseStatefulPage {
   @override
   State<_CollectorDetailsScreen> createState() =>
       _CollectorDetailsScreenState();
@@ -55,8 +55,8 @@ class _CollectorDetailsScreen extends StatefulWidget {
   final String collectorID;
 }
 
-class _CollectorDetailsScreenState extends State<_CollectorDetailsScreen>
-    with ErrorHandlingMixin {
+class _CollectorDetailsScreenState
+    extends BaseStatefulState<_CollectorDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
@@ -66,49 +66,49 @@ class _CollectorDetailsScreenState extends State<_CollectorDetailsScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Collector Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  Widget body() {
     final user =
         context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Collector Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getAccountStatusBar(approvalStatus: user.approvalStatus ?? ''),
-                SizedBox(height: 10),
-                if (user.approvalStatus == 'Rejected') ...[
-                  getRejectionMessage(
-                    rejectionMessage: user.accountRejectMessage ?? '',
-                  ),
-                  SizedBox(height: 20),
-                ],
-                getCollectorImage(imageURL: user.profileImageURL ?? ''),
-                SizedBox(height: 20),
-                getCollectorNameOrganization(
-                  collectorName: user.fullName ?? '-',
-                  companyName: user.companyName ?? '-',
-                ),
-                SizedBox(height: 60),
-                getCollectorDetails(user: user),
-                if (user.approvalStatus != 'Approved') ...[
-                  SizedBox(height: 40),
-                  getRejectApproveButton(
-                    approvalStatus: user.approvalStatus ?? '',
-                  ),
-                ],
-              ],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getAccountStatusBar(approvalStatus: user.approvalStatus ?? ''),
+          SizedBox(height: 10),
+          if (user.approvalStatus == 'Rejected') ...[
+            getRejectionMessage(
+              rejectionMessage: user.accountRejectMessage ?? '',
             ),
+            SizedBox(height: 20),
+          ],
+          getCollectorImage(imageURL: user.profileImageURL ?? ''),
+          SizedBox(height: 20),
+          getCollectorNameOrganization(
+            collectorName: user.fullName ?? '-',
+            companyName: user.companyName ?? '-',
           ),
-        ),
+          SizedBox(height: 60),
+          getCollectorDetails(user: user),
+          if (user.approvalStatus != 'Approved') ...[
+            SizedBox(height: 40),
+            getRejectApproveButton(approvalStatus: user.approvalStatus ?? ''),
+          ],
+        ],
       ),
     );
   }
@@ -403,11 +403,6 @@ class _Styles {
   static const imageSize = 130.0;
   static const iconSize = 25.0;
   static const maxLines = 6;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const collectorNameTextStyle = TextStyle(
     fontSize: 25,

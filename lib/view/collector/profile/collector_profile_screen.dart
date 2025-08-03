@@ -8,8 +8,8 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -38,14 +38,14 @@ class CollectorProfileScreen extends StatelessWidget {
   }
 }
 
-class _CollectorProfileScreen extends StatefulWidget {
+class _CollectorProfileScreen extends BaseStatefulPage {
   @override
   State<_CollectorProfileScreen> createState() =>
       _CollectorProfileScreenState();
 }
 
-class _CollectorProfileScreenState extends State<_CollectorProfileScreen>
-    with ErrorHandlingMixin {
+class _CollectorProfileScreenState
+    extends BaseStatefulState<_CollectorProfileScreen> {
   @override
   void initState() {
     super.initState();
@@ -55,37 +55,39 @@ class _CollectorProfileScreenState extends State<_CollectorProfileScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'Profile', isBackButtonVisible: false);
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     final user =
         context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
 
-    return Scaffold(
-      appBar: CustomAppBar(title: 'Profile', isBackButtonVisible: false),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getProfileDetails(
-                  imageURL: user.profileImageURL ?? '',
-                  fullName: user.fullName ?? '-',
-                  userRole: user.userRole ?? '-',
-                ),
-                SizedBox(height: 25),
-                Divider(color: ColorManager.lightGreyColor),
-                SizedBox(height: 25),
-                getCollectorStatsCard(),
-                SizedBox(height: 30),
-                getProfileCard(
-                  userRole: user.userRole ?? '',
-                  userID: user.userID ?? '',
-                ),
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getProfileDetails(
+            imageURL: user.profileImageURL ?? '',
+            fullName: user.fullName ?? '-',
+            userRole: user.userRole ?? '-',
           ),
-        ),
+          SizedBox(height: 25),
+          Divider(color: ColorManager.lightGreyColor),
+          SizedBox(height: 25),
+          getCollectorStatsCard(),
+          SizedBox(height: 30),
+          getProfileCard(
+            userRole: user.userRole ?? '',
+            userID: user.userID ?? '',
+          ),
+        ],
       ),
     );
   }
@@ -250,10 +252,6 @@ class _Styles {
   static const customCardPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 10,
-  );
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
   );
 
   static const usernameTextStyle = TextStyle(

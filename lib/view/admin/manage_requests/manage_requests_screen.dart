@@ -4,55 +4,63 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/view/admin/manage_requests/manage_request_tab.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 
 @RoutePage()
-class ManageRequestsScreen extends StatefulWidget {
+class ManageRequestsScreen extends StatelessWidget {
   const ManageRequestsScreen({super.key});
 
   @override
-  State<ManageRequestsScreen> createState() => _ManageRequestsScreenState();
+  Widget build(BuildContext context) {
+    return _ManageRequestsScreen();
+  }
 }
 
-class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
+class _ManageRequestsScreen extends BaseStatefulPage {
   @override
-  Widget build(BuildContext context) {
+  State<_ManageRequestsScreen> createState() => _ManageRequestsScreenState();
+}
+
+class _ManageRequestsScreenState
+    extends BaseStatefulState<_ManageRequestsScreen> {
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'Pickup Request', isBackButtonVisible: false);
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
     return DefaultTabController(
       length: 4,
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Pickup Request',
-          isBackButtonVisible: false,
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          getTotalRequestCard(),
+          SizedBox(height: 60),
+          getSearchBar(),
+          SizedBox(height: 20),
+          getTabBar(),
+          SizedBox(height: 10),
+          Expanded(
+            child: TabBarView(
               children: [
-                getTotalRequestCard(),
-                SizedBox(height: 60),
-                getSearchBar(),
-                SizedBox(height: 20),
-                getTabBar(),
-                SizedBox(height: 10),
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      getRequestList(status: 'Pending'),
-                      getRequestList(status: 'Pending'),
-                      getRequestList(status: 'Ongoing'),
-                      getRequestList(status: 'Completed'),
-                    ],
-                  ),
-                ),
+                getRequestList(status: 'Pending'),
+                getRequestList(status: 'Pending'),
+                getRequestList(status: 'Ongoing'),
+                getRequestList(status: 'Completed'),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -103,12 +111,6 @@ extension _WidgetFactories on _ManageRequestsScreenState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 30,
-  );
-
   static const customCardPadding = EdgeInsets.all(10);
 
   static const blackTextStyle = TextStyle(

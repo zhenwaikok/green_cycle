@@ -186,10 +186,6 @@ class _Styles {
   static const imageSize = 100.0;
   static const imageBorderRadius = 5.0;
   static const maxTextLines = 2;
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
 

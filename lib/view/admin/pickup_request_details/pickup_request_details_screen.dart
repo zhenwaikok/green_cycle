@@ -2,22 +2,30 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
 
 @RoutePage()
-class PickupRequestDetailsScreen extends StatefulWidget {
+class PickupRequestDetailsScreen extends StatelessWidget {
   const PickupRequestDetailsScreen({super.key});
 
   @override
-  State<PickupRequestDetailsScreen> createState() =>
+  Widget build(BuildContext context) {
+    return _PickupRequestDetailsScreen();
+  }
+}
+
+class _PickupRequestDetailsScreen extends BaseStatefulPage {
+  @override
+  State<_PickupRequestDetailsScreen> createState() =>
       _PickupRequestDetailsScreenState();
 }
 
 class _PickupRequestDetailsScreenState
-    extends State<PickupRequestDetailsScreen> {
+    extends BaseStatefulState<_PickupRequestDetailsScreen> {
   final List<String> imgItems = [
     'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
     'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
@@ -33,31 +41,33 @@ class _PickupRequestDetailsScreenState
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Request Details',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getRequestStatusAndRequestDetails(),
-                SizedBox(height: 10),
-                getImageSlider(),
-                SizedBox(height: 10),
-                getDotIndicator(),
-                SizedBox(height: 20),
-                getRequestDetails(),
-              ],
-            ),
-          ),
-        ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Request Details',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getRequestStatusAndRequestDetails(),
+          SizedBox(height: 10),
+          getImageSlider(),
+          SizedBox(height: 10),
+          getDotIndicator(),
+          SizedBox(height: 20),
+          getRequestDetails(),
+        ],
       ),
     );
   }
@@ -213,11 +223,6 @@ class _Styles {
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
   static const containerMargin = EdgeInsets.symmetric(horizontal: 5);
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const greenTextStyle = TextStyle(
     fontSize: 18,

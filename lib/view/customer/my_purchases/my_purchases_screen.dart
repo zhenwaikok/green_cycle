@@ -82,13 +82,3 @@ extension _WidgetFactories on _MyPurchasesScreenState {
     );
   }
 }
-
-// * ----------------------------- Styles -----------------------------
-class _Styles {
-  _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
-}

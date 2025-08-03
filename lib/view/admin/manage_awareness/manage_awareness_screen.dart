@@ -7,8 +7,8 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -38,13 +38,13 @@ class ManageAwarenessScreen extends StatelessWidget {
   }
 }
 
-class _ManageAwarenessScreen extends StatefulWidget {
+class _ManageAwarenessScreen extends BaseStatefulPage {
   @override
   State<_ManageAwarenessScreen> createState() => _ManageAwarenessScreenState();
 }
 
-class _ManageAwarenessScreenState extends State<_ManageAwarenessScreen>
-    with AutoRouteAware, ErrorHandlingMixin {
+class _ManageAwarenessScreenState
+    extends BaseStatefulState<_ManageAwarenessScreen> {
   final List<String> sortByItems = ['All', 'Name: A-Z', 'Name: Z-A', 'Latest'];
 
   String? selectedSortBy;
@@ -72,43 +72,45 @@ class _ManageAwarenessScreenState extends State<_ManageAwarenessScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Awareness Management',
-        isBackButtonVisible: false,
-        actions: [
-          IconButton(
-            onPressed: onAddButtonPressed,
-            icon: Icon(Icons.add, color: ColorManager.whiteColor),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getSortBy(),
-              SizedBox(height: 15),
-              Expanded(
-                child: Skeletonizer(
-                  enabled: _isLoading,
-                  child: getAwarenessContent(
-                    awarenessList: _isLoading
-                        ? List.generate(
-                            5,
-                            (_) => AwarenessModel(awarenessTitle: 'Loading...'),
-                          )
-                        : _awarenessList,
-                  ),
-                ),
-              ),
-            ],
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Awareness Management',
+      isBackButtonVisible: false,
+      actions: [
+        IconButton(
+          onPressed: onAddButtonPressed,
+          icon: Icon(Icons.add, color: ColorManager.whiteColor),
+        ),
+      ],
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getSortBy(),
+        SizedBox(height: 15),
+        Expanded(
+          child: Skeletonizer(
+            enabled: _isLoading,
+            child: getAwarenessContent(
+              awarenessList: _isLoading
+                  ? List.generate(
+                      5,
+                      (_) => AwarenessModel(awarenessTitle: 'Loading...'),
+                    )
+                  : _awarenessList,
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -156,7 +158,7 @@ extension _Actions on _ManageAwarenessScreenState {
 
   Future<void> initialLoad() async {
     _setState(() => _isLoading = true);
-    final awarenessList = await tryCatch(
+    final awarenessList = await tryLoad(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessList(),
     );
@@ -213,11 +215,6 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const awarenessContentPadding = EdgeInsets.symmetric(vertical: 15);
 }

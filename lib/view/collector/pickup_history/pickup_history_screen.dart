@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_date_filter.dart';
@@ -11,14 +12,22 @@ import 'package:green_cycle_fyp/widget/search_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 
 @RoutePage()
-class PickupHistoryScreen extends StatefulWidget {
+class PickupHistoryScreen extends StatelessWidget {
   const PickupHistoryScreen({super.key});
 
   @override
-  State<PickupHistoryScreen> createState() => _PickupHistoryScreenState();
+  Widget build(BuildContext context) {
+    return _PickupHistoryScreen();
+  }
 }
 
-class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
+class _PickupHistoryScreen extends BaseStatefulPage {
+  @override
+  State<_PickupHistoryScreen> createState() => _PickupHistoryScreenState();
+}
+
+class _PickupHistoryScreenState
+    extends BaseStatefulState<_PickupHistoryScreen> {
   DateTimeRange? selectedRange;
 
   void _setState(VoidCallback fn) {
@@ -28,30 +37,32 @@ class _PickupHistoryScreenState extends State<PickupHistoryScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Pickup History',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(child: getCompletedPickups()),
-              SizedBox(height: 50),
-              getSearchBar(),
-              SizedBox(height: 20),
-              getDateRangePicker(),
-              SizedBox(height: 35),
-              Expanded(child: getCompletedRequestList()),
-            ],
-          ),
-        ),
-      ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Pickup History',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(child: getCompletedPickups()),
+        SizedBox(height: 50),
+        getSearchBar(),
+        SizedBox(height: 20),
+        getDateRangePicker(),
+        SizedBox(height: 35),
+        Expanded(child: getCompletedRequestList()),
+      ],
     );
   }
 }
@@ -218,11 +229,6 @@ extension _WidgetFactories on _PickupHistoryScreenState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const titleTextStyle = TextStyle(
     fontSize: 20,

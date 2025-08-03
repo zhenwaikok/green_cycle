@@ -11,8 +11,8 @@ import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -45,7 +45,7 @@ class AddOrEditRewardScreen extends StatelessWidget {
   }
 }
 
-class _AddOrEditRewardScreen extends StatefulWidget {
+class _AddOrEditRewardScreen extends BaseStatefulPage {
   const _AddOrEditRewardScreen({required this.isEdit, this.rewardId});
 
   final bool isEdit;
@@ -55,8 +55,8 @@ class _AddOrEditRewardScreen extends StatefulWidget {
   State<_AddOrEditRewardScreen> createState() => _AddEditRewardScreenState();
 }
 
-class _AddEditRewardScreenState extends State<_AddOrEditRewardScreen>
-    with ErrorHandlingMixin {
+class _AddEditRewardScreenState
+    extends BaseStatefulState<_AddOrEditRewardScreen> {
   RewardModel? _rewardDetails;
   double sliderValue = 100;
   final _formKey = GlobalKey<FormBuilderState>();
@@ -76,39 +76,37 @@ class _AddEditRewardScreenState extends State<_AddOrEditRewardScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: widget.isEdit ? 'Edit Reward Content' : 'Add Reward Content',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      bottomNavigationBar: Padding(
-        padding: _Styles.screenPadding,
-        child: getAddButton(),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: FormBuilder(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!widget.isEdit) ...[
-                    getTitleDescription(),
-                    SizedBox(height: 35),
-                    getAddRewardField(),
-                  ],
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: widget.isEdit ? 'Edit Reward' : 'Add Reward',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+    );
+  }
 
-                  if (widget.isEdit && _rewardDetails != null) ...[
-                    getEditRewardField(),
-                  ],
-                ],
-              ),
-            ),
-          ),
+  @override
+  Widget bottomNavigationBar() {
+    return getAddButton();
+  }
+
+  @override
+  Widget body() {
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!widget.isEdit) ...[
+              getTitleDescription(),
+              SizedBox(height: 35),
+              getAddRewardField(),
+            ],
+
+            if (widget.isEdit && _rewardDetails != null) ...[
+              getEditRewardField(),
+            ],
+          ],
         ),
       ),
     );
@@ -432,11 +430,6 @@ class _Styles {
   static const datePickerIconSize = 20.0;
 
   static const imageHeight = 200.0;
-
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
-  );
 
   static const sliderPadding = EdgeInsets.zero;
 

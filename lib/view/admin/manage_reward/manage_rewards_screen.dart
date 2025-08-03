@@ -8,8 +8,8 @@ import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -37,13 +37,13 @@ class ManageRewardsScreen extends StatelessWidget {
   }
 }
 
-class _ManageRewardsScreen extends StatefulWidget {
+class _ManageRewardsScreen extends BaseStatefulPage {
   @override
   State<_ManageRewardsScreen> createState() => _ManageRewardsScreenState();
 }
 
-class _ManageRewardsScreenState extends State<_ManageRewardsScreen>
-    with ErrorHandlingMixin {
+class _ManageRewardsScreenState
+    extends BaseStatefulState<_ManageRewardsScreen> {
   final sortByItems = DropDownItems.sortByItems;
   String? selectedSort;
   List<RewardModel> _rewardList = [];
@@ -65,38 +65,36 @@ class _ManageRewardsScreenState extends State<_ManageRewardsScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Rewards Management',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-        actions: [getPlusIconButton()],
-      ),
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(
+      title: 'Rewards Management',
+      isBackButtonVisible: true,
+      onPressed: onBackButtonPressed,
+      actions: [getPlusIconButton()],
+    );
+  }
 
-      body: SafeArea(
-        child: Padding(
-          padding: _Styles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getSortBy(),
-              SizedBox(height: 15),
-              Expanded(
-                child: getRewardList(
-                  rewardList: _isLoading
-                      ? List.generate(
-                          5,
-                          (_) => RewardModel(rewardName: 'Loading...'),
-                        )
-                      : _rewardList,
-                  isLoading: _isLoading,
-                ),
-              ),
-            ],
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getSortBy(),
+        SizedBox(height: 15),
+        Expanded(
+          child: getRewardList(
+            rewardList: _isLoading
+                ? List.generate(5, (_) => RewardModel(rewardName: 'Loading...'))
+                : _rewardList,
+            isLoading: _isLoading,
           ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/utils/mixins/error_handling_mixin.dart';
@@ -9,7 +10,7 @@ abstract class BaseStatefulPage extends StatefulWidget {
 /// A basic state that include common widgets and Ui logic handling
 abstract class BaseStatefulState<Page extends BaseStatefulPage>
     extends State<Page>
-    with ErrorHandlingMixin {
+    with ErrorHandlingMixin, AutoRouteAware {
   /// Basic component helper
   PreferredSizeWidget? appbar() => null;
 
