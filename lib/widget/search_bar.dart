@@ -7,10 +7,12 @@ class CustomSearchBar extends StatelessWidget {
     this.onChanged,
     this.controller,
     required this.hintText,
+    this.onPressed,
   });
 
   final void Function(String? value)? onChanged;
   final TextEditingController? controller;
+  final void Function()? onPressed;
   final String hintText;
 
   @override
@@ -18,9 +20,6 @@ class CustomSearchBar extends StatelessWidget {
     return getTextField();
   }
 }
-
-// * ---------------------------- Actions ----------------------------
-extension _Actions on CustomSearchBar {}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on CustomSearchBar {
@@ -51,6 +50,12 @@ extension _WidgetFactories on CustomSearchBar {
             color: ColorManager.blackColor,
             size: _Styles.searchIconSize,
           ),
+          suffixIcon: controller?.text.isNotEmpty ?? false
+              ? IconButton(
+                  onPressed: onPressed,
+                  icon: Icon(Icons.clear, color: ColorManager.blackColor),
+                )
+              : null,
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),
         cursorColor: ColorManager.blackColor,

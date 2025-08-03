@@ -101,6 +101,7 @@ extension _Actions on _RequestSummaryScreenState {
     final result =
         await tryLoad(context, () => vm.insertPickupRequest()) ?? false;
     if (result) {
+      vm.clearAll();
       unawaited(
         WidgetUtil.showSnackBar(text: 'Request submitted successfully'),
       );

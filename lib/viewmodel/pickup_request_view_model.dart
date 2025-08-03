@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
@@ -21,6 +22,11 @@ class PickupRequestViewModel extends BaseViewModel {
   final UserRepository userRepository;
 
   UserModel? get user => userRepository.user;
+
+  List<PickupRequestModel> _pickupRequestList = [];
+  PickupRequestModel? _pickupRequestDetails;
+  PickupRequestModel? get pickupRequestDetails => _pickupRequestDetails;
+  List<PickupRequestModel> get pickupRequestList => _pickupRequestList;
 
   String? pickupLocation;
   LatLng? selectedLatLng;
@@ -82,6 +88,39 @@ class PickupRequestViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<void> getPickupRequestsWithUserID() async {
+    final userID = user?.userID ?? '';
+
+    final response = await pickupRequestRepository.getPickupRequestsWithUserID(
+      userID: userID,
+    );
+
+    if (response.data is List<PickupRequestModel>) {
+      _pickupRequestList = response.data;
+      notifyListeners();
+    }
+
+    checkError(response);
+  }
+
+  Future<void> getPickupRequestDetails({
+    required String pickupRequestID,
+  }) async {
+    final response = await pickupRequestRepository.getPickupRequestDetails(
+      requestID: pickupRequestID,
+    );
+
+    print('response viewmodel : ${response.data}');
+
+    if (response.data is PickupRequestModel) {
+      _pickupRequestDetails = response.data;
+      print('Pickup Request Details: ${_pickupRequestDetails}');
+      notifyListeners();
+    }
+
+    checkError(response);
+  }
+
   Future<bool> insertPickupRequest() async {
     List<String> imageURL = [];
 
@@ -124,6 +163,15 @@ class PickupRequestViewModel extends BaseViewModel {
     return insertPickupRequestResponse.data is PickupRequestModel;
   }
 
+  Future<bool> deletePickupRequest({required String pickupRequestID}) async {
+    final response = await pickupRequestRepository.deletePickupRequest(
+      requestID: pickupRequestID,
+    );
+
+    checkError(response);
+    return response.data is ApiResponseModel;
+  }
+
   Future<List<String>> uploadImage({
     required String storageRef,
     List<File>? images,
@@ -139,6 +187,6 @@ class PickupRequestViewModel extends BaseViewModel {
 
   String generatePickupRequestID() {
     final millis = DateTime.now().millisecondsSinceEpoch;
-    return '#REQ${millis % 1000000}';
+    return 'REQ${millis % 1000000}';
   }
 }

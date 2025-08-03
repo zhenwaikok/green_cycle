@@ -111,6 +111,15 @@ class DropDownItems {
     '2:00 PM - 4:00 PM',
     '4:00 PM - 6:00 PM',
   ];
+
+  static const List<String> requestDropdownItems = [
+    'All Requests',
+    'Pending',
+    'Accepted',
+    'In Progress',
+    'Arrived',
+    'Completed',
+  ];
 }
 
 class OnboardData {

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
@@ -230,7 +230,7 @@ class UserViewModel extends BaseViewModel {
     );
 
     checkError(response);
-    return response.data is ErrorModel;
+    return response.data is ApiResponseModel;
   }
 
   Future<String> uploadImage({

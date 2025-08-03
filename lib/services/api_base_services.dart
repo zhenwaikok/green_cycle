@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 
 abstract class BaseServices {
@@ -76,7 +76,7 @@ abstract class BaseServices {
       }
     } catch (e) {
       if (e is DioException && e.response?.data != null) {
-        var processedError = ErrorModel.fromJson(
+        var processedError = ApiResponseModel.fromJson(
           e.response?.data,
         ).copyWith(status: e.response?.statusCode);
 
@@ -104,7 +104,10 @@ abstract class BaseServices {
         print('Error calling API: $message');
 
         return MyResponse.error(
-          ErrorModel(status: e.response?.statusCode, message: message).toJson(),
+          ApiResponseModel(
+            status: e.response?.statusCode,
+            message: message,
+          ).toJson(),
         );
       }
       return MyResponse.error(e.toString());

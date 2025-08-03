@@ -1049,18 +1049,45 @@ class ProfileRoute extends _i49.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i41.RequestDetailsScreen]
-class RequestDetailsRoute extends _i49.PageRouteInfo<void> {
-  const RequestDetailsRoute({List<_i49.PageRouteInfo>? children})
-    : super(RequestDetailsRoute.name, initialChildren: children);
+class RequestDetailsRoute extends _i49.PageRouteInfo<RequestDetailsRouteArgs> {
+  RequestDetailsRoute({
+    _i50.Key? key,
+    required String pickupRequestID,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         RequestDetailsRoute.name,
+         args: RequestDetailsRouteArgs(
+           key: key,
+           pickupRequestID: pickupRequestID,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'RequestDetailsRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i41.RequestDetailsScreen();
+      final args = data.argsAs<RequestDetailsRouteArgs>();
+      return _i41.RequestDetailsScreen(
+        key: args.key,
+        pickupRequestID: args.pickupRequestID,
+      );
     },
   );
+}
+
+class RequestDetailsRouteArgs {
+  const RequestDetailsRouteArgs({this.key, required this.pickupRequestID});
+
+  final _i50.Key? key;
+
+  final String pickupRequestID;
+
+  @override
+  String toString() {
+    return 'RequestDetailsRouteArgs{key: $key, pickupRequestID: $pickupRequestID}';
+  }
 }
 
 /// generated route for

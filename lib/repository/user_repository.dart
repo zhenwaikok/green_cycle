@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
-import 'package:green_cycle_fyp/model/error/error_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
@@ -108,7 +108,7 @@ class UserRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = ErrorModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       if (!isApproveCollectorAccount) {
         await getUserDetails(userID: userID);
       }
