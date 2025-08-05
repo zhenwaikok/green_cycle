@@ -4,7 +4,10 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 
 class NoDataAvailableLabel extends StatelessWidget {
-  const NoDataAvailableLabel({super.key});
+  const NoDataAvailableLabel({super.key, required this.noDataText});
+
+  final String noDataText;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,7 +20,7 @@ class NoDataAvailableLabel extends StatelessWidget {
           fit: BoxFit.cover,
         ),
         SizedBox(height: 10),
-        Text('No Data Available', style: _Styles.noLabelTextStyle),
+        Text(noDataText, style: _Styles.noLabelTextStyle),
       ],
     );
   }

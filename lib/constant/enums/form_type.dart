@@ -34,15 +34,14 @@ enum EditProfileFormFieldsEnum {
   address,
 }
 
-enum CreateListingFormFieldsEnum {
+enum CreateOrEditListingFormFieldsEnum {
+  itemPhotos,
   name,
   description,
   price,
   condition,
   category,
 }
-
-enum EditListingFormFieldsEnum { name, description, price, condition, category }
 
 enum RequestForPickupFormFieldsEnum {
   remarks,

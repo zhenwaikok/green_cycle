@@ -1,11 +1,26 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class MarketplaceCategoryScreen extends StatelessWidget {
@@ -15,7 +30,19 @@ class MarketplaceCategoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _MarketplaceCategoryScreen(category: category);
+    return ChangeNotifierProvider(
+      create: (context) => ItemListingViewModel(
+        itemListingRepository: ItemListingRepository(),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _MarketplaceCategoryScreen(category: category),
+    );
   }
 }
 
@@ -31,22 +58,9 @@ class _MarketplaceCategoryScreen extends BaseStatefulPage {
 
 class _MarketplaceCategoryScreenState
     extends BaseStatefulState<_MarketplaceCategoryScreen> {
-  final List<String> sortByItems = [
-    'All',
-    'Name: A-Z',
-    'Name: Z-A',
-    'Price: Low-High',
-    'Price: High-Low',
-  ];
-
-  final List<String> conditionItems = [
-    'All',
-    'Brand New',
-    'Like New',
-    'Very Good',
-    'Good',
-  ];
-
+  final sortByItems = DropDownItems.itemListingSortByItems;
+  final conditionItems = ['All', ...DropDownItems.itemListingConditionItems];
+  bool _isLoading = true;
   String? selectedSort;
   String? selectedCondition;
 
@@ -58,9 +72,8 @@ class _MarketplaceCategoryScreenState
 
   @override
   void initState() {
-    selectedSort = sortByItems.first;
-    selectedCondition = conditionItems.first;
     super.initState();
+    initialLoad();
   }
 
   @override
@@ -74,20 +87,49 @@ class _MarketplaceCategoryScreenState
 
   @override
   Widget body() {
+    final itemListingList = context.select(
+      (ItemListingViewModel vm) => vm.itemListings.where(isMatch).toList(),
+    );
+
+    final categoryItemListingList = itemListingList
+        .where((item) => item.itemCategory == widget.category)
+        .toList();
+
     return Column(
       children: [
         getFilterOptions(),
         SizedBox(height: 35),
-        Expanded(child: getCategoryItems()),
+        Expanded(
+          child: categoryItemListingList.isEmpty
+              ? Center(
+                  child: NoDataAvailableLabel(noDataText: 'No Items Found'),
+                )
+              : getCategoryItems(
+                  itemListingList: categoryItemListingList,
+                  isLoading: _isLoading,
+                ),
+        ),
       ],
     );
+  }
+}
+
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _MarketplaceCategoryScreenState {
+  bool isMatch(ItemListingModel item) {
+    final matchesCondition =
+        selectedCondition == null ||
+        selectedCondition == conditionItems.first ||
+        item.itemCondition == selectedCondition;
+
+    return matchesCondition;
   }
 }
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _MarketplaceCategoryScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(true);
   }
 
   void onSortByChanged(String? value) {
@@ -100,6 +142,64 @@ extension _Actions on _MarketplaceCategoryScreenState {
     _setState(() {
       selectedCondition = value;
     });
+  }
+
+  void onItemPressed({required int itemListingID}) async {
+    final result = await context.router.push(
+      ItemDetailsRoute(itemListingID: itemListingID),
+    );
+
+    if (result == true && mounted) {
+      initialLoad();
+    }
+  }
+
+  Future<void> initialLoad() async {
+    _setState(() {
+      _isLoading = true;
+    });
+    selectedSort = sortByItems.first;
+    selectedCondition = conditionItems.first;
+    await tryLoad(
+      context,
+      () => context.read<ItemListingViewModel>().getAllItemListings(),
+    );
+    _setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void sortListings(List<ItemListingModel> itemListingList) {
+    if (selectedSort == sortByItems[1]) {
+      itemListingList.sort(
+        (a, b) =>
+            a.itemName?.toLowerCase().compareTo(
+              b.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[2]) {
+      itemListingList.sort(
+        (a, b) =>
+            b.itemName?.toLowerCase().compareTo(
+              a.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[3]) {
+      itemListingList.sort(
+        (a, b) => a.itemPrice?.compareTo(b.itemPrice ?? 0) ?? 0,
+      );
+    } else if (selectedSort == sortByItems[4]) {
+      itemListingList.sort(
+        (a, b) => b.itemPrice?.compareTo(a.itemPrice ?? 0) ?? 0,
+      );
+    } else {
+      itemListingList.sort(
+        (a, b) =>
+            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
+      );
+    }
   }
 }
 
@@ -146,7 +246,11 @@ extension _WidgetFactories on _MarketplaceCategoryScreenState {
     );
   }
 
-  Widget getCategoryItems() {
+  Widget getCategoryItems({
+    required List<ItemListingModel> itemListingList,
+    required bool isLoading,
+  }) {
+    sortListings(itemListingList);
     return GridView.builder(
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -155,16 +259,24 @@ extension _WidgetFactories on _MarketplaceCategoryScreenState {
         crossAxisSpacing: 20,
         mainAxisExtent: 210,
       ),
-      itemCount: 7,
+      itemCount: itemListingList.length,
       itemBuilder: (context, index) {
+        final item = itemListingList[index];
         return Padding(
           padding: _Styles.itemPadding,
-          child: SecondHandItem(
-            imageURL:
-                'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-            productName: 'Product Nameasdasdsad',
-            productPrice: 'RM xx.xx',
-            text: 'Like New',
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: TouchableOpacity(
+              onPressed: () =>
+                  onItemPressed(itemListingID: item.itemListingID ?? 0),
+              child: SecondHandItem(
+                imageURL: item.itemImageURL?.first ?? '',
+                productName: item.itemName ?? '',
+                productPrice:
+                    'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
+                text: item.itemCondition ?? '',
+              ),
+            ),
           ),
         );
       },

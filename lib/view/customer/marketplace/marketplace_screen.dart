@@ -1,14 +1,27 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/search_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class MarketplaceScreen extends StatelessWidget {
@@ -16,7 +29,19 @@ class MarketplaceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _MarketplaceScreen();
+    return ChangeNotifierProvider(
+      create: (_) => ItemListingViewModel(
+        itemListingRepository: ItemListingRepository(),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _MarketplaceScreen(),
+    );
   }
 }
 
@@ -26,6 +51,30 @@ class _MarketplaceScreen extends BaseStatefulPage {
 }
 
 class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
+  late final tabsRouter = AutoTabsRouter.of(context);
+  bool _isLoading = true;
+  final secondHandItemCategories = DropDownItems.itemCategoryItems;
+  String? searchQuery;
+  TextEditingController searchController = TextEditingController();
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tabsRouter.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    tabsRouter.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
   @override
   EdgeInsets defaultPadding() {
     return EdgeInsets.zero;
@@ -55,6 +104,16 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
 
   @override
   Widget body() {
+    final itemListingList = context.watch<ItemListingViewModel>().itemListings;
+
+    final filteredItems = itemListingList.where(isMatch).toList();
+    final sortedItems = [...filteredItems]
+      ..sort(
+        (a, b) =>
+            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
+      );
+    final latest13ItemListingList = sortedItems.take(13).toList();
+
     return SingleChildScrollView(
       child: Padding(
         padding: _Styles.screenPadding,
@@ -63,11 +122,19 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
           children: [
             getStartSellingButton(),
             SizedBox(height: 20),
-            CustomSearchBar(hintText: 'Search here'),
+            getCategoriesSection(categories: secondHandItemCategories),
             SizedBox(height: 25),
-            getCategoriesSection(),
+            getSearchBar(),
             SizedBox(height: 25),
-            getRecommendSection(),
+            getRecommendSection(
+              itemListingList: _isLoading
+                  ? List.generate(
+                      5,
+                      (index) => ItemListingModel(itemName: 'Loading...'),
+                    )
+                  : latest13ItemListingList,
+              isLoading: _isLoading,
+            ),
           ],
         ),
       ),
@@ -76,21 +143,75 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
 }
 
 // * ---------------------------- Actions ----------------------------
+extension _Helpers on _MarketplaceScreenState {
+  bool isMatch(ItemListingModel item) {
+    final query = searchQuery?.toLowerCase().trim() ?? '';
+
+    final matchesSearch =
+        query.isEmpty ||
+        (item.itemName?.toLowerCase().contains(query) ?? false);
+
+    return matchesSearch;
+  }
+}
+
+// * ---------------------------- Actions ----------------------------
 extension _Actions on _MarketplaceScreenState {
-  void onCategoryCardPressed() {
-    context.router.push(MarketplaceCategoryRoute(category: 'category'));
+  void onCategoryCardPressed({required String category}) async {
+    final result = await context.router.push(
+      MarketplaceCategoryRoute(category: category),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
   }
 
   void onStartSellingPressed() {
-    context.router.push(CreateListingRoute());
+    context.router.push(CreateEditListingRoute(isEdit: false));
   }
 
   void onCartPressed() {
     context.router.push(CartRoute());
   }
 
-  void onItemPressed() {
-    context.router.push(ItemDetailsRoute());
+  void onItemPressed({required int itemListingID}) async {
+    final result = await context.router.push(
+      ItemDetailsRoute(itemListingID: itemListingID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
+  }
+
+  void _onTabChanged() {
+    if (tabsRouter.activeIndex == 2) {
+      fetchData();
+      removeSearchText();
+    }
+  }
+
+  void onSearchChanged(String? value) {
+    _setState(() {
+      searchQuery = value;
+    });
+  }
+
+  void removeSearchText() {
+    _setState(() {
+      searchQuery = null;
+      searchController.clear();
+    });
+  }
+
+  Future<void> fetchData() async {
+    _setState(() => _isLoading = true);
+    await tryLoad(
+      context,
+      () => context.read<ItemListingViewModel>().getAllItemListings(),
+    );
+    _setState(() => _isLoading = false);
   }
 }
 
@@ -109,7 +230,16 @@ extension _WidgetFactories on _MarketplaceScreenState {
     );
   }
 
-  Widget getCategoriesSection() {
+  Widget getSearchBar() {
+    return CustomSearchBar(
+      controller: searchController,
+      onChanged: (value) => onSearchChanged(value),
+      onPressed: removeSearchText,
+      hintText: 'Search here',
+    );
+  }
+
+  Widget getCategoriesSection({required List<String> categories}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -119,9 +249,9 @@ extension _WidgetFactories on _MarketplaceScreenState {
           height: MediaQuery.of(context).size.width * 0.18,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 8,
+            itemCount: categories.length,
             itemBuilder: (context, index) {
-              return getCategoryCard(text: 'Category');
+              return getCategoryCard(category: categories[index]);
             },
           ),
         ),
@@ -129,11 +259,11 @@ extension _WidgetFactories on _MarketplaceScreenState {
     );
   }
 
-  Widget getCategoryCard({required String text}) {
+  Widget getCategoryCard({required String category}) {
     return Padding(
       padding: _Styles.categoryCardPadding,
       child: TouchableOpacity(
-        onPressed: onCategoryCardPressed,
+        onPressed: () => onCategoryCardPressed(category: category),
         child: Container(
           padding: _Styles.categoriesPadding,
           decoration: BoxDecoration(
@@ -151,19 +281,25 @@ extension _WidgetFactories on _MarketplaceScreenState {
             ],
           ),
           child: Center(
-            child: Text(text, style: _Styles.categoryCardTextStyle),
+            child: Text(category, style: _Styles.categoryCardTextStyle),
           ),
         ),
       ),
     );
   }
 
-  Widget getRecommendSection() {
+  Widget getRecommendSection({
+    required List<ItemListingModel> itemListingList,
+    required bool isLoading,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Recommended For You', style: _Styles.blackTextStyle),
         SizedBox(height: 15),
+        if (itemListingList.isEmpty) ...[
+          Center(child: NoDataAvailableLabel(noDataText: 'No Items Found')),
+        ],
         GridView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -173,16 +309,21 @@ extension _WidgetFactories on _MarketplaceScreenState {
             crossAxisSpacing: 30,
             mainAxisExtent: 200,
           ),
-          itemCount: 7,
+          itemCount: itemListingList.length,
           itemBuilder: (context, index) {
+            final item = itemListingList[index];
             return TouchableOpacity(
-              onPressed: onItemPressed,
-              child: SecondHandItem(
-                imageURL:
-                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-                productName: 'Product Nameasdasdsad',
-                productPrice: 'RM xx.xx',
-                text: 'Like New',
+              onPressed: () =>
+                  onItemPressed(itemListingID: item.itemListingID ?? 0),
+              child: Skeletonizer(
+                enabled: isLoading,
+                child: SecondHandItem(
+                  imageURL: item.itemImageURL?.first ?? '',
+                  productName: item.itemName ?? '',
+                  productPrice:
+                      'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
+                  text: item.itemCondition ?? '',
+                ),
               ),
             );
           },

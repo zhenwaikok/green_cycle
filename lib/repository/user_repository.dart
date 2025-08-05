@@ -60,10 +60,10 @@ class UserRepository {
     final response = await userServices.getAllUsers();
 
     if (response.data is List) {
-      final resultList = (response.data as List)
+      final resultModel = (response.data as List)
           .map((json) => UserModel.fromJson(json))
           .toList();
-      return MyResponse.complete(resultList);
+      return MyResponse.complete(resultModel);
     }
     return response;
   }
@@ -81,14 +81,14 @@ class UserRepository {
 
   Future<MyResponse> getUserDetails({
     required String userID,
-    bool? isApproveCollectorAccount,
+    bool? noNeedUpdateUserSharedPreference,
   }) async {
     final response = await userServices.getUserDetails(userID: userID);
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = UserModel.fromJson(response.data);
-      if (isApproveCollectorAccount == null ||
-          isApproveCollectorAccount == false) {
+      if (noNeedUpdateUserSharedPreference == null ||
+          noNeedUpdateUserSharedPreference == false) {
         await sharePreferenceHandler.putUser(resultModel);
         sharePreferenceHandler.getUser();
       }
@@ -100,7 +100,7 @@ class UserRepository {
   Future<MyResponse> updateUser({
     required String userID,
     required UserModel userModel,
-    required bool isApproveCollectorAccount,
+    required bool noNeedUpdateUserSharedPreference,
   }) async {
     final response = await userServices.updateUser(
       userID: userID,
@@ -109,7 +109,7 @@ class UserRepository {
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = ApiResponseModel.fromJson(response.data);
-      if (!isApproveCollectorAccount) {
+      if (!noNeedUpdateUserSharedPreference) {
         await getUserDetails(userID: userID);
       }
       return MyResponse.complete(resultModel);

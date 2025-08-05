@@ -122,7 +122,11 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
           SizedBox(height: 20),
           Expanded(
             child: filteredPickupRequestList.isEmpty
-                ? Center(child: NoDataAvailableLabel())
+                ? Center(
+                    child: NoDataAvailableLabel(
+                      noDataText: 'No Requests Found',
+                    ),
+                  )
                 : getRequestList(
                     pickupRequestList: _isLoading
                         ? List.generate(
@@ -171,8 +175,8 @@ extension _Actions on _RequestScreenState {
       fetchData();
       _setState(() {
         selectedValue = requestItems.first;
-        removeSearchText();
       });
+      removeSearchText();
     }
   }
 
