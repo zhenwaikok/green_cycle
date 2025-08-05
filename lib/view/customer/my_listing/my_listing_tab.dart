@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MyListingTab extends StatelessWidget {
   const MyListingTab({
     super.key,
-    required this.listingStatus,
     this.onTap,
     this.onLongPress,
+    required this.itemListingDetails,
+    required this.isLoading,
   });
 
-  final String listingStatus;
   final void Function()? onTap;
   final void Function()? onLongPress;
+  final ItemListingModel itemListingDetails;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return getMyListingCard();
+    return getMyListingCard(itemListingDetails: itemListingDetails);
   }
 }
 
@@ -29,7 +34,7 @@ extension _Actions on MyListingTab {}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on MyListingTab {
-  Widget getMyListingCard() {
+  Widget getMyListingCard({required ItemListingModel itemListingDetails}) {
     return TouchableOpacity(
       onPressed: onTap,
       onLongPress: onLongPress,
@@ -37,47 +42,81 @@ extension _WidgetFactories on MyListingTab {
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [getStatus(), SizedBox(height: 10), getProductDetails()],
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getStatus(
+                  listingStatus: itemListingDetails.status ?? '',
+                  createdDate: itemListingDetails.createdDate ?? DateTime.now(),
+                ),
+                SizedBox(height: 10),
+                getProductDetails(
+                  itemListingDetails: isLoading
+                      ? ItemListingModel(
+                          itemName: 'Loading...',
+                          itemCategory: 'Loading...',
+                          itemCondition: 'Loading...',
+                        )
+                      : itemListingDetails,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget getStatus() {
+  Widget getStatus({
+    required String listingStatus,
+    required DateTime createdDate,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('Status: $listingStatus', style: _Styles.greyTextStyle),
-        Text('Posted On: 24/7/2025', style: _Styles.greyTextStyle),
+        Text(
+          'Posted On: ${WidgetUtil.dateFormatter(createdDate)}',
+          style: _Styles.greyTextStyle,
+        ),
       ],
     );
   }
 
-  Widget getProductDetails() {
+  Widget getProductDetails({required ItemListingModel itemListingDetails}) {
     return Row(
       children: [
-        getProductImage(),
+        getProductImage(imageURL: itemListingDetails.itemImageURL?.first ?? ''),
         SizedBox(width: 15),
-        Expanded(child: getProductDescription()),
+        Expanded(
+          child: getProductDescription(
+            itemName: itemListingDetails.itemName ?? '',
+            category: itemListingDetails.itemCategory ?? '',
+          ),
+        ),
         SizedBox(width: 15),
-        getProductStatusPrice(),
+        getProductStatusPrice(
+          itemCondition: itemListingDetails.itemCondition ?? '',
+          itemPrice: itemListingDetails.itemPrice ?? 0.0,
+        ),
       ],
     );
   }
 
-  Widget getProductImage() {
+  Widget getProductImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.productImageSize,
-      imageURL:
-          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageURL: imageURL,
       borderRadius: _Styles.imageBorderRadius,
     );
   }
 
-  Widget getProductDescription() {
+  Widget getProductDescription({
+    required String itemName,
+    required String category,
+  }) {
     return SizedBox(
       height: _Styles.productImageSize,
       child: Column(
@@ -85,25 +124,36 @@ extension _WidgetFactories on MyListingTab {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Product Nasadasdsadasdasdasdasdasdme',
+            itemName,
             style: _Styles.productNameTextStyle,
-            maxLines: _Styles.maxTextLines,
+            maxLines: _Styles.maxNameTextLines,
             overflow: TextOverflow.ellipsis,
           ),
-          Text('Category', style: _Styles.categoryTextStyle),
+          Text(
+            category,
+            style: _Styles.categoryTextStyle,
+            maxLines: _Styles.maxCategoryTextLines,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
   }
 
-  Widget getProductStatusPrice() {
+  Widget getProductStatusPrice({
+    required String itemCondition,
+    required double itemPrice,
+  }) {
     return SizedBox(
       height: _Styles.productImageSize,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomStatusBar(text: 'Like new'),
-          Text('RM xx.xx', style: _Styles.priceTextStyle),
+          CustomStatusBar(text: itemCondition),
+          Text(
+            'RM ${WidgetUtil.priceFormatter(itemPrice)}',
+            style: _Styles.priceTextStyle,
+          ),
         ],
       ),
     );
@@ -118,7 +168,8 @@ class _Styles {
   static const imageBorderRadius = 5.0;
   static const customCardPadding = EdgeInsets.all(10);
   static const cardPadding = EdgeInsets.symmetric(horizontal: 5, vertical: 10);
-  static const maxTextLines = 2;
+  static const maxNameTextLines = 2;
+  static const maxCategoryTextLines = 1;
 
   static const productNameTextStyle = TextStyle(
     fontSize: 15,

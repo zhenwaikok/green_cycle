@@ -24,7 +24,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: ColorManager.primary,
       centerTitle: true,
-      title: Text(title, style: _Styles.titleTextStyle),
+      title: Text(
+        title,
+        style: _Styles.titleTextStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       leading: isBackButtonVisible
           ? getBackButton(onPressed: onPressed ?? () {})
           : null,

@@ -1,43 +1,92 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
+import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class ItemDetailsScreen extends StatelessWidget {
-  const ItemDetailsScreen({super.key});
+  const ItemDetailsScreen({super.key, required this.itemListingID});
+
+  final int itemListingID;
 
   @override
   Widget build(BuildContext context) {
-    return _ItemDetailsScreen();
+    return ChangeNotifierProvider(
+      create: (_) {
+        ItemListingViewModel(
+          itemListingRepository: ItemListingRepository(),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+        UserViewModel(
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+      },
+      child: _ItemDetailsScreen(itemListingID: itemListingID),
+    );
   }
 }
 
 class _ItemDetailsScreen extends BaseStatefulPage {
+  const _ItemDetailsScreen({required this.itemListingID});
+  final int itemListingID;
+
   @override
   State<_ItemDetailsScreen> createState() => _ItemDetailsScreenState();
 }
 
 class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
-  final List<String> imgItems = [
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-    'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-  ];
-
   int currentIndex = 0;
+  bool isUserItemOwner = false;
+  ItemListingModel? itemListingDetails;
+  bool _isLoading = true;
+  bool isEdit = false;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchItemData();
   }
 
   @override
@@ -52,36 +101,72 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
 
   @override
   Widget bottomNavigationBar() {
-    return getAddToCartButton();
+    if (_isLoading) {
+      return SizedBox.shrink();
+    }
+
+    return !isUserItemOwner ? getAddToCartButton() : getOwnerTag();
   }
 
   @override
   Widget body() {
+    itemListingDetails = context.select(
+      (ItemListingViewModel vm) => vm.itemListingDetails,
+    );
+    final sellerInfo = context.select((UserViewModel vm) => vm.userDetails);
+
+    if (_isLoading) {
+      return SizedBox.shrink();
+    }
+
     return SingleChildScrollView(
       child: Column(
         children: [
           Stack(
             children: [
-              getItemImageSlider(),
-              Positioned(top: 15, left: 15, child: getBackButton()),
+              getItemImageSlider(
+                itemImages: itemListingDetails?.itemImageURL ?? [],
+              ),
+              Positioned(top: 25, left: 15, child: getBackButton()),
+              if (isUserItemOwner) ...[
+                Positioned(
+                  top: 25,
+                  right: 15,
+                  child: getMoreButton(
+                    itemListingID: itemListingDetails?.itemListingID ?? 0,
+                  ),
+                ),
+              ],
             ],
           ),
           SizedBox(height: 10),
-          getDotIndicator(),
+          getDotIndicator(itemImages: itemListingDetails?.itemImageURL ?? []),
           Padding(
             padding: _Styles.screenPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                getConditionAndPosted(),
+                getConditionAndPosted(
+                  itemStatus: itemListingDetails?.itemCondition ?? '-',
+                  createdDate:
+                      itemListingDetails?.createdDate ?? DateTime.now(),
+                ),
                 SizedBox(height: 20),
-                getItemNamePrice(),
+                getItemNamePrice(
+                  itemName: itemListingDetails?.itemName ?? '-',
+                  itemPrice: itemListingDetails?.itemPrice ?? 0.0,
+                ),
                 getDivider(),
-                getItemCategory(),
+                getItemCategory(
+                  itemCategory: itemListingDetails?.itemCategory ?? '-',
+                ),
                 getDivider(),
-                getItemDescription(),
+                getItemDescription(
+                  itemDescription: itemListingDetails?.itemDescription ?? '-',
+                ),
                 getDivider(),
-                getSellerDetails(),
+                if (!isUserItemOwner)
+                  getSellerDetails(sellerInfo: sellerInfo ?? UserModel()),
               ],
             ),
           ),
@@ -94,7 +179,7 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ItemDetailsScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(isEdit);
   }
 
   void onImageChanged(int index, dynamic reason) {
@@ -102,13 +187,115 @@ extension _Actions on _ItemDetailsScreenState {
       currentIndex = index;
     });
   }
+
+  void onMoreButtonPressed({required int itemListingID}) {
+    showModalBottomSheet(
+      backgroundColor: ColorManager.whiteColor,
+      context: context,
+      builder: (context) {
+        return getListingBottomSheet(itemListingID: itemListingID);
+      },
+    );
+  }
+
+  void onRemovePressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      WidgetUtil.showAlertDialog(
+        context,
+        title: 'Delete Confirmation',
+        content: 'Are you sure you want to delete this item from your listing?',
+        actions: [
+          getAlertDialogTextButton(
+            onPressed: () {
+              onBackButtonPressed();
+            },
+            text: 'No',
+          ),
+          getAlertDialogTextButton(
+            onPressed: () => onYesRemovePressed(itemListingID: itemListingID),
+            text: 'Yes',
+          ),
+        ],
+      );
+    }
+  }
+
+  void onEditPressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      final result = await context.router.push(
+        CreateEditListingRoute(isEdit: true, itemListingID: itemListingID),
+      );
+
+      if (result == true && mounted) {
+        _setState(() {
+          isEdit = true;
+        });
+        await fetchItemData();
+      }
+    }
+  }
+
+  Future<void> onYesRemovePressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    final result = mounted
+        ? await tryLoad(
+                context,
+                () => context.read<ItemListingViewModel>().deleteItemListing(
+                  itemListingID: itemListingID,
+                ),
+              ) ??
+              false
+        : false;
+
+    if (result) {
+      unawaited(
+        WidgetUtil.showSnackBar(text: 'Item listing removed successfully.'),
+      );
+      await fetchItemData();
+    } else {
+      WidgetUtil.showSnackBar(text: 'Failed to remove item listing.');
+    }
+  }
+
+  Future<void> fetchItemData() async {
+    _setState(() {
+      _isLoading = true;
+    });
+    await tryLoad(
+      context,
+      () => context.read<ItemListingViewModel>().getItemListingDetails(
+        itemListingID: widget.itemListingID,
+      ),
+    );
+
+    final sellerUserIDItemListing = itemListingDetails?.userID ?? '';
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<UserViewModel>().getUserDetails(
+          userID: sellerUserIDItemListing,
+          noNeedUpdateUserSharedPreference: true,
+        ),
+      );
+    }
+
+    final userID = mounted
+        ? context.read<UserViewModel>().user?.userID ?? ''
+        : '';
+    _setState(() {
+      isUserItemOwner = sellerUserIDItemListing == userID;
+      _isLoading = false;
+    });
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ItemDetailsScreenState {
-  Widget getItemImageSlider() {
+  Widget getItemImageSlider({required List<String> itemImages}) {
     return ImageSlider(
-      items: imgItems,
+      items: itemImages,
       imageBorderRadius: 0,
       carouselHeight: _Styles.itemImageSize,
       containerMargin: _Styles.containerMargin,
@@ -116,12 +303,12 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     );
   }
 
-  Widget getDotIndicator() {
+  Widget getDotIndicator({required List<String> itemImages}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: List.generate(
-        imgItems.length,
+        itemImages.length,
         (index) => Padding(
           padding: const EdgeInsets.only(right: _Styles.indicatorRightPadding),
           child: DotIndicator(
@@ -134,6 +321,20 @@ extension _WidgetFactories on _ItemDetailsScreenState {
   }
 
   Widget getBackButton() {
+    return getTopButton(
+      icon: Icons.arrow_back_rounded,
+      onPressed: onBackButtonPressed,
+    );
+  }
+
+  Widget getMoreButton({required int itemListingID}) {
+    return getTopButton(
+      icon: Icons.more_vert_rounded,
+      onPressed: () => onMoreButtonPressed(itemListingID: itemListingID),
+    );
+  }
+
+  Widget getTopButton({required IconData icon, required Function() onPressed}) {
     return Container(
       width: _Styles.backButtonContainerSize,
       height: _Styles.backButtonContainerSize,
@@ -143,47 +344,54 @@ extension _WidgetFactories on _ItemDetailsScreenState {
       ),
       child: Center(
         child: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: Colors.black),
-          onPressed: onBackButtonPressed,
+          icon: Icon(icon, color: Colors.black),
+          onPressed: onPressed,
         ),
       ),
     );
   }
 
-  Widget getConditionAndPosted() {
+  Widget getConditionAndPosted({
+    required String itemStatus,
+    required DateTime createdDate,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomStatusBar(text: 'Like New'),
-        Text('Posted x days ago', style: _Styles.postedTextStyle),
+        CustomStatusBar(text: itemStatus),
+        Text(
+          'Posted ${WidgetUtil.differenceBetweenDate(createdDate)}',
+          style: _Styles.postedTextStyle,
+        ),
       ],
     );
   }
 
-  Widget getItemNamePrice() {
+  Widget getItemNamePrice({
+    required String itemName,
+    required double itemPrice,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Product Name', style: _Styles.productNameTextStyle),
+        Text(itemName, style: _Styles.productNameTextStyle),
         SizedBox(height: 10),
-        Text('RM xx.xx', style: _Styles.productPriceTextStyle),
+        Text(
+          'RM ${WidgetUtil.priceFormatter(itemPrice)}',
+          style: _Styles.productPriceTextStyle,
+        ),
       ],
     );
   }
 
-  Widget getItemCategory() {
-    return getTitleDescription(
-      title: 'Category',
-      description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
-    );
+  Widget getItemCategory({required String itemCategory}) {
+    return getTitleDescription(title: 'Category', description: itemCategory);
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({required String itemDescription}) {
     return getTitleDescription(
       title: 'Description',
-      description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+      description: itemDescription,
     );
   }
 
@@ -204,48 +412,56 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     );
   }
 
-  Widget getSellerDetails() {
+  Widget getSellerDetails({required UserModel sellerInfo}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Seller Info', style: _Styles.titleTextStyle),
         SizedBox(height: 10),
-        getSellerInfoCard(),
+        getSellerInfoCard(sellerInfo: sellerInfo),
       ],
     );
   }
 
-  Widget getSellerInfoCard() {
+  Widget getSellerInfoCard({required UserModel sellerInfo}) {
     return CustomCard(
       needBoxShadow: false,
       backgroundColor: ColorManager.primaryLight,
       child: Row(
         children: [
-          getSellerProfileImage(),
+          getSellerProfileImage(imageURL: sellerInfo.profileImageURL ?? ''),
           SizedBox(width: 25),
-          Expanded(child: getSellerNamePhoneNum()),
+          Expanded(
+            child: getSellerNamePhoneNum(
+              sellerName:
+                  '${sellerInfo.firstName ?? '-'} ${sellerInfo.lastName ?? ''}',
+              sellerPhoneNum: sellerInfo.phoneNumber ?? 'xxx-xxxxxxx',
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget getSellerProfileImage() {
+  Widget getSellerProfileImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.sellerImageSize,
       imageWidth: _Styles.sellerImageSize,
       borderRadius: _Styles.sellerBorderRadius,
-      imageURL:
-          'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
+      imageURL: imageURL,
     );
   }
 
-  Widget getSellerNamePhoneNum() {
+  Widget getSellerNamePhoneNum({
+    required String sellerName,
+    required String sellerPhoneNum,
+  }) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Seller Name',
+          sellerName,
           style: _Styles.sellerNameTextStyle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -253,13 +469,16 @@ extension _WidgetFactories on _ItemDetailsScreenState {
         SizedBox(height: 5),
         Row(
           children: [
-            Icon(
-              Icons.phone,
-              size: _Styles.iconSize,
-              color: ColorManager.blackColor,
+            TouchableOpacity(
+              onPressed: () {},
+              child: Icon(
+                Icons.phone,
+                size: _Styles.iconSize,
+                color: ColorManager.blackColor,
+              ),
             ),
             SizedBox(width: 8),
-            Text('012-3456789', style: _Styles.sellerPhoneNumTextStyle),
+            Text(sellerPhoneNum, style: _Styles.sellerPhoneNumTextStyle),
           ],
         ),
       ],
@@ -284,13 +503,59 @@ extension _WidgetFactories on _ItemDetailsScreenState {
       ),
     );
   }
+
+  Widget getOwnerTag() {
+    return Padding(
+      padding: _Styles.screenPadding,
+      child: Text(
+        'This is your item listing',
+        style: _Styles.ownerTagTextStyle,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget getListingBottomSheet({required int itemListingID}) {
+    return Padding(
+      padding: _Styles.screenPadding,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BottomSheetAction(
+            icon: Icons.edit,
+            color: ColorManager.blackColor,
+            text: 'Edit',
+            onTap: () => onEditPressed(itemListingID: itemListingID),
+          ),
+          SizedBox(height: 10),
+          BottomSheetAction(
+            icon: Icons.delete_outline,
+            color: ColorManager.redColor,
+            text: 'Remove',
+            onTap: () => onRemovePressed(itemListingID: itemListingID),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getAlertDialogTextButton({
+    required void Function()? onPressed,
+    required String text,
+  }) {
+    return TextButton(
+      style: _Styles.textButtonStyle,
+      onPressed: onPressed,
+      child: Text(text, style: _Styles.textButtonTextStyle),
+    );
+  }
 }
 
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
 
-  static const itemImageSize = 180.0;
+  static const itemImageSize = 220.0;
   static const sellerImageSize = 80.0;
   static const sellerBorderRadius = 80.0;
   static const backButtonContainerSize = 50.0;
@@ -323,7 +588,7 @@ class _Styles {
   static const productPriceTextStyle = TextStyle(
     fontSize: 25,
     fontWeight: FontWeightManager.regular,
-    color: ColorManager.primary,
+    color: ColorManager.redColor,
   );
 
   static const titleTextStyle = TextStyle(
@@ -348,5 +613,21 @@ class _Styles {
     fontSize: 18,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
+  );
+
+  static const ownerTagTextStyle = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
+  );
+
+  static final textButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(ColorManager.lightGreyColor2),
+  );
+
+  static const textButtonTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
   );
 }

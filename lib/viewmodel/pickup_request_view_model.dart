@@ -7,6 +7,7 @@ import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
 
@@ -124,10 +125,9 @@ class PickupRequestViewModel extends BaseViewModel {
   Future<bool> insertPickupRequest() async {
     List<String> imageURL = [];
 
-    final List<File> imageFiles = pickupItemImages
-        .where((img) => img.hasPath)
-        .map((img) => File(img.path ?? ''))
-        .toList();
+    final imageFiles = WidgetUtil.convertImageFileToFile(
+      images: pickupItemImages,
+    );
 
     final uploadImageResponse = await uploadImage(
       storageRef: 'PickupRequestItemImages',

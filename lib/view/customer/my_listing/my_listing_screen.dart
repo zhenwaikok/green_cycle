@@ -1,15 +1,28 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
+import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class MyListingScreen extends StatelessWidget {
@@ -17,7 +30,19 @@ class MyListingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _MyListingScreen();
+    return ChangeNotifierProvider(
+      create: (_) => ItemListingViewModel(
+        itemListingRepository: ItemListingRepository(),
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _MyListingScreen(),
+    );
   }
 }
 
@@ -27,15 +52,9 @@ class _MyListingScreen extends BaseStatefulPage {
 }
 
 class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
-  final List<String> sortByItems = [
-    'All',
-    'Ascending Name',
-    'Descending Name',
-    'Price: Low-High',
-    'Price: High-Low',
-  ];
-
+  final sortByItems = DropDownItems.itemListingSortByItems;
   String? selectedSort;
+  bool isLoading = true;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -45,8 +64,8 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
 
   @override
   void initState() {
-    selectedSort = sortByItems.first;
     super.initState();
+    fetchData();
   }
 
   @override
@@ -65,6 +84,18 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
 
   @override
   Widget body() {
+    final allItemListingList = context.select(
+      (ItemListingViewModel vm) => vm.itemListings,
+    );
+
+    final activeItemListingList = allItemListingList
+        .where((itemListing) => itemListing.status == 'Active')
+        .toList();
+
+    final soldItemListingList = allItemListingList
+        .where((itemListing) => itemListing.status == 'Sold')
+        .toList();
+
     return DefaultTabController(
       length: 3,
       child: Column(
@@ -77,9 +108,18 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
           Expanded(
             child: TabBarView(
               children: [
-                getMyListingList(listingStatus: ''),
-                getMyListingList(listingStatus: 'Active'),
-                getMyListingList(listingStatus: 'Sold'),
+                getMyListingList(
+                  itemListingList: allItemListingList,
+                  isLoading: isLoading,
+                ),
+                getMyListingList(
+                  itemListingList: activeItemListingList,
+                  isLoading: isLoading,
+                ),
+                getMyListingList(
+                  itemListingList: soldItemListingList,
+                  isLoading: isLoading,
+                ),
               ],
             ),
           ),
@@ -101,30 +141,123 @@ extension _Actions on _MyListingScreenState {
     });
   }
 
-  void onListingLongPressed() async {
+  void onListingLongPressed({required int itemListingID}) {
     showModalBottomSheet(
       backgroundColor: ColorManager.whiteColor,
       context: context,
       builder: (context) {
-        return getListingBottomSheet();
+        return getListingBottomSheet(itemListingID: itemListingID);
       },
     );
   }
 
-  void onRemovePressed() async {
-    WidgetUtil.showAlertDialog(
-      context,
-      title: 'Delete Confirmation',
-      content: 'Are you sure you want to delete this item from your listing?',
-      actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'No'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Yes'),
-      ],
-    );
+  void onListingPressed({required int itemListingID}) {
+    context.router.push(ItemDetailsRoute(itemListingID: itemListingID));
   }
 
-  void onEditPressed() {
-    context.router.push(EditListingRoute());
+  void onRemovePressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      WidgetUtil.showAlertDialog(
+        context,
+        title: 'Delete Confirmation',
+        content: 'Are you sure you want to delete this item from your listing?',
+        actions: [
+          getAlertDialogTextButton(
+            onPressed: () {
+              onBackButtonPressed();
+            },
+            text: 'No',
+          ),
+          getAlertDialogTextButton(
+            onPressed: () => onYesRemovePressed(itemListingID: itemListingID),
+            text: 'Yes',
+          ),
+        ],
+      );
+    }
+  }
+
+  void onEditPressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      final result = await context.router.push(
+        CreateEditListingRoute(isEdit: true, itemListingID: itemListingID),
+      );
+
+      if (result == true && mounted) {
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> fetchData() async {
+    _setState(() {
+      isLoading = true;
+    });
+    selectedSort = sortByItems.first;
+    await tryLoad(
+      context,
+      () => context.read<ItemListingViewModel>().getItemListingWithUserID(),
+    );
+    _setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> onYesRemovePressed({required int itemListingID}) async {
+    await context.router.maybePop();
+    final result = mounted
+        ? await tryLoad(
+                context,
+                () => context.read<ItemListingViewModel>().deleteItemListing(
+                  itemListingID: itemListingID,
+                ),
+              ) ??
+              false
+        : false;
+
+    if (result) {
+      unawaited(
+        WidgetUtil.showSnackBar(text: 'Item listing removed successfully.'),
+      );
+      await fetchData();
+    } else {
+      WidgetUtil.showSnackBar(text: 'Failed to remove item listing.');
+    }
+  }
+
+  void sortListings(List<ItemListingModel> itemListingList) {
+    if (selectedSort == sortByItems[1]) {
+      itemListingList.sort(
+        (a, b) =>
+            a.itemName?.toLowerCase().compareTo(
+              b.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[2]) {
+      itemListingList.sort(
+        (a, b) =>
+            b.itemName?.toLowerCase().compareTo(
+              a.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[3]) {
+      itemListingList.sort(
+        (a, b) => a.itemPrice?.compareTo(b.itemPrice ?? 0) ?? 0,
+      );
+    } else if (selectedSort == sortByItems[4]) {
+      itemListingList.sort(
+        (a, b) => b.itemPrice?.compareTo(a.itemPrice ?? 0) ?? 0,
+      );
+    } else {
+      itemListingList.sort(
+        (a, b) =>
+            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
+      );
+    }
   }
 }
 
@@ -151,19 +284,36 @@ extension _WidgetFactories on _MyListingScreenState {
     return CustomTabBar(tabs: [Text('All'), Text('Active'), Text('Sold')]);
   }
 
-  Widget getMyListingList({required String listingStatus}) {
+  Widget getMyListingList({
+    required List<ItemListingModel> itemListingList,
+    required bool isLoading,
+  }) {
+    sortListings(itemListingList);
+
+    if (itemListingList.isEmpty) {
+      return Center(
+        child: NoDataAvailableLabel(noDataText: 'No Listing Available'),
+      );
+    }
+
     return ListView.builder(
-      itemCount: 10,
+      itemCount: itemListingList.length,
       itemBuilder: (context, index) {
         return MyListingTab(
-          onLongPress: onListingLongPressed,
-          listingStatus: listingStatus,
+          itemListingDetails: itemListingList[index],
+          isLoading: isLoading,
+          onTap: () => onListingPressed(
+            itemListingID: itemListingList[index].itemListingID ?? 0,
+          ),
+          onLongPress: () => onListingLongPressed(
+            itemListingID: itemListingList[index].itemListingID ?? 0,
+          ),
         );
       },
     );
   }
 
-  Widget getListingBottomSheet() {
+  Widget getListingBottomSheet({required int itemListingID}) {
     return Padding(
       padding: _Styles.screenPadding,
       child: Column(
@@ -173,7 +323,7 @@ extension _WidgetFactories on _MyListingScreenState {
             icon: Icons.edit,
             color: ColorManager.blackColor,
             text: 'Edit',
-            onTap: onEditPressed,
+            onTap: () => onEditPressed(itemListingID: itemListingID),
           ),
           SizedBox(height: 10),
           BottomSheetAction(
@@ -187,7 +337,7 @@ extension _WidgetFactories on _MyListingScreenState {
             icon: Icons.delete_outline,
             color: ColorManager.redColor,
             text: 'Remove',
-            onTap: onRemovePressed,
+            onTap: () => onRemovePressed(itemListingID: itemListingID),
           ),
         ],
       ),

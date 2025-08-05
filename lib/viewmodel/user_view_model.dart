@@ -131,11 +131,11 @@ class UserViewModel extends BaseViewModel {
 
   Future<void> getUserDetails({
     required String userID,
-    bool? isApproveCollectorAccount,
+    bool? noNeedUpdateUserSharedPreference,
   }) async {
     final response = await userRepository.getUserDetails(
       userID: userID,
-      isApproveCollectorAccount: isApproveCollectorAccount,
+      noNeedUpdateUserSharedPreference: noNeedUpdateUserSharedPreference,
     );
 
     if (response.data is UserModel) {
@@ -165,7 +165,7 @@ class UserViewModel extends BaseViewModel {
     DateTime? createdDate,
     String? profileImageURL,
     File? profileImage,
-    bool? isApproveCollectorAccount,
+    bool? noNeedUpdateUserSharedPreference,
   }) async {
     String? imageURL;
     if (profileImage != null) {
@@ -180,7 +180,7 @@ class UserViewModel extends BaseViewModel {
     String? newProfileImageURL = imageURL ?? profileImageURL;
     UserModel usermodel = UserModel();
 
-    if (isApproveCollectorAccount == true) {
+    if (noNeedUpdateUserSharedPreference == true) {
       usermodel = UserModel(
         userID: userDetails?.userID,
         userRole: userDetails?.userRole,
@@ -226,7 +226,8 @@ class UserViewModel extends BaseViewModel {
     final response = await userRepository.updateUser(
       userID: userID ?? '',
       userModel: usermodel,
-      isApproveCollectorAccount: isApproveCollectorAccount ?? false,
+      noNeedUpdateUserSharedPreference:
+          noNeedUpdateUserSharedPreference ?? false,
     );
 
     checkError(response);

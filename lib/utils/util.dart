@@ -21,6 +21,34 @@ class WidgetUtil {
     return DateFormat('dd/MM/yyyy, h:mm a').format(date);
   }
 
+  static String priceFormatter(double price) {
+    return price.toStringAsFixed(2);
+  }
+
+  static String differenceBetweenDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    final minutes = difference.inMinutes;
+    final hours = difference.inHours;
+    final days = difference.inDays;
+    final months = (difference.inDays / 30).floor();
+    final years = (difference.inDays / 365).floor();
+
+    if (difference.inSeconds < 60) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return minutes == 1 ? '1 minute ago' : '$minutes minutes ago';
+    } else if (difference.inHours < 24) {
+      return hours == 1 ? '1 hour ago' : '$hours hours ago';
+    } else if (difference.inDays < 30) {
+      return days == 1 ? '1 day ago' : '$days days ago';
+    } else if (difference.inDays < 365) {
+      return months == 1 ? '1 month ago' : '$months months ago';
+    } else {
+      return years == 1 ? '1 year ago' : '$years years ago';
+    }
+  }
+
   static Color getPickupRequestStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
@@ -138,5 +166,27 @@ class WidgetUtil {
     final ImagePicker imagePicker = ImagePicker();
     images = await imagePicker.pickMultiImage();
     return images;
+  }
+
+  static List<File> convertImageFileToFile({required List<ImageFile> images}) {
+    final List<File> imageFiles = images
+        .where((img) => img.hasPath)
+        .map((img) => File(img.path ?? ''))
+        .toList();
+
+    return imageFiles;
+  }
+
+  static List<ImageFile> convertImageURLsToImageFiles(List<String> imageUrls) {
+    return imageUrls
+        .map(
+          (url) => ImageFile(
+            url,
+            name: url.split('/').last,
+            extension: url.split('.').last,
+            path: url,
+          ),
+        )
+        .toList();
   }
 }

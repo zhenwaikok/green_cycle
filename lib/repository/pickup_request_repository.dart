@@ -40,10 +40,10 @@ class PickupRequestRepository {
     );
 
     if (response.data is List) {
-      final resultList = (response.data as List)
+      final resultModel = (response.data as List)
           .map((json) => PickupRequestModel.fromJson(json))
           .toList();
-      return MyResponse.complete(resultList);
+      return MyResponse.complete(resultModel);
     }
     return response;
   }
@@ -54,8 +54,6 @@ class PickupRequestRepository {
     final response = await _pickupRequestServices.getPickupRequestDetails(
       requestID: requestID,
     );
-
-    print('response: ${response.data}');
 
     if (response.data is Map<String, dynamic>) {
       final resultModel = PickupRequestModel.fromJson(response.data);

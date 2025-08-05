@@ -81,8 +81,11 @@ class _CollectorDetailsScreenState
 
   @override
   Widget body() {
-    final user =
-        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+    final user = context.select((UserViewModel vm) => vm.userDetails);
+
+    if (user == null) {
+      return SizedBox.shrink();
+    }
 
     return SingleChildScrollView(
       child: Column(
@@ -135,7 +138,7 @@ extension _Actions on _CollectorDetailsScreenState {
       context,
       () => context.read<UserViewModel>().getUserDetails(
         userID: widget.collectorID,
-        isApproveCollectorAccount: true,
+        noNeedUpdateUserSharedPreference: true,
       ),
     );
   }
@@ -192,7 +195,7 @@ extension _Actions on _CollectorDetailsScreenState {
               context,
               () => context.read<UserViewModel>().updateUser(
                 userID: widget.collectorID,
-                isApproveCollectorAccount: true,
+                noNeedUpdateUserSharedPreference: true,
                 approvalStatus: 'Rejected',
                 accountRejectMessage: rejectMessage,
               ),
@@ -223,7 +226,7 @@ extension _Actions on _CollectorDetailsScreenState {
             context,
             () => context.read<UserViewModel>().updateUser(
               userID: widget.collectorID,
-              isApproveCollectorAccount: true,
+              noNeedUpdateUserSharedPreference: true,
               approvalStatus: 'Approved',
             ),
           )

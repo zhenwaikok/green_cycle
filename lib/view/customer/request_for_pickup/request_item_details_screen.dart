@@ -45,10 +45,8 @@ class _RequestItemDetailsScreenState
     extends BaseStatefulState<_RequestItemDetailsScreen> {
   late MultiImagePickerController controller;
   List<XFile> images = [];
-
   final _formkey = GlobalKey<FormBuilderState>();
-
-  final categoryItems = DropDownItems.pickupRequestCategoryItems;
+  final categoryItems = DropDownItems.itemCategoryItems;
 
   @override
   void initState() {
@@ -198,7 +196,6 @@ extension _Actions on _RequestItemDetailsScreenState {
     controller.removeListener(() {});
     controller.addListener(() {
       final currentImages = controller.images;
-      print('Current Images: $currentImages');
       field.didChange(currentImages.map((e) => XFile(e.path ?? '')).toList());
     });
   }

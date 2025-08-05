@@ -116,7 +116,7 @@ extension _Actions on _CustomerHomeScreenState {
   }
 
   void onStartSellingButtonPressed() {
-    context.router.push(CreateListingRoute());
+    context.router.push(CreateEditListingRoute(isEdit: false));
   }
 
   void onNewsCardPressed({required int awarenessID}) {
