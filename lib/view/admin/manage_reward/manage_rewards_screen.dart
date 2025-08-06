@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -15,6 +16,7 @@ import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -60,7 +62,7 @@ class _ManageRewardsScreenState
     super.initState();
     selectedSort = sortByItems.first;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initialLoad();
+      fetchData();
     });
   }
 
@@ -87,11 +89,22 @@ class _ManageRewardsScreenState
         getSortBy(),
         SizedBox(height: 15),
         Expanded(
-          child: getRewardList(
-            rewardList: _isLoading
-                ? List.generate(5, (_) => RewardModel(rewardName: 'Loading...'))
-                : _rewardList,
-            isLoading: _isLoading,
+          child: AdaptiveWidgets.buildRefreshableScrollView(
+            context,
+            onRefresh: fetchData,
+            color: ColorManager.blackColor,
+            refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+            slivers: [
+              ...getRewardList(
+                rewardList: _isLoading
+                    ? List.generate(
+                        5,
+                        (_) => RewardModel(rewardName: 'Loading...'),
+                      )
+                    : _rewardList,
+                isLoading: _isLoading,
+              ),
+            ],
           ),
         ),
       ],
@@ -101,15 +114,15 @@ class _ManageRewardsScreenState
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ManageRewardsScreenState {
-  Future<void> initialLoad() async {
+  Future<void> fetchData() async {
+    _setState(() {
+      _isLoading = true;
+    });
+
     final rewardList = await tryLoad(
       context,
       () => context.read<RewardViewModel>().getRewardList(),
     );
-
-    _setState(() {
-      _isLoading = true;
-    });
 
     if (rewardList != null) {
       _setState(() {
@@ -167,8 +180,26 @@ extension _Actions on _ManageRewardsScreenState {
       );
 
       if (result == true && mounted) {
-        initialLoad();
+        fetchData();
       }
+    }
+  }
+
+  void sortRewardList({required List<RewardModel> rewardList}) {
+    if (selectedSort == sortByItems[1]) {
+      rewardList.sort(
+        (a, b) => (a.createdDate ?? DateTime.now()).compareTo(
+          b.createdDate ?? DateTime.now(),
+        ),
+      );
+    } else if (selectedSort == sortByItems[2]) {
+      rewardList.sort(
+        (a, b) => (b.createdDate ?? DateTime.now()).compareTo(
+          a.createdDate ?? DateTime.now(),
+        ),
+      );
+    } else {
+      rewardList.sort((a, b) => (a.rewardID ?? 0).compareTo(b.rewardID ?? 0));
     }
   }
 }
@@ -192,21 +223,31 @@ extension _WidgetFactories on _ManageRewardsScreenState {
     );
   }
 
-  Widget getRewardList({
+  List<Widget> getRewardList({
     required List<RewardModel> rewardList,
     required bool isLoading,
   }) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: rewardList.length,
-      itemBuilder: (context, index) {
-        return TouchableOpacity(
-          onPressed: () =>
-              onRewardCardPressed(rewardDetails: rewardList[index]),
-          child: getRewardCard(reward: rewardList[index], isLoading: isLoading),
-        );
-      },
-    );
+    sortRewardList(rewardList: rewardList);
+    if (rewardList.isEmpty) {
+      return [
+        Center(child: NoDataAvailableLabel(noDataText: 'No Rewards Found')),
+      ];
+    }
+
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return TouchableOpacity(
+            onPressed: () =>
+                onRewardCardPressed(rewardDetails: rewardList[index]),
+            child: getRewardCard(
+              reward: rewardList[index],
+              isLoading: isLoading,
+            ),
+          );
+        }, childCount: rewardList.length),
+      ),
+    ];
   }
 
   Widget getRewardCard({required RewardModel reward, required bool isLoading}) {

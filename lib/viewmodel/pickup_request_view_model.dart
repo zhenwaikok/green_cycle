@@ -89,6 +89,17 @@ class PickupRequestViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future<void> getAllPickupRequests() async {
+    final response = await pickupRequestRepository.getAllPickupRequests();
+
+    if (response.data is List<PickupRequestModel>) {
+      _pickupRequestList = response.data;
+      notifyListeners();
+    }
+
+    checkError(response);
+  }
+
   Future<void> getPickupRequestsWithUserID() async {
     final userID = user?.userID ?? '';
 
@@ -110,12 +121,8 @@ class PickupRequestViewModel extends BaseViewModel {
     final response = await pickupRequestRepository.getPickupRequestDetails(
       requestID: pickupRequestID,
     );
-
-    print('response viewmodel : ${response.data}');
-
     if (response.data is PickupRequestModel) {
       _pickupRequestDetails = response.data;
-      print('Pickup Request Details: ${_pickupRequestDetails}');
       notifyListeners();
     }
 

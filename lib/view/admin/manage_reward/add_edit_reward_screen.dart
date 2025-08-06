@@ -309,6 +309,8 @@ extension _WidgetFactories on _AddEditRewardScreenState {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Reward Photo', style: _Styles.titleTextStyle),
+            if (isEdit)
+              Text('**Tap photo to change', style: _Styles.noteTextStyle),
             SizedBox(height: 10),
 
             rewardImageURL != null && field.value == null
@@ -452,6 +454,11 @@ class _Styles {
   static const pointsTextStyle = TextStyle(
     fontSize: 18,
     fontWeight: FontWeightManager.bold,
+    color: ColorManager.greyColor,
+  );
+
+  static const noteTextStyle = TextStyle(
+    fontSize: 15,
     color: ColorManager.greyColor,
   );
 }

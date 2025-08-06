@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -74,6 +75,13 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    selectedValue = requestItems.first;
+  }
+
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
@@ -121,25 +129,53 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
           getFilterOption(),
           SizedBox(height: 20),
           Expanded(
-            child: filteredPickupRequestList.isEmpty
-                ? Center(
-                    child: NoDataAvailableLabel(
-                      noDataText: 'No Requests Found',
+            child: AdaptiveWidgets.buildRefreshableScrollView(
+              context,
+              onRefresh: fetchData,
+              color: ColorManager.blackColor,
+              refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+              slivers: [
+                if (filteredPickupRequestList.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: NoDataAvailableLabel(
+                        noDataText: 'No Requests Found',
+                      ),
                     ),
                   )
-                : getRequestList(
-                    pickupRequestList: _isLoading
-                        ? List.generate(
-                            5,
-                            (index) => PickupRequestModel(
-                              pickupRequestID: 'Loading...',
-                              pickupItemDescription: 'Loading...',
-                              pickupItemCategory: 'Loading...',
-                            ),
-                          )
-                        : filteredPickupRequestList,
-                    isLoading: _isLoading,
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final request = _isLoading
+                            ? PickupRequestModel(
+                                pickupRequestID: 'Loading...',
+                                pickupItemDescription: 'Loading...',
+                                pickupItemCategory: 'Loading...',
+                              )
+                            : filteredPickupRequestList[index];
+
+                        return getRequestCard(
+                          isLoading: _isLoading,
+                          requestID: request.pickupRequestID ?? '',
+                          pickupItemImageURL:
+                              request.pickupItemImageURL?.first ?? '',
+                          itemDescription: request.pickupItemDescription ?? '',
+                          category: request.pickupItemCategory ?? '',
+                          quantity: request.pickupItemQuantity ?? 0,
+                          pickupDate: request.pickupDate ?? DateTime.now(),
+                          pickupTimeRange: request.pickupTimeRange ?? '',
+                          status: request.pickupRequestStatus ?? '',
+                        );
+                      },
+                      childCount: _isLoading
+                          ? 5
+                          : filteredPickupRequestList.length,
+                    ),
                   ),
+              ],
+            ),
           ),
         ],
       ),
@@ -172,18 +208,18 @@ extension _Helpers on _RequestScreenState {
 extension _Actions on _RequestScreenState {
   void _onTabChanged() {
     if (tabsRouter.activeIndex == 1) {
-      fetchData();
       _setState(() {
         selectedValue = requestItems.first;
       });
-      removeSearchText();
+      resetAll();
     }
   }
 
-  void removeSearchText() {
+  void resetAll() {
     _setState(() {
       searchQuery = null;
       searchController.clear();
+      selectedValue = requestItems.first;
     });
   }
 
@@ -232,7 +268,7 @@ extension _WidgetFactories on _RequestScreenState {
       onChanged: (value) {
         onSearchChanged(value);
       },
-      onPressed: removeSearchText,
+      onPressed: resetAll,
       hintText: 'Search request here',
     );
   }
@@ -246,29 +282,6 @@ extension _WidgetFactories on _RequestScreenState {
       },
       isExpanded: false,
       needBorder: false,
-    );
-  }
-
-  Widget getRequestList({
-    required List<PickupRequestModel> pickupRequestList,
-    required bool isLoading,
-  }) {
-    return ListView.builder(
-      itemCount: pickupRequestList.length,
-      itemBuilder: (context, index) {
-        return getRequestCard(
-          isLoading: isLoading,
-          requestID: pickupRequestList[index].pickupRequestID ?? '',
-          pickupItemImageURL:
-              pickupRequestList[index].pickupItemImageURL?.first ?? '',
-          itemDescription: pickupRequestList[index].pickupItemDescription ?? '',
-          category: pickupRequestList[index].pickupItemCategory ?? '',
-          quantity: pickupRequestList[index].pickupItemQuantity ?? 0,
-          pickupDate: pickupRequestList[index].pickupDate ?? DateTime.now(),
-          pickupTimeRange: pickupRequestList[index].pickupTimeRange ?? '',
-          status: pickupRequestList[index].pickupRequestStatus ?? '',
-        );
-      },
     );
   }
 

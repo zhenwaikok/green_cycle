@@ -1,6 +1,8 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
@@ -14,6 +16,7 @@ import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -45,12 +48,11 @@ class _ManageAwarenessScreen extends BaseStatefulPage {
 
 class _ManageAwarenessScreenState
     extends BaseStatefulState<_ManageAwarenessScreen> {
-  final List<String> sortByItems = ['All', 'Name: A-Z', 'Name: Z-A', 'Latest'];
-
+  final sortByItems = DropDownItems.awarenessSortByItems;
   String? selectedSortBy;
-
   bool _isLoading = true;
   List<AwarenessModel> _awarenessList = [];
+
   late final tabsRouter = AutoTabsRouter.of(context);
 
   @override
@@ -63,6 +65,12 @@ class _ManageAwarenessScreenState
   void dispose() {
     tabsRouter.removeListener(_onTabChanged);
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchdata();
   }
 
   void _setState(VoidCallback fn) {
@@ -98,16 +106,22 @@ class _ManageAwarenessScreenState
         getSortBy(),
         SizedBox(height: 15),
         Expanded(
-          child: Skeletonizer(
-            enabled: _isLoading,
-            child: getAwarenessContent(
-              awarenessList: _isLoading
-                  ? List.generate(
-                      5,
-                      (_) => AwarenessModel(awarenessTitle: 'Loading...'),
-                    )
-                  : _awarenessList,
-            ),
+          child: AdaptiveWidgets.buildRefreshableScrollView(
+            context,
+            onRefresh: fetchdata,
+            color: ColorManager.blackColor,
+            refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+            slivers: [
+              ...getAwarenessContent(
+                awarenessList: _isLoading
+                    ? List.generate(
+                        5,
+                        (_) => AwarenessModel(awarenessTitle: 'Loading...'),
+                      )
+                    : _awarenessList,
+                isLoading: _isLoading,
+              ),
+            ],
           ),
         ),
       ],
@@ -119,7 +133,6 @@ class _ManageAwarenessScreenState
 extension _Actions on _ManageAwarenessScreenState {
   void _onTabChanged() {
     if (tabsRouter.activeIndex == 3) {
-      initialLoad();
       _setState(() {
         selectedSortBy = sortByItems.first;
       });
@@ -142,7 +155,7 @@ extension _Actions on _ManageAwarenessScreenState {
     );
 
     if (result == true && mounted) {
-      initialLoad();
+      fetchdata();
     }
   }
 
@@ -152,12 +165,42 @@ extension _Actions on _ManageAwarenessScreenState {
     );
 
     if (result == true && mounted) {
-      initialLoad();
+      fetchdata();
     }
   }
 
-  Future<void> initialLoad() async {
-    _setState(() => _isLoading = true);
+  void sortAwarenessList({required List<AwarenessModel> awarenessList}) {
+    if (selectedSortBy == sortByItems[1]) {
+      awarenessList.sort(
+        (a, b) => (a.awarenessTitle?.toLowerCase() ?? '').compareTo(
+          b.awarenessTitle?.toLowerCase() ?? '',
+        ),
+      );
+    } else if (selectedSortBy == sortByItems[2]) {
+      awarenessList.sort(
+        (a, b) => (b.awarenessTitle?.toLowerCase() ?? '').compareTo(
+          a.awarenessTitle?.toLowerCase() ?? '',
+        ),
+      );
+    } else if (selectedSortBy == sortByItems[3]) {
+      awarenessList.sort(
+        (a, b) => (b.createdDate ?? DateTime.now()).compareTo(
+          a.createdDate ?? DateTime.now(),
+        ),
+      );
+    } else {
+      awarenessList.sort(
+        (a, b) => (a.awarenessID ?? 0).compareTo(b.awarenessID ?? 0),
+      );
+    }
+  }
+
+  Future<void> fetchdata() async {
+    _setState(() {
+      _isLoading = true;
+
+      selectedSortBy = sortByItems.first;
+    });
     final awarenessList = await tryLoad(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessList(),
@@ -181,34 +224,51 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
     );
   }
 
-  Widget getAwarenessContent({required List<AwarenessModel> awarenessList}) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: awarenessList.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            Padding(
-              padding: _Styles.awarenessContentPadding,
-              child: TouchableOpacity(
-                onPressed: () => onAwarenessCardPressed(
-                  awarenessId: awarenessList[index].awarenessID ?? 0,
-                ),
-                child: CustomAwarenessCard(
-                  imageURL: awarenessList[index].awarenessImageURL ?? '',
-                  awarenessTitle: awarenessList[index].awarenessTitle ?? '',
-                  date: WidgetUtil.dateFormatter(
-                    awarenessList[index].createdDate ?? DateTime.now(),
+  List<Widget> getAwarenessContent({
+    required List<AwarenessModel> awarenessList,
+    required bool isLoading,
+  }) {
+    sortAwarenessList(awarenessList: awarenessList);
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = awarenessList[index];
+
+          if (awarenessList.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: _Styles.awarenessContentPadding,
+                child: TouchableOpacity(
+                  onPressed: () => onAwarenessCardPressed(
+                    awarenessId: item.awarenessID ?? 0,
+                  ),
+                  child: Skeletonizer(
+                    enabled: isLoading,
+                    child: CustomAwarenessCard(
+                      imageURL: item.awarenessImageURL ?? '',
+                      awarenessTitle: item.awarenessTitle ?? '',
+                      date: WidgetUtil.dateFormatter(
+                        item.createdDate ?? DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            Divider(color: ColorManager.lightGreyColor),
-          ],
-        );
-      },
-    );
+              Divider(color: ColorManager.lightGreyColor),
+            ],
+          );
+        }, childCount: awarenessList.length),
+      ),
+    ];
   }
 }
 

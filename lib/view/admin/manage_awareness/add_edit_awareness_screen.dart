@@ -301,6 +301,9 @@ extension _WidgetFactories on _AddOrEditAwarenessScreenState {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Awareness Photo', style: _Styles.itemListingTitleTextStyle),
+            if (isEdit) ...[
+              Text('**Tap photo to change', style: _Styles.noteTextStyle),
+            ],
             SizedBox(height: 10),
 
             awarenessImageURL != null && field.value == null
@@ -388,6 +391,11 @@ class _Styles {
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
+  );
+
+  static const noteTextStyle = TextStyle(
+    fontSize: 15,
+    color: ColorManager.greyColor,
   );
 
   static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);

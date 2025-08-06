@@ -55,7 +55,7 @@ class WidgetUtil {
         return ColorManager.yellowColor;
       case 'completed':
         return ColorManager.primary;
-      case 'in progress':
+      case 'ongoing':
         return ColorManager.orangeColor;
       case 'accepted':
         return ColorManager.blueColor;

@@ -104,9 +104,12 @@ class DropDownItems {
     'All',
     'Collector Name: A-Z',
     'Collector Name: Z - A',
-    'Approved',
-    'Pending',
     'Latest',
+  ];
+  static const List<String> collectorManagementStatusSortByItems = [
+    'All',
+    'Pending',
+    'Approved',
   ];
   static const List<String> itemCategoryItems = [
     'Large Household Appliances',
@@ -130,7 +133,7 @@ class DropDownItems {
     'All Requests',
     'Pending',
     'Accepted',
-    'In Progress',
+    'Ongoing',
     'Arrived',
     'Completed',
   ];
@@ -146,6 +149,12 @@ class DropDownItems {
     'Descending Name',
     'Price: Low-High',
     'Price: High-Low',
+  ];
+  static const List<String> awarenessSortByItems = [
+    'All',
+    'Name: A-Z',
+    'Name: Z-A',
+    'Latest',
   ];
 }
 

@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -13,6 +14,7 @@ import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/awareness_card.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -76,16 +78,22 @@ class _AwarenessScreenState extends BaseStatefulState<_AwarenessScreen> {
 
   @override
   Widget body() {
-    return Skeletonizer(
-      enabled: _isLoading,
-      child: getAwarenessContent(
-        awarenessModel: _isLoading
-            ? List.generate(
-                5,
-                (_) => AwarenessModel(awarenessTitle: 'Loading...'),
-              )
-            : _awarenessList,
-      ),
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: initialLoad,
+      color: ColorManager.blackColor,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      slivers: [
+        ...getAwarenessContent(
+          awarenessModel: _isLoading
+              ? List.generate(
+                  5,
+                  (_) => AwarenessModel(awarenessTitle: 'Loading...'),
+                )
+              : _awarenessList,
+          isLoading: _isLoading,
+        ),
+      ],
     );
   }
 }
@@ -122,33 +130,50 @@ extension _Actions on _AwarenessScreenState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _AwarenessScreenState {
-  Widget getAwarenessContent({required List<AwarenessModel> awarenessModel}) {
-    return ListView.builder(
-      itemCount: awarenessModel.length,
-      itemBuilder: (context, index) {
-        return Column(
-          children: [
-            Padding(
-              padding: _Styles.awarenessContentPadding,
-              child: TouchableOpacity(
-                onPressed: () => onAwarenessCardPressed(
-                  awarenessID: awarenessModel[index].awarenessID ?? 0,
-                ),
-                child: CustomAwarenessCard(
-                  imageURL: awarenessModel[index].awarenessImageURL ?? '',
-                  awarenessTitle: awarenessModel[index].awarenessTitle ?? '',
-                  date: WidgetUtil.dateFormatter(
-                    awarenessModel[index].createdDate ?? DateTime.now(),
+  List<Widget> getAwarenessContent({
+    required List<AwarenessModel> awarenessModel,
+    required bool isLoading,
+  }) {
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final item = awarenessModel[index];
+
+          if (awarenessModel.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: _Styles.awarenessContentPadding,
+                child: TouchableOpacity(
+                  onPressed: () => onAwarenessCardPressed(
+                    awarenessID: item.awarenessID ?? 0,
+                  ),
+                  child: Skeletonizer(
+                    enabled: isLoading,
+                    child: CustomAwarenessCard(
+                      imageURL: item.awarenessImageURL ?? '',
+                      awarenessTitle: item.awarenessTitle ?? '',
+                      date: WidgetUtil.dateFormatter(
+                        item.createdDate ?? DateTime.now(),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            Divider(color: ColorManager.lightGreyColor),
-          ],
-        );
-      },
-    );
+              Divider(color: ColorManager.lightGreyColor),
+            ],
+          );
+        }, childCount: awarenessModel.length),
+      ),
+    ];
   }
 }
 

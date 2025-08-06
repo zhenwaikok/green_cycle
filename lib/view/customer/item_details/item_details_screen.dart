@@ -20,10 +20,10 @@ import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
-import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
+import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 
@@ -444,10 +444,8 @@ extension _WidgetFactories on _ItemDetailsScreenState {
   }
 
   Widget getSellerProfileImage({required String imageURL}) {
-    return CustomImage(
+    return CustomProfileImage(
       imageSize: _Styles.sellerImageSize,
-      imageWidth: _Styles.sellerImageSize,
-      borderRadius: _Styles.sellerBorderRadius,
       imageURL: imageURL,
     );
   }
@@ -557,7 +555,6 @@ class _Styles {
 
   static const itemImageSize = 220.0;
   static const sellerImageSize = 80.0;
-  static const sellerBorderRadius = 80.0;
   static const backButtonContainerSize = 50.0;
   static const iconSize = 20.0;
   static const dotIndicatorSize = 10.0;
