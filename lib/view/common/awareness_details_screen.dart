@@ -26,6 +26,7 @@ class AwarenessDetailsScreen extends StatelessWidget {
 
   final String userRole;
   final int awarenessId;
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -61,6 +62,14 @@ class _AwarenessDetailsScreen extends BaseStatefulPage {
 
 class _AwarenessDetailsScreenState
     extends BaseStatefulState<_AwarenessDetailsScreen> {
+  bool isEdit = false;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -113,7 +122,7 @@ extension _Actions on _AwarenessDetailsScreenState {
   }
 
   void onBackButtonPressed() {
-    context.router.maybePop(true);
+    context.router.maybePop(isEdit);
   }
 
   void onEditButtonPressed() async {
@@ -129,6 +138,9 @@ extension _Actions on _AwarenessDetailsScreenState {
 
     if (result == true && mounted) {
       initialLoad();
+      _setState(() {
+        isEdit = true;
+      });
     }
   }
 

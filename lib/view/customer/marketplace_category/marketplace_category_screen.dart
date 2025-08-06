@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -100,14 +101,28 @@ class _MarketplaceCategoryScreenState
         getFilterOptions(),
         SizedBox(height: 35),
         Expanded(
-          child: categoryItemListingList.isEmpty
-              ? Center(
-                  child: NoDataAvailableLabel(noDataText: 'No Items Found'),
+          child: AdaptiveWidgets.buildRefreshableScrollView(
+            context,
+            onRefresh: initialLoad,
+            color: ColorManager.blackColor,
+            refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+            slivers: [
+              if (categoryItemListingList.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: NoDataAvailableLabel(noDataText: 'No Items Found'),
+                  ),
                 )
-              : getCategoryItems(
-                  itemListingList: categoryItemListingList,
-                  isLoading: _isLoading,
+              else
+                SliverToBoxAdapter(
+                  child: getCategoryItems(
+                    itemListingList: categoryItemListingList,
+                    isLoading: _isLoading,
+                  ),
                 ),
+            ],
+          ),
         ),
       ],
     );
@@ -264,11 +279,11 @@ extension _WidgetFactories on _MarketplaceCategoryScreenState {
         final item = itemListingList[index];
         return Padding(
           padding: _Styles.itemPadding,
-          child: Skeletonizer(
-            enabled: isLoading,
-            child: TouchableOpacity(
-              onPressed: () =>
-                  onItemPressed(itemListingID: item.itemListingID ?? 0),
+          child: TouchableOpacity(
+            onPressed: () =>
+                onItemPressed(itemListingID: item.itemListingID ?? 0),
+            child: Skeletonizer(
+              enabled: isLoading,
               child: SecondHandItem(
                 imageURL: item.itemImageURL?.first ?? '',
                 productName: item.itemName ?? '',

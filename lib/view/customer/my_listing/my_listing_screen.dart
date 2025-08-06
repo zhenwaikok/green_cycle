@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -106,19 +107,16 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
           getTabBar(),
           SizedBox(height: 15),
           Expanded(
-            child: TabBarView(
+            child: Column(
               children: [
-                getMyListingList(
-                  itemListingList: allItemListingList,
-                  isLoading: isLoading,
-                ),
-                getMyListingList(
-                  itemListingList: activeItemListingList,
-                  isLoading: isLoading,
-                ),
-                getMyListingList(
-                  itemListingList: soldItemListingList,
-                  isLoading: isLoading,
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      buildTabContent(itemListingList: allItemListingList),
+                      buildTabContent(itemListingList: activeItemListingList),
+                      buildTabContent(itemListingList: soldItemListingList),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -284,33 +282,52 @@ extension _WidgetFactories on _MyListingScreenState {
     return CustomTabBar(tabs: [Text('All'), Text('Active'), Text('Sold')]);
   }
 
-  Widget getMyListingList({
+  Widget buildTabContent({required List<ItemListingModel> itemListingList}) {
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      color: ColorManager.blackColor,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      slivers: getMyListingList(
+        itemListingList: itemListingList,
+        isLoading: isLoading,
+      ),
+    );
+  }
+
+  List<Widget> getMyListingList({
     required List<ItemListingModel> itemListingList,
     required bool isLoading,
   }) {
     sortListings(itemListingList);
 
     if (itemListingList.isEmpty) {
-      return Center(
-        child: NoDataAvailableLabel(noDataText: 'No Listing Available'),
-      );
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Item Listing Found'),
+          ),
+        ),
+      ];
     }
 
-    return ListView.builder(
-      itemCount: itemListingList.length,
-      itemBuilder: (context, index) {
-        return MyListingTab(
-          itemListingDetails: itemListingList[index],
-          isLoading: isLoading,
-          onTap: () => onListingPressed(
-            itemListingID: itemListingList[index].itemListingID ?? 0,
-          ),
-          onLongPress: () => onListingLongPressed(
-            itemListingID: itemListingList[index].itemListingID ?? 0,
-          ),
-        );
-      },
-    );
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return MyListingTab(
+            itemListingDetails: itemListingList[index],
+            isLoading: isLoading,
+            onTap: () => onListingPressed(
+              itemListingID: itemListingList[index].itemListingID ?? 0,
+            ),
+            onLongPress: () => onListingLongPressed(
+              itemListingID: itemListingList[index].itemListingID ?? 0,
+            ),
+          );
+        }, childCount: itemListingList.length),
+      ),
+    ];
   }
 
   Widget getListingBottomSheet({required int itemListingID}) {

@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.59"
+  adaptive_widgets_flutter:
+    dependency: "direct main"
+    description:
+      name: adaptive_widgets_flutter
+      sha256: d747c5609048c33a37c1d362e417c1a32047cdd3d96bc47679a720228be3bde6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.5"
   analyzer:
     dependency: transitive
     description:

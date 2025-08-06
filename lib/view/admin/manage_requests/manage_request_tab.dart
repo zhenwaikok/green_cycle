@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ManageRequestTab extends StatefulWidget {
   const ManageRequestTab({
     super.key,
-    required this.status,
+    required this.request,
     required this.onTap,
+    required this.isLoading,
   });
 
-  final String status;
+  final PickupRequestModel request;
   final void Function() onTap;
+  final bool isLoading;
 
   @override
   State<ManageRequestTab> createState() => _ManageRequestTabState();
@@ -23,7 +28,7 @@ class ManageRequestTab extends StatefulWidget {
 class _ManageRequestTabState extends State<ManageRequestTab> {
   @override
   Widget build(BuildContext context) {
-    return getRequestCard();
+    return getRequestCard(request: widget.request);
   }
 }
 
@@ -32,30 +37,45 @@ extension _Actions on _ManageRequestTabState {}
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ManageRequestTabState {
-  Widget getRequestCard() {
+  Widget getRequestCard({required PickupRequestModel request}) {
     return TouchableOpacity(
       onPressed: widget.onTap,
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getRequestID(),
-                  getRequestStatus(status: widget.status),
-                ],
-              ),
-              getDivider(),
-              getItemDetails(),
-              getDivider(),
-              getRequestDetailsDate(text: 'Requested: 29/4/2025, 11:22 PM'),
-              getRequestDetailsDate(text: 'Completed: 29/4/2025, 11:22 PM'),
-            ],
+          child: Skeletonizer(
+            enabled: widget.isLoading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getRequestID(requestID: request.pickupRequestID ?? ''),
+                    getRequestStatus(status: request.pickupRequestStatus ?? ''),
+                  ],
+                ),
+                getDivider(),
+                getItemDetails(
+                  imageURL: request.pickupItemImageURL?.first ?? '',
+                  itemDescription: request.pickupItemDescription ?? '',
+                  itemCategory: request.pickupItemCategory ?? '',
+                  quantity: request.pickupItemQuantity ?? 0,
+                ),
+                getDivider(),
+                getRequestDetailsDate(
+                  text:
+                      'Requested: ${WidgetUtil.dateTimeFormatter(request.requestedDate ?? DateTime.now())}',
+                ),
+                if (request.completedDate != null)
+                  getRequestDetailsDate(
+                    text:
+                        'Completed: ${WidgetUtil.dateTimeFormatter(request.completedDate ?? DateTime.now())}',
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -73,12 +93,12 @@ extension _WidgetFactories on _ManageRequestTabState {
     );
   }
 
-  Widget getRequestID() {
+  Widget getRequestID({required String requestID}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Request ID', style: _Styles.requestIDTitleTextStyle),
-        Text('#REQ13113', style: _Styles.requestIDTextStyle),
+        Text('#$requestID', style: _Styles.requestIDTextStyle),
       ],
     );
   }
@@ -87,26 +107,40 @@ extension _WidgetFactories on _ManageRequestTabState {
     return CustomStatusBar(text: status);
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({
+    required String imageURL,
+    required String itemDescription,
+    required String itemCategory,
+    required int quantity,
+  }) {
     return Row(
       children: [
-        getItemImage(),
+        getItemImage(imageURL: imageURL),
         SizedBox(width: 15),
-        Expanded(child: getItemDescription()),
+        Expanded(
+          child: getItemDescription(
+            itemDescription: itemDescription,
+            itemCategory: itemCategory,
+            quantity: quantity,
+          ),
+        ),
       ],
     );
   }
 
-  Widget getItemImage() {
+  Widget getItemImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.imageSize,
-      imageURL:
-          'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+      imageURL: imageURL,
       borderRadius: _Styles.imageBorderRadius,
     );
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({
+    required String itemDescription,
+    required String itemCategory,
+    required int quantity,
+  }) {
     return SizedBox(
       height: _Styles.imageSize,
       child: Column(
@@ -117,15 +151,15 @@ extension _WidgetFactories on _ManageRequestTabState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item Descriptionsas0',
+                itemDescription,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
                 style: _Styles.itemDescriptionTextStyle,
               ),
-              Text('Category', style: _Styles.itemDescriptionTextStyle),
+              Text(itemCategory, style: _Styles.itemDescriptionTextStyle),
             ],
           ),
-          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+          Text('Quantity: $quantity', style: _Styles.quantityTextStyle),
         ],
       ),
     );

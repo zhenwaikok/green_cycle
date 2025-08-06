@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -17,6 +18,7 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -51,7 +53,9 @@ class _ManageCollectorsScreen extends BaseStatefulPage {
 class _ManageCollectorsScreenState
     extends BaseStatefulState<_ManageCollectorsScreen> {
   final sortByItems = DropDownItems.collectorManagementSortByItems;
+  final statusItems = DropDownItems.collectorManagementStatusSortByItems;
   String? selectedSort;
+  String? selectedStatus;
   bool _isLoading = true;
   late final tabsRouter = AutoTabsRouter.of(context);
 
@@ -59,6 +63,12 @@ class _ManageCollectorsScreenState
     if (mounted) {
       setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
   }
 
   @override
@@ -88,26 +98,47 @@ class _ManageCollectorsScreenState
 
   @override
   Widget body() {
-    final userList = context
-        .select((UserViewModel vm) => vm.userList)
-        .where((user) => user.userRole == 'Collector')
+    final rawCollectorList = context.select((UserViewModel vm) => vm.userList);
+
+    final filteredCollectorList = rawCollectorList
+        .where((user) => user.userRole == 'Collector' && isMatch(user))
         .toList();
+
+    sortCollectorList(collectorList: filteredCollectorList);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getSortBy(),
+        getFilterOptions(),
         SizedBox(height: 15),
         Expanded(
-          child: getCollectorList(
-            userList: _isLoading
-                ? List.generate(
-                    5,
-                    (index) => UserModel(
-                      fullName: 'Loading...',
-                      companyName: 'Loading...',
+          child: AdaptiveWidgets.buildRefreshableScrollView(
+            context,
+            onRefresh: fetchData,
+            color: ColorManager.blackColor,
+            refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+            slivers: [
+              if (filteredCollectorList.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: NoDataAvailableLabel(
+                      noDataText: 'No Collectors Found',
                     ),
-                  )
-                : userList,
+                  ),
+                )
+              else
+                ...getCollectorList(
+                  collectorList: _isLoading
+                      ? List.generate(
+                          5,
+                          (index) => UserModel(
+                            fullName: 'Loading...',
+                            companyName: 'Loading...',
+                          ),
+                        )
+                      : filteredCollectorList,
+                ),
+            ],
           ),
         ),
       ],
@@ -115,13 +146,21 @@ class _ManageCollectorsScreenState
   }
 }
 
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _ManageCollectorsScreenState {
+  bool isMatch(UserModel collector) {
+    if (selectedStatus == statusItems[0]) return true;
+    return collector.approvalStatus == selectedStatus;
+  }
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ManageCollectorsScreenState {
   void _onTabChanged() {
     if (tabsRouter.activeIndex == 1) {
-      initialLoad();
       _setState(() {
         selectedSort = sortByItems.first;
+        selectedStatus = statusItems.first;
       });
     }
   }
@@ -132,18 +171,50 @@ extension _Actions on _ManageCollectorsScreenState {
     });
   }
 
+  void onStatusChanged(String? value) {
+    _setState(() {
+      selectedStatus = value;
+    });
+  }
+
   void onCollectorCardPressed({required String collectorID}) async {
     final result = await context.router.push(
       CollectorDetailsRoute(collectorID: collectorID),
     );
 
     if (result == true && mounted) {
-      initialLoad();
+      fetchData();
     }
   }
 
-  Future<void> initialLoad() async {
-    _setState(() => _isLoading = true);
+  void sortCollectorList({required List<UserModel> collectorList}) {
+    if (selectedSort == sortByItems[1]) {
+      collectorList.sort(
+        (a, b) => (a.fullName?.toLowerCase() ?? '').compareTo(
+          (b.fullName?.toLowerCase() ?? ''),
+        ),
+      );
+    } else if (selectedSort == sortByItems[2]) {
+      collectorList.sort(
+        (a, b) => (b.fullName?.toLowerCase() ?? '').compareTo(
+          (a.fullName?.toLowerCase() ?? ''),
+        ),
+      );
+    } else if (selectedSort == sortByItems[3]) {
+      collectorList.sort(
+        (a, b) => (b.createdDate ?? DateTime.now()).compareTo(
+          a.createdDate ?? DateTime.now(),
+        ),
+      );
+    }
+  }
+
+  Future<void> fetchData() async {
+    _setState(() {
+      _isLoading = true;
+      selectedSort = sortByItems.first;
+      selectedStatus = statusItems.first;
+    });
     await tryLoad(context, () => context.read<UserViewModel>().getAllUsers());
     _setState(() => _isLoading = false);
   }
@@ -151,13 +222,48 @@ extension _Actions on _ManageCollectorsScreenState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ManageCollectorsScreenState {
-  Widget getSortBy() {
-    return CustomSortBy(
-      sortByItems: sortByItems,
-      selectedValue: selectedSort,
-      onChanged: (value) {
-        onSortByChanged(value);
-      },
+  Widget getFilterOptions() {
+    return Row(
+      children: [
+        getFilterDetails(
+          text: 'Sort By',
+          filterItems: sortByItems,
+          selectedValue: selectedSort ?? '',
+          onChanged: (value) {
+            onSortByChanged(value);
+          },
+        ),
+        SizedBox(width: 10),
+        getFilterDetails(
+          text: 'Status',
+          filterItems: statusItems,
+          selectedValue: selectedStatus ?? '',
+          onChanged: (value) {
+            onStatusChanged(value);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget getFilterDetails({
+    required String text,
+    required List<String> filterItems,
+    required String selectedValue,
+    required void Function(String?)? onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(text, style: _Styles.sortByTextStyle),
+        SizedBox(height: 5),
+        CustomSortBy(
+          sortByItems: filterItems,
+          selectedValue: selectedValue,
+          onChanged: onChanged,
+          isExpanded: false,
+        ),
+      ],
     );
   }
 
@@ -174,14 +280,14 @@ extension _WidgetFactories on _ManageCollectorsScreenState {
     );
   }
 
-  Widget getCollectorList({required List<UserModel> userList}) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: userList.length,
-      itemBuilder: (context, index) {
-        return getCollectorCard(user: userList[index]);
-      },
-    );
+  List<Widget> getCollectorList({required List<UserModel> collectorList}) {
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return getCollectorCard(user: collectorList[index]);
+        }, childCount: collectorList.length),
+      ),
+    ];
   }
 
   Widget getCollectorCard({required UserModel user}) {
@@ -276,5 +382,11 @@ class _Styles {
     fontSize: 14,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,
+  );
+
+  static const sortByTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.blackColor,
   );
 }

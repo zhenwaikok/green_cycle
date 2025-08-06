@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -57,12 +58,6 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
   String? searchQuery;
   TextEditingController searchController = TextEditingController();
 
-  void _setState(VoidCallback fn) {
-    if (mounted) {
-      setState(fn);
-    }
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -73,6 +68,18 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
   void dispose() {
     tabsRouter.removeListener(_onTabChanged);
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
   }
 
   @override
@@ -114,30 +121,41 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
       );
     final latest13ItemListingList = sortedItems.take(13).toList();
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: _Styles.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getStartSellingButton(),
-            SizedBox(height: 20),
-            getCategoriesSection(categories: secondHandItemCategories),
-            SizedBox(height: 25),
-            getSearchBar(),
-            SizedBox(height: 25),
-            getRecommendSection(
-              itemListingList: _isLoading
-                  ? List.generate(
-                      5,
-                      (index) => ItemListingModel(itemName: 'Loading...'),
-                    )
-                  : latest13ItemListingList,
-              isLoading: _isLoading,
-            ),
-          ],
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      color: ColorManager.blackColor,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      slivers: [
+        SliverPadding(
+          padding: _Styles.screenPadding,
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(child: getStartSellingButton()),
+              SliverToBoxAdapter(child: SizedBox(height: 20)),
+              SliverToBoxAdapter(
+                child: getCategoriesSection(
+                  categories: secondHandItemCategories,
+                ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(child: getSearchBar()),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: getRecommendSection(
+                  itemListingList: _isLoading
+                      ? List.generate(
+                          5,
+                          (index) => ItemListingModel(itemName: 'Loading...'),
+                        )
+                      : latest13ItemListingList,
+                  isLoading: _isLoading,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -157,6 +175,12 @@ extension _Helpers on _MarketplaceScreenState {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _MarketplaceScreenState {
+  void _onTabChanged() {
+    if (tabsRouter.activeIndex == 2) {
+      removeSearchText();
+    }
+  }
+
   void onCategoryCardPressed({required String category}) async {
     final result = await context.router.push(
       MarketplaceCategoryRoute(category: category),
@@ -182,13 +206,6 @@ extension _Actions on _MarketplaceScreenState {
 
     if (result == true && mounted) {
       fetchData();
-    }
-  }
-
-  void _onTabChanged() {
-    if (tabsRouter.activeIndex == 2) {
-      fetchData();
-      removeSearchText();
     }
   }
 
