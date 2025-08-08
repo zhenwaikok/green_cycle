@@ -15,6 +15,7 @@ import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_date_filter.dart';
@@ -88,12 +89,15 @@ class _PickupHistoryScreenState
 
   @override
   Widget body() {
+    final colletorUserID = context.read<UserViewModel>().user?.userID;
+
     final completedPickupRequestList = context.select(
       (PickupRequestViewModel vm) => vm.pickupRequestList
           .where(
             (request) =>
                 request.pickupRequestStatus ==
-                DropDownItems.requestDropdownItems[5],
+                    DropDownItems.requestDropdownItems[5] &&
+                request.collectorUserID == colletorUserID,
           )
           .toList(),
     );
@@ -163,6 +167,37 @@ extension _Helpers on _PickupHistoryScreenState {
 
     return matchesSearch;
   }
+
+  List<PickupRequestModel> filteredCompletedPickupRequestList({
+    required List<PickupRequestModel> pickupRequestList,
+  }) {
+    return pickupRequestList.where((request) {
+      if (selectedRange == null) return true;
+
+      final completionDate = request.completedDate ?? DateTime.now();
+
+      final completionDateOnly = DateTime(
+        completionDate.year,
+        completionDate.month,
+        completionDate.day,
+      );
+      final startDateOnly = DateTime(
+        selectedRange?.start.year ?? 0,
+        selectedRange?.start.month ?? 0,
+        selectedRange?.start.day ?? 0,
+      );
+      final endDateOnly = DateTime(
+        selectedRange?.end.year ?? 0,
+        selectedRange?.end.month ?? 0,
+        selectedRange?.end.day ?? 0,
+      );
+
+      return (completionDateOnly.isAtSameMomentAs(startDateOnly) ||
+          completionDateOnly.isAtSameMomentAs(endDateOnly) ||
+          (completionDateOnly.isAfter(startDateOnly) &&
+              completionDateOnly.isBefore(endDateOnly)));
+    }).toList();
+  }
 }
 
 // * ---------------------------- Actions ----------------------------
@@ -202,37 +237,6 @@ extension _Actions on _PickupHistoryScreenState {
     );
   }
 
-  List<PickupRequestModel> filteredCompletedPickupRequestList({
-    required List<PickupRequestModel> pickupRequestList,
-  }) {
-    return pickupRequestList.where((request) {
-      if (selectedRange == null) return true;
-
-      final completionDate = request.completedDate ?? DateTime.now();
-
-      final completionDateOnly = DateTime(
-        completionDate.year,
-        completionDate.month,
-        completionDate.day,
-      );
-      final startDateOnly = DateTime(
-        selectedRange?.start.year ?? 0,
-        selectedRange?.start.month ?? 0,
-        selectedRange?.start.day ?? 0,
-      );
-      final endDateOnly = DateTime(
-        selectedRange?.end.year ?? 0,
-        selectedRange?.end.month ?? 0,
-        selectedRange?.end.day ?? 0,
-      );
-
-      return (completionDateOnly.isAtSameMomentAs(startDateOnly) ||
-          completionDateOnly.isAtSameMomentAs(endDateOnly) ||
-          (completionDateOnly.isAfter(startDateOnly) &&
-              completionDateOnly.isBefore(endDateOnly)));
-    }).toList();
-  }
-
   Future<void> fetchData() async {
     _setState(() {
       isLoading = true;
@@ -255,7 +259,7 @@ extension _WidgetFactories on _PickupHistoryScreenState {
         Text('You\'ve completed', style: _Styles.titleTextStyle),
         SizedBox(height: 10),
         Text(
-          completedCount == 1
+          completedCount <= 1
               ? '$completedCount Pickup'
               : '$completedCount Pickups',
           style: _Styles.pickUpTextStyle,
