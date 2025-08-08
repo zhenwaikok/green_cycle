@@ -1,26 +1,37 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/image_picker_widget.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class CompletePickupScreen extends StatelessWidget {
-  const CompletePickupScreen({super.key});
+  const CompletePickupScreen({super.key, required this.pickupRequestDetails});
+
+  final PickupRequestModel pickupRequestDetails;
 
   @override
   Widget build(BuildContext context) {
-    return _CompletePickupScreen();
+    return _CompletePickupScreen(pickupRequestDetails: pickupRequestDetails);
   }
 }
 
 class _CompletePickupScreen extends BaseStatefulPage {
+  const _CompletePickupScreen({required this.pickupRequestDetails});
+
+  final PickupRequestModel pickupRequestDetails;
+
   @override
   State<_CompletePickupScreen> createState() => _CompletePickupScreenState();
 }
@@ -79,6 +90,37 @@ extension _Actions on _CompletePickupScreenState {
       _setState(() {
         selectedImage = File(pickedFile.path);
       });
+    }
+  }
+
+  Future<void> onSubmitButtonPressed() async {
+    if (selectedImage == null) {
+      unawaited(
+        WidgetUtil.showSnackBar(
+          text: 'Please upload a proof of collection image',
+        ),
+      );
+    } else {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<PickupRequestViewModel>().updatePickupRequest(
+              collectionProofImage: selectedImage,
+              completedDate: DateTime.now(),
+              pickupRequestStatus: 'Completed',
+              pickupRequestDetails: widget.pickupRequestDetails,
+              isCollectorUpdate: true,
+            ),
+          ) ??
+          false;
+      if (result) {
+        unawaited(
+          WidgetUtil.showSnackBar(
+            text: 'Congrats! Successfully completed the pickup',
+          ),
+        );
+        if (mounted) await context.router.maybePop(true);
+      }
     }
   }
 }
@@ -141,7 +183,7 @@ extension _WidgetFactories on _CompletePickupScreenState {
     return CustomButton(
       text: 'Submit',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: onSubmitButtonPressed,
     );
   }
 }

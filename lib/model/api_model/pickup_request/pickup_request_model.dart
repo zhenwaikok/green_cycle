@@ -10,6 +10,8 @@ class PickupRequestModel with _$PickupRequestModel {
     String? userID,
     String? collectorUserID,
     String? pickupLocation,
+    double? pickupLatitude,
+    double? pickupLongtitude,
     String? remarks,
     DateTime? pickupDate,
     String? pickupTimeRange,

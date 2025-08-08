@@ -80,6 +80,7 @@ abstract class BaseServices {
           e.response?.data,
         ).copyWith(status: e.response?.statusCode);
 
+        print('error status code: ${e.response?.statusCode}');
         print('error: ${e.response?.data}');
 
         print('API Call Error: ${processedError.message}');

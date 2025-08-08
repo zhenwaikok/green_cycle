@@ -25,6 +25,8 @@ mixin _$PickupRequestModel {
   String? get userID => throw _privateConstructorUsedError;
   String? get collectorUserID => throw _privateConstructorUsedError;
   String? get pickupLocation => throw _privateConstructorUsedError;
+  double? get pickupLatitude => throw _privateConstructorUsedError;
+  double? get pickupLongtitude => throw _privateConstructorUsedError;
   String? get remarks => throw _privateConstructorUsedError;
   DateTime? get pickupDate => throw _privateConstructorUsedError;
   String? get pickupTimeRange => throw _privateConstructorUsedError;
@@ -60,6 +62,8 @@ abstract class $PickupRequestModelCopyWith<$Res> {
     String? userID,
     String? collectorUserID,
     String? pickupLocation,
+    double? pickupLatitude,
+    double? pickupLongtitude,
     String? remarks,
     DateTime? pickupDate,
     String? pickupTimeRange,
@@ -94,6 +98,8 @@ class _$PickupRequestModelCopyWithImpl<$Res, $Val extends PickupRequestModel>
     Object? userID = freezed,
     Object? collectorUserID = freezed,
     Object? pickupLocation = freezed,
+    Object? pickupLatitude = freezed,
+    Object? pickupLongtitude = freezed,
     Object? remarks = freezed,
     Object? pickupDate = freezed,
     Object? pickupTimeRange = freezed,
@@ -125,6 +131,14 @@ class _$PickupRequestModelCopyWithImpl<$Res, $Val extends PickupRequestModel>
                 ? _value.pickupLocation
                 : pickupLocation // ignore: cast_nullable_to_non_nullable
                       as String?,
+            pickupLatitude: freezed == pickupLatitude
+                ? _value.pickupLatitude
+                : pickupLatitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            pickupLongtitude: freezed == pickupLongtitude
+                ? _value.pickupLongtitude
+                : pickupLongtitude // ignore: cast_nullable_to_non_nullable
+                      as double?,
             remarks: freezed == remarks
                 ? _value.remarks
                 : remarks // ignore: cast_nullable_to_non_nullable
@@ -193,6 +207,8 @@ abstract class _$$PickupRequestModelImplCopyWith<$Res>
     String? userID,
     String? collectorUserID,
     String? pickupLocation,
+    double? pickupLatitude,
+    double? pickupLongtitude,
     String? remarks,
     DateTime? pickupDate,
     String? pickupTimeRange,
@@ -226,6 +242,8 @@ class __$$PickupRequestModelImplCopyWithImpl<$Res>
     Object? userID = freezed,
     Object? collectorUserID = freezed,
     Object? pickupLocation = freezed,
+    Object? pickupLatitude = freezed,
+    Object? pickupLongtitude = freezed,
     Object? remarks = freezed,
     Object? pickupDate = freezed,
     Object? pickupTimeRange = freezed,
@@ -257,6 +275,14 @@ class __$$PickupRequestModelImplCopyWithImpl<$Res>
             ? _value.pickupLocation
             : pickupLocation // ignore: cast_nullable_to_non_nullable
                   as String?,
+        pickupLatitude: freezed == pickupLatitude
+            ? _value.pickupLatitude
+            : pickupLatitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        pickupLongtitude: freezed == pickupLongtitude
+            ? _value.pickupLongtitude
+            : pickupLongtitude // ignore: cast_nullable_to_non_nullable
+                  as double?,
         remarks: freezed == remarks
             ? _value.remarks
             : remarks // ignore: cast_nullable_to_non_nullable
@@ -318,6 +344,8 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
     this.userID,
     this.collectorUserID,
     this.pickupLocation,
+    this.pickupLatitude,
+    this.pickupLongtitude,
     this.remarks,
     this.pickupDate,
     this.pickupTimeRange,
@@ -343,6 +371,10 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
   final String? collectorUserID;
   @override
   final String? pickupLocation;
+  @override
+  final double? pickupLatitude;
+  @override
+  final double? pickupLongtitude;
   @override
   final String? remarks;
   @override
@@ -379,7 +411,7 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
 
   @override
   String toString() {
-    return 'PickupRequestModel(pickupRequestID: $pickupRequestID, userID: $userID, collectorUserID: $collectorUserID, pickupLocation: $pickupLocation, remarks: $remarks, pickupDate: $pickupDate, pickupTimeRange: $pickupTimeRange, pickupItemImageURL: $pickupItemImageURL, pickupItemDescription: $pickupItemDescription, pickupItemCategory: $pickupItemCategory, pickupItemQuantity: $pickupItemQuantity, pickupItemCondition: $pickupItemCondition, pickupRequestStatus: $pickupRequestStatus, collectionProofImageURL: $collectionProofImageURL, requestedDate: $requestedDate, completedDate: $completedDate)';
+    return 'PickupRequestModel(pickupRequestID: $pickupRequestID, userID: $userID, collectorUserID: $collectorUserID, pickupLocation: $pickupLocation, pickupLatitude: $pickupLatitude, pickupLongtitude: $pickupLongtitude, remarks: $remarks, pickupDate: $pickupDate, pickupTimeRange: $pickupTimeRange, pickupItemImageURL: $pickupItemImageURL, pickupItemDescription: $pickupItemDescription, pickupItemCategory: $pickupItemCategory, pickupItemQuantity: $pickupItemQuantity, pickupItemCondition: $pickupItemCondition, pickupRequestStatus: $pickupRequestStatus, collectionProofImageURL: $collectionProofImageURL, requestedDate: $requestedDate, completedDate: $completedDate)';
   }
 
   @override
@@ -394,6 +426,10 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
                 other.collectorUserID == collectorUserID) &&
             (identical(other.pickupLocation, pickupLocation) ||
                 other.pickupLocation == pickupLocation) &&
+            (identical(other.pickupLatitude, pickupLatitude) ||
+                other.pickupLatitude == pickupLatitude) &&
+            (identical(other.pickupLongtitude, pickupLongtitude) ||
+                other.pickupLongtitude == pickupLongtitude) &&
             (identical(other.remarks, remarks) || other.remarks == remarks) &&
             (identical(other.pickupDate, pickupDate) ||
                 other.pickupDate == pickupDate) &&
@@ -432,6 +468,8 @@ class _$PickupRequestModelImpl implements _PickupRequestModel {
     userID,
     collectorUserID,
     pickupLocation,
+    pickupLatitude,
+    pickupLongtitude,
     remarks,
     pickupDate,
     pickupTimeRange,
@@ -469,6 +507,8 @@ abstract class _PickupRequestModel implements PickupRequestModel {
     final String? userID,
     final String? collectorUserID,
     final String? pickupLocation,
+    final double? pickupLatitude,
+    final double? pickupLongtitude,
     final String? remarks,
     final DateTime? pickupDate,
     final String? pickupTimeRange,
@@ -494,6 +534,10 @@ abstract class _PickupRequestModel implements PickupRequestModel {
   String? get collectorUserID;
   @override
   String? get pickupLocation;
+  @override
+  double? get pickupLatitude;
+  @override
+  double? get pickupLongtitude;
   @override
   String? get remarks;
   @override

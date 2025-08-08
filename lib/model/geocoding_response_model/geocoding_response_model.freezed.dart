@@ -214,7 +214,6 @@ GeocodingResult _$GeocodingResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GeocodingResult {
-  // ignore: invalid_annotation_target
   @JsonKey(name: 'formatted_address')
   String? get formattedAddress => throw _privateConstructorUsedError;
 
@@ -312,7 +311,6 @@ class _$GeocodingResultImpl implements _GeocodingResult {
   factory _$GeocodingResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$GeocodingResultImplFromJson(json);
 
-  // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'formatted_address')
   final String? formattedAddress;
@@ -360,7 +358,6 @@ abstract class _GeocodingResult implements GeocodingResult {
   factory _GeocodingResult.fromJson(Map<String, dynamic> json) =
       _$GeocodingResultImpl.fromJson;
 
-  // ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'formatted_address')
   String? get formattedAddress;

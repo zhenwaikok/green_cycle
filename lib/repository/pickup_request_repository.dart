@@ -72,7 +72,7 @@ class PickupRequestRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = PickupRequestModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

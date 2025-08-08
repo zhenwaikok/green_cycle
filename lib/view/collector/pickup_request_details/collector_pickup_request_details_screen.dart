@@ -1,38 +1,80 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
-import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
+import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class CollectorPickupRequestDetailsScreen extends StatelessWidget {
-  const CollectorPickupRequestDetailsScreen({super.key, this.requestStatus});
+  const CollectorPickupRequestDetailsScreen({
+    super.key,
+    required this.pickupRequestID,
+  });
 
-  final String? requestStatus;
+  final String pickupRequestID;
 
   @override
   Widget build(BuildContext context) {
-    return _CollectorPickupRequestDetailsScreen(requestStatus: requestStatus);
+    return ChangeNotifierProvider(
+      create: (_) {
+        PickupRequestViewModel(
+          pickupRequestRepository: PickupRequestRepository(),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+        UserViewModel(
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+      },
+      child: _CollectorPickupRequestDetailsScreen(
+        pickupRequestID: pickupRequestID,
+      ),
+    );
   }
 }
 
 class _CollectorPickupRequestDetailsScreen extends BaseStatefulPage {
-  const _CollectorPickupRequestDetailsScreen({this.requestStatus});
+  const _CollectorPickupRequestDetailsScreen({required this.pickupRequestID});
 
-  final String? requestStatus;
+  final String pickupRequestID;
 
   @override
   State<_CollectorPickupRequestDetailsScreen> createState() =>
@@ -41,18 +83,23 @@ class _CollectorPickupRequestDetailsScreen extends BaseStatefulPage {
 
 class _CollectorPickupRequestDetailsScreenState
     extends BaseStatefulState<_CollectorPickupRequestDetailsScreen> {
-  final List<String> imgItems = [
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-    'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-  ];
-
+  PickupRequestModel? pickupRequestDetails;
   int currentIndex = 0;
+  bool isLoading = true;
+  bool updateRequestStatus = false;
+  final pickupRequestStatus = DropDownItems.requestDropdownItems;
+  bool isCompleted = false;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialLoad();
   }
 
   @override
@@ -65,23 +112,75 @@ class _CollectorPickupRequestDetailsScreenState
   }
 
   @override
+  EdgeInsets bottomNavigationBarPadding() {
+    if (isCompleted) {
+      return EdgeInsets.zero;
+    }
+    return super.bottomNavigationBarPadding();
+  }
+
+  @override
   Widget bottomNavigationBar() {
-    return getButtonBasedOnStatus();
+    if (isLoading) {
+      return SizedBox.shrink();
+    }
+    return getButtonBasedOnStatus(
+      status: pickupRequestDetails?.pickupRequestStatus ?? '',
+    );
   }
 
   @override
   Widget body() {
+    pickupRequestDetails = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestDetails,
+    );
+
+    isCompleted =
+        pickupRequestDetails?.pickupRequestStatus == pickupRequestStatus[5];
+
+    final userDetails = context.select((UserViewModel vm) => vm.userDetails);
+    final backgroundColor = WidgetUtil.getPickupRequestStatusColor(
+      pickupRequestDetails?.pickupRequestStatus ?? '',
+    );
+
+    if (pickupRequestDetails == null || isLoading) {
+      return SizedBox.shrink();
+    }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getRequestIdAndStatus(),
+          getRequestIdAndStatus(
+            pickupRequestID: pickupRequestDetails?.pickupRequestID ?? '',
+            status: pickupRequestDetails?.pickupRequestStatus ?? '',
+            backgroundColor: backgroundColor,
+          ),
           SizedBox(height: 10),
-          getImageSlider(),
+          getImageSlider(
+            imgItems: pickupRequestDetails?.pickupItemImageURL ?? [],
+          ),
           SizedBox(height: 10),
-          getDotIndicator(),
-          SizedBox(height: 20),
-          getRequestDetails(),
+          getDotIndicator(
+            imgItems: pickupRequestDetails?.pickupItemImageURL ?? [],
+          ),
+          if (isCompleted) ...[
+            SizedBox(height: 20),
+            getCompletionDate(
+              completedDate:
+                  pickupRequestDetails?.completedDate ?? DateTime.now(),
+            ),
+          ],
+          if (isCompleted) ...[
+            SizedBox(height: 10),
+          ] else ...[
+            SizedBox(height: 20),
+          ],
+          getRequestDetails(
+            pickupRequestDetails: pickupRequestDetails ?? PickupRequestModel(),
+            userDetails: userDetails ?? UserModel(),
+            isCompleted: isCompleted,
+          ),
         ],
       ),
     );
@@ -91,7 +190,7 @@ class _CollectorPickupRequestDetailsScreenState
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CollectorPickupRequestDetailsScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(updateRequestStatus);
   }
 
   void onImageChanged(int index, dynamic reason) {
@@ -100,87 +199,227 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
     });
   }
 
-  Future<void> onGoogleMapsPressed() async {
+  void onStatusButtonPressed({
+    required PickupRequestModel pickupRequestDetails,
+  }) {
+    WidgetUtil.showAlertDialog(
+      context,
+      title: 'Pickup Request Confirmation',
+      content: WidgetUtil.getAlertDialogContentLabel(
+        pickupRequestDetails.pickupRequestStatus ?? '',
+      ),
+      actions: [
+        getAlertDialogTextButton(
+          onPressed: () {
+            context.router.maybePop();
+          },
+          text: 'No',
+        ),
+        getAlertDialogTextButton(
+          onPressed: () async {
+            await context.router.maybePop();
+            onButtonPressed(pickupRequestDetails: pickupRequestDetails);
+          },
+          text: 'Yes',
+        ),
+      ],
+    );
+  }
+
+  void onButtonPressed({required PickupRequestModel pickupRequestDetails}) {
+    if (pickupRequestDetails.pickupRequestStatus == pickupRequestStatus[1]) {
+      onAcceptPickupRequestPressed(pickupRequestDetails: pickupRequestDetails);
+    } else if (pickupRequestDetails.pickupRequestStatus ==
+        pickupRequestStatus[2]) {
+      onOnMyWayPressed(pickupRequestDetails: pickupRequestDetails);
+    } else if (pickupRequestDetails.pickupRequestStatus ==
+        pickupRequestStatus[3]) {
+      onArrivedPressed(pickupRequestDetails: pickupRequestDetails);
+    } else if (pickupRequestDetails.pickupRequestStatus ==
+        pickupRequestStatus[4]) {
+      onCompletePickupPressed(pickupRequestDetails: pickupRequestDetails);
+    } else {
+      () {};
+    }
+  }
+
+  void onOnMyWayPressed({
+    required PickupRequestModel pickupRequestDetails,
+  }) async {
+    await updatePickupRequestStatus(
+      pickupRequestDetails: pickupRequestDetails,
+      pickupRequestStatus: pickupRequestStatus[3],
+      acceptPickupRequest: false,
+    );
+  }
+
+  void onArrivedPressed({
+    required PickupRequestModel pickupRequestDetails,
+  }) async {
+    await updatePickupRequestStatus(
+      pickupRequestDetails: pickupRequestDetails,
+      pickupRequestStatus: pickupRequestStatus[4],
+      acceptPickupRequest: false,
+    );
+  }
+
+  void onCompletePickupPressed({
+    required PickupRequestModel pickupRequestDetails,
+  }) async {
+    final result = await context.router.push(
+      CompletePickupRoute(pickupRequestDetails: pickupRequestDetails),
+    );
+
+    if (result == true && mounted) {
+      _setState(() {
+        updateRequestStatus = true;
+      });
+      await initialLoad();
+    }
+  }
+
+  void onAcceptPickupRequestPressed({
+    required PickupRequestModel pickupRequestDetails,
+  }) async {
+    await updatePickupRequestStatus(
+      pickupRequestDetails: pickupRequestDetails,
+      pickupRequestStatus: pickupRequestStatus[2],
+      acceptPickupRequest: true,
+    );
+  }
+
+  Future<void> updatePickupRequestStatus({
+    required PickupRequestModel pickupRequestDetails,
+    required String pickupRequestStatus,
+    required bool acceptPickupRequest,
+  }) async {
+    final result =
+        await tryLoad(
+          context,
+          () => context.read<PickupRequestViewModel>().updatePickupRequest(
+            pickupRequestDetails: pickupRequestDetails,
+            pickupRequestStatus: pickupRequestStatus,
+            isCollectorUpdate: true,
+          ),
+        ) ??
+        false;
+
+    if (result) {
+      _setState(() {
+        updateRequestStatus = true;
+      });
+      unawaited(
+        WidgetUtil.showSnackBar(
+          text: acceptPickupRequest
+              ? 'You\'ve accepted the pickup request'
+              : 'Updated successfully',
+        ),
+      );
+      await initialLoad();
+    } else {
+      unawaited(
+        WidgetUtil.showSnackBar(
+          text:
+              'Failed to update pickup request status, please try again later',
+        ),
+      );
+    }
+  }
+
+  Future<void> initialLoad() async {
+    _setState(() {
+      isLoading = true;
+    });
+    await tryLoad(
+      context,
+      () => context.read<PickupRequestViewModel>().getPickupRequestDetails(
+        pickupRequestID: widget.pickupRequestID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<UserViewModel>().getUserDetails(
+          userID: pickupRequestDetails?.userID ?? '',
+          noNeedUpdateUserSharedPreference: true,
+        ),
+      );
+    }
+
+    _setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> onGoogleMapsPressed({
+    required double latitude,
+    required double longitude,
+  }) async {
     final isAvailable = await MapLauncher.isMapAvailable(MapType.google);
     if (isAvailable == true) {
       await MapLauncher.showDirections(
         mapType: MapType.google,
-        destination: Coords(3.0551, 101.7006),
+        destination: Coords(latitude, longitude),
       );
     } else {
       if (Platform.isAndroid || Platform.isIOS) {
         final appId = Platform.isAndroid
-            ? 'com.google.android.apps.maps'
-            : '585027354';
+            ? MapConstants.googleMapPlayStoreID
+            : MapConstants.googleMapAppStoreID;
         final url = Uri.parse(
           Platform.isAndroid
-              ? 'https://play.google.com/store/apps/details?id=$appId'
-              : 'https://apps.apple.com/app/id$appId',
+              ? '${MapConstants.playStoreURL}$appId'
+              : '${MapConstants.appStoreURL}$appId',
         );
         await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     }
   }
 
-  Future<void> onWazePressed() async {
+  Future<void> onWazePressed({
+    required double latitude,
+    required double longitude,
+  }) async {
     final isAvailable = await MapLauncher.isMapAvailable(MapType.waze);
     if (isAvailable == true) {
       await MapLauncher.showDirections(
         mapType: MapType.waze,
-        destination: Coords(3.0551, 101.7006),
+        destination: Coords(latitude, longitude),
       );
     } else {
       if (Platform.isAndroid || Platform.isIOS) {
-        final appId = Platform.isAndroid ? 'com.waze' : '323229106';
+        final appId = Platform.isAndroid
+            ? MapConstants.wazePlayStoreID
+            : MapConstants.wazeAppStoreID;
         final url = Uri.parse(
           Platform.isAndroid
-              ? 'https://play.google.com/store/apps/details?id=$appId'
-              : 'https://apps.apple.com/app/id$appId',
+              ? '${MapConstants.playStoreURL}$appId'
+              : '${MapConstants.appStoreURL}$appId',
         );
         await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     }
-  }
-
-  void Function() onButtonPressed(String status) {
-    return switch (status) {
-      'Accepted' => onOnMyWayPressed,
-      'Ongoing' => onArrivedPressed,
-      'Arrived' => onCompletePickupPressed,
-      _ => onAcceptPickupRequestPressed,
-    };
-  }
-
-  void onOnMyWayPressed() {
-    // Update status to "Ongoing"
-  }
-
-  void onArrivedPressed() {
-    // Update status to "Arrived"
-  }
-
-  void onCompletePickupPressed() {
-    context.router.push(CompletePickupRoute());
-  }
-
-  void onAcceptPickupRequestPressed() {
-    // Assign pickup to this collector
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
-  Widget getRequestIdAndStatus() {
+  Widget getRequestIdAndStatus({
+    required String pickupRequestID,
+    required String status,
+    required Color backgroundColor,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('#REQ13113', style: _Styles.greenTextStyle),
-        CustomStatusBar(text: 'Accepted'),
+        Text('#$pickupRequestID', style: _Styles.greenTextStyle),
+        CustomStatusBar(text: status, backgroundColor: backgroundColor),
       ],
     );
   }
 
-  Widget getImageSlider() {
+  Widget getImageSlider({required List<String> imgItems}) {
     return ImageSlider(
       items: imgItems,
       imageBorderRadius: _Styles.sliderImageBorderRadius,
@@ -190,7 +429,7 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getDotIndicator() {
+  Widget getDotIndicator({required List<String> imgItems}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -207,46 +446,65 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getRequestDetails() {
+  Widget getCompletionDate({required DateTime completedDate}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          'Completed on: ${WidgetUtil.dateTimeFormatter(completedDate)}',
+          style: _Styles.smallGreyTextStyle,
+        ),
+      ],
+    );
+  }
+
+  Widget getRequestDetails({
+    required bool isCompleted,
+    required PickupRequestModel pickupRequestDetails,
+    required UserModel userDetails,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getTitleDescription(
           title: 'Pickup Location',
-          description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+          description: pickupRequestDetails.pickupLocation ?? '-',
         ),
-        SizedBox(height: 15),
-        getNavigationOptions(),
+        if (!isCompleted) ...[
+          SizedBox(height: 15),
+          getNavigationOptions(
+            latitude: pickupRequestDetails.pickupLatitude ?? 0,
+            longitude: pickupRequestDetails.pickupLongtitude ?? 0,
+          ),
+        ],
         getDivider(),
         getTitleDescription(
-          title: 'Pickup Time',
+          title: 'Pickup Date & Time',
           description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+              '${WidgetUtil.dateFormatter(pickupRequestDetails.pickupDate ?? DateTime.now())}, ${pickupRequestDetails.pickupTimeRange}',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Item Description',
-          description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+          description: pickupRequestDetails.pickupItemDescription ?? '-',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Category',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: pickupRequestDetails.pickupItemCategory ?? '-',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Quantity',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: '${pickupRequestDetails.pickupItemQuantity ?? 0}',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Condition & Usage Info',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: pickupRequestDetails.pickupItemCondition ?? '-',
         ),
         getDivider(),
-        getRequestedBy(),
+        getRequestedBy(userDetails: userDetails),
       ],
     );
   }
@@ -268,7 +526,10 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getNavigationOptions() {
+  Widget getNavigationOptions({
+    required double latitude,
+    required double longitude,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -276,7 +537,8 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
           child: getNavigationButton(
             image: Images.wazeLogo,
             text: 'Waze',
-            onPressed: onWazePressed,
+            onPressed: () =>
+                onWazePressed(latitude: latitude, longitude: longitude),
           ),
         ),
         SizedBox(width: 10),
@@ -284,7 +546,8 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
           child: getNavigationButton(
             image: Images.googleLogo,
             text: 'Google Map',
-            onPressed: onGoogleMapsPressed,
+            onPressed: () =>
+                onGoogleMapsPressed(latitude: latitude, longitude: longitude),
           ),
         ),
       ],
@@ -313,7 +576,7 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getRequestedBy() {
+  Widget getRequestedBy({required UserModel userDetails}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -324,11 +587,9 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
           backgroundColor: ColorManager.primaryLight,
           child: Row(
             children: [
-              CustomImage(
+              CustomProfileImage(
                 imageSize: _Styles.imageSize,
-                borderRadius: _Styles.imageBorderRadius,
-                imageURL:
-                    'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
+                imageURL: userDetails.profileImageURL ?? '',
               ),
               SizedBox(width: 20),
               Expanded(
@@ -336,13 +597,13 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Username',
+                      '${userDetails.firstName} ${userDetails.lastName}',
                       style: _Styles.usernameTextStyle,
                       maxLines: _Styles.maxTextLines,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      '01563365555',
+                      userDetails.phoneNumber ?? '',
                       style: _Styles.phoneNumTextStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -364,21 +625,28 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getButtonBasedOnStatus() {
+  Widget getButtonBasedOnStatus({required String status}) {
+    if (status == pickupRequestStatus[5]) {
+      return SizedBox.shrink();
+    }
     return CustomButton(
-      text: getButtonLabel(widget.requestStatus ?? ''),
+      text: WidgetUtil.getButtonLabel(status),
       textColor: ColorManager.whiteColor,
-      onPressed: onButtonPressed(widget.requestStatus ?? ''),
+      onPressed: () => onStatusButtonPressed(
+        pickupRequestDetails: pickupRequestDetails ?? PickupRequestModel(),
+      ),
     );
   }
 
-  String getButtonLabel(String status) {
-    return switch (status) {
-      'Accepted' => 'On My Way',
-      'Ongoing' => 'Arrived',
-      'Arrived' => 'Complete Pickup',
-      _ => 'Accept Pickup Request',
-    };
+  Widget getAlertDialogTextButton({
+    required void Function()? onPressed,
+    required String text,
+  }) {
+    return TextButton(
+      style: _Styles.textButtonStyle,
+      onPressed: onPressed,
+      child: Text(text, style: _Styles.textButtonTextStyle),
+    );
   }
 }
 
@@ -387,7 +655,6 @@ class _Styles {
   _Styles._();
 
   static const imageSize = 70.0;
-  static const imageBorderRadius = 40.0;
   static const sliderImageBorderRadius = 10.0;
   static const carouselHeight = 180.0;
   static const indicatorRightPadding = 8.0;
@@ -410,6 +677,12 @@ class _Styles {
     color: ColorManager.greyColor,
   );
 
+  static const smallGreyTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.greyColor,
+  );
+
   static const usernameTextStyle = TextStyle(
     fontSize: 20,
     fontWeight: FontWeightManager.regular,
@@ -420,5 +693,15 @@ class _Styles {
     fontSize: 16,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
+  );
+
+  static final textButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(ColorManager.lightGreyColor2),
+  );
+
+  static const textButtonTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
   );
 }

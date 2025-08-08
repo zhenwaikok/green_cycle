@@ -156,6 +156,12 @@ class DropDownItems {
     'Name: Z-A',
     'Latest',
   ];
+  static const List<String> availablePickupRequestSortByItems = [
+    'All',
+    'Nearest',
+    'Recent Requests',
+    'Earliest Pickup Time',
+  ];
 }
 
 class OnboardData {
@@ -181,4 +187,17 @@ class OnboardData {
           'Every pickup reduces toxic waste and protects our planet. Join us in building a cleaner, greener future!',
     ),
   ];
+}
+
+class MapConstants {
+  MapConstants._();
+
+  static const googleMapPlayStoreID = 'com.google.android.apps.maps';
+  static const googleMapAppStoreID = '585027354';
+
+  static const wazePlayStoreID = 'com.waze';
+  static const wazeAppStoreID = '323229106';
+
+  static const playStoreURL = 'https://play.google.com/store/apps/details?id=';
+  static const appStoreURL = 'https://apps.apple.com/app/id';
 }

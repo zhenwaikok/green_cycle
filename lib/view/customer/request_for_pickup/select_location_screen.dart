@@ -204,8 +204,6 @@ extension _Actions on _SelectLocationScreenState {
       selectedLatLng = latLng;
     });
 
-    print('lat lang: $selectedLatLng');
-
     await convertCoordinatesToAddress(latLng);
 
     await animateToSelectedLocation();
@@ -231,6 +229,8 @@ extension _Actions on _SelectLocationScreenState {
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(cameraPosition),
     );
+
+    print('Selected latlng: $selectedLatLng');
 
     markers.clear();
     markers.add(

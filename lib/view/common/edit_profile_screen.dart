@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -100,7 +99,7 @@ class _EditProfileScreenState extends BaseStatefulState<_EditProfileScreen> {
 
   @override
   Widget bottomNavigationBar() {
-    return getButton();
+    return userDetails != null ? getButton() : SizedBox.shrink();
   }
 
   @override

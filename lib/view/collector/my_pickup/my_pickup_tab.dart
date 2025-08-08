@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
-import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class MyPickupTab extends StatefulWidget {
   const MyPickupTab({
     super.key,
-    this.statusBarColor,
-    required this.status,
-    required this.buttonText,
     required this.onPressed,
+    required this.pickupRequestDetails,
+    required this.isLoading,
   });
 
-  final Color? statusBarColor;
-  final String status;
-  final String buttonText;
-  final void Function() onPressed;
+  final PickupRequestModel pickupRequestDetails;
+  final bool isLoading;
+  final VoidCallback onPressed;
 
   @override
   State<MyPickupTab> createState() => _MyPickupTabState();
@@ -28,35 +28,47 @@ class MyPickupTab extends StatefulWidget {
 class _MyPickupTabState extends State<MyPickupTab> {
   @override
   Widget build(BuildContext context) {
-    return getPickupCard();
+    return getPickupCard(pickupRequestDetails: widget.pickupRequestDetails);
   }
 }
 
-// * ---------------------------- Actions ----------------------------
-extension _Actions on _MyPickupTabState {}
-
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MyPickupTabState {
-  Widget getPickupCard() {
-    return TouchableOpacity(
-      child: Padding(
-        padding: _Styles.cardPadding,
-        child: CustomCard(
-          padding: _Styles.customCardPadding,
+  Widget getPickupCard({required PickupRequestModel pickupRequestDetails}) {
+    return Padding(
+      padding: _Styles.cardPadding,
+      child: CustomCard(
+        padding: _Styles.customCardPadding,
+        child: Skeletonizer(
+          enabled: widget.isLoading,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [getRequestID(), getRequestStatus()],
+                children: [
+                  getRequestID(
+                    pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+                  ),
+                  getRequestStatus(
+                    status: pickupRequestDetails.pickupRequestStatus ?? '',
+                  ),
+                ],
               ),
               getDivider(),
-              getItemDetails(),
+              getItemDetails(pickupRequestDetails: pickupRequestDetails),
               getDivider(),
-              getRequestDetails(),
+              getRequestDetails(
+                pickupLocation: pickupRequestDetails.pickupLocation ?? '',
+                pickupDate: pickupRequestDetails.pickupDate ?? DateTime.now(),
+                pickupTimeRange: pickupRequestDetails.pickupTimeRange ?? '',
+              ),
               SizedBox(height: 20),
-              getButton(),
+              getButton(
+                status: pickupRequestDetails.pickupRequestStatus ?? '',
+                onPressed: widget.onPressed,
+              ),
             ],
           ),
         ),
@@ -64,7 +76,11 @@ extension _WidgetFactories on _MyPickupTabState {
     );
   }
 
-  Widget getRequestDetails() {
+  Widget getRequestDetails({
+    required String pickupLocation,
+    required DateTime pickupDate,
+    required String pickupTimeRange,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -72,8 +88,7 @@ extension _WidgetFactories on _MyPickupTabState {
         getRequestDetailsText(
           icon: Icons.location_on,
           title: 'Pickup Location: ',
-          text:
-              'No. 1, Jalan Balakong Jaya 1, Taman Balakong Jaya, 43300 Seri Kembangan, Selangor, Malaysia. ',
+          text: pickupLocation,
         ),
 
         SizedBox(height: 10),
@@ -81,7 +96,7 @@ extension _WidgetFactories on _MyPickupTabState {
         getRequestDetailsText(
           icon: Icons.access_time,
           title: 'Pickup Time: ',
-          text: '29/4/2025, 11pm - 12am',
+          text: '${WidgetUtil.dateFormatter(pickupDate)}, $pickupTimeRange',
         ),
       ],
     );
@@ -118,43 +133,52 @@ extension _WidgetFactories on _MyPickupTabState {
     );
   }
 
-  Widget getRequestID() {
+  Widget getRequestID({required String pickupRequestID}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Request ID', style: _Styles.requestIDTitleTextStyle),
-        Text('#REQ13113', style: _Styles.requestIDTextStyle),
+        Text('#$pickupRequestID', style: _Styles.requestIDTextStyle),
       ],
     );
   }
 
-  Widget getRequestStatus() {
-    return CustomStatusBar(
-      text: widget.status,
-      backgroundColor: widget.statusBarColor,
-    );
+  Widget getRequestStatus({required String status}) {
+    final backgroundColor = WidgetUtil.getPickupRequestStatusColor(status);
+    return CustomStatusBar(text: status, backgroundColor: backgroundColor);
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({required PickupRequestModel pickupRequestDetails}) {
     return Row(
       children: [
-        getItemImage(),
+        getItemImage(
+          imageURL: pickupRequestDetails.pickupItemImageURL?.first ?? '',
+        ),
         SizedBox(width: 15),
-        Expanded(child: getItemDescription()),
+        Expanded(
+          child: getItemDescription(
+            itemDescription: pickupRequestDetails.pickupItemDescription ?? '',
+            itemCategory: pickupRequestDetails.pickupItemCategory ?? '',
+            itemQuantity: pickupRequestDetails.pickupItemQuantity ?? 0,
+          ),
+        ),
       ],
     );
   }
 
-  Widget getItemImage() {
+  Widget getItemImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.imageSize,
-      imageURL:
-          'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+      imageURL: imageURL,
       borderRadius: _Styles.imageBorderRadius,
     );
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({
+    required String itemDescription,
+    required String itemCategory,
+    required int itemQuantity,
+  }) {
     return SizedBox(
       height: _Styles.imageSize,
       child: Column(
@@ -165,25 +189,28 @@ extension _WidgetFactories on _MyPickupTabState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item Descriptionsas0',
+                itemDescription,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
                 style: _Styles.itemDescriptionTextStyle,
               ),
-              Text('Category', style: _Styles.itemDescriptionTextStyle),
+              Text(itemCategory, style: _Styles.itemDescriptionTextStyle),
             ],
           ),
-          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+          Text('Quantity: $itemQuantity', style: _Styles.quantityTextStyle),
         ],
       ),
     );
   }
 
-  Widget getButton() {
+  Widget getButton({
+    required String status,
+    required void Function() onPressed,
+  }) {
     return CustomButton(
-      text: widget.buttonText,
+      text: WidgetUtil.getButtonLabel(status),
       textColor: ColorManager.whiteColor,
-      onPressed: widget.onPressed,
+      onPressed: onPressed,
       backgroundColor: ColorManager.primary,
     );
   }

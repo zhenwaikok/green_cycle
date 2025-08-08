@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'geocoding_response_model.freezed.dart';
@@ -17,7 +19,6 @@ class GeocodingResponseModel with _$GeocodingResponseModel {
 @freezed
 class GeocodingResult with _$GeocodingResult {
   const factory GeocodingResult({
-    // ignore: invalid_annotation_target
     @JsonKey(name: 'formatted_address') String? formattedAddress,
   }) = _GeocodingResult;
 
