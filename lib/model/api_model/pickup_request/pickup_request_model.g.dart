@@ -13,6 +13,8 @@ _$PickupRequestModelImpl _$$PickupRequestModelImplFromJson(
   userID: json['userID'] as String?,
   collectorUserID: json['collectorUserID'] as String?,
   pickupLocation: json['pickupLocation'] as String?,
+  pickupLatitude: (json['pickupLatitude'] as num?)?.toDouble(),
+  pickupLongtitude: (json['pickupLongtitude'] as num?)?.toDouble(),
   remarks: json['remarks'] as String?,
   pickupDate: json['pickupDate'] == null
       ? null
@@ -42,6 +44,8 @@ Map<String, dynamic> _$$PickupRequestModelImplToJson(
   'userID': instance.userID,
   'collectorUserID': instance.collectorUserID,
   'pickupLocation': instance.pickupLocation,
+  'pickupLatitude': instance.pickupLatitude,
+  'pickupLongtitude': instance.pickupLongtitude,
   'remarks': instance.remarks,
   'pickupDate': instance.pickupDate?.toIso8601String(),
   'pickupTimeRange': instance.pickupTimeRange,

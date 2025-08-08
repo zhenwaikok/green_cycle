@@ -129,7 +129,7 @@ extension _Actions on _CollectorProfileScreenState {
   Future<void> fetchData() async {
     final user = context.read<UserViewModel>().user;
 
-    await tryCatch(
+    await tryLoad(
       context,
       () => context.read<UserViewModel>().getUserDetails(
         userID: user?.userID ?? '',

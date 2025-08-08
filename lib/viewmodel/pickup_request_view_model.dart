@@ -149,6 +149,8 @@ class PickupRequestViewModel extends BaseViewModel {
       userID: user?.userID,
       collectorUserID: null,
       pickupLocation: pickupLocation,
+      pickupLatitude: selectedLatLng?.latitude,
+      pickupLongtitude: selectedLatLng?.longitude,
       remarks: remarks,
       pickupDate: pickupDate,
       pickupTimeRange: pickupTimeRange,
@@ -170,6 +172,59 @@ class PickupRequestViewModel extends BaseViewModel {
     return insertPickupRequestResponse.data is PickupRequestModel;
   }
 
+  Future<bool> updatePickupRequest({
+    String? pickupRequestStatus,
+    DateTime? completedDate,
+    File? collectionProofImage,
+    required PickupRequestModel pickupRequestDetails,
+    required bool isCollectorUpdate,
+  }) async {
+    String? collectionProofImageURL;
+
+    if (collectionProofImage != null) {
+      final uploadImageResponse = await uploadImage(
+        storageRef: 'PickupRequestCollectionProofImages',
+        image: collectionProofImage,
+      );
+      collectionProofImageURL = uploadImageResponse;
+    }
+
+    PickupRequestModel pickupRequestModel = PickupRequestModel(
+      pickupRequestID: pickupRequestDetails.pickupRequestID,
+      userID: pickupRequestDetails.userID,
+      collectorUserID: isCollectorUpdate
+          ? (pickupRequestDetails.collectorUserID ?? user?.userID)
+          : null,
+      pickupLocation: pickupRequestDetails.pickupLocation,
+      pickupLatitude: pickupRequestDetails.pickupLatitude,
+      pickupLongtitude: pickupRequestDetails.pickupLongtitude,
+      remarks: pickupRequestDetails.remarks,
+      pickupDate: pickupRequestDetails.pickupDate,
+      pickupTimeRange: pickupRequestDetails.pickupTimeRange,
+      pickupItemImageURL: pickupRequestDetails.pickupItemImageURL,
+      pickupItemDescription: pickupRequestDetails.pickupItemDescription,
+      pickupItemCategory: pickupRequestDetails.pickupItemCategory,
+      pickupItemQuantity: pickupRequestDetails.pickupItemQuantity,
+      pickupItemCondition: pickupRequestDetails.pickupItemCondition,
+      pickupRequestStatus:
+          pickupRequestStatus ?? pickupRequestDetails.pickupRequestStatus,
+      collectionProofImageURL: isCollectorUpdate
+          ? (collectionProofImageURL ??
+                pickupRequestDetails.collectionProofImageURL)
+          : null,
+      requestedDate: pickupRequestDetails.requestedDate,
+      completedDate: completedDate ?? pickupRequestDetails.completedDate,
+    );
+
+    final response = await pickupRequestRepository.updatePickupRequest(
+      requestID: pickupRequestDetails.pickupRequestID ?? '',
+      pickupRequestModel: pickupRequestModel,
+    );
+
+    checkError(response);
+    return response.data is ApiResponseModel;
+  }
+
   Future<bool> deletePickupRequest({required String pickupRequestID}) async {
     final response = await pickupRequestRepository.deletePickupRequest(
       requestID: pickupRequestID,
@@ -179,12 +234,14 @@ class PickupRequestViewModel extends BaseViewModel {
     return response.data is ApiResponseModel;
   }
 
-  Future<List<String>> uploadImage({
+  Future<dynamic> uploadImage({
     required String storageRef,
+    File? image,
     List<File>? images,
   }) async {
     final response = await firebaseRepository.uploadPhoto(
       storageRef: storageRef,
+      image: image,
       images: images,
     );
 

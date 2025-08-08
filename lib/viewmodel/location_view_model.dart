@@ -16,6 +16,19 @@ class LocationViewModel extends BaseViewModel {
     return response.data;
   }
 
+  Future<int> calculateDistance({
+    required LatLng originLatLng,
+    required LatLng destinationLatLng,
+  }) async {
+    final response = await locationRepository.calculateDistance(
+      originLatLng: originLatLng,
+      destinationLatLng: destinationLatLng,
+    );
+
+    checkError(response);
+    return response.data;
+  }
+
   Future<Position> currentLocation() async {
     bool serviceEnable;
     LocationPermission permission;

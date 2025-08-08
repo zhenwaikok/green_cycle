@@ -11,6 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i48;
 import 'package:flutter/material.dart' as _i49;
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart'
+    as _i50;
 import 'package:green_cycle_fyp/view/admin/collector_details/collector_details_screen.dart'
     as _i12;
 import 'package:green_cycle_fyp/view/admin/dashboard/admin_dashboard_screen.dart'
@@ -507,13 +509,13 @@ class CollectorPickupRequestDetailsRoute
     extends _i48.PageRouteInfo<CollectorPickupRequestDetailsRouteArgs> {
   CollectorPickupRequestDetailsRoute({
     _i49.Key? key,
-    String? requestStatus,
+    required String pickupRequestID,
     List<_i48.PageRouteInfo>? children,
   }) : super(
          CollectorPickupRequestDetailsRoute.name,
          args: CollectorPickupRequestDetailsRouteArgs(
            key: key,
-           requestStatus: requestStatus,
+           pickupRequestID: pickupRequestID,
          ),
          initialChildren: children,
        );
@@ -523,27 +525,28 @@ class CollectorPickupRequestDetailsRoute
   static _i48.PageInfo page = _i48.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CollectorPickupRequestDetailsRouteArgs>(
-        orElse: () => const CollectorPickupRequestDetailsRouteArgs(),
-      );
+      final args = data.argsAs<CollectorPickupRequestDetailsRouteArgs>();
       return _i14.CollectorPickupRequestDetailsScreen(
         key: args.key,
-        requestStatus: args.requestStatus,
+        pickupRequestID: args.pickupRequestID,
       );
     },
   );
 }
 
 class CollectorPickupRequestDetailsRouteArgs {
-  const CollectorPickupRequestDetailsRouteArgs({this.key, this.requestStatus});
+  const CollectorPickupRequestDetailsRouteArgs({
+    this.key,
+    required this.pickupRequestID,
+  });
 
   final _i49.Key? key;
 
-  final String? requestStatus;
+  final String pickupRequestID;
 
   @override
   String toString() {
-    return 'CollectorPickupRequestDetailsRouteArgs{key: $key, requestStatus: $requestStatus}';
+    return 'CollectorPickupRequestDetailsRouteArgs{key: $key, pickupRequestID: $pickupRequestID}';
   }
 }
 
@@ -565,18 +568,45 @@ class CollectorProfileRoute extends _i48.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i16.CompletePickupScreen]
-class CompletePickupRoute extends _i48.PageRouteInfo<void> {
-  const CompletePickupRoute({List<_i48.PageRouteInfo>? children})
-    : super(CompletePickupRoute.name, initialChildren: children);
+class CompletePickupRoute extends _i48.PageRouteInfo<CompletePickupRouteArgs> {
+  CompletePickupRoute({
+    _i49.Key? key,
+    required _i50.PickupRequestModel pickupRequestDetails,
+    List<_i48.PageRouteInfo>? children,
+  }) : super(
+         CompletePickupRoute.name,
+         args: CompletePickupRouteArgs(
+           key: key,
+           pickupRequestDetails: pickupRequestDetails,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'CompletePickupRoute';
 
   static _i48.PageInfo page = _i48.PageInfo(
     name,
     builder: (data) {
-      return const _i16.CompletePickupScreen();
+      final args = data.argsAs<CompletePickupRouteArgs>();
+      return _i16.CompletePickupScreen(
+        key: args.key,
+        pickupRequestDetails: args.pickupRequestDetails,
+      );
     },
   );
+}
+
+class CompletePickupRouteArgs {
+  const CompletePickupRouteArgs({this.key, required this.pickupRequestDetails});
+
+  final _i49.Key? key;
+
+  final _i50.PickupRequestModel pickupRequestDetails;
+
+  @override
+  String toString() {
+    return 'CompletePickupRouteArgs{key: $key, pickupRequestDetails: $pickupRequestDetails}';
+  }
 }
 
 /// generated route for

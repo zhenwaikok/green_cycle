@@ -25,6 +25,34 @@ class WidgetUtil {
     return price.toStringAsFixed(2);
   }
 
+  static String distanceFormatter(int meters) {
+    if (meters < 1000) {
+      return '$meters m';
+    } else {
+      return '${(meters / 1000).toStringAsFixed(1)} km';
+    }
+  }
+
+  static DateTime getEarliestPickupDateTime({
+    required DateTime date,
+    required String timeRange,
+  }) {
+    final startTime = timeRange.split(' - ').first.trim();
+
+    final timeParts = startTime.split(RegExp(r'[: ]'));
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+    final period = timeParts[2].toLowerCase();
+
+    if (period == 'pm' && hour != 12) {
+      hour += 12;
+    } else if (period == 'am' && hour == 12) {
+      hour = 0;
+    }
+
+    return DateTime(date.year, date.month, date.day, hour, minute);
+  }
+
   static String differenceBetweenDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
@@ -64,6 +92,29 @@ class WidgetUtil {
       default:
         return ColorManager.primary;
     }
+  }
+
+  static String getButtonLabel(String status) {
+    return switch (status) {
+      'Accepted' => 'On My Way',
+      'Ongoing' => 'Arrived',
+      'Arrived' => 'Complete Pickup',
+      _ => 'Accept Pickup Request',
+    };
+  }
+
+  static String getAlertDialogContentLabel(String status) {
+    return switch (status) {
+      'Pending' =>
+        'Are you sure you want to accept this pickup request? This action cannot be undone.',
+      'Accepted' =>
+        'Are you sure you\'re on the way? This action cannot be undone.',
+      'Ongoing' =>
+        'Are you sure you\'re arrived? This action cannot be undone.',
+      'Arrived' =>
+        'Are you sure to complete this pickup? This action cannot be undone.',
+      _ => '',
+    };
   }
 
   static Future<T?> showAlertDialog<T>(

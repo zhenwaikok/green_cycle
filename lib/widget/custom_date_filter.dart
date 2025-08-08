@@ -9,10 +9,12 @@ class CustomDateRangeFilter extends StatefulWidget {
     super.key,
     this.selectedRange,
     this.onDateRangeChanged,
+    this.hintText,
   });
 
   final DateTimeRange? selectedRange;
   final void Function(DateTimeRange range)? onDateRangeChanged;
+  final String? hintText;
 
   @override
   State<CustomDateRangeFilter> createState() => _CustomDateRangeFilterState();
@@ -83,7 +85,7 @@ extension _WidgetFactories on _CustomDateRangeFilterState {
       children: [
         Text(
           widget.selectedRange == null
-              ? 'Date'
+              ? widget.hintText ?? 'Date'
               : '${WidgetUtil.dateFormatter(widget.selectedRange?.start ?? DateTime.now())} - ${WidgetUtil.dateFormatter(widget.selectedRange?.end ?? DateTime.now())}',
 
           style: _Styles.dateTextStyle,
