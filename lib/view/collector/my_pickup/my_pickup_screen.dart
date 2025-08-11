@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +12,12 @@ import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/background_service.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_tab.dart';
+import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
@@ -197,6 +198,25 @@ extension _Actions on _MyPickupScreenState {
       pickupRequestDetails: pickupRequestDetails,
       pickupRequestStatus: pickupRequestStatus[3],
     );
+    final result = mounted
+        ? await tryLoad(
+                context,
+                () =>
+                    context.read<LocationViewModel>().insertCollectorLocations(
+                      collectorUserID:
+                          pickupRequestDetails.collectorUserID ?? '',
+                    ),
+              ) ??
+              false
+        : false;
+
+    if (result) {}
+    await initializeService();
+    if (mounted) {
+      context.read<LocationViewModel>().startTrackingService(
+        collectorUserID: pickupRequestDetails.collectorUserID ?? '',
+      );
+    }
   }
 
   void onArrivedPressed({
@@ -206,6 +226,9 @@ extension _Actions on _MyPickupScreenState {
       pickupRequestDetails: pickupRequestDetails,
       pickupRequestStatus: pickupRequestStatus[4],
     );
+    if (mounted) {
+      context.read<LocationViewModel>().stopBackgroundTrackingService();
+    }
   }
 
   void onCompletePickupPressed({

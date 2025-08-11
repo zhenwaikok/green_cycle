@@ -33,6 +33,18 @@ class WidgetUtil {
     }
   }
 
+  static String durationFormatter(double minutes) {
+    if (minutes < 60) {
+      return minutes == 1 ? '1 min' : '${minutes.floor()} mins';
+    } else {
+      final hour = (minutes / 60).floor();
+
+      return hour == 1
+          ? '${hour.toStringAsFixed(1)} hour'
+          : '${hour.toStringAsFixed(1)} hours';
+    }
+  }
+
   static DateTime getEarliestPickupDateTime({
     required DateTime date,
     required String timeRange,

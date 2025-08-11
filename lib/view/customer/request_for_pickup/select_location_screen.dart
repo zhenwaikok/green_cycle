@@ -184,7 +184,7 @@ extension _Actions on _SelectLocationScreenState {
           markers.add(
             Marker(
               markerId: MarkerId('fallback_location'),
-              position: selectedLatLng!,
+              position: selectedLatLng ?? LatLng(0, 0),
             ),
           );
         });

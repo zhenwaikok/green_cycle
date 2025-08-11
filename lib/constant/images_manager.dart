@@ -14,4 +14,6 @@ class Images {
   static const profilePlaceHolderImage =
       'assets/images/profile_placeholder.png';
   static const noDataImage = 'assets/images/not_found_image.png';
+  static const homeMarkerIcon = 'assets/images/home_marker.png';
+  static const carMarkerIcon = 'assets/images/car_marker.png';
 }

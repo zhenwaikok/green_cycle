@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
@@ -56,7 +56,11 @@ class _RequestDetailsScreen extends BaseStatefulPage {
 class _RequestDetailsScreenState
     extends BaseStatefulState<_RequestDetailsScreen> {
   int currentIndex = 0;
+  bool isLoading = true;
   bool isDelete = false;
+  bool isPending = false;
+  bool showTrackingButton = false;
+  bool isCompleted = false;
   bool isAccepted = false;
 
   void _setState(VoidCallback fn) {
@@ -77,13 +81,13 @@ class _RequestDetailsScreenState
       title: 'Request Details',
       isBackButtonVisible: true,
       onPressed: onBackButtonPressed,
-      actions: [getDeleteButton()],
+      actions: [isPending ? getDeleteButton() : SizedBox.shrink()],
     );
   }
 
   @override
   Widget? bottomNavigationBar() {
-    return isAccepted ? getTrackLocatorButton() : null;
+    return showTrackingButton ? getTrackLocatorButton() : null;
   }
 
   @override
@@ -102,7 +106,7 @@ class _RequestDetailsScreenState
       (PickupRequestViewModel vm) => vm.pickupRequestDetails,
     );
 
-    if (pickupRequestDetails == null) {
+    if (pickupRequestDetails == null || isLoading) {
       return SizedBox.shrink();
     }
 
@@ -112,6 +116,7 @@ class _RequestDetailsScreenState
         children: [
           getRequestStatus(
             status: pickupRequestDetails.pickupRequestStatus ?? '',
+            requestedDate: pickupRequestDetails.requestedDate ?? DateTime.now(),
           ),
           SizedBox(height: 10),
           getImageSlider(
@@ -121,7 +126,17 @@ class _RequestDetailsScreenState
           getDotIndicator(
             imgItems: pickupRequestDetails.pickupItemImageURL ?? [],
           ),
-          SizedBox(height: 20),
+          if (isCompleted) ...[
+            SizedBox(height: 20),
+            getCompletionDate(
+              completedDate:
+                  pickupRequestDetails.completedDate ?? DateTime.now(),
+            ),
+            SizedBox(height: 10),
+          ] else ...[
+            SizedBox(height: 20),
+          ],
+
           getRequestDetails(
             pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
             pickupLocation: pickupRequestDetails.pickupLocation ?? '',
@@ -134,6 +149,9 @@ class _RequestDetailsScreenState
             pickupItemCondition: pickupRequestDetails.pickupItemCondition ?? '',
             pickupCreatedAt:
                 pickupRequestDetails.requestedDate ?? DateTime.now(),
+            collectionProofImageURL:
+                pickupRequestDetails.collectionProofImageURL ?? '',
+            isCompleted: isCompleted,
           ),
           if (isAccepted) ...[getNote()],
         ],
@@ -169,17 +187,16 @@ extension _Actions on _RequestDetailsScreenState {
     });
   }
 
-  void onTrackButtonPressed() async {
-    showModalBottomSheet(
-      backgroundColor: ColorManager.whiteColor,
-      context: context,
-      builder: (context) {
-        return SingleChildScrollView(child: getBottomSheet());
-      },
+  void onTrackButtonPressed({required String pickupRequestID}) async {
+    context.router.push(
+      RequestLocationTrackingRoute(pickupRequestID: pickupRequestID),
     );
   }
 
   Future<void> initialLoad() async {
+    _setState(() {
+      isLoading = true;
+    });
     final vm = context.read<PickupRequestViewModel>();
 
     await tryLoad(
@@ -188,7 +205,13 @@ extension _Actions on _RequestDetailsScreenState {
     );
 
     _setState(() {
+      showTrackingButton =
+          vm.pickupRequestDetails?.pickupRequestStatus == 'Ongoing' ||
+          vm.pickupRequestDetails?.pickupRequestStatus == 'Arrived';
+      isCompleted = vm.pickupRequestDetails?.pickupRequestStatus == 'Completed';
+      isPending = vm.pickupRequestDetails?.pickupRequestStatus == 'Pending';
       isAccepted = vm.pickupRequestDetails?.pickupRequestStatus == 'Accepted';
+      isLoading = false;
     });
   }
 
@@ -244,10 +267,29 @@ extension _WidgetFactories on _RequestDetailsScreenState {
     );
   }
 
-  Widget getRequestStatus({required String status}) {
+  Widget getRequestStatus({
+    required String status,
+    required DateTime requestedDate,
+  }) {
     Color color = WidgetUtil.getPickupRequestStatusColor(status);
 
-    return CustomStatusBar(text: status, backgroundColor: color);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomStatusBar(text: status, backgroundColor: color),
+        SizedBox(width: 20),
+        getRequestedOn(requestedDate: requestedDate),
+      ],
+    );
+  }
+
+  Widget getRequestedOn({required DateTime requestedDate}) {
+    return Text(
+      'Requested on: ${WidgetUtil.dateTimeFormatter(requestedDate)}',
+      style: _Styles.smallGreyTextStyle,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
   }
 
   Widget getImageSlider({required List<String> imgItems}) {
@@ -277,6 +319,18 @@ extension _WidgetFactories on _RequestDetailsScreenState {
     );
   }
 
+  Widget getCompletionDate({required DateTime completedDate}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          'Completed on: ${WidgetUtil.dateTimeFormatter(completedDate)}',
+          style: _Styles.smallGreyTextStyle,
+        ),
+      ],
+    );
+  }
+
   Widget getRequestDetails({
     required String pickupRequestID,
     required String pickupLocation,
@@ -287,6 +341,8 @@ extension _WidgetFactories on _RequestDetailsScreenState {
     required int pickupItemQuantity,
     required String pickupItemCondition,
     required DateTime pickupCreatedAt,
+    required String collectionProofImageURL,
+    required bool isCompleted,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,6 +352,13 @@ extension _WidgetFactories on _RequestDetailsScreenState {
           description: '#$pickupRequestID',
         ),
         getDivider(),
+        if (isCompleted) ...[
+          getCollectionProofSection(
+            collectionProofImageURL: collectionProofImageURL,
+          ),
+          SizedBox(height: 10),
+          getDivider(),
+        ],
         getTitleDescription(
           title: 'Pickup Location',
           description: pickupLocation,
@@ -324,11 +387,20 @@ extension _WidgetFactories on _RequestDetailsScreenState {
           description: pickupItemCondition,
         ),
         getDivider(),
-        getTitleDescription(
-          title: 'Requested At',
-          description: WidgetUtil.dateTimeFormatter(pickupCreatedAt),
+      ],
+    );
+  }
+
+  Widget getCollectionProofSection({required String collectionProofImageURL}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Collection Evidence Photo', style: _Styles.greenTextStyle),
+        SizedBox(height: 10),
+        CustomImage(
+          imageSize: _Styles.collectionProofImageSize,
+          imageURL: collectionProofImageURL,
         ),
-        getDivider(),
       ],
     );
   }
@@ -381,105 +453,11 @@ extension _WidgetFactories on _RequestDetailsScreenState {
         child: CustomButton(
           text: 'Track Collector Location',
           textColor: ColorManager.whiteColor,
-          onPressed: onTrackButtonPressed,
+          onPressed: () =>
+              onTrackButtonPressed(pickupRequestID: widget.pickupRequestID),
           backgroundColor: ColorManager.primary,
         ),
       ),
-    );
-  }
-
-  Widget getBottomSheet() {
-    return Padding(
-      padding: _Styles.screenPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getLocationTracking(),
-          SizedBox(height: 20),
-          getCollectorDetails(),
-        ],
-      ),
-    );
-  }
-
-  Widget getLocationTracking() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Location Tracking', style: _Styles.greenTextStyle),
-        //TODO: integrate google map
-        SizedBox(height: 20),
-        getGoogleMap(),
-      ],
-    );
-  }
-
-  Widget getGoogleMap() {
-    return SizedBox(
-      height: 400,
-      child: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(
-          //TODO: Change to current location of user later
-          target: LatLng(3.0551, 101.7006),
-          zoom: 18,
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId("currentLocation"),
-            position: LatLng(3.0551, 101.7006),
-            icon: BitmapDescriptor.defaultMarker,
-          ),
-        },
-      ),
-    );
-  }
-
-  Widget getCollectorDetails() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Collector Details', style: _Styles.greenTextStyle),
-        SizedBox(height: 20),
-        Row(
-          children: [
-            CustomImage(
-              borderRadius: _Styles.collectorImageBorderRadius,
-              imageSize: _Styles.collectorImageSize,
-              imageURL:
-                  'https://img.freepik.com/free-photo/man-car-driving_23-2148889981.jpg?semt=ais_hybrid&w=740',
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Collector Name',
-                    style: _Styles.collectorNameTextStyle,
-                    maxLines: _Styles.maxTextLines,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    'Vehicle, WWN 2552',
-                    style: _Styles.vehicleTextStyle,
-                    maxLines: _Styles.maxTextLines,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.phone,
-                color: ColorManager.primary,
-                size: _Styles.dialButtonSize,
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
@@ -492,10 +470,7 @@ class _Styles {
   static const carouselHeight = 180.0;
   static const indicatorRightPadding = 8.0;
   static const dotIndicatorSize = 10.0;
-  static const collectorImageSize = 80.0;
-  static const collectorImageBorderRadius = 50.0;
-  static const dialButtonSize = 25.0;
-  static const maxTextLines = 2;
+  static const collectionProofImageSize = 180.0;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 10);
   static const containerMargin = EdgeInsets.symmetric(horizontal: 5);
@@ -517,15 +492,9 @@ class _Styles {
     color: ColorManager.greyColor,
   );
 
-  static const collectorNameTextStyle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeightManager.bold,
-    color: ColorManager.blackColor,
-  );
-
-  static const vehicleTextStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeightManager.bold,
+  static const smallGreyTextStyle = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
     color: ColorManager.greyColor,
   );
 

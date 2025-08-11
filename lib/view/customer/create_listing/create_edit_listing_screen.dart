@@ -400,8 +400,8 @@ extension _WidgetFactories on _CreateListingScreenState {
 
     return SizedBox(
       height: hasImages
-          ? MediaQuery.of(context).size.height * 0.13
-          : MediaQuery.of(context).size.height * 0.11,
+          ? _Styles.photoPickerWithImageHeight
+          : _Styles.photoPickerWithoutImageHeight,
       child: MultiImagePickerView(
         controller: controller,
         builder: (context, ImageFile imageFile) {
@@ -443,6 +443,8 @@ class _Styles {
   _Styles._();
 
   static const createListingFormFieldFontSize = 18.0;
+  static const photoPickerWithImageHeight = 120.0;
+  static const photoPickerWithoutImageHeight = 100.0;
   static const createListingFormFieldColor = ColorManager.primary;
   static const closeButtonPadding = EdgeInsets.all(3);
 
