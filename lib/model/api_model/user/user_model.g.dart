@@ -24,6 +24,7 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
       profileImageURL: json['profileImageURL'] as String?,
       approvalStatus: json['approvalStatus'] as String?,
       accountRejectMessage: json['accountRejectMessage'] as String?,
+      currentPoint: (json['currentPoint'] as num?)?.toInt(),
       createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),
@@ -47,5 +48,6 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'profileImageURL': instance.profileImageURL,
       'approvalStatus': instance.approvalStatus,
       'accountRejectMessage': instance.accountRejectMessage,
+      'currentPoint': instance.currentPoint,
       'createdDate': instance.createdDate?.toIso8601String(),
     };

@@ -173,9 +173,11 @@ extension _Helpers on _EditProfileScreenState {
 
   String? get profileImageURL => userDetails?.profileImageURL;
 
-  String get approvalStatus => userDetails?.approvalStatus ?? '';
+  String? get approvalStatus => userDetails?.approvalStatus;
 
-  String get accountRejectMessage => userDetails?.accountRejectMessage ?? '';
+  String? get accountRejectMessage => userDetails?.accountRejectMessage;
+
+  int? get currentPoint => userDetails?.currentPoint;
 
   DateTime get createdDate => userDetails?.createdDate ?? DateTime.now();
 }
@@ -232,6 +234,7 @@ extension _Actions on _EditProfileScreenState {
               profileImageURL: profileImageURL,
               approvalStatus: approvalStatus,
               accountRejectMessage: accountRejectMessage,
+              currentPoint: currentPoint,
               createdDate: createdDate,
             ),
           ) ??

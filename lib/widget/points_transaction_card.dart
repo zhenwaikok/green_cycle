@@ -2,21 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class PointsTransactionCard extends StatelessWidget {
+class PointsTransactionCard extends StatefulWidget {
   const PointsTransactionCard({
     super.key,
     required this.transactionName,
     required this.transactionDate,
     required this.points,
     required this.isEarned,
+    required this.isLoading,
   });
 
   final String transactionName;
   final String transactionDate;
   final String points;
   final bool isEarned;
+  final bool isLoading;
 
+  @override
+  State<PointsTransactionCard> createState() => _PointsTransactionCardState();
+}
+
+class _PointsTransactionCardState extends State<PointsTransactionCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -27,35 +35,35 @@ class PointsTransactionCard extends StatelessWidget {
           border: Border.all(color: ColorManager.greyColor),
           borderRadius: BorderRadius.circular(_Styles.borderRadius),
         ),
-        child: getPointsTransactionContent(),
+        child: getPointsTransactionContent(isLoading: widget.isLoading),
       ),
     );
   }
 }
 
-// * ---------------------------- Actions ----------------------------
-extension _Actions on PointsTransactionCard {}
-
 // * ------------------------ WidgetFactories ------------------------
-extension _WidgetFactories on PointsTransactionCard {
-  Widget getPointsTransactionContent() {
-    return Row(
-      children: [
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getCoinIcon(),
-              SizedBox(width: 15),
-              getTransactionDetails(
-                transactionName: transactionName,
-                transactionDate: transactionDate,
-              ),
-            ],
+extension _WidgetFactories on _PointsTransactionCardState {
+  Widget getPointsTransactionContent({required bool isLoading}) {
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                getCoinIcon(),
+                SizedBox(width: 15),
+                getTransactionDetails(
+                  transactionName: widget.transactionName,
+                  transactionDate: widget.transactionDate,
+                ),
+              ],
+            ),
           ),
-        ),
-        getPoints(points: points),
-      ],
+          getPoints(points: widget.points),
+        ],
+      ),
     );
   }
 
@@ -72,6 +80,7 @@ extension _WidgetFactories on PointsTransactionCard {
     required String transactionDate,
   }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           transactionName,
@@ -86,7 +95,10 @@ extension _WidgetFactories on PointsTransactionCard {
   }
 
   Widget getPoints({required String points}) {
-    return Text(points, style: _Styles.pointsNameTextStyle(isEarned: isEarned));
+    return Text(
+      points,
+      style: _Styles.pointsNameTextStyle(isEarned: widget.isEarned),
+    );
   }
 }
 

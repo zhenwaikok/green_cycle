@@ -206,8 +206,7 @@ extension _Actions on _RequestDetailsScreenState {
 
     _setState(() {
       showTrackingButton =
-          vm.pickupRequestDetails?.pickupRequestStatus == 'Ongoing' ||
-          vm.pickupRequestDetails?.pickupRequestStatus == 'Arrived';
+          vm.pickupRequestDetails?.pickupRequestStatus == 'Ongoing';
       isCompleted = vm.pickupRequestDetails?.pickupRequestStatus == 'Completed';
       isPending = vm.pickupRequestDetails?.pickupRequestStatus == 'Pending';
       isAccepted = vm.pickupRequestDetails?.pickupRequestStatus == 'Accepted';

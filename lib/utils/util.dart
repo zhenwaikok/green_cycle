@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/adaptive_alert_dialog.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
@@ -35,7 +36,7 @@ class WidgetUtil {
 
   static String durationFormatter(double minutes) {
     if (minutes < 60) {
-      return minutes == 1 ? '1 min' : '${minutes.floor()} mins';
+      return minutes <= 1 ? '$minutes min' : '${minutes.floor()} mins';
     } else {
       final hour = (minutes / 60).floor();
 
@@ -127,6 +128,32 @@ class WidgetUtil {
         'Are you sure to complete this pickup? This action cannot be undone.',
       _ => '',
     };
+  }
+
+  static int completedRequestPoints({
+    required String pickupRequestItemcategory,
+    required int pickupQuantity,
+  }) {
+    final category = DropDownItems.itemCategoryItems;
+
+    const categoryPoints = [
+      50, // Large Household Appliances
+      25, // Small Household Appliances
+      30, // Consumer Electronics
+      35, // ICT
+      10, // Lighting Equipment
+      15, // Batteries & Accumulators
+      20, // Electrical & Electronic Tools
+      25, // Medical Devices
+      20, // Monitoring & Control Instruments
+    ];
+
+    final index = category.indexOf(pickupRequestItemcategory);
+    final pointsPerItem = (index >= 0 && index < categoryPoints.length)
+        ? categoryPoints[index]
+        : 0;
+
+    return pointsPerItem * pickupQuantity;
   }
 
   static Future<T?> showAlertDialog<T>(

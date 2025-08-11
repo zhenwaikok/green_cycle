@@ -9,6 +9,8 @@ import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_mo
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/image_picker_widget.dart';
@@ -75,6 +77,15 @@ class _CompletePickupScreenState
   }
 }
 
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _CompletePickupScreenState {
+  int get completedRequestPoints => WidgetUtil.completedRequestPoints(
+    pickupRequestItemcategory:
+        widget.pickupRequestDetails.pickupItemCategory ?? '',
+    pickupQuantity: widget.pickupRequestDetails.pickupItemQuantity ?? 0,
+  );
+}
+
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CompletePickupScreenState {
   void onBackButtonPressed() {
@@ -114,13 +125,61 @@ extension _Actions on _CompletePickupScreenState {
           ) ??
           false;
       if (result) {
-        unawaited(
-          WidgetUtil.showSnackBar(
-            text: 'Congrats! Successfully completed the pickup',
-          ),
-        );
-        if (mounted) await context.router.maybePop(true);
+        await updateCustomerPoints();
       }
+    }
+  }
+
+  Future<void> updateCustomerPoints() async {
+    final userVM = context.read<UserViewModel>();
+
+    await tryCatch(
+      context,
+      () => userVM.getUserDetails(
+        userID: widget.pickupRequestDetails.userID ?? '',
+        noNeedUpdateUserSharedPreference: true,
+      ),
+    );
+
+    final result = mounted
+        ? await tryLoad(
+                context,
+                () => userVM.updateUser(
+                  userID: widget.pickupRequestDetails.userID,
+                  currentPoint: completedRequestPoints,
+                  noNeedUpdateUserSharedPreference: true,
+                ),
+              ) ??
+              false
+        : false;
+
+    if (result) {
+      await addPointTransaction();
+    }
+  }
+
+  Future<void> addPointTransaction() async {
+    final result =
+        await tryLoad(
+          context,
+          () => context.read<PointTransactionViewModel>().insertPointTransaction(
+            userID: widget.pickupRequestDetails.userID ?? '',
+            point: completedRequestPoints,
+            type: 'earn',
+            description:
+                'Completed request: #${widget.pickupRequestDetails.pickupRequestID}',
+            createdAt: DateTime.now(),
+          ),
+        ) ??
+        false;
+
+    if (result) {
+      unawaited(
+        WidgetUtil.showSnackBar(
+          text: 'Congrats! Successfully completed the pickup',
+        ),
+      );
+      if (mounted) await context.router.maybePop(true);
     }
   }
 }
