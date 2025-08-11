@@ -37,6 +37,7 @@ mixin _$UserModel {
   String? get profileImageURL => throw _privateConstructorUsedError;
   String? get approvalStatus => throw _privateConstructorUsedError;
   String? get accountRejectMessage => throw _privateConstructorUsedError;
+  int? get currentPoint => throw _privateConstructorUsedError;
   DateTime? get createdDate => throw _privateConstructorUsedError;
 
   /// Serializes this UserModel to a JSON map.
@@ -71,6 +72,7 @@ abstract class $UserModelCopyWith<$Res> {
     String? profileImageURL,
     String? approvalStatus,
     String? accountRejectMessage,
+    int? currentPoint,
     DateTime? createdDate,
   });
 }
@@ -106,6 +108,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? profileImageURL = freezed,
     Object? approvalStatus = freezed,
     Object? accountRejectMessage = freezed,
+    Object? currentPoint = freezed,
     Object? createdDate = freezed,
   }) {
     return _then(
@@ -174,6 +177,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.accountRejectMessage
                 : accountRejectMessage // ignore: cast_nullable_to_non_nullable
                       as String?,
+            currentPoint: freezed == currentPoint
+                ? _value.currentPoint
+                : currentPoint // ignore: cast_nullable_to_non_nullable
+                      as int?,
             createdDate: freezed == createdDate
                 ? _value.createdDate
                 : createdDate // ignore: cast_nullable_to_non_nullable
@@ -210,6 +217,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
     String? profileImageURL,
     String? approvalStatus,
     String? accountRejectMessage,
+    int? currentPoint,
     DateTime? createdDate,
   });
 }
@@ -244,6 +252,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? profileImageURL = freezed,
     Object? approvalStatus = freezed,
     Object? accountRejectMessage = freezed,
+    Object? currentPoint = freezed,
     Object? createdDate = freezed,
   }) {
     return _then(
@@ -312,6 +321,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.accountRejectMessage
             : accountRejectMessage // ignore: cast_nullable_to_non_nullable
                   as String?,
+        currentPoint: freezed == currentPoint
+            ? _value.currentPoint
+            : currentPoint // ignore: cast_nullable_to_non_nullable
+                  as int?,
         createdDate: freezed == createdDate
             ? _value.createdDate
             : createdDate // ignore: cast_nullable_to_non_nullable
@@ -341,6 +354,7 @@ class _$UserModelImpl implements _UserModel {
     this.profileImageURL,
     this.approvalStatus,
     this.accountRejectMessage,
+    this.currentPoint,
     this.createdDate,
   });
 
@@ -380,11 +394,13 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String? accountRejectMessage;
   @override
+  final int? currentPoint;
+  @override
   final DateTime? createdDate;
 
   @override
   String toString() {
-    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address: $address, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, approvalStatus: $approvalStatus, accountRejectMessage: $accountRejectMessage, createdDate: $createdDate)';
+    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address: $address, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, approvalStatus: $approvalStatus, accountRejectMessage: $accountRejectMessage, currentPoint: $currentPoint, createdDate: $createdDate)';
   }
 
   @override
@@ -421,6 +437,8 @@ class _$UserModelImpl implements _UserModel {
                 other.approvalStatus == approvalStatus) &&
             (identical(other.accountRejectMessage, accountRejectMessage) ||
                 other.accountRejectMessage == accountRejectMessage) &&
+            (identical(other.currentPoint, currentPoint) ||
+                other.currentPoint == currentPoint) &&
             (identical(other.createdDate, createdDate) ||
                 other.createdDate == createdDate));
   }
@@ -445,6 +463,7 @@ class _$UserModelImpl implements _UserModel {
     profileImageURL,
     approvalStatus,
     accountRejectMessage,
+    currentPoint,
     createdDate,
   );
 
@@ -480,6 +499,7 @@ abstract class _UserModel implements UserModel {
     final String? profileImageURL,
     final String? approvalStatus,
     final String? accountRejectMessage,
+    final int? currentPoint,
     final DateTime? createdDate,
   }) = _$UserModelImpl;
 
@@ -518,6 +538,8 @@ abstract class _UserModel implements UserModel {
   String? get approvalStatus;
   @override
   String? get accountRejectMessage;
+  @override
+  int? get currentPoint;
   @override
   DateTime? get createdDate;
 

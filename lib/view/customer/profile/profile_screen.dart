@@ -123,13 +123,11 @@ extension _Actions on _ProfileScreenState {
   }
 
   Future<void> fetchData() async {
-    final user = context.read<UserViewModel>().user;
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
 
     await tryLoad(
       context,
-      () => context.read<UserViewModel>().getUserDetails(
-        userID: user?.userID ?? '',
-      ),
+      () => context.read<UserViewModel>().getUserDetails(userID: userID),
     );
   }
 
@@ -165,8 +163,11 @@ extension _WidgetFactories on _ProfileScreenState {
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: 15),
-              Text('Point: 123', style: _Styles.pointTextStyle),
+              SizedBox(height: 10),
+              Text(
+                '${user.currentPoint ?? 0} points',
+                style: _Styles.pointTextStyle,
+              ),
             ],
           ),
         ),
@@ -287,15 +288,15 @@ class _Styles {
   );
 
   static const usernameTextStyle = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeightManager.bold,
+    fontSize: 18,
+    fontWeight: FontWeightManager.semiBold,
     color: ColorManager.blackColor,
   );
 
   static const pointTextStyle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeightManager.regular,
-    color: ColorManager.blackColor,
+    fontSize: 20,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
   );
 
   static const profileElementTextStyle = TextStyle(

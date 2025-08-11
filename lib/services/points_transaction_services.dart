@@ -3,14 +3,16 @@ import 'package:green_cycle_fyp/model/api_model/points/points_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/api_base_services.dart';
 
-class PointsServices extends BaseServices {
-  Future<MyResponse> getAllPoints() async {
+class PointTransactionServices extends BaseServices {
+  Future<MyResponse> getAllPointTransactions() async {
     String path = '${apiUrl()}/Points';
 
     return callAPI(httpMethod: HttpMethod.get, path: path);
   }
 
-  Future<MyResponse> insertPoints({required PointsModel pointsModel}) async {
+  Future<MyResponse> insertPointTransaction({
+    required PointsModel pointsModel,
+  }) async {
     String path = '${apiUrl()}/Points';
 
     return callAPI(
@@ -20,19 +22,21 @@ class PointsServices extends BaseServices {
     );
   }
 
-  Future<MyResponse> getPointsWithUserID({required String userID}) async {
+  Future<MyResponse> getPointTransactionsWithUserID({
+    required String userID,
+  }) async {
     String path = '${apiUrl()}/Points/$userID';
 
     return callAPI(httpMethod: HttpMethod.get, path: path);
   }
 
-  Future<MyResponse> getPointDetails({required int pointID}) async {
+  Future<MyResponse> getPointTransactionDetails({required int pointID}) async {
     String path = '${apiUrl()}/Points/$pointID';
 
     return callAPI(httpMethod: HttpMethod.get, path: path);
   }
 
-  Future<MyResponse> updatePoint({
+  Future<MyResponse> updatePointTransaction({
     required int pointID,
     required PointsModel pointsModel,
   }) async {
@@ -45,7 +49,7 @@ class PointsServices extends BaseServices {
     );
   }
 
-  Future<MyResponse> deletePoints({required int pointID}) async {
+  Future<MyResponse> deletePointTransaction({required int pointID}) async {
     String path = '${apiUrl()}/Points/$pointID';
 
     return callAPI(httpMethod: HttpMethod.delete, path: path);

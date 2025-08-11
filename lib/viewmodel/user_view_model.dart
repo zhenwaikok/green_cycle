@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
@@ -39,6 +40,7 @@ class UserViewModel extends BaseViewModel {
     String? accountRejectMessage,
     File? profileImage,
   }) async {
+    bool isCollectorSignUp = userRole == DropDownItems.roles[1];
     UserModel userModel;
 
     final response = await userRepository.signUpWithEmailPassword(
@@ -73,8 +75,9 @@ class UserViewModel extends BaseViewModel {
         vehiclePlateNumber: vehiclePlateNumber,
         companyName: companyName,
         profileImageURL: imageURL,
-        approvalStatus: 'Pending',
+        approvalStatus: isCollectorSignUp ? 'Pending' : null,
         accountRejectMessage: accountRejectMessage,
+        currentPoint: isCollectorSignUp ? null : 0,
         createdDate: DateTime.now(),
       );
 
@@ -162,6 +165,7 @@ class UserViewModel extends BaseViewModel {
     String? companyName,
     String? approvalStatus,
     String? accountRejectMessage,
+    int? currentPoint,
     DateTime? createdDate,
     String? profileImageURL,
     File? profileImage,
@@ -178,28 +182,33 @@ class UserViewModel extends BaseViewModel {
     }
 
     String? newProfileImageURL = imageURL ?? profileImageURL;
+    final newCurrentPoint =
+        (currentPoint ?? 0) + (_userDetails?.currentPoint ?? 0);
     UserModel usermodel = UserModel();
 
     if (noNeedUpdateUserSharedPreference == true) {
       usermodel = UserModel(
-        userID: userDetails?.userID,
-        userRole: userDetails?.userRole,
-        fullName: userDetails?.fullName,
-        firstName: userDetails?.firstName,
-        lastName: userDetails?.lastName,
-        emailAddress: userDetails?.emailAddress,
-        gender: userDetails?.gender,
-        phoneNumber: userDetails?.phoneNumber,
-        password: userDetails?.password,
-        address: userDetails?.address,
-        vehicleType: userDetails?.vehicleType,
-        vehiclePlateNumber: userDetails?.vehiclePlateNumber,
-        companyName: userDetails?.companyName,
-        profileImageURL: userDetails?.profileImageURL,
-        approvalStatus: approvalStatus,
+        userID: userID ?? _userDetails?.userID,
+        userRole: _userDetails?.userRole,
+        fullName: _userDetails?.fullName,
+        firstName: _userDetails?.firstName,
+        lastName: _userDetails?.lastName,
+        emailAddress: _userDetails?.emailAddress,
+        gender: _userDetails?.gender,
+        phoneNumber: _userDetails?.phoneNumber,
+        password: _userDetails?.password,
+        address: _userDetails?.address,
+        vehicleType: _userDetails?.vehicleType,
+        vehiclePlateNumber: _userDetails?.vehiclePlateNumber,
+        companyName: _userDetails?.companyName,
+        profileImageURL: _userDetails?.profileImageURL,
+        approvalStatus: approvalStatus ?? _userDetails?.approvalStatus,
         accountRejectMessage:
-            accountRejectMessage ?? userDetails?.accountRejectMessage,
-        createdDate: userDetails?.createdDate ?? DateTime.now(),
+            accountRejectMessage ?? _userDetails?.accountRejectMessage,
+        currentPoint: currentPoint != null
+            ? newCurrentPoint
+            : _userDetails?.currentPoint,
+        createdDate: _userDetails?.createdDate ?? DateTime.now(),
       );
     } else {
       usermodel = UserModel(
@@ -219,6 +228,7 @@ class UserViewModel extends BaseViewModel {
         profileImageURL: newProfileImageURL,
         approvalStatus: approvalStatus,
         accountRejectMessage: accountRejectMessage,
+        currentPoint: currentPoint,
         createdDate: createdDate ?? DateTime.now(),
       );
     }

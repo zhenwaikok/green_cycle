@@ -22,6 +22,7 @@ class UserModel with _$UserModel {
     String? profileImageURL,
     String? approvalStatus,
     String? accountRejectMessage,
+    int? currentPoint,
     DateTime? createdDate,
   }) = _UserModel;
 
