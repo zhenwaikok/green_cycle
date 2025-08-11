@@ -53,6 +53,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: ItemDetailsRoute.page),
     AutoRoute(page: CheckoutRoute.page),
     AutoRoute(page: RequestDetailsRoute.page),
+    AutoRoute(page: RequestLocationTrackingRoute.page),
     AutoRoute(page: SelectLocationRoute.page),
     AutoRoute(page: SchedulePickupRoute.page),
     AutoRoute(page: RequestItemDetailsRoute.page),

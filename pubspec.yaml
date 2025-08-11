@@ -57,10 +57,11 @@ dependencies:
   #Flutter App Icon
   flutter_launcher_icons: ^0.14.4
 
-  #Google Map
+  #Map
   google_maps_flutter: ^2.12.3
   google_places_flutter: ^2.1.0
   geolocator: ^14.0.2
+  flutter_polyline_points: ^3.0.1
 
   #Data
   dio: ^5.7.0
@@ -75,6 +76,9 @@ dependencies:
 
   #Snackbar
   fluttertoast: ^8.2.12
+
+  #Background Service
+  flutter_background_service: ^5.1.0
 
 
 dev_dependencies:

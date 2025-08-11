@@ -344,7 +344,7 @@ extension _WidgetFactories on _ItemDetailsScreenState {
       ),
       child: Center(
         child: IconButton(
-          icon: Icon(icon, color: Colors.black),
+          icon: Icon(icon, color: ColorManager.blackColor),
           onPressed: onPressed,
         ),
       ),

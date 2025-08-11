@@ -1,13 +1,29 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
+import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/awareness_services.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
@@ -15,23 +31,64 @@ import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/second_hand_item.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
-class CustomerHomeScreen extends BaseStatefulPage {
+class CustomerHomeScreen extends StatelessWidget {
   const CustomerHomeScreen({super.key});
 
   @override
-  State<CustomerHomeScreen> createState() => _CustomerHomeScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) {
+        PickupRequestViewModel(
+          pickupRequestRepository: PickupRequestRepository(),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+        ItemListingViewModel(
+          itemListingRepository: ItemListingRepository(),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+        AwarenessViewModel(
+          awarenessRepository: AwarenessRepository(
+            awarenessServices: AwarenessServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+      },
+      child: _CustomerHomeScreen(),
+    );
+  }
 }
 
-class _CustomerHomeScreenState extends BaseStatefulState<CustomerHomeScreen> {
+class _CustomerHomeScreen extends BaseStatefulPage {
+  @override
+  State<_CustomerHomeScreen> createState() => _CustomerHomeScreenState();
+}
+
+class _CustomerHomeScreenState extends BaseStatefulState<_CustomerHomeScreen> {
   List<AwarenessModel> _awarenessList = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initialLoad();
+      fetchData();
     });
   }
 
@@ -53,54 +110,184 @@ class _CustomerHomeScreenState extends BaseStatefulState<CustomerHomeScreen> {
 
   @override
   Widget body() {
+    final userVM = context.read<UserViewModel>();
+    final firstName = userVM.user?.firstName;
+    final userID = userVM.user?.userID;
+
+    final pickupRequestList = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestList,
+    );
+    final pendingPickupRequestList = pendingPickupRequest(
+      pickupRequestList: pickupRequestList,
+    );
+    final ongoingPickupRequestList = ongoingPickupRequest(
+      pickupRequestList: pickupRequestList,
+    );
+    final completedPickupRequestList = completedPickupRequest(
+      pickupRequestList: pickupRequestList,
+    );
+    final loadingPickupRequestList = List.generate(
+      5,
+      (index) => PickupRequestModel(
+        pickupRequestID: 'Loading...',
+        pickupItemDescription: 'Loading...',
+        pickupItemCategory: 'Loading...',
+        pickupLocation: 'Loading...',
+        pickupDate: DateTime.now(),
+        pickupTimeRange: 'Loading...',
+      ),
+    );
+    sortOngoingPickupRequest(pickupRequestList: ongoingPickupRequestList);
+
+    final itemListingList = context.select(
+      (ItemListingViewModel vm) => vm.itemListings
+          .where((item) {
+            return item.userID != userID && item.isSold == false;
+          })
+          .take(5)
+          .toList(),
+    );
+
     final awarenessList = _awarenessList
       ..sort(
         (a, b) =>
             b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
       );
-    final latest5AwarenessList = awarenessList.take(2).toList();
+    final latest5AwarenessList = awarenessList.take(5).toList();
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          getTopBarInfo(),
-          Transform.translate(
-            offset: const Offset(0, -40),
-            child: Padding(
-              padding: _Styles.requestContainerPadding,
-              child: getRequestPickupCard(),
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      color: ColorManager.blackColor,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      slivers: [
+        SliverMainAxisGroup(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  getTopBarInfo(
+                    firstName: firstName ?? '-',
+                    numOfPending: pendingPickupRequestList.length,
+                    numOfOngoing: ongoingPickupRequestList.length,
+                    numOfCompleted: completedPickupRequestList.length,
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -40),
+                    child: Padding(
+                      padding: _Styles.requestContainerPadding,
+                      child: getRequestPickupCard(),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: _Styles.screenPadding,
-            child: Column(
-              children: [
-                getStartSellingSection(),
-                SizedBox(height: 40),
-                getRequestList(),
-                SizedBox(height: 30),
-                getMarketplaceSection(),
-                SizedBox(height: 30),
-                getWhatNewSection(awarenessList: latest5AwarenessList),
-              ],
+
+            SliverPadding(
+              padding: _Styles.screenPadding,
+              sliver: SliverMainAxisGroup(
+                slivers: [
+                  SliverToBoxAdapter(child: getStartSellingSection()),
+                  SliverToBoxAdapter(child: SizedBox(height: 40)),
+                  SliverToBoxAdapter(
+                    child: getRequestList(
+                      ongoingPickupRequestList: isLoading
+                          ? loadingPickupRequestList
+                          : ongoingPickupRequestList.take(5).toList(),
+                      isLoading: isLoading,
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 30)),
+                  SliverToBoxAdapter(
+                    child: getMarketplaceSection(
+                      itemListingList: itemListingList,
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 30)),
+                  SliverToBoxAdapter(
+                    child: getWhatNewSection(
+                      awarenessList: latest5AwarenessList,
+                      isLoading: isLoading,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
+  }
+}
+
+// * ---------------------------- Helpers ----------------------------
+extension _Helpers on _CustomerHomeScreenState {
+  List<PickupRequestModel> pendingPickupRequest({
+    required List<PickupRequestModel> pickupRequestList,
+  }) {
+    return pickupRequestList.where((request) {
+      return request.pickupRequestStatus ==
+          DropDownItems.requestDropdownItems[1];
+    }).toList();
+  }
+
+  List<PickupRequestModel> ongoingPickupRequest({
+    required List<PickupRequestModel> pickupRequestList,
+  }) {
+    return pickupRequestList.where((request) {
+      return request.pickupRequestStatus ==
+              DropDownItems.requestDropdownItems[3] ||
+          request.pickupRequestStatus == DropDownItems.requestDropdownItems[4];
+    }).toList();
+  }
+
+  List<PickupRequestModel> completedPickupRequest({
+    required List<PickupRequestModel> pickupRequestList,
+  }) {
+    return pickupRequestList.where((request) {
+      return request.pickupRequestStatus ==
+          DropDownItems.requestDropdownItems[5];
+    }).toList();
   }
 }
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CustomerHomeScreenState {
-  Future<void> initialLoad() async {
-    final awarenessList = await tryLoad(
+  Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+    await tryLoad(
       context,
-      () => context.read<AwarenessViewModel>().getAwarenessList(),
+      () =>
+          context.read<PickupRequestViewModel>().getPickupRequestsWithUserID(),
     );
+
+    if (mounted) {
+      await tryLoad(
+        context,
+        () => context.read<ItemListingViewModel>().getAllItemListings(),
+      );
+    }
+
+    final awarenessList = mounted
+        ? await tryLoad(
+            context,
+            () => context.read<AwarenessViewModel>().getAwarenessList(),
+          )
+        : null;
     if (awarenessList != null) {
       _setState(() => _awarenessList = awarenessList);
     }
+    _setState(() => isLoading = false);
+  }
+
+  void sortOngoingPickupRequest({
+    required List<PickupRequestModel> pickupRequestList,
+  }) async {
+    pickupRequestList.sort(
+      (a, b) => (b.requestedDate ?? DateTime.now()).compareTo(
+        a.requestedDate ?? DateTime.now(),
+      ),
+    );
   }
 
   void onRequestPickupButtonPressed() {
@@ -124,19 +311,32 @@ extension _Actions on _CustomerHomeScreenState {
       AwarenessDetailsRoute(userRole: 'Customer', awarenessId: awarenessID),
     );
   }
+
+  void onItemListingCardPressed({required int itemListingID}) {
+    context.router.push(ItemDetailsRoute(itemListingID: itemListingID));
+  }
+
+  void onPickupRequestCardPressed({required String pickupRequestID}) {
+    context.router.push(RequestDetailsRoute(pickupRequestID: pickupRequestID));
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CustomerHomeScreenState {
-  Widget getTopBarInfo() {
+  Widget getTopBarInfo({
+    required String firstName,
+    required int numOfPending,
+    required int numOfOngoing,
+    required int numOfCompleted,
+  }) {
     return Container(
       width: double.infinity,
       height: _Styles.welcomeContainerHeight,
       padding: _Styles.welcomeContainerPadding,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.0),
-          bottomRight: Radius.circular(20.0),
+          bottomLeft: Radius.circular(_Styles.topBarBorderRadius),
+          bottomRight: Radius.circular(_Styles.topBarBorderRadius),
         ),
         image: DecorationImage(
           image: AssetImage(Images.customerHomeImage),
@@ -150,15 +350,18 @@ extension _WidgetFactories on _CustomerHomeScreenState {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TODO: Change to real username
-          Text('Welcome,name', style: _Styles.welcomeTextStyle),
+          SizedBox(height: 10),
+          Text('Welcome, $firstName', style: _Styles.welcomeTextStyle),
           SizedBox(height: 25),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              getTopBarRequestStatus(number: '1', status: 'Pending'),
-              getTopBarRequestStatus(number: '1', status: 'Ongoing'),
-              getTopBarRequestStatus(number: '1', status: 'Completed'),
+              getTopBarRequestStatus(number: numOfPending, status: 'Pending'),
+              getTopBarRequestStatus(number: numOfOngoing, status: 'Ongoing'),
+              getTopBarRequestStatus(
+                number: numOfCompleted,
+                status: 'Completed',
+              ),
             ],
           ),
         ],
@@ -166,14 +369,11 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getTopBarRequestStatus({
-    required String number,
-    required String status,
-  }) {
+  Widget getTopBarRequestStatus({required int number, required String status}) {
     return Column(
       children: [
         Text(
-          number,
+          '$number',
           textAlign: TextAlign.center,
           style: _Styles.requestNumberTextStyle,
         ),
@@ -270,62 +470,89 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getRequestList() {
+  Widget getRequestList({
+    required List<PickupRequestModel> ongoingPickupRequestList,
+    required bool isLoading,
+  }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Recent Pickup Requests', style: _Styles.titleTextStyle),
+        Text('In Progress Pickup Requests', style: _Styles.titleTextStyle),
         SizedBox(height: 20),
-        SizedBox(
-          height: 240,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: getRequestCard(),
-              );
-            },
+
+        if (ongoingPickupRequestList.isEmpty) ...[
+          Text('No ongoing pickup requests found yet. Request now!'),
+        ] else ...[
+          SizedBox(
+            height: 240,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: ongoingPickupRequestList.length,
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: getRequestCard(
+                    pickupRequestDetails: ongoingPickupRequestList[index],
+                    isLoading: isLoading,
+                  ),
+                );
+              },
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
 
-  Widget getRequestCard() {
+  Widget getRequestCard({
+    required PickupRequestModel pickupRequestDetails,
+    required bool isLoading,
+  }) {
     return TouchableOpacity(
-      onPressed: () {},
+      onPressed: () => onPickupRequestCardPressed(
+        pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+      ),
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
           padding: _Styles.customCardPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  getRequestID(),
-                  getRequestStatus(status: 'Pending'),
-                ],
-              ),
-              getDivider(),
-              getItemDetails(),
-              getDivider(),
-              getRequestDetails(),
-            ],
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    getRequestID(
+                      pickupRequestID:
+                          pickupRequestDetails.pickupRequestID ?? '',
+                    ),
+                    getRequestStatus(
+                      status: pickupRequestDetails.pickupRequestStatus ?? '',
+                    ),
+                  ],
+                ),
+                getDivider(),
+                getItemDetails(pickupRequestDetails: pickupRequestDetails),
+                getDivider(),
+                getRequestDetails(
+                  requestedDate:
+                      pickupRequestDetails.requestedDate ?? DateTime.now(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget getRequestDetails() {
+  Widget getRequestDetails({required DateTime requestedDate}) {
     return Text(
-      'Requested: 29/4/2025, 11:22 PM',
+      'Requested: ${WidgetUtil.dateTimeFormatter(requestedDate)}',
       style: _Styles.completedTextStyle,
     );
   }
@@ -337,40 +564,53 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getRequestID() {
+  Widget getRequestID({required String pickupRequestID}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Request ID', style: _Styles.requestIDTitleTextStyle),
-        Text('#REQ13113', style: _Styles.requestIDTextStyle),
+        Text('#$pickupRequestID', style: _Styles.requestIDTextStyle),
       ],
     );
   }
 
   Widget getRequestStatus({required String status}) {
-    return CustomStatusBar(text: status);
+    final backgroundColor = WidgetUtil.getPickupRequestStatusColor(status);
+
+    return CustomStatusBar(text: status, backgroundColor: backgroundColor);
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({required PickupRequestModel pickupRequestDetails}) {
     return Row(
       children: [
-        getItemImage(),
+        getItemImage(
+          imageURL: pickupRequestDetails.pickupItemImageURL?.first ?? '',
+        ),
         SizedBox(width: 15),
-        Expanded(child: getItemDescription()),
+        Expanded(
+          child: getItemDescription(
+            itemDescription: pickupRequestDetails.pickupItemDescription ?? '',
+            itemCategory: pickupRequestDetails.pickupItemCategory ?? '',
+            itemQuantity: pickupRequestDetails.pickupItemQuantity ?? 0,
+          ),
+        ),
       ],
     );
   }
 
-  Widget getItemImage() {
+  Widget getItemImage({required String imageURL}) {
     return CustomImage(
       imageSize: _Styles.imageSize,
-      imageURL:
-          'https://thumbs.dreamstime.com/b/image-attractive-shopper-girl-dressed-casual-clothing-holding-paper-bags-standing-isolated-over-pyrple-iimage-attractive-150643339.jpg',
+      imageURL: imageURL,
       borderRadius: _Styles.imageBorderRadius,
     );
   }
 
-  Widget getItemDescription() {
+  Widget getItemDescription({
+    required String itemDescription,
+    required String itemCategory,
+    required int itemQuantity,
+  }) {
     return SizedBox(
       height: _Styles.imageSize,
       child: Column(
@@ -381,26 +621,29 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item Descriptionsas0',
+                itemDescription,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
                 style: _Styles.itemDescriptionTextStyle,
               ),
-              Text('Category', style: _Styles.itemDescriptionTextStyle),
+              Text(itemCategory, style: _Styles.itemDescriptionTextStyle),
             ],
           ),
-          Text('Quantity: 1', style: _Styles.quantityTextStyle),
+          Text('Quantity: $itemQuantity', style: _Styles.quantityTextStyle),
         ],
       ),
     );
   }
 
-  Widget getMarketplaceSection() {
+  Widget getMarketplaceSection({
+    required List<ItemListingModel> itemListingList,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getMarketplaceTitle(),
         SizedBox(height: 10),
-        getMarketplaceList(),
+        getMarketplaceList(itemListingList: itemListingList),
       ],
     );
   }
@@ -423,25 +666,32 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getMarketplaceList() {
+  Widget getMarketplaceList({required List<ItemListingModel> itemListingList}) {
+    if (itemListingList.isEmpty) {
+      return Text('No item listing found yet from others.');
+    }
+
     return SizedBox(
       height: 220,
       child: ListView.builder(
-        itemCount: 5,
+        itemCount: itemListingList.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
+          final itemListingDetails = itemListingList[index];
           return Padding(
             padding: _Styles.productCardPadding,
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TouchableOpacity(
-                onPressed: () {},
+                onPressed: () => onItemListingCardPressed(
+                  itemListingID: itemListingDetails.itemListingID ?? 0,
+                ),
                 child: SecondHandItem(
-                  imageURL:
-                      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
-                  productName: 'Product Nameasdasdsad',
-                  productPrice: 'RM xx.xx',
-                  text: 'Like New',
+                  imageURL: itemListingDetails.itemImageURL?.first ?? '',
+                  productName: itemListingDetails.itemName ?? '',
+                  productPrice:
+                      'RM ${WidgetUtil.priceFormatter(itemListingDetails.itemPrice ?? 0.0)}',
+                  text: itemListingDetails.itemCondition ?? '',
                 ),
               ),
             ),
@@ -451,12 +701,16 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getWhatNewSection({required List<AwarenessModel> awarenessList}) {
+  Widget getWhatNewSection({
+    required List<AwarenessModel> awarenessList,
+    required bool isLoading,
+  }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getWhatNewTitle(),
         SizedBox(height: 10),
-        getWhatNewItems(awarenessList: awarenessList),
+        getWhatNewItems(awarenessList: awarenessList, isLoading: isLoading),
       ],
     );
   }
@@ -479,7 +733,14 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     );
   }
 
-  Widget getWhatNewItems({required List<AwarenessModel> awarenessList}) {
+  Widget getWhatNewItems({
+    required List<AwarenessModel> awarenessList,
+    required bool isLoading,
+  }) {
+    if (awarenessList.isEmpty) {
+      return Text('No awarness feed found.');
+    }
+
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       child: ListView.builder(
@@ -495,35 +756,39 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                   awarenessID: awarenessList[index].awarenessID ?? 0,
                 ),
                 child: SizedBox(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomImage(
-                        imageURL: awarenessList[index].awarenessImageURL ?? '',
-                        imageSize: MediaQuery.of(context).size.height * 0.15,
-                        imageWidth: double.infinity,
-                        borderRadius: 10.0,
-                      ),
-                      SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            awarenessList[index].awarenessTitle ?? '',
-                            style: _Styles.newsTitleTextStyle,
-                            maxLines: _Styles.maxTextLines,
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            WidgetUtil.dateFormatter(
-                              awarenessList[index].createdDate ??
-                                  DateTime.now(),
+                  child: Skeletonizer(
+                    enabled: isLoading,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomImage(
+                          imageURL:
+                              awarenessList[index].awarenessImageURL ?? '',
+                          imageSize: MediaQuery.of(context).size.height * 0.15,
+                          imageWidth: double.infinity,
+                          borderRadius: 10.0,
+                        ),
+                        SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              awarenessList[index].awarenessTitle ?? '',
+                              style: _Styles.newsTitleTextStyle,
+                              maxLines: _Styles.maxTextLines,
                             ),
-                            style: _Styles.dateTextStyle,
-                          ),
-                        ],
-                      ),
-                    ],
+                            SizedBox(height: 5),
+                            Text(
+                              WidgetUtil.dateFormatter(
+                                awarenessList[index].createdDate ??
+                                    DateTime.now(),
+                              ),
+                              style: _Styles.dateTextStyle,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -540,17 +805,13 @@ class _Styles {
   _Styles._();
 
   static const marketplaceImageSize = 80.0;
-
   static const welcomeContainerHeight = 180.0;
-
   static const screenPadding = EdgeInsets.only(left: 20, right: 20, bottom: 20);
-
   static const customCardPadding = EdgeInsets.all(10);
-
   static const iconButtonContainerSize = 40.0;
   static const iconButtonSize = 20.0;
-
   static const requestPickupImageSize = 120.0;
+  static const topBarBorderRadius = 20.0;
 
   static const welcomeContainerPadding = EdgeInsets.symmetric(
     horizontal: 20,
