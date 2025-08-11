@@ -99,6 +99,16 @@ class _PointsScreenState extends BaseStatefulState<_PointsScreen> {
         .where((list) => list.type == 'used')
         .toList();
 
+    final loadingList = List.generate(
+      5,
+      (index) => PointsModel(
+        description: 'Loading...',
+        type: 'Loading...',
+        point: 0,
+        createdAt: DateTime.now(),
+      ),
+    );
+
     return DefaultTabController(
       length: 2,
       child: Padding(
@@ -113,10 +123,14 @@ class _PointsScreenState extends BaseStatefulState<_PointsScreen> {
               child: TabBarView(
                 children: [
                   buildTabContent(
-                    pointTransactionList: earnedPointTransactionList,
+                    pointTransactionList: isLoading
+                        ? loadingList
+                        : earnedPointTransactionList,
                   ),
                   buildTabContent(
-                    pointTransactionList: usedPointTransactionList,
+                    pointTransactionList: isLoading
+                        ? loadingList
+                        : usedPointTransactionList,
                   ),
                 ],
               ),
