@@ -1,56 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/model/api_model/reward_redemption/reward_redemption_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/reward_bottom_sheet.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class MyRewardsTab extends BaseStatefulPage {
-  const MyRewardsTab({super.key});
+class MyRewardsTab extends StatefulWidget {
+  const MyRewardsTab({
+    super.key,
+    required this.rewardRedemptionDetails,
+    required this.isLoading,
+    required this.onUseButtonPressed,
+  });
+
+  final RewardRedemptionModel rewardRedemptionDetails;
+  final bool isLoading;
+  final void Function()? onUseButtonPressed;
 
   @override
   State<MyRewardsTab> createState() => _MyRewardsTabState();
 }
 
-class _MyRewardsTabState extends BaseStatefulState<MyRewardsTab> {
+class _MyRewardsTabState extends State<MyRewardsTab> {
   @override
-  EdgeInsets defaultPadding() {
-    return EdgeInsets.zero;
-  }
+  Widget build(BuildContext context) {
+    final isUsed = WidgetUtil.isRewardUsed(
+      rewardRedemptionDetails: widget.rewardRedemptionDetails,
+    );
 
-  @override
-  EdgeInsets bottomNavigationBarPadding() {
-    return EdgeInsets.zero;
-  }
+    final isExpired = WidgetUtil.isRewardDateExpired(
+      expiryDate: widget.rewardRedemptionDetails.expiryDate ?? DateTime.now(),
+    );
 
-  @override
-  Widget body() {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
+    return TouchableOpacity(
+      onPressed: () => showRewardBottomSheet(
+        rewardRedemptionDetails: widget.rewardRedemptionDetails,
+        isRewardUsed: isUsed,
+        isRewardExpired: isExpired,
       ),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return TouchableOpacity(
-          onPressed: showRewardBottomSheet,
-          child: getMyRewards(),
-        );
-      },
+      child: getMyRewardsCard(
+        rewardRedemptionDetails: widget.rewardRedemptionDetails,
+        isLoading: widget.isLoading,
+        isRewardUsed: isUsed,
+        isRewardExpired: isExpired,
+      ),
     );
   }
 }
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _MyRewardsTabState {
-  void showRewardBottomSheet() {
+  void showRewardBottomSheet({
+    required RewardRedemptionModel rewardRedemptionDetails,
+    required bool isRewardUsed,
+    required bool isRewardExpired,
+  }) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: ColorManager.whiteColor,
       builder: (context) {
-        return getBottomSheetCard();
+        return getBottomSheetCard(
+          rewardRedemptionDetails: rewardRedemptionDetails,
+          isRewardUsed: isRewardUsed,
+          isRewardExpired: isRewardExpired,
+        );
       },
     );
   }
@@ -58,43 +76,81 @@ extension _Actions on _MyRewardsTabState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _MyRewardsTabState {
-  Widget getMyRewards() {
-    return getMyRewardsCard();
-  }
-
-  Widget getMyRewardsCard() {
+  Widget getMyRewardsCard({
+    required RewardRedemptionModel rewardRedemptionDetails,
+    required bool isLoading,
+    required bool isRewardUsed,
+    required bool isRewardExpired,
+  }) {
     return Padding(
-      padding: _Styles.gridViewBuilderPadding,
-      child: CustomCard(
-        padding: _Styles.myRewardsCardPadding,
-        child: Center(
-          child: Column(
-            children: [
-              getRewardImage(),
-              Padding(
-                padding: _Styles.rewardNamePadding,
-                child: getRewardName(),
-              ),
-            ],
+      padding: _Styles.gapPadding,
+      child: SizedBox(
+        height: _Styles.rewardCardHeight,
+        child: CustomCard(
+          padding: _Styles.myRewardsCardPadding,
+          child: Skeletonizer(
+            enabled: isLoading,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    getRewardImage(
+                      imageURL: rewardRedemptionDetails.rewardImageURL ?? '',
+                    ),
+                    Positioned(
+                      top: 5,
+                      left: 5,
+                      child: getStatusBar(
+                        isUsed: isRewardUsed,
+                        isExpired: isRewardExpired,
+                        backgroundColor: isRewardUsed
+                            ? ColorManager.greyColor
+                            : isRewardExpired
+                            ? ColorManager.greyColor
+                            : ColorManager.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: _Styles.rewardNamePadding,
+                  child: getRewardName(
+                    rewardName: rewardRedemptionDetails.rewardName ?? '',
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget getRewardImage() {
+  Widget getRewardImage({required String imageURL}) {
     return CustomImage(
       imageWidth: double.infinity,
       imageSize: _Styles.rewardImageHeight,
-      imageURL:
-          'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
+      imageURL: imageURL,
       borderRadius: _Styles.borderRadius,
     );
   }
 
-  Widget getRewardName() {
+  Widget getStatusBar({
+    required bool isUsed,
+    required bool isExpired,
+    required Color backgroundColor,
+  }) {
+    return CustomStatusBar(
+      text: WidgetUtil.getRewardStatus(isUsed: isUsed, isExpired: isExpired),
+      backgroundColor: backgroundColor,
+    );
+  }
+
+  Widget getRewardName({required String rewardName}) {
     return Text(
-      'Reward Name asdadasdsdasdasdasdaaaaaaaaaaaaaaaaaaaa',
+      rewardName,
       style: _Styles.rewardNameTextStyle,
       textAlign: TextAlign.justify,
       maxLines: _Styles.maxTextLines,
@@ -102,15 +158,29 @@ extension _WidgetFactories on _MyRewardsTabState {
     );
   }
 
-  Widget getBottomSheetCard() {
-    return RewardBottomSheet(
-      imageURL:
-          'https://img.freepik.com/free-photo/purple-open-gift-box-with-voucher-bonus-surprise-minimal-present-greeting-celebration-promotion-discount-sale-reward-icon-3d-illustration_56104-2100.jpg?semt=ais_hybrid&w=740',
-      rewardName: 'Reward name aslkdjklajdajjsd',
-      descriptionText:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
-      buttonText: 'Use',
-      onPressed: () {},
+  Widget getBottomSheetCard({
+    required RewardRedemptionModel rewardRedemptionDetails,
+    required bool isRewardUsed,
+    required bool isRewardExpired,
+  }) {
+    return Padding(
+      padding: _Styles.screenPadding,
+      child: RewardBottomSheet(
+        imageURL: rewardRedemptionDetails.rewardImageURL ?? '',
+        rewardName: rewardRedemptionDetails.rewardName ?? '',
+        expiryDate: rewardRedemptionDetails.expiryDate ?? DateTime.now(),
+
+        descriptionText: rewardRedemptionDetails.rewardDescription ?? '',
+        buttonText: isRewardExpired
+            ? 'Expired'
+            : isRewardUsed
+            ? 'Used'
+            : 'Use',
+        onPressed: widget.onUseButtonPressed ?? () {},
+        buttonBackgroundColor: isRewardUsed || isRewardExpired
+            ? ColorManager.greyColor
+            : ColorManager.primary,
+      ),
     );
   }
 }
@@ -121,12 +191,15 @@ class _Styles {
 
   static const borderRadius = 0.0;
   static const maxTextLines = 2;
-  static const rewardImageHeight = 80.0;
+  static const rewardImageHeight = 100.0;
+  static const rewardCardHeight = 160.0;
 
-  static const gridViewBuilderPadding = EdgeInsets.symmetric(
-    vertical: 10,
-    horizontal: 10,
+  static const screenPadding = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 20,
   );
+
+  static const gapPadding = EdgeInsets.symmetric(vertical: 10, horizontal: 10);
   static const myRewardsCardPadding = EdgeInsets.all(0);
 
   static const rewardNamePadding = EdgeInsets.all(10);

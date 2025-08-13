@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 
@@ -10,15 +10,19 @@ class RewardBottomSheet extends StatefulWidget {
     super.key,
     required this.imageURL,
     required this.rewardName,
+    required this.expiryDate,
     required this.descriptionText,
     required this.buttonText,
     required this.onPressed,
+    required this.buttonBackgroundColor,
   });
 
   final String imageURL;
   final String rewardName;
+  final DateTime expiryDate;
   final String descriptionText;
   final String buttonText;
+  final Color buttonBackgroundColor;
   final void Function() onPressed;
 
   @override
@@ -32,31 +36,29 @@ class _RewardBottomSheetState extends State<RewardBottomSheet> {
   }
 }
 
-// * ---------------------------- Actions ----------------------------
-extension _Actions on _RewardBottomSheetState {}
-
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _RewardBottomSheetState {
   Widget getBottomSheetCard() {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: getBottomSheetCardImageName(
-              imageURL: widget.imageURL,
-              rewardName: widget.rewardName,
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: getBottomSheetCardImageName(
+            imageURL: widget.imageURL,
+            rewardName: widget.rewardName,
           ),
-          SizedBox(height: 40),
-          getDescription(descriptionText: widget.descriptionText),
-          Spacer(),
-          getBottomSheetCardClaimButton(
-            buttonText: widget.buttonText,
-            onPressed: widget.onPressed,
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: 20),
+        getExpiryDate(expiryDate: widget.expiryDate),
+        SizedBox(height: 20),
+        getDescription(descriptionText: widget.descriptionText),
+        SizedBox(height: 60),
+        getBottomSheetCardClaimButton(
+          buttonText: widget.buttonText,
+          onPressed: widget.onPressed,
+        ),
+      ],
     );
   }
 
@@ -74,6 +76,23 @@ extension _WidgetFactories on _RewardBottomSheetState {
         ),
         SizedBox(height: 10),
         Text(rewardName, style: _Styles.botomSheetRewardNameTextStyle),
+      ],
+    );
+  }
+
+  Widget getExpiryDate({required DateTime expiryDate}) {
+    return Row(
+      children: [
+        Icon(
+          Icons.calendar_today,
+          color: ColorManager.greyColor,
+          size: _Styles.iconSize,
+        ),
+        SizedBox(width: 5),
+        Text(
+          'Expiry Date: ${WidgetUtil.dateFormatter(expiryDate)}',
+          style: _Styles.expiryDateTextStyle,
+        ),
       ],
     );
   }
@@ -100,7 +119,7 @@ extension _WidgetFactories on _RewardBottomSheetState {
       text: buttonText,
       textColor: ColorManager.whiteColor,
       onPressed: onPressed,
-      backgroundColor: ColorManager.primary,
+      backgroundColor: widget.buttonBackgroundColor,
     );
   }
 }
@@ -111,11 +130,18 @@ class _Styles {
 
   static const bottomSheetImageSize = 120.0;
   static const borderRadius = 5.0;
+  static const iconSize = 20.0;
 
   static const botomSheetRewardNameTextStyle = TextStyle(
     fontSize: 22,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
+  );
+
+  static const expiryDateTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.greyColor,
   );
 
   static const descriptionTitleTextStyle = TextStyle(

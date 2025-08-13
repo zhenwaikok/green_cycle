@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -7,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/reward_redemption/reward_redemption_model.dart';
 import 'package:green_cycle_fyp/widget/adaptive_alert_dialog.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
 import 'package:image_picker/image_picker.dart';
@@ -130,6 +130,19 @@ class WidgetUtil {
     };
   }
 
+  static String getRewardStatus({
+    required bool isUsed,
+    required bool isExpired,
+  }) {
+    if (isUsed) {
+      return 'Used';
+    } else if (isExpired) {
+      return 'Expired';
+    } else {
+      return 'Active';
+    }
+  }
+
   static int completedRequestPoints({
     required String pickupRequestItemcategory,
     required int pickupQuantity,
@@ -156,6 +169,20 @@ class WidgetUtil {
     return pointsPerItem * pickupQuantity;
   }
 
+  static bool isRewardDateExpired({required DateTime expiryDate}) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final expiry = DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
+
+    return expiry.isBefore(today);
+  }
+
+  static bool isRewardUsed({
+    required RewardRedemptionModel rewardRedemptionDetails,
+  }) {
+    return rewardRedemptionDetails.isUsed == true;
+  }
+
   static Future<T?> showAlertDialog<T>(
     BuildContext context, {
     required String? title,
@@ -168,6 +195,7 @@ class WidgetUtil {
     String? Function(String?)? validator,
     GlobalKey<FormBuilderState>? formKey,
     String? hintText,
+    Widget? customizeContent,
   }) {
     return showDialog(
       context: context,
@@ -180,20 +208,24 @@ class WidgetUtil {
           title ?? '',
           textAlign: TextAlign.justify,
           style: TextStyle(fontWeight: FontWeightManager.bold, fontSize: 20),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
-        content: needTextField
-            ? FormBuilder(
-                key: formKey,
-                child: SizedBox(
-                  width: double.maxFinite,
-                  child: CustomTextField(
-                    formName: formName ?? '',
-                    validator: validator,
-                    labelText: hintText,
-                  ),
-                ),
-              )
-            : Text(content ?? '', style: TextStyle(fontSize: 16)),
+        content:
+            customizeContent ??
+            (needTextField
+                ? FormBuilder(
+                    key: formKey,
+                    child: SizedBox(
+                      width: double.maxFinite,
+                      child: CustomTextField(
+                        formName: formName ?? '',
+                        validator: validator,
+                        labelText: hintText,
+                      ),
+                    ),
+                  )
+                : Text(content ?? '', style: TextStyle(fontSize: 16))),
         actions: actions,
         backgroundColor: ColorManager.whiteColor,
       ),

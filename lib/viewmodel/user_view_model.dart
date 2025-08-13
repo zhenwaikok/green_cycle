@@ -165,7 +165,8 @@ class UserViewModel extends BaseViewModel {
     String? companyName,
     String? approvalStatus,
     String? accountRejectMessage,
-    int? currentPoint,
+    int? point,
+    bool? isAddPoint,
     DateTime? createdDate,
     String? profileImageURL,
     File? profileImage,
@@ -182,8 +183,9 @@ class UserViewModel extends BaseViewModel {
     }
 
     String? newProfileImageURL = imageURL ?? profileImageURL;
-    final newCurrentPoint =
-        (currentPoint ?? 0) + (_userDetails?.currentPoint ?? 0);
+    final newCurrentPoint = isAddPoint == true
+        ? (point ?? 0) + (_userDetails?.currentPoint ?? 0)
+        : (_userDetails?.currentPoint ?? 0) - (point ?? 0);
     UserModel usermodel = UserModel();
 
     if (noNeedUpdateUserSharedPreference == true) {
@@ -205,7 +207,7 @@ class UserViewModel extends BaseViewModel {
         approvalStatus: approvalStatus ?? _userDetails?.approvalStatus,
         accountRejectMessage:
             accountRejectMessage ?? _userDetails?.accountRejectMessage,
-        currentPoint: currentPoint != null
+        currentPoint: point != null
             ? newCurrentPoint
             : _userDetails?.currentPoint,
         createdDate: _userDetails?.createdDate ?? DateTime.now(),
@@ -228,7 +230,7 @@ class UserViewModel extends BaseViewModel {
         profileImageURL: newProfileImageURL,
         approvalStatus: approvalStatus,
         accountRejectMessage: accountRejectMessage,
-        currentPoint: currentPoint,
+        currentPoint: point,
         createdDate: createdDate ?? DateTime.now(),
       );
     }

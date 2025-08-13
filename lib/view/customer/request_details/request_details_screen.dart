@@ -394,7 +394,7 @@ extension _WidgetFactories on _RequestDetailsScreenState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Collection Evidence Photo', style: _Styles.greenTextStyle),
+        Text('Proof of Collection', style: _Styles.greenTextStyle),
         SizedBox(height: 10),
         CustomImage(
           imageSize: _Styles.collectionProofImageSize,

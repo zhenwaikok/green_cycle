@@ -16,9 +16,13 @@ _$RewardRedemptionModelImpl _$$RewardRedemptionModelImplFromJson(
   redeemedDate: json['redeemedDate'] == null
       ? null
       : DateTime.parse(json['redeemedDate'] as String),
-  reward: json['reward'] == null
+  rewardName: json['rewardName'] as String?,
+  rewardDescription: json['rewardDescription'] as String?,
+  pointsRequired: (json['pointsRequired'] as num?)?.toInt(),
+  rewardImageURL: json['rewardImageURL'] as String?,
+  expiryDate: json['expiryDate'] == null
       ? null
-      : RewardModel.fromJson(json['reward'] as Map<String, dynamic>),
+      : DateTime.parse(json['expiryDate'] as String),
 );
 
 Map<String, dynamic> _$$RewardRedemptionModelImplToJson(
@@ -29,5 +33,9 @@ Map<String, dynamic> _$$RewardRedemptionModelImplToJson(
   'rewardID': instance.rewardID,
   'isUsed': instance.isUsed,
   'redeemedDate': instance.redeemedDate?.toIso8601String(),
-  'reward': instance.reward,
+  'rewardName': instance.rewardName,
+  'rewardDescription': instance.rewardDescription,
+  'pointsRequired': instance.pointsRequired,
+  'rewardImageURL': instance.rewardImageURL,
+  'expiryDate': instance.expiryDate?.toIso8601String(),
 };

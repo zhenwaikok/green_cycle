@@ -146,8 +146,9 @@ extension _Actions on _CompletePickupScreenState {
                 context,
                 () => userVM.updateUser(
                   userID: widget.pickupRequestDetails.userID,
-                  currentPoint: completedRequestPoints,
+                  point: completedRequestPoints,
                   noNeedUpdateUserSharedPreference: true,
+                  isAddPoint: true,
                 ),
               ) ??
               false

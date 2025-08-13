@@ -28,7 +28,11 @@ mixin _$RewardRedemptionModel {
   int? get rewardID => throw _privateConstructorUsedError;
   bool? get isUsed => throw _privateConstructorUsedError;
   DateTime? get redeemedDate => throw _privateConstructorUsedError;
-  RewardModel? get reward => throw _privateConstructorUsedError;
+  String? get rewardName => throw _privateConstructorUsedError;
+  String? get rewardDescription => throw _privateConstructorUsedError;
+  int? get pointsRequired => throw _privateConstructorUsedError;
+  String? get rewardImageURL => throw _privateConstructorUsedError;
+  DateTime? get expiryDate => throw _privateConstructorUsedError;
 
   /// Serializes this RewardRedemptionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,10 +57,12 @@ abstract class $RewardRedemptionModelCopyWith<$Res> {
     int? rewardID,
     bool? isUsed,
     DateTime? redeemedDate,
-    RewardModel? reward,
+    String? rewardName,
+    String? rewardDescription,
+    int? pointsRequired,
+    String? rewardImageURL,
+    DateTime? expiryDate,
   });
-
-  $RewardModelCopyWith<$Res>? get reward;
 }
 
 /// @nodoc
@@ -82,7 +88,11 @@ class _$RewardRedemptionModelCopyWithImpl<
     Object? rewardID = freezed,
     Object? isUsed = freezed,
     Object? redeemedDate = freezed,
-    Object? reward = freezed,
+    Object? rewardName = freezed,
+    Object? rewardDescription = freezed,
+    Object? pointsRequired = freezed,
+    Object? rewardImageURL = freezed,
+    Object? expiryDate = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -106,27 +116,29 @@ class _$RewardRedemptionModelCopyWithImpl<
                 ? _value.redeemedDate
                 : redeemedDate // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
-            reward: freezed == reward
-                ? _value.reward
-                : reward // ignore: cast_nullable_to_non_nullable
-                      as RewardModel?,
+            rewardName: freezed == rewardName
+                ? _value.rewardName
+                : rewardName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rewardDescription: freezed == rewardDescription
+                ? _value.rewardDescription
+                : rewardDescription // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            pointsRequired: freezed == pointsRequired
+                ? _value.pointsRequired
+                : pointsRequired // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            rewardImageURL: freezed == rewardImageURL
+                ? _value.rewardImageURL
+                : rewardImageURL // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            expiryDate: freezed == expiryDate
+                ? _value.expiryDate
+                : expiryDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of RewardRedemptionModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $RewardModelCopyWith<$Res>? get reward {
-    if (_value.reward == null) {
-      return null;
-    }
-
-    return $RewardModelCopyWith<$Res>(_value.reward!, (value) {
-      return _then(_value.copyWith(reward: value) as $Val);
-    });
   }
 }
 
@@ -145,11 +157,12 @@ abstract class _$$RewardRedemptionModelImplCopyWith<$Res>
     int? rewardID,
     bool? isUsed,
     DateTime? redeemedDate,
-    RewardModel? reward,
+    String? rewardName,
+    String? rewardDescription,
+    int? pointsRequired,
+    String? rewardImageURL,
+    DateTime? expiryDate,
   });
-
-  @override
-  $RewardModelCopyWith<$Res>? get reward;
 }
 
 /// @nodoc
@@ -172,7 +185,11 @@ class __$$RewardRedemptionModelImplCopyWithImpl<$Res>
     Object? rewardID = freezed,
     Object? isUsed = freezed,
     Object? redeemedDate = freezed,
-    Object? reward = freezed,
+    Object? rewardName = freezed,
+    Object? rewardDescription = freezed,
+    Object? pointsRequired = freezed,
+    Object? rewardImageURL = freezed,
+    Object? expiryDate = freezed,
   }) {
     return _then(
       _$RewardRedemptionModelImpl(
@@ -196,10 +213,26 @@ class __$$RewardRedemptionModelImplCopyWithImpl<$Res>
             ? _value.redeemedDate
             : redeemedDate // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
-        reward: freezed == reward
-            ? _value.reward
-            : reward // ignore: cast_nullable_to_non_nullable
-                  as RewardModel?,
+        rewardName: freezed == rewardName
+            ? _value.rewardName
+            : rewardName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rewardDescription: freezed == rewardDescription
+            ? _value.rewardDescription
+            : rewardDescription // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        pointsRequired: freezed == pointsRequired
+            ? _value.pointsRequired
+            : pointsRequired // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        rewardImageURL: freezed == rewardImageURL
+            ? _value.rewardImageURL
+            : rewardImageURL // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        expiryDate: freezed == expiryDate
+            ? _value.expiryDate
+            : expiryDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
       ),
     );
   }
@@ -214,7 +247,11 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
     this.rewardID,
     this.isUsed,
     this.redeemedDate,
-    this.reward,
+    this.rewardName,
+    this.rewardDescription,
+    this.pointsRequired,
+    this.rewardImageURL,
+    this.expiryDate,
   });
 
   factory _$RewardRedemptionModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -231,11 +268,19 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
   @override
   final DateTime? redeemedDate;
   @override
-  final RewardModel? reward;
+  final String? rewardName;
+  @override
+  final String? rewardDescription;
+  @override
+  final int? pointsRequired;
+  @override
+  final String? rewardImageURL;
+  @override
+  final DateTime? expiryDate;
 
   @override
   String toString() {
-    return 'RewardRedemptionModel(rewardRedemptionID: $rewardRedemptionID, userID: $userID, rewardID: $rewardID, isUsed: $isUsed, redeemedDate: $redeemedDate, reward: $reward)';
+    return 'RewardRedemptionModel(rewardRedemptionID: $rewardRedemptionID, userID: $userID, rewardID: $rewardID, isUsed: $isUsed, redeemedDate: $redeemedDate, rewardName: $rewardName, rewardDescription: $rewardDescription, pointsRequired: $pointsRequired, rewardImageURL: $rewardImageURL, expiryDate: $expiryDate)';
   }
 
   @override
@@ -251,7 +296,16 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
             (identical(other.isUsed, isUsed) || other.isUsed == isUsed) &&
             (identical(other.redeemedDate, redeemedDate) ||
                 other.redeemedDate == redeemedDate) &&
-            (identical(other.reward, reward) || other.reward == reward));
+            (identical(other.rewardName, rewardName) ||
+                other.rewardName == rewardName) &&
+            (identical(other.rewardDescription, rewardDescription) ||
+                other.rewardDescription == rewardDescription) &&
+            (identical(other.pointsRequired, pointsRequired) ||
+                other.pointsRequired == pointsRequired) &&
+            (identical(other.rewardImageURL, rewardImageURL) ||
+                other.rewardImageURL == rewardImageURL) &&
+            (identical(other.expiryDate, expiryDate) ||
+                other.expiryDate == expiryDate));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -263,7 +317,11 @@ class _$RewardRedemptionModelImpl implements _RewardRedemptionModel {
     rewardID,
     isUsed,
     redeemedDate,
-    reward,
+    rewardName,
+    rewardDescription,
+    pointsRequired,
+    rewardImageURL,
+    expiryDate,
   );
 
   /// Create a copy of RewardRedemptionModel
@@ -291,7 +349,11 @@ abstract class _RewardRedemptionModel implements RewardRedemptionModel {
     final int? rewardID,
     final bool? isUsed,
     final DateTime? redeemedDate,
-    final RewardModel? reward,
+    final String? rewardName,
+    final String? rewardDescription,
+    final int? pointsRequired,
+    final String? rewardImageURL,
+    final DateTime? expiryDate,
   }) = _$RewardRedemptionModelImpl;
 
   factory _RewardRedemptionModel.fromJson(Map<String, dynamic> json) =
@@ -308,7 +370,15 @@ abstract class _RewardRedemptionModel implements RewardRedemptionModel {
   @override
   DateTime? get redeemedDate;
   @override
-  RewardModel? get reward;
+  String? get rewardName;
+  @override
+  String? get rewardDescription;
+  @override
+  int? get pointsRequired;
+  @override
+  String? get rewardImageURL;
+  @override
+  DateTime? get expiryDate;
 
   /// Create a copy of RewardRedemptionModel
   /// with the given fields replaced by the non-null parameter values.
