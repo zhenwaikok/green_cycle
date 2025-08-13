@@ -176,10 +176,11 @@ extension _WidgetFactories on _MyRewardsTabState {
             : isRewardUsed
             ? 'Used'
             : 'Use',
-        onPressed: widget.onUseButtonPressed ?? () {},
-        buttonBackgroundColor: isRewardUsed || isRewardExpired
-            ? ColorManager.greyColor
-            : ColorManager.primary,
+        onPressed: widget.onUseButtonPressed,
+        buttonTextColor: (isRewardExpired || isRewardUsed)
+            ? ColorManager.blackColor
+            : ColorManager.whiteColor,
+        buttonBackgroundColor: ColorManager.primary,
       ),
     );
   }

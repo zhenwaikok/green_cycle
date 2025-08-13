@@ -15,6 +15,7 @@ class RewardBottomSheet extends StatefulWidget {
     required this.buttonText,
     required this.onPressed,
     required this.buttonBackgroundColor,
+    this.buttonTextColor,
   });
 
   final String imageURL;
@@ -23,7 +24,8 @@ class RewardBottomSheet extends StatefulWidget {
   final String descriptionText;
   final String buttonText;
   final Color buttonBackgroundColor;
-  final void Function() onPressed;
+  final Color? buttonTextColor;
+  final void Function()? onPressed;
 
   @override
   State<RewardBottomSheet> createState() => _RewardBottomSheetState();
@@ -113,11 +115,11 @@ extension _WidgetFactories on _RewardBottomSheetState {
 
   Widget getBottomSheetCardClaimButton({
     required String buttonText,
-    required void Function() onPressed,
+    required void Function()? onPressed,
   }) {
     return CustomButton(
       text: buttonText,
-      textColor: ColorManager.whiteColor,
+      textColor: widget.buttonTextColor ?? ColorManager.whiteColor,
       onPressed: onPressed,
       backgroundColor: widget.buttonBackgroundColor,
     );

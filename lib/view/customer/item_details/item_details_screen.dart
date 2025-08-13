@@ -6,6 +6,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/cart_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
@@ -15,6 +16,7 @@ import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
@@ -56,6 +58,13 @@ class ItemDetailsScreen extends StatelessWidget {
             firebaseServices: FirebaseServices(),
           ),
         );
+        CartViewModel(
+          cartRepository: CartRepository(),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
       },
       child: _ItemDetailsScreen(itemListingID: itemListingID),
     );
@@ -72,10 +81,11 @@ class _ItemDetailsScreen extends BaseStatefulPage {
 
 class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
   int currentIndex = 0;
-  bool isUserItemOwner = false;
   ItemListingModel? itemListingDetails;
+  bool isUserItemOwner = false;
   bool _isLoading = true;
-  bool isEdit = false;
+  bool refreshData = false;
+  bool isAddedToCart = false;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -105,7 +115,12 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
       return SizedBox.shrink();
     }
 
-    return !isUserItemOwner ? getAddToCartButton() : getOwnerTag();
+    return !isUserItemOwner
+        ? getAddToCartButton(
+            isAddedToCart: isAddedToCart,
+            itemListingDetails: itemListingDetails ?? ItemListingModel(),
+          )
+        : getOwnerTag();
   }
 
   @override
@@ -179,7 +194,7 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ItemDetailsScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop(isEdit);
+    context.router.maybePop(refreshData);
   }
 
   void onImageChanged(int index, dynamic reason) {
@@ -230,7 +245,7 @@ extension _Actions on _ItemDetailsScreenState {
 
       if (result == true && mounted) {
         _setState(() {
-          isEdit = true;
+          refreshData = true;
         });
         await fetchItemData();
       }
@@ -259,10 +274,36 @@ extension _Actions on _ItemDetailsScreenState {
     }
   }
 
+  Future<void> addItemToCart({
+    required ItemListingModel itemListingDetails,
+  }) async {
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+
+    final result =
+        await tryLoad(
+          context,
+          () => context.read<CartViewModel>().addToCart(
+            buyerUserID: userID,
+            sellerUserID: itemListingDetails.userID ?? '',
+            itemListingID: itemListingDetails.itemListingID ?? 0,
+          ),
+        ) ??
+        false;
+
+    if (result) {
+      unawaited(
+        WidgetUtil.showSnackBar(text: 'Item added to cart successfully'),
+      );
+      _setState(() {
+        isAddedToCart = true;
+        refreshData = true;
+      });
+      await fetchItemData();
+    }
+  }
+
   Future<void> fetchItemData() async {
-    _setState(() {
-      _isLoading = true;
-    });
+    _setState(() => _isLoading = true);
     await tryLoad(
       context,
       () => context.read<ItemListingViewModel>().getItemListingDetails(
@@ -284,7 +325,18 @@ extension _Actions on _ItemDetailsScreenState {
     final userID = mounted
         ? context.read<UserViewModel>().user?.userID ?? ''
         : '';
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<CartViewModel>().getUserCartItems(userID: userID),
+      );
+    }
+
     _setState(() {
+      isAddedToCart = context.read<CartViewModel>().userCartItems.any(
+        (item) => item.itemListingID == widget.itemListingID,
+      );
       isUserItemOwner = sellerUserIDItemListing == userID;
       _isLoading = false;
     });
@@ -490,13 +542,22 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     );
   }
 
-  Widget getAddToCartButton() {
+  Widget getAddToCartButton({
+    required bool isAddedToCart,
+    required ItemListingModel itemListingDetails,
+  }) {
     return Padding(
       padding: _Styles.screenPadding,
       child: CustomButton(
-        text: 'Add To Cart',
-        textColor: ColorManager.whiteColor,
-        onPressed: () {},
+        text: isAddedToCart ? 'Added to Cart' : 'Add To Cart',
+        textColor: isAddedToCart
+            ? ColorManager.blackColor
+            : ColorManager.whiteColor,
+        onPressed: isAddedToCart
+            ? null
+            : () {
+                addItemToCart(itemListingDetails: itemListingDetails);
+              },
         backgroundColor: ColorManager.primary,
       ),
     );
@@ -548,6 +609,8 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     );
   }
 }
+
+class ItemListingDetails {}
 
 // * ----------------------------- Styles -----------------------------
 class _Styles {

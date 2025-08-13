@@ -1,5 +1,6 @@
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/cart_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
@@ -14,6 +15,7 @@ import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/view/onboarding_screen.dart';
 import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
@@ -98,6 +100,15 @@ List<SingleChildWidget> providerAssets() => [
   ChangeNotifierProvider.value(
     value: RewardRedemptionViewModel(
       rewardRedemptionRepository: RewardRedemptionRepository(),
+    ),
+  ),
+  ChangeNotifierProvider.value(
+    value: CartViewModel(
+      cartRepository: CartRepository(),
+      userRepository: UserRepository(
+        sharePreferenceHandler: SharedPreferenceHandler(),
+        userServices: UserServices(),
+      ),
     ),
   ),
 ];
