@@ -234,7 +234,7 @@ extension _Actions on _EditProfileScreenState {
               profileImageURL: profileImageURL,
               approvalStatus: approvalStatus,
               accountRejectMessage: accountRejectMessage,
-              currentPoint: currentPoint,
+              point: currentPoint,
               createdDate: createdDate,
             ),
           ) ??

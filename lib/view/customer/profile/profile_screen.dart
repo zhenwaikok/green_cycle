@@ -85,8 +85,12 @@ class _ProfileScreenState extends State<_ProfileScreen>
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ProfileScreenState {
-  void onRewardsPressed() {
-    context.router.push(RewardRoute());
+  void onRewardsPressed() async {
+    final result = await context.router.push(RewardRoute());
+
+    if (result == true && mounted) {
+      fetchData();
+    }
   }
 
   void onChangePasswordPressed() {

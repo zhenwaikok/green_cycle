@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:green_cycle_fyp/model/api_model/reward/reward_model.dart';
-
 part 'reward_redemption_model.freezed.dart';
 part 'reward_redemption_model.g.dart';
 
@@ -12,7 +10,11 @@ class RewardRedemptionModel with _$RewardRedemptionModel {
     int? rewardID,
     bool? isUsed,
     DateTime? redeemedDate,
-    RewardModel? reward,
+    String? rewardName,
+    String? rewardDescription,
+    int? pointsRequired,
+    String? rewardImageURL,
+    DateTime? expiryDate,
   }) = _RewardRedemptionModel;
 
   factory RewardRedemptionModel.fromJson(Map<String, dynamic> json) =>

@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
 import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/point_transaction_repository.dart';
+import 'package:green_cycle_fyp/repository/reward_redemption_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
@@ -17,6 +18,7 @@ import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/reward_redemption_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:provider/provider.dart';
@@ -91,6 +93,11 @@ List<SingleChildWidget> providerAssets() => [
   ChangeNotifierProvider.value(
     value: PointTransactionViewModel(
       pointTransactionRepository: PointTransactionRepository(),
+    ),
+  ),
+  ChangeNotifierProvider.value(
+    value: RewardRedemptionViewModel(
+      rewardRedemptionRepository: RewardRedemptionRepository(),
     ),
   ),
 ];

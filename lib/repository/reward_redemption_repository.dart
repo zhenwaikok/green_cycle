@@ -1,3 +1,4 @@
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/reward_redemption/reward_redemption_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/reward_redemption_services.dart';
@@ -36,8 +37,10 @@ class RewardRedemptionRepository {
     final response = await _rewardRedemptionServices
         .getRewardRedemptionsWithUserID(userID: userID);
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = RewardRedemptionModel.fromJson(response.data);
+    if (response.data is List) {
+      final resultModel = (response.data as List)
+          .map((json) => RewardRedemptionModel.fromJson(json))
+          .toList();
       return MyResponse.complete(resultModel);
     }
     return response;
@@ -67,7 +70,7 @@ class RewardRedemptionRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = RewardRedemptionModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;
