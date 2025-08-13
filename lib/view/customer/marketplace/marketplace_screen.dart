@@ -5,6 +5,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/repository/cart_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
@@ -14,7 +15,9 @@ import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_floating_action_button.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
@@ -31,16 +34,26 @@ class MarketplaceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ItemListingViewModel(
-        itemListingRepository: ItemListingRepository(),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
-        ),
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
-        ),
-      ),
+      create: (_) {
+        ItemListingViewModel(
+          itemListingRepository: ItemListingRepository(),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+
+        CartViewModel(
+          cartRepository: CartRepository(),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+      },
       child: _MarketplaceScreen(),
     );
   }
@@ -54,8 +67,9 @@ class _MarketplaceScreen extends BaseStatefulPage {
 class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
   late final tabsRouter = AutoTabsRouter.of(context);
   bool _isLoading = true;
-  final secondHandItemCategories = DropDownItems.itemCategoryItems;
   String? searchQuery;
+  int numOfCartItems = 0;
+  final secondHandItemCategories = DropDownItems.itemCategoryItems;
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -102,11 +116,7 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
 
   @override
   Widget floatingActionButton() {
-    return CustomFloatingActionButton(
-      icon: Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
-      onPressed: onCartPressed,
-      heroTag: 'marketplace_fab',
-    );
+    return getFloatingActionButton(numOfCartItems: numOfCartItems);
   }
 
   @override
@@ -187,7 +197,7 @@ extension _Actions on _MarketplaceScreenState {
     );
 
     if (result == true && mounted) {
-      fetchData();
+      await fetchData();
     }
   }
 
@@ -195,8 +205,12 @@ extension _Actions on _MarketplaceScreenState {
     context.router.push(CreateEditListingRoute(isEdit: false));
   }
 
-  void onCartPressed() {
-    context.router.push(CartRoute());
+  void onCartPressed() async {
+    final result = await context.router.push(CartRoute());
+
+    if (result == true && mounted) {
+      await fetchData();
+    }
   }
 
   void onItemPressed({required int itemListingID}) async {
@@ -205,7 +219,7 @@ extension _Actions on _MarketplaceScreenState {
     );
 
     if (result == true && mounted) {
-      fetchData();
+      await fetchData();
     }
   }
 
@@ -224,11 +238,23 @@ extension _Actions on _MarketplaceScreenState {
 
   Future<void> fetchData() async {
     _setState(() => _isLoading = true);
+
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+    final cartVM = context.read<CartViewModel>();
+
     await tryLoad(
       context,
       () => context.read<ItemListingViewModel>().getAllItemListings(),
     );
-    _setState(() => _isLoading = false);
+
+    if (mounted) {
+      await tryCatch(context, () => cartVM.getUserCartItems(userID: userID));
+    }
+
+    _setState(() {
+      numOfCartItems = cartVM.userCartItems.length;
+      _isLoading = false;
+    });
   }
 }
 
@@ -348,6 +374,39 @@ extension _WidgetFactories on _MarketplaceScreenState {
       ],
     );
   }
+
+  Widget getFloatingActionButton({required int numOfCartItems}) {
+    return CustomFloatingActionButton(
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(Icons.shopping_cart_rounded, color: ColorManager.whiteColor),
+          if (numOfCartItems > 0) ...[
+            Positioned(
+              right: -5,
+              top: -12,
+              child: getCartItemBadge(numOfCartItems: numOfCartItems),
+            ),
+          ],
+        ],
+      ),
+      onPressed: onCartPressed,
+      heroTag: 'marketplace_fab',
+    );
+  }
+
+  Widget getCartItemBadge({required int numOfCartItems}) {
+    return Container(
+      padding: _Styles.cartItemBadgePadding,
+      decoration: BoxDecoration(
+        color: ColorManager.redColor,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text('$numOfCartItems', style: _Styles.cartItemBadgeTextStyle),
+      ),
+    );
+  }
 }
 
 // * ----------------------------- Styles -----------------------------
@@ -355,6 +414,8 @@ class _Styles {
   _Styles._();
 
   static const categoryCardBorderRadius = 30.0;
+
+  static const cartItemBadgePadding = EdgeInsets.all(4);
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
@@ -391,5 +452,11 @@ class _Styles {
     fontSize: 15,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.primary,
+  );
+
+  static const cartItemBadgeTextStyle = TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.whiteColor,
   );
 }

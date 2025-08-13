@@ -9,7 +9,7 @@ class CustomFloatingActionButton extends StatelessWidget {
     this.heroTag,
   });
 
-  final Icon icon;
+  final Widget icon;
   final void Function()? onPressed;
   final Object? heroTag;
 

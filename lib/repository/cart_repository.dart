@@ -1,3 +1,4 @@
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/cart/cart_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/cart_services.dart';
@@ -28,9 +29,11 @@ class CartRepository {
   Future<MyResponse> getCartItemsWithUserID({required String userID}) async {
     final response = await _cartServices.getCartItemsWithUserID(userID: userID);
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = CartModel.fromJson(response.data);
-      return MyResponse.complete(resultModel);
+    if (response.data is List) {
+      final resultList = (response.data as List)
+          .map((json) => CartModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultList);
     }
     return response;
   }
@@ -65,7 +68,7 @@ class CartRepository {
     final response = await _cartServices.deleteCartItem(cartID: cartID);
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = CartModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

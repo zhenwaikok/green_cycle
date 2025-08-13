@@ -1,16 +1,29 @@
+import 'dart:async';
+
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/cart/cart_model.dart';
+import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
+import 'package:green_cycle_fyp/repository/cart_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/no_data_label.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class CartScreen extends StatelessWidget {
@@ -18,7 +31,18 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _CartScreen();
+    return ChangeNotifierProvider(
+      create: (_) {
+        CartViewModel(
+          cartRepository: CartRepository(),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+      },
+      child: _CartScreen(),
+    );
   }
 }
 
@@ -28,6 +52,21 @@ class _CartScreen extends BaseStatefulPage {
 }
 
 class _CartScreenState extends BaseStatefulState<_CartScreen> {
+  bool isLoading = true;
+  bool removeItem = false;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
   @override
   PreferredSizeWidget? appbar() {
     return CustomAppBar(
@@ -43,21 +82,60 @@ class _CartScreenState extends BaseStatefulState<_CartScreen> {
   }
 
   @override
-  Widget body() {
-    return getCartList();
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Cart',
-        isBackButtonVisible: true,
-        onPressed: onBackButtonPressed,
-      ),
-      body: SafeArea(
-        child: Padding(padding: _Styles.screenPadding, child: getCartList()),
-      ),
+  Widget body() {
+    final groupCartItemsBySeller = context.select(
+      (CartViewModel vm) => vm.groupedCartItems.entries.toList(),
+    );
+
+    final loadingList = List.generate(
+      3,
+      (index) =>
+          CartModel(itemListing: ItemListingModel(itemName: 'Loading...')),
+    );
+
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      color: ColorManager.blackColor,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      slivers: [
+        if (groupCartItemsBySeller.isEmpty)
+          (SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: NoDataAvailableLabel(noDataText: 'Your cart is empty'),
+            ),
+          ))
+        else
+          (SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final sellerName =
+                    groupCartItemsBySeller[index].value['sellerName'];
+                final items =
+                    groupCartItemsBySeller[index].value['items']
+                        as List<CartModel>;
+
+                return Padding(
+                  padding: _Styles.cardPadding,
+                  child: getCartCard(
+                    cartItemList: isLoading ? loadingList : items,
+                    isLoading: isLoading,
+                    sellerNamee: isLoading ? 'Loading...' : sellerName,
+                  ),
+                );
+              },
+              childCount: groupCartItemsBySeller.isEmpty
+                  ? (isLoading ? 5 : 0)
+                  : groupCartItemsBySeller.length,
+            ),
+          )),
+      ],
     );
   }
 }
@@ -65,100 +143,149 @@ class _CartScreenState extends BaseStatefulState<_CartScreen> {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CartScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(removeItem);
   }
 
-  void onDeleteButtonPressed() {
+  void onDeleteButtonPressed({required int cartID}) {
     WidgetUtil.showAlertDialog(
       context,
       title: 'Delete Confirmation',
       content: 'Are you sure you want to delete this item from your cart?',
       actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'No'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Yes'),
+        getAlertDialogTextButton(
+          onPressed: () => context.router.maybePop(),
+          text: 'No',
+        ),
+        getAlertDialogTextButton(
+          onPressed: () => removeFromCart(cartID: cartID),
+          text: 'Yes',
+        ),
       ],
     );
+  }
+
+  Future<void> removeFromCart({required int cartID}) async {
+    await context.router.maybePop();
+
+    if (mounted) {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<CartViewModel>().removeFromCart(cartID: cartID),
+          ) ??
+          false;
+
+      if (result) {
+        _setState(() => removeItem = true);
+        unawaited(
+          WidgetUtil.showSnackBar(text: 'Item removed from cart successfully'),
+        );
+        await fetchData();
+      }
+    }
   }
 
   void onCheckoutButtonPressed() {
     context.router.push(CheckoutRoute());
   }
+
+  Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+    final userVM = context.read<UserViewModel>();
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+
+    await tryLoad(
+      context,
+      () => context.read<CartViewModel>().getUserCartItems(
+        userID: userID,
+        userViewModel: userVM,
+        groupCartItem: true,
+      ),
+    );
+    _setState(() => isLoading = false);
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CartScreenState {
-  Widget getCartList() {
-    return ListView.builder(
-      padding: _Styles.listViewPadding,
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return Padding(padding: _Styles.cardPadding, child: getCartCard());
-      },
-    );
-  }
-
-  Widget getCartCard() {
+  Widget getCartCard({
+    required List<CartModel> cartItemList,
+    required String sellerNamee,
+    required bool isLoading,
+  }) {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getSellerName(),
-          getDivider(),
-          getCartItems(),
-          getDivider(),
-          getTotalAmount(),
-          getDivider(),
-          getCheckoutButton(),
-        ],
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getSellerName(sellerName: sellerNamee),
+            getDivider(),
+            getCartItems(cartItemList: cartItemList),
+            getDivider(),
+            getTotalAmount(cartItemList: cartItemList),
+            getDivider(),
+            getCheckoutButton(),
+          ],
+        ),
       ),
     );
   }
 
-  Widget getSellerName() {
+  Widget getSellerName({required String sellerName}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Icon(
-          FontAwesomeIcons.shop,
-          color: ColorManager.greyColor,
+          Icons.person,
+          color: ColorManager.blackColor,
           size: _Styles.shopIconSize,
         ),
-        SizedBox(width: 12),
-        Text('Seller Name', style: _Styles.sellerNameTextStyle),
+        SizedBox(width: 8),
+        Text(sellerName, style: _Styles.sellerNameTextStyle),
       ],
     );
   }
 
-  Widget getCartItems() {
+  Widget getCartItems({required List<CartModel> cartItemList}) {
     return Column(
       children: List.generate(
-        3,
+        cartItemList.length,
         (index) => Padding(
           padding: _Styles.cartItemPadding,
-          child: getCartItemDetails(),
+          child: getCartItemDetails(cartItemDetails: cartItemList[index]),
         ),
       ),
     );
   }
 
-  Widget getCartItemDetails() {
+  Widget getCartItemDetails({required CartModel cartItemDetails}) {
     return Row(
       children: [
         CustomImage(
           borderRadius: _Styles.itemImageBorderRadius,
           imageSize: _Styles.cartItemImageSize,
-          imageURL:
-              'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+          imageURL: cartItemDetails.itemListing?.itemImageURL?.first ?? '',
         ),
         SizedBox(width: 10),
-        Expanded(child: getCartItemDescription()),
-        getDeleteButton(),
+        Expanded(
+          child: getCartItemDescription(
+            productName: cartItemDetails.itemListing?.itemName ?? '',
+            condition: cartItemDetails.itemListing?.itemCondition ?? '',
+            price: cartItemDetails.itemListing?.itemPrice ?? 0.0,
+          ),
+        ),
+        getDeleteButton(cartID: cartItemDetails.cartID ?? 0),
       ],
     );
   }
 
-  Widget getCartItemDescription() {
+  Widget getCartItemDescription({
+    required String productName,
+    required String condition,
+    required double price,
+  }) {
     return SizedBox(
       height: _Styles.cartItemImageSize,
       child: Column(
@@ -169,23 +296,26 @@ extension _WidgetFactories on _CartScreenState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Product Name',
+                productName,
                 style: _Styles.blackTextStyle,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
               ),
-              CustomStatusBar(text: 'Like New'),
+              CustomStatusBar(text: condition),
             ],
           ),
-          Text('RM xx.xx', style: _Styles.priceTextStyle),
+          Text(
+            'RM ${WidgetUtil.priceFormatter(price)}',
+            style: _Styles.priceTextStyle,
+          ),
         ],
       ),
     );
   }
 
-  Widget getDeleteButton() {
+  Widget getDeleteButton({required int cartID}) {
     return IconButton(
-      onPressed: onDeleteButtonPressed,
+      onPressed: () => onDeleteButtonPressed(cartID: cartID),
       icon: Icon(
         Icons.delete,
         color: ColorManager.greyColor,
@@ -194,12 +324,25 @@ extension _WidgetFactories on _CartScreenState {
     );
   }
 
-  Widget getTotalAmount() {
+  Widget getTotalAmount({required List<CartModel> cartItemList}) {
+    final totalAmount = context.read<CartViewModel>().calculateTotalAmount(
+      cartItemList: cartItemList,
+    );
+    final totalItems = cartItemList.length;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Total (x items)', style: _Styles.blackTextStyle),
-        Text('RM xx.xx', style: _Styles.totalPriceTextStyle),
+        Text(
+          totalItems == 1
+              ? 'Total ($totalItems item)'
+              : 'Total ($totalItems items)',
+          style: _Styles.blackTextStyle,
+        ),
+        Text(
+          'RM ${WidgetUtil.priceFormatter(totalAmount)}',
+          style: _Styles.totalPriceTextStyle,
+        ),
       ],
     );
   }
@@ -240,7 +383,7 @@ class _Styles {
   static const maxTextLines = 2;
   static const deleteIconSize = 20.0;
   static const itemImageBorderRadius = 5.0;
-  static const shopIconSize = 15.0;
+  static const shopIconSize = 20.0;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 5);
 
@@ -249,18 +392,16 @@ class _Styles {
     vertical: 10,
   );
 
-  static const listViewPadding = EdgeInsets.all(10);
-
   static const customCardPadding = EdgeInsets.symmetric(
     horizontal: 15,
     vertical: 15,
   );
 
-  static const cardPadding = EdgeInsets.symmetric(vertical: 15);
+  static const cardPadding = EdgeInsets.symmetric(vertical: 15, horizontal: 10);
   static const cartItemPadding = EdgeInsets.symmetric(vertical: 10);
 
   static const sellerNameTextStyle = TextStyle(
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.blackColor,
   );

@@ -485,7 +485,7 @@ extension _WidgetFactories on _RewardSreenState {
               data:
                   'Use reward ${rewardRedemptionDetails.rewardID}: ${rewardRedemptionDetails.rewardName}',
               version: QrVersions.auto,
-              size: _Styles.CodeSize,
+              size: _Styles.qrCodeSize,
             ),
           ),
         ],
@@ -510,7 +510,7 @@ class _Styles {
   _Styles._();
 
   static const coinIconSize = 28.0;
-  static const CodeSize = 200.0;
+  static const qrCodeSize = 200.0;
 
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
