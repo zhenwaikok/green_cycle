@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/point_transaction_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_redemption_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
+import 'package:green_cycle_fyp/repository/stripe_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/awareness_services.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
@@ -22,17 +23,25 @@ import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_redemption_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/stripe_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
 enum HttpMethod { get, post, put, delete }
 
+enum PaymentStatus { success, cancelled, failed }
+
 class EnvValues {
   EnvValues._();
 
-  static const googleApiKey = String.fromEnvironment('google_api_key');
+  static const googleApiKey = String.fromEnvironment('googleApiKey');
   static const hostUrl = String.fromEnvironment('hostUrl');
+  static const stripeHostUrl = String.fromEnvironment('stripeHostUrl');
+  static const stripePublishableKey = String.fromEnvironment(
+    'stripePublishableKey',
+  );
+  static const stripeSecretKey = String.fromEnvironment('stripeSecretKey');
 }
 
 List<SingleChildWidget> providerAssets() => [
@@ -110,6 +119,9 @@ List<SingleChildWidget> providerAssets() => [
         userServices: UserServices(),
       ),
     ),
+  ),
+  ChangeNotifierProvider.value(
+    value: StripeViewModel(stripeRepository: StripeRepository()),
   ),
 ];
 

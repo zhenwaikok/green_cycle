@@ -13,7 +13,10 @@ abstract class BaseServices {
 
   static BaseServices? _instance;
   static String? hostUrl = EnvValues.hostUrl;
+  static String? stripeHostUrl = EnvValues.stripeHostUrl;
+
   String apiUrl() => hostUrl ?? '';
+  String stripeUrl() => stripeHostUrl ?? '';
 
   Dio? _dio;
 
@@ -22,6 +25,11 @@ abstract class BaseServices {
       _instance?._init();
     }
     return _instance?._dio;
+  }
+
+  /// Generate the stripe secret key with Bearer Authentication format
+  String get auth {
+    return 'Bearer ${EnvValues.stripeSecretKey}';
   }
 
   void _init() {
@@ -44,9 +52,16 @@ abstract class BaseServices {
     required HttpMethod httpMethod,
     required String path,
     dynamic postBody,
+    bool isAuthRequired = false,
   }) async {
     try {
       Response? response;
+
+      if (isAuthRequired) {
+        dio?.options.headers['Content-Type'] =
+            'application/x-www-form-urlencoded';
+        dio?.options.headers['Authorization'] = auth;
+      }
 
       switch (httpMethod) {
         case HttpMethod.get:

@@ -83,6 +83,9 @@ dependencies:
   #QR
   qr_flutter: ^4.1.0
 
+  #Payment
+  flutter_stripe: ^11.5.0
+
 
 dev_dependencies:
   flutter_test:

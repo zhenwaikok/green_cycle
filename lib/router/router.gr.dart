@@ -11,8 +11,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i49;
 import 'package:flutter/material.dart' as _i50;
+import 'package:green_cycle_fyp/model/api_model/cart/cart_model.dart' as _i51;
 import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart'
-    as _i51;
+    as _i52;
 import 'package:green_cycle_fyp/view/admin/collector_details/collector_details_screen.dart'
     as _i12;
 import 'package:green_cycle_fyp/view/admin/dashboard/admin_dashboard_screen.dart'
@@ -357,18 +358,39 @@ class ChangePasswordRoute extends _i49.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.CheckoutScreen]
-class CheckoutRoute extends _i49.PageRouteInfo<void> {
-  const CheckoutRoute({List<_i49.PageRouteInfo>? children})
-    : super(CheckoutRoute.name, initialChildren: children);
+class CheckoutRoute extends _i49.PageRouteInfo<CheckoutRouteArgs> {
+  CheckoutRoute({
+    _i50.Key? key,
+    required List<_i51.CartModel> cartItems,
+    List<_i49.PageRouteInfo>? children,
+  }) : super(
+         CheckoutRoute.name,
+         args: CheckoutRouteArgs(key: key, cartItems: cartItems),
+         initialChildren: children,
+       );
 
   static const String name = 'CheckoutRoute';
 
   static _i49.PageInfo page = _i49.PageInfo(
     name,
     builder: (data) {
-      return const _i10.CheckoutScreen();
+      final args = data.argsAs<CheckoutRouteArgs>();
+      return _i10.CheckoutScreen(key: args.key, cartItems: args.cartItems);
     },
   );
+}
+
+class CheckoutRouteArgs {
+  const CheckoutRouteArgs({this.key, required this.cartItems});
+
+  final _i50.Key? key;
+
+  final List<_i51.CartModel> cartItems;
+
+  @override
+  String toString() {
+    return 'CheckoutRouteArgs{key: $key, cartItems: $cartItems}';
+  }
 }
 
 /// generated route for
@@ -573,7 +595,7 @@ class CollectorProfileRoute extends _i49.PageRouteInfo<void> {
 class CompletePickupRoute extends _i49.PageRouteInfo<CompletePickupRouteArgs> {
   CompletePickupRoute({
     _i50.Key? key,
-    required _i51.PickupRequestModel pickupRequestDetails,
+    required _i52.PickupRequestModel pickupRequestDetails,
     List<_i49.PageRouteInfo>? children,
   }) : super(
          CompletePickupRoute.name,
@@ -603,7 +625,7 @@ class CompletePickupRouteArgs {
 
   final _i50.Key? key;
 
-  final _i51.PickupRequestModel pickupRequestDetails;
+  final _i52.PickupRequestModel pickupRequestDetails;
 
   @override
   String toString() {

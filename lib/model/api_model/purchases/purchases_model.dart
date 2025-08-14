@@ -15,6 +15,7 @@ class PurchasesModel with _$PurchasesModel {
     String? itemCondition,
     String? itemCategory,
     List<String>? itemImageURL,
+    String? deliveryAddress,
     bool? isDelivered,
     DateTime? purchasedDate,
     DateTime? deliveredDate,
