@@ -22,6 +22,7 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
+import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -185,8 +186,12 @@ extension _Actions on _CartScreenState {
     }
   }
 
-  void onCheckoutButtonPressed() {
-    context.router.push(CheckoutRoute());
+  void onCheckoutButtonPressed({required List<CartModel> cartItems}) {
+    context.router.push(CheckoutRoute(cartItems: cartItems));
+  }
+
+  void onCartItemPressed({required int itemListingID}) {
+    context.router.push(ItemDetailsRoute(itemListingID: itemListingID));
   }
 
   Future<void> fetchData() async {
@@ -226,7 +231,7 @@ extension _WidgetFactories on _CartScreenState {
             getDivider(),
             getTotalAmount(cartItemList: cartItemList),
             getDivider(),
-            getCheckoutButton(),
+            getCheckoutButton(cartItems: cartItemList),
           ],
         ),
       ),
@@ -261,23 +266,28 @@ extension _WidgetFactories on _CartScreenState {
   }
 
   Widget getCartItemDetails({required CartModel cartItemDetails}) {
-    return Row(
-      children: [
-        CustomImage(
-          borderRadius: _Styles.itemImageBorderRadius,
-          imageSize: _Styles.cartItemImageSize,
-          imageURL: cartItemDetails.itemListing?.itemImageURL?.first ?? '',
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: getCartItemDescription(
-            productName: cartItemDetails.itemListing?.itemName ?? '',
-            condition: cartItemDetails.itemListing?.itemCondition ?? '',
-            price: cartItemDetails.itemListing?.itemPrice ?? 0.0,
+    return TouchableOpacity(
+      onPressed: () => onCartItemPressed(
+        itemListingID: cartItemDetails.itemListing?.itemListingID ?? 0,
+      ),
+      child: Row(
+        children: [
+          CustomImage(
+            borderRadius: _Styles.itemImageBorderRadius,
+            imageSize: _Styles.cartItemImageSize,
+            imageURL: cartItemDetails.itemListing?.itemImageURL?.first ?? '',
           ),
-        ),
-        getDeleteButton(cartID: cartItemDetails.cartID ?? 0),
-      ],
+          SizedBox(width: 10),
+          Expanded(
+            child: getCartItemDescription(
+              productName: cartItemDetails.itemListing?.itemName ?? '',
+              condition: cartItemDetails.itemListing?.itemCondition ?? '',
+              price: cartItemDetails.itemListing?.itemPrice ?? 0.0,
+            ),
+          ),
+          getDeleteButton(cartID: cartItemDetails.cartID ?? 0),
+        ],
+      ),
     );
   }
 
@@ -347,11 +357,11 @@ extension _WidgetFactories on _CartScreenState {
     );
   }
 
-  Widget getCheckoutButton() {
+  Widget getCheckoutButton({required List<CartModel> cartItems}) {
     return CustomButton(
       text: 'Checkout',
       textColor: ColorManager.whiteColor,
-      onPressed: onCheckoutButtonPressed,
+      onPressed: () => onCheckoutButtonPressed(cartItems: cartItems),
       backgroundColor: ColorManager.primary,
     );
   }

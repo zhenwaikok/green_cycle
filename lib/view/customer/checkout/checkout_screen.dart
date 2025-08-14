@@ -1,48 +1,43 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/constant/images_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/cart/cart_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/stripe_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class CheckoutScreen extends StatelessWidget {
-  const CheckoutScreen({super.key});
+  const CheckoutScreen({super.key, required this.cartItems});
+
+  final List<CartModel> cartItems;
 
   @override
   Widget build(BuildContext context) {
-    return _CheckoutScreen();
+    return _CheckoutScreen(cartItems: cartItems);
   }
 }
 
 class _CheckoutScreen extends BaseStatefulPage {
+  const _CheckoutScreen({required this.cartItems});
+
+  final List<CartModel> cartItems;
+
   @override
   State<_CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends BaseStatefulState<_CheckoutScreen> {
-  List<String> paymentOptions = ["FPX", 'Debit/Credit Card'];
-
-  String? selectedPaymentOption;
-
-  void _setState(VoidCallback fn) {
-    if (mounted) {
-      setState(fn);
-    }
-  }
-
-  @override
-  void initState() {
-    selectedPaymentOption = paymentOptions.first;
-    super.initState();
-  }
-
   @override
   PreferredSizeWidget? appbar() {
     return CustomAppBar(
@@ -58,22 +53,28 @@ class _CheckoutScreenState extends BaseStatefulState<_CheckoutScreen> {
   }
 
   @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
   Widget bottomNavigationBar() {
-    return getBottomSheet();
+    return getBottomSheet(cartItemList: widget.cartItems);
   }
 
   @override
   Widget body() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getDeliveryDetailsSection(),
-          SizedBox(height: 35),
-          getCartItems(),
-          SizedBox(height: 25),
-          getPaymentOptionSection(),
-        ],
+      child: Padding(
+        padding: _Styles.screenPadding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getDeliveryDetailsSection(),
+            SizedBox(height: 35),
+            getCartItems(cartItems: widget.cartItems),
+          ],
+        ),
       ),
     );
   }
@@ -85,11 +86,28 @@ extension _Actions on _CheckoutScreenState {
     context.router.maybePop();
   }
 
-  void onPaymentOptionChanged(String? value) {
-    if (value != null) {
-      _setState(() {
-        selectedPaymentOption = value;
-      });
+  Future<void> onPlaceOrderButtonPressed({required double amount}) async {
+    final paymentIntentClientSecret = await tryLoad(
+      context,
+      () => context.read<StripeViewModel>().createPaymentIntent(amount: amount),
+    );
+    if (mounted) {
+      final paymentStatus = await context.read<StripeViewModel>().makePayment(
+        paymentIntentClientSecret: paymentIntentClientSecret ?? '',
+      );
+
+      switch (paymentStatus) {
+        case PaymentStatus.success:
+          if (mounted) await context.router.maybePop();
+          print('successful');
+          break;
+        case PaymentStatus.cancelled:
+          WidgetUtil.showSnackBar(text: 'Payment cancelled');
+          break;
+        case PaymentStatus.failed:
+          WidgetUtil.showSnackBar(text: 'Payment failed, please try again');
+          break;
+      }
     }
   }
 }
@@ -128,7 +146,7 @@ extension _WidgetFactories on _CheckoutScreenState {
     );
   }
 
-  Widget getCartItems() {
+  Widget getCartItems({required List<CartModel> cartItems}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -136,16 +154,16 @@ extension _WidgetFactories on _CheckoutScreenState {
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: 3,
+          itemCount: cartItems.length,
           itemBuilder: (context, index) {
-            return getCartItemCard();
+            return getCartItemCard(cartItem: cartItems[index]);
           },
         ),
       ],
     );
   }
 
-  Widget getCartItemCard() {
+  Widget getCartItemCard({required CartModel cartItem}) {
     return Padding(
       padding: _Styles.cardPadding,
       child: CustomCard(
@@ -153,26 +171,34 @@ extension _WidgetFactories on _CheckoutScreenState {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            getItemImage(),
+            getItemImage(
+              imageURL: cartItem.itemListing?.itemImageURL?.first ?? '',
+            ),
             SizedBox(width: 10),
-            Expanded(child: getItemDetails()),
-            getItemCondition(),
+            Expanded(
+              child: getItemDetails(
+                productName: cartItem.itemListing?.itemName ?? '',
+                price: cartItem.itemListing?.itemPrice ?? 0.0,
+              ),
+            ),
+            getItemCondition(
+              condition: cartItem.itemListing?.itemCondition ?? '',
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget getItemImage() {
+  Widget getItemImage({required String imageURL}) {
     return CustomImage(
       borderRadius: _Styles.itemImageBorderRadius,
       imageSize: _Styles.cartItemImageSize,
-      imageURL:
-          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZHVjdHxlbnwwfHwwfHx8MA%3D%3D',
+      imageURL: imageURL,
     );
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({required String productName, required double price}) {
     return SizedBox(
       height: _Styles.cartItemImageSize,
       child: Column(
@@ -180,76 +206,30 @@ extension _WidgetFactories on _CheckoutScreenState {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Product Name',
+            productName,
             style: _Styles.blackSmallTextStyle,
             maxLines: _Styles.maxTextLines,
             overflow: TextOverflow.ellipsis,
           ),
-          Text('RM xx.xx', style: _Styles.productPriceTextStyle),
-        ],
-      ),
-    );
-  }
-
-  Widget getItemCondition() {
-    return CustomStatusBar(text: 'Like New');
-  }
-
-  Widget getPaymentOptionSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Payment Options', style: _Styles.blackTextStyle),
-        ...List.generate(
-          paymentOptions.length,
-          (index) => getPaymentOption(
-            option: paymentOptions[index],
-            selectedPaymentOption: selectedPaymentOption ?? '',
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget getPaymentOption({
-    required String option,
-    required String selectedPaymentOption,
-  }) {
-    return Padding(
-      padding: _Styles.paymentOptionPadding,
-      child: Row(
-        children: [
-          Image.asset(
-            getPaymentOptionIcon(option),
-            width: _Styles.paymentOptionIconSize,
-            height: _Styles.paymentOptionIconSize,
-            fit: BoxFit.cover,
-          ),
-          SizedBox(width: 15),
-          Expanded(child: Text(option, style: _Styles.blackSmallTextStyle)),
-          Radio<String>(
-            value: option,
-            groupValue: selectedPaymentOption,
-            onChanged: (value) => onPaymentOptionChanged(value),
-            activeColor: ColorManager.primary,
+          Text(
+            'RM ${WidgetUtil.priceFormatter(price)}',
+            style: _Styles.productPriceTextStyle,
           ),
         ],
       ),
     );
   }
 
-  String getPaymentOptionIcon(String option) {
-    switch (option) {
-      case "FPX":
-        return Images.fpxLogo;
-      case "Debit/Credit Card":
-        return Images.fpxLogo;
-      default:
-        return Images.fpxLogo;
-    }
+  Widget getItemCondition({required String condition}) {
+    return CustomStatusBar(text: condition);
   }
 
-  Widget getBottomSheet() {
+  Widget getBottomSheet({required List<CartModel> cartItemList}) {
+    final numOfCartItems = cartItemList.length;
+    final totalAmount = context.read<CartViewModel>().calculateTotalAmount(
+      cartItemList: cartItemList,
+    );
+
     return Padding(
       padding: _Styles.bottomSheetPadding,
       child: Column(
@@ -259,15 +239,18 @@ extension _WidgetFactories on _CheckoutScreenState {
           Text('Order Summary', style: _Styles.blackTextStyle),
           SizedBox(height: 5),
           getOrderSummaryDetails(
-            title: 'Items Total (x items)',
-            amount: 'RM xx.xx',
+            title: numOfCartItems == 1
+                ? 'Item Total ($numOfCartItems item)'
+                : 'Items Total ($numOfCartItems items)',
+            amount: 'RM ${WidgetUtil.priceFormatter(totalAmount)}',
           ),
-          SizedBox(height: 5),
-          getOrderSummaryDetails(title: 'Delivery Fee', amount: 'RM xx.xx'),
+          SizedBox(height: 20),
+          getTotalPriceDetails(
+            title: 'Total',
+            amount: 'RM ${WidgetUtil.priceFormatter(totalAmount)}',
+          ),
           SizedBox(height: 15),
-          getTotalPriceDetails(title: 'Total', amount: 'RM xx.xx'),
-          SizedBox(height: 15),
-          getPlaceOrderButton(),
+          getPlaceOrderButton(amount: totalAmount),
         ],
       ),
     );
@@ -296,11 +279,11 @@ extension _WidgetFactories on _CheckoutScreenState {
     );
   }
 
-  Widget getPlaceOrderButton() {
+  Widget getPlaceOrderButton({required double amount}) {
     return CustomButton(
       text: 'Place Order',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: () => onPlaceOrderButtonPressed(amount: amount),
       backgroundColor: ColorManager.primary,
     );
   }
@@ -313,15 +296,15 @@ class _Styles {
   static const cartItemImageSize = 80.0;
   static const itemImageBorderRadius = 5.0;
   static const maxTextLines = 2;
-  static const paymentOptionIconSize = 60.0;
 
   static const bottomSheetPadding = EdgeInsets.all(20);
-
-  static const paymentOptionPadding = EdgeInsets.symmetric(vertical: 5);
-
   static const cardPadding = EdgeInsets.symmetric(vertical: 10);
-
   static const customCardPadding = EdgeInsets.all(15);
+
+  static const screenPadding = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 20,
+  );
 
   static const greyTextStyle = TextStyle(
     fontSize: 15,

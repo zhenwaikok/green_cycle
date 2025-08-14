@@ -107,7 +107,7 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
   Widget floatingActionButton() {
     return CustomFloatingActionButton(
       icon: Icon(Icons.add, color: ColorManager.whiteColor),
-      onPressed: () {},
+      onPressed: onAddButtonPressed,
       heroTag: 'request_fab',
     );
   }
@@ -243,6 +243,10 @@ extension _Actions on _RequestScreenState {
     if (result == true && mounted) {
       fetchData();
     }
+  }
+
+  void onAddButtonPressed() {
+    context.router.push(SelectLocationRoute(isEdit: false));
   }
 
   Future<void> fetchData() async {

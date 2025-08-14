@@ -30,6 +30,7 @@ mixin _$PurchasesModel {
   String? get itemCondition => throw _privateConstructorUsedError;
   String? get itemCategory => throw _privateConstructorUsedError;
   List<String>? get itemImageURL => throw _privateConstructorUsedError;
+  String? get deliveryAddress => throw _privateConstructorUsedError;
   bool? get isDelivered => throw _privateConstructorUsedError;
   DateTime? get purchasedDate => throw _privateConstructorUsedError;
   DateTime? get deliveredDate => throw _privateConstructorUsedError;
@@ -61,6 +62,7 @@ abstract class $PurchasesModelCopyWith<$Res> {
     String? itemCondition,
     String? itemCategory,
     List<String>? itemImageURL,
+    String? deliveryAddress,
     bool? isDelivered,
     DateTime? purchasedDate,
     DateTime? deliveredDate,
@@ -91,6 +93,7 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
     Object? itemCondition = freezed,
     Object? itemCategory = freezed,
     Object? itemImageURL = freezed,
+    Object? deliveryAddress = freezed,
     Object? isDelivered = freezed,
     Object? purchasedDate = freezed,
     Object? deliveredDate = freezed,
@@ -133,6 +136,10 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
                 ? _value.itemImageURL
                 : itemImageURL // ignore: cast_nullable_to_non_nullable
                       as List<String>?,
+            deliveryAddress: freezed == deliveryAddress
+                ? _value.deliveryAddress
+                : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
             isDelivered: freezed == isDelivered
                 ? _value.isDelivered
                 : isDelivered // ignore: cast_nullable_to_non_nullable
@@ -170,6 +177,7 @@ abstract class _$$PurchasesModelImplCopyWith<$Res>
     String? itemCondition,
     String? itemCategory,
     List<String>? itemImageURL,
+    String? deliveryAddress,
     bool? isDelivered,
     DateTime? purchasedDate,
     DateTime? deliveredDate,
@@ -199,6 +207,7 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
     Object? itemCondition = freezed,
     Object? itemCategory = freezed,
     Object? itemImageURL = freezed,
+    Object? deliveryAddress = freezed,
     Object? isDelivered = freezed,
     Object? purchasedDate = freezed,
     Object? deliveredDate = freezed,
@@ -241,6 +250,10 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
             ? _value._itemImageURL
             : itemImageURL // ignore: cast_nullable_to_non_nullable
                   as List<String>?,
+        deliveryAddress: freezed == deliveryAddress
+            ? _value.deliveryAddress
+            : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
         isDelivered: freezed == isDelivered
             ? _value.isDelivered
             : isDelivered // ignore: cast_nullable_to_non_nullable
@@ -271,6 +284,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     this.itemCondition,
     this.itemCategory,
     final List<String>? itemImageURL,
+    this.deliveryAddress,
     this.isDelivered,
     this.purchasedDate,
     this.deliveredDate,
@@ -306,6 +320,8 @@ class _$PurchasesModelImpl implements _PurchasesModel {
   }
 
   @override
+  final String? deliveryAddress;
+  @override
   final bool? isDelivered;
   @override
   final DateTime? purchasedDate;
@@ -314,7 +330,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
 
   @override
   String toString() {
-    return 'PurchasesModel(purchaseID: $purchaseID, buyerUserID: $buyerUserID, sellerUserID: $sellerUserID, itemListingID: $itemListingID, itemName: $itemName, itemPrice: $itemPrice, itemCondition: $itemCondition, itemCategory: $itemCategory, itemImageURL: $itemImageURL, isDelivered: $isDelivered, purchasedDate: $purchasedDate, deliveredDate: $deliveredDate)';
+    return 'PurchasesModel(purchaseID: $purchaseID, buyerUserID: $buyerUserID, sellerUserID: $sellerUserID, itemListingID: $itemListingID, itemName: $itemName, itemPrice: $itemPrice, itemCondition: $itemCondition, itemCategory: $itemCategory, itemImageURL: $itemImageURL, deliveryAddress: $deliveryAddress, isDelivered: $isDelivered, purchasedDate: $purchasedDate, deliveredDate: $deliveredDate)';
   }
 
   @override
@@ -342,6 +358,8 @@ class _$PurchasesModelImpl implements _PurchasesModel {
               other._itemImageURL,
               _itemImageURL,
             ) &&
+            (identical(other.deliveryAddress, deliveryAddress) ||
+                other.deliveryAddress == deliveryAddress) &&
             (identical(other.isDelivered, isDelivered) ||
                 other.isDelivered == isDelivered) &&
             (identical(other.purchasedDate, purchasedDate) ||
@@ -363,6 +381,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     itemCondition,
     itemCategory,
     const DeepCollectionEquality().hash(_itemImageURL),
+    deliveryAddress,
     isDelivered,
     purchasedDate,
     deliveredDate,
@@ -396,6 +415,7 @@ abstract class _PurchasesModel implements PurchasesModel {
     final String? itemCondition,
     final String? itemCategory,
     final List<String>? itemImageURL,
+    final String? deliveryAddress,
     final bool? isDelivered,
     final DateTime? purchasedDate,
     final DateTime? deliveredDate,
@@ -422,6 +442,8 @@ abstract class _PurchasesModel implements PurchasesModel {
   String? get itemCategory;
   @override
   List<String>? get itemImageURL;
+  @override
+  String? get deliveryAddress;
   @override
   bool? get isDelivered;
   @override
