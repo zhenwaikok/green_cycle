@@ -107,21 +107,29 @@ class ItemListingViewModel extends BaseViewModel {
   }
 
   Future<bool> updateItemListing({
-    required List<ImageFile> itemImages,
+    List<ImageFile>? itemImages,
     required String itemName,
     required String itemDescription,
     required double itemPrice,
     required String itemCondition,
     required String itemCategory,
+    bool? isSold,
+    int? itemListingID,
+    String? userID,
+    String? status,
+    DateTime? createdDate,
+    List<String>? imageURLs,
   }) async {
     List<String> finalImageURLs = [];
     List<ImageFile> newImageFiles = [];
 
-    for (var image in itemImages) {
-      if (image.path?.startsWith('http') ?? false) {
-        finalImageURLs.add(image.path ?? '');
-      } else {
-        newImageFiles.add(image);
+    if (itemImages?.isNotEmpty == true) {
+      for (var image in itemImages ?? []) {
+        if (image.path?.startsWith('http') ?? false) {
+          finalImageURLs.add(image.path ?? '');
+        } else {
+          newImageFiles.add(image);
+        }
       }
     }
 
@@ -138,21 +146,21 @@ class ItemListingViewModel extends BaseViewModel {
     }
 
     ItemListingModel itemListingModel = ItemListingModel(
-      itemListingID: _itemListingDetails?.itemListingID ?? 0,
-      userID: userRepository.user?.userID ?? '',
-      itemImageURL: finalImageURLs,
+      itemListingID: itemListingID ?? _itemListingDetails?.itemListingID ?? 0,
+      userID: userID ?? userRepository.user?.userID ?? '',
+      itemImageURL: imageURLs ?? finalImageURLs,
       itemName: itemName,
       itemDescription: itemDescription,
       itemPrice: itemPrice,
       itemCondition: itemCondition,
       itemCategory: itemCategory,
-      isSold: _itemListingDetails?.isSold,
-      status: _itemListingDetails?.status,
-      createdDate: _itemListingDetails?.createdDate,
+      isSold: isSold ?? _itemListingDetails?.isSold,
+      status: status ?? _itemListingDetails?.status,
+      createdDate: createdDate ?? _itemListingDetails?.createdDate,
     );
 
     final response = await itemListingRepository.updateItemListing(
-      itemListingID: _itemListingDetails?.itemListingID ?? 0,
+      itemListingID: itemListingID ?? _itemListingDetails?.itemListingID ?? 0,
       itemListingModel: itemListingModel,
     );
 

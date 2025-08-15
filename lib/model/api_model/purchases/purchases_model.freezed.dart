@@ -21,10 +21,11 @@ PurchasesModel _$PurchasesModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PurchasesModel {
-  String? get purchaseID => throw _privateConstructorUsedError;
+  int? get purchaseID => throw _privateConstructorUsedError;
   String? get buyerUserID => throw _privateConstructorUsedError;
   String? get sellerUserID => throw _privateConstructorUsedError;
   int? get itemListingID => throw _privateConstructorUsedError;
+  String? get purchaseGroupID => throw _privateConstructorUsedError;
   String? get itemName => throw _privateConstructorUsedError;
   double? get itemPrice => throw _privateConstructorUsedError;
   String? get itemCondition => throw _privateConstructorUsedError;
@@ -32,7 +33,7 @@ mixin _$PurchasesModel {
   List<String>? get itemImageURL => throw _privateConstructorUsedError;
   String? get deliveryAddress => throw _privateConstructorUsedError;
   bool? get isDelivered => throw _privateConstructorUsedError;
-  DateTime? get purchasedDate => throw _privateConstructorUsedError;
+  DateTime? get purchaseDate => throw _privateConstructorUsedError;
   DateTime? get deliveredDate => throw _privateConstructorUsedError;
 
   /// Serializes this PurchasesModel to a JSON map.
@@ -53,10 +54,11 @@ abstract class $PurchasesModelCopyWith<$Res> {
   ) = _$PurchasesModelCopyWithImpl<$Res, PurchasesModel>;
   @useResult
   $Res call({
-    String? purchaseID,
+    int? purchaseID,
     String? buyerUserID,
     String? sellerUserID,
     int? itemListingID,
+    String? purchaseGroupID,
     String? itemName,
     double? itemPrice,
     String? itemCondition,
@@ -64,7 +66,7 @@ abstract class $PurchasesModelCopyWith<$Res> {
     List<String>? itemImageURL,
     String? deliveryAddress,
     bool? isDelivered,
-    DateTime? purchasedDate,
+    DateTime? purchaseDate,
     DateTime? deliveredDate,
   });
 }
@@ -88,6 +90,7 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
     Object? buyerUserID = freezed,
     Object? sellerUserID = freezed,
     Object? itemListingID = freezed,
+    Object? purchaseGroupID = freezed,
     Object? itemName = freezed,
     Object? itemPrice = freezed,
     Object? itemCondition = freezed,
@@ -95,7 +98,7 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
     Object? itemImageURL = freezed,
     Object? deliveryAddress = freezed,
     Object? isDelivered = freezed,
-    Object? purchasedDate = freezed,
+    Object? purchaseDate = freezed,
     Object? deliveredDate = freezed,
   }) {
     return _then(
@@ -103,7 +106,7 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
             purchaseID: freezed == purchaseID
                 ? _value.purchaseID
                 : purchaseID // ignore: cast_nullable_to_non_nullable
-                      as String?,
+                      as int?,
             buyerUserID: freezed == buyerUserID
                 ? _value.buyerUserID
                 : buyerUserID // ignore: cast_nullable_to_non_nullable
@@ -116,6 +119,10 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
                 ? _value.itemListingID
                 : itemListingID // ignore: cast_nullable_to_non_nullable
                       as int?,
+            purchaseGroupID: freezed == purchaseGroupID
+                ? _value.purchaseGroupID
+                : purchaseGroupID // ignore: cast_nullable_to_non_nullable
+                      as String?,
             itemName: freezed == itemName
                 ? _value.itemName
                 : itemName // ignore: cast_nullable_to_non_nullable
@@ -144,9 +151,9 @@ class _$PurchasesModelCopyWithImpl<$Res, $Val extends PurchasesModel>
                 ? _value.isDelivered
                 : isDelivered // ignore: cast_nullable_to_non_nullable
                       as bool?,
-            purchasedDate: freezed == purchasedDate
-                ? _value.purchasedDate
-                : purchasedDate // ignore: cast_nullable_to_non_nullable
+            purchaseDate: freezed == purchaseDate
+                ? _value.purchaseDate
+                : purchaseDate // ignore: cast_nullable_to_non_nullable
                       as DateTime?,
             deliveredDate: freezed == deliveredDate
                 ? _value.deliveredDate
@@ -168,10 +175,11 @@ abstract class _$$PurchasesModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String? purchaseID,
+    int? purchaseID,
     String? buyerUserID,
     String? sellerUserID,
     int? itemListingID,
+    String? purchaseGroupID,
     String? itemName,
     double? itemPrice,
     String? itemCondition,
@@ -179,7 +187,7 @@ abstract class _$$PurchasesModelImplCopyWith<$Res>
     List<String>? itemImageURL,
     String? deliveryAddress,
     bool? isDelivered,
-    DateTime? purchasedDate,
+    DateTime? purchaseDate,
     DateTime? deliveredDate,
   });
 }
@@ -202,6 +210,7 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
     Object? buyerUserID = freezed,
     Object? sellerUserID = freezed,
     Object? itemListingID = freezed,
+    Object? purchaseGroupID = freezed,
     Object? itemName = freezed,
     Object? itemPrice = freezed,
     Object? itemCondition = freezed,
@@ -209,7 +218,7 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
     Object? itemImageURL = freezed,
     Object? deliveryAddress = freezed,
     Object? isDelivered = freezed,
-    Object? purchasedDate = freezed,
+    Object? purchaseDate = freezed,
     Object? deliveredDate = freezed,
   }) {
     return _then(
@@ -217,7 +226,7 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
         purchaseID: freezed == purchaseID
             ? _value.purchaseID
             : purchaseID // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                  as int?,
         buyerUserID: freezed == buyerUserID
             ? _value.buyerUserID
             : buyerUserID // ignore: cast_nullable_to_non_nullable
@@ -230,6 +239,10 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
             ? _value.itemListingID
             : itemListingID // ignore: cast_nullable_to_non_nullable
                   as int?,
+        purchaseGroupID: freezed == purchaseGroupID
+            ? _value.purchaseGroupID
+            : purchaseGroupID // ignore: cast_nullable_to_non_nullable
+                  as String?,
         itemName: freezed == itemName
             ? _value.itemName
             : itemName // ignore: cast_nullable_to_non_nullable
@@ -258,9 +271,9 @@ class __$$PurchasesModelImplCopyWithImpl<$Res>
             ? _value.isDelivered
             : isDelivered // ignore: cast_nullable_to_non_nullable
                   as bool?,
-        purchasedDate: freezed == purchasedDate
-            ? _value.purchasedDate
-            : purchasedDate // ignore: cast_nullable_to_non_nullable
+        purchaseDate: freezed == purchaseDate
+            ? _value.purchaseDate
+            : purchaseDate // ignore: cast_nullable_to_non_nullable
                   as DateTime?,
         deliveredDate: freezed == deliveredDate
             ? _value.deliveredDate
@@ -279,6 +292,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     this.buyerUserID,
     this.sellerUserID,
     this.itemListingID,
+    this.purchaseGroupID,
     this.itemName,
     this.itemPrice,
     this.itemCondition,
@@ -286,7 +300,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     final List<String>? itemImageURL,
     this.deliveryAddress,
     this.isDelivered,
-    this.purchasedDate,
+    this.purchaseDate,
     this.deliveredDate,
   }) : _itemImageURL = itemImageURL;
 
@@ -294,13 +308,15 @@ class _$PurchasesModelImpl implements _PurchasesModel {
       _$$PurchasesModelImplFromJson(json);
 
   @override
-  final String? purchaseID;
+  final int? purchaseID;
   @override
   final String? buyerUserID;
   @override
   final String? sellerUserID;
   @override
   final int? itemListingID;
+  @override
+  final String? purchaseGroupID;
   @override
   final String? itemName;
   @override
@@ -324,13 +340,13 @@ class _$PurchasesModelImpl implements _PurchasesModel {
   @override
   final bool? isDelivered;
   @override
-  final DateTime? purchasedDate;
+  final DateTime? purchaseDate;
   @override
   final DateTime? deliveredDate;
 
   @override
   String toString() {
-    return 'PurchasesModel(purchaseID: $purchaseID, buyerUserID: $buyerUserID, sellerUserID: $sellerUserID, itemListingID: $itemListingID, itemName: $itemName, itemPrice: $itemPrice, itemCondition: $itemCondition, itemCategory: $itemCategory, itemImageURL: $itemImageURL, deliveryAddress: $deliveryAddress, isDelivered: $isDelivered, purchasedDate: $purchasedDate, deliveredDate: $deliveredDate)';
+    return 'PurchasesModel(purchaseID: $purchaseID, buyerUserID: $buyerUserID, sellerUserID: $sellerUserID, itemListingID: $itemListingID, purchaseGroupID: $purchaseGroupID, itemName: $itemName, itemPrice: $itemPrice, itemCondition: $itemCondition, itemCategory: $itemCategory, itemImageURL: $itemImageURL, deliveryAddress: $deliveryAddress, isDelivered: $isDelivered, purchaseDate: $purchaseDate, deliveredDate: $deliveredDate)';
   }
 
   @override
@@ -346,6 +362,8 @@ class _$PurchasesModelImpl implements _PurchasesModel {
                 other.sellerUserID == sellerUserID) &&
             (identical(other.itemListingID, itemListingID) ||
                 other.itemListingID == itemListingID) &&
+            (identical(other.purchaseGroupID, purchaseGroupID) ||
+                other.purchaseGroupID == purchaseGroupID) &&
             (identical(other.itemName, itemName) ||
                 other.itemName == itemName) &&
             (identical(other.itemPrice, itemPrice) ||
@@ -362,8 +380,8 @@ class _$PurchasesModelImpl implements _PurchasesModel {
                 other.deliveryAddress == deliveryAddress) &&
             (identical(other.isDelivered, isDelivered) ||
                 other.isDelivered == isDelivered) &&
-            (identical(other.purchasedDate, purchasedDate) ||
-                other.purchasedDate == purchasedDate) &&
+            (identical(other.purchaseDate, purchaseDate) ||
+                other.purchaseDate == purchaseDate) &&
             (identical(other.deliveredDate, deliveredDate) ||
                 other.deliveredDate == deliveredDate));
   }
@@ -376,6 +394,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     buyerUserID,
     sellerUserID,
     itemListingID,
+    purchaseGroupID,
     itemName,
     itemPrice,
     itemCondition,
@@ -383,7 +402,7 @@ class _$PurchasesModelImpl implements _PurchasesModel {
     const DeepCollectionEquality().hash(_itemImageURL),
     deliveryAddress,
     isDelivered,
-    purchasedDate,
+    purchaseDate,
     deliveredDate,
   );
 
@@ -406,10 +425,11 @@ class _$PurchasesModelImpl implements _PurchasesModel {
 
 abstract class _PurchasesModel implements PurchasesModel {
   const factory _PurchasesModel({
-    final String? purchaseID,
+    final int? purchaseID,
     final String? buyerUserID,
     final String? sellerUserID,
     final int? itemListingID,
+    final String? purchaseGroupID,
     final String? itemName,
     final double? itemPrice,
     final String? itemCondition,
@@ -417,7 +437,7 @@ abstract class _PurchasesModel implements PurchasesModel {
     final List<String>? itemImageURL,
     final String? deliveryAddress,
     final bool? isDelivered,
-    final DateTime? purchasedDate,
+    final DateTime? purchaseDate,
     final DateTime? deliveredDate,
   }) = _$PurchasesModelImpl;
 
@@ -425,13 +445,15 @@ abstract class _PurchasesModel implements PurchasesModel {
       _$PurchasesModelImpl.fromJson;
 
   @override
-  String? get purchaseID;
+  int? get purchaseID;
   @override
   String? get buyerUserID;
   @override
   String? get sellerUserID;
   @override
   int? get itemListingID;
+  @override
+  String? get purchaseGroupID;
   @override
   String? get itemName;
   @override
@@ -447,7 +469,7 @@ abstract class _PurchasesModel implements PurchasesModel {
   @override
   bool? get isDelivered;
   @override
-  DateTime? get purchasedDate;
+  DateTime? get purchaseDate;
   @override
   DateTime? get deliveredDate;
 

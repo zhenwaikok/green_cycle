@@ -6,6 +6,7 @@ import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
 import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/point_transaction_repository.dart';
+import 'package:green_cycle_fyp/repository/purchases_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_redemption_repository.dart';
 import 'package:green_cycle_fyp/repository/reward_repository.dart';
 import 'package:green_cycle_fyp/repository/stripe_repository.dart';
@@ -21,6 +22,7 @@ import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_redemption_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/stripe_view_model.dart';
@@ -123,6 +125,9 @@ List<SingleChildWidget> providerAssets() => [
   ChangeNotifierProvider.value(
     value: StripeViewModel(stripeRepository: StripeRepository()),
   ),
+  ChangeNotifierProvider.value(
+    value: PurchaseViewModel(purchasesRepository: PurchasesRepository()),
+  ),
 ];
 
 class RegexConstants {
@@ -198,6 +203,24 @@ class DropDownItems {
     'Nearest',
     'Recent Requests',
     'Earliest Pickup Time',
+  ];
+  static const List<String> malaysiaStates = [
+    'Johor',
+    'Kedah',
+    'Kelantan',
+    'Kuala Lumpur',
+    'Labuan',
+    'Melaka',
+    'Negeri Sembilan',
+    'Pahang',
+    'Perak',
+    'Perlis',
+    'Penang',
+    'Putrajaya',
+    'Sabah',
+    'Sarawak',
+    'Selangor',
+    'Terengganu',
   ];
 }
 

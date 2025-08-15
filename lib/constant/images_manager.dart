@@ -16,4 +16,5 @@ class Images {
   static const noDataImage = 'assets/images/not_found_image.png';
   static const homeMarkerIcon = 'assets/images/home_marker.png';
   static const carMarkerIcon = 'assets/images/car_marker.png';
+  static const successTickImage = 'assets/images/success_tick_image.png';
 }
