@@ -157,14 +157,6 @@ extension _Helpers on _EditProfileScreenState {
 
   String? get phoneNumber => _phoneNumber;
 
-  String? get address {
-    final value = _formKey
-        .currentState
-        ?.fields[EditProfileFormFieldsEnum.address.name]
-        ?.value;
-    return (value?.trim().isEmpty ?? true) ? null : value.trim();
-  }
-
   String? get vehicleType => userDetails?.vehicleType;
 
   String? get vehiclePlateNumber => userDetails?.vehiclePlateNumber;
@@ -222,7 +214,6 @@ extension _Actions on _EditProfileScreenState {
               lastName: lastName,
               gender: gender,
               phoneNumber: phoneNumber,
-              address: address,
               profileImage: profileImageFile,
               emailAddress: emailAddress,
               password: password,
@@ -300,8 +291,6 @@ extension _WidgetFactories on _EditProfileScreenState {
         if (widget.userRole == 'Customer') ...[
           SizedBox(height: 20),
           getPhoneTextField(phoneNumber: userDetails.phoneNumber ?? ''),
-          SizedBox(height: 20),
-          getAddressTextField(address: userDetails.address ?? ''),
         ],
         if (widget.userRole == 'Collector') ...[
           SizedBox(height: 20),
@@ -434,17 +423,6 @@ extension _WidgetFactories on _EditProfileScreenState {
           ],
         );
       },
-    );
-  }
-
-  Widget getAddressTextField({required String address}) {
-    return CustomTextField(
-      fontSize: _Styles.editProfileFormFieldFontSize,
-      color: _Styles.editProfileFormFieldColor,
-      title: 'Address',
-      prefixIcon: Icon(Icons.location_on, color: ColorManager.blackColor),
-      formName: EditProfileFormFieldsEnum.address.name,
-      initialValue: address,
     );
   }
 

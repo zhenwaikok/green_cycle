@@ -123,7 +123,9 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
   Widget body() {
     final itemListingList = context.watch<ItemListingViewModel>().itemListings;
 
-    final filteredItems = itemListingList.where(isMatch).toList();
+    final filteredItems = itemListingList
+        .where((item) => isMatch(item) && item.isSold == false)
+        .toList();
     final sortedItems = [...filteredItems]
       ..sort(
         (a, b) =>

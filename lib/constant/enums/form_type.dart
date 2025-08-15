@@ -67,3 +67,11 @@ enum AddEditRewardFormFieldsEnum {
 }
 
 enum RejectCollectorFormFieldEnum { reason }
+
+enum AddEditAddressFormFieldsEnum {
+  address1,
+  address2,
+  city,
+  state,
+  postalCode,
+}

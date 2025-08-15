@@ -17,9 +17,10 @@ class CustomBottomNavBar extends StatefulWidget {
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
-    return AutoTabsRouter(
+    return AutoTabsRouter.tabBar(
+      physics: NeverScrollableScrollPhysics(),
       routes: getRoutes(),
-      builder: (context, child) {
+      builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
 
         return Scaffold(

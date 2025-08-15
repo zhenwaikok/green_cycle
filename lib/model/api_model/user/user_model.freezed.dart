@@ -30,7 +30,11 @@ mixin _$UserModel {
   String? get gender => throw _privateConstructorUsedError;
   String? get phoneNumber => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
-  String? get address => throw _privateConstructorUsedError;
+  String? get address1 => throw _privateConstructorUsedError;
+  String? get address2 => throw _privateConstructorUsedError;
+  String? get city => throw _privateConstructorUsedError;
+  String? get postalCode => throw _privateConstructorUsedError;
+  String? get state => throw _privateConstructorUsedError;
   String? get vehicleType => throw _privateConstructorUsedError;
   String? get vehiclePlateNumber => throw _privateConstructorUsedError;
   String? get companyName => throw _privateConstructorUsedError;
@@ -65,7 +69,11 @@ abstract class $UserModelCopyWith<$Res> {
     String? gender,
     String? phoneNumber,
     String? password,
-    String? address,
+    String? address1,
+    String? address2,
+    String? city,
+    String? postalCode,
+    String? state,
     String? vehicleType,
     String? vehiclePlateNumber,
     String? companyName,
@@ -101,7 +109,11 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? gender = freezed,
     Object? phoneNumber = freezed,
     Object? password = freezed,
-    Object? address = freezed,
+    Object? address1 = freezed,
+    Object? address2 = freezed,
+    Object? city = freezed,
+    Object? postalCode = freezed,
+    Object? state = freezed,
     Object? vehicleType = freezed,
     Object? vehiclePlateNumber = freezed,
     Object? companyName = freezed,
@@ -149,9 +161,25 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
                 ? _value.password
                 : password // ignore: cast_nullable_to_non_nullable
                       as String?,
-            address: freezed == address
-                ? _value.address
-                : address // ignore: cast_nullable_to_non_nullable
+            address1: freezed == address1
+                ? _value.address1
+                : address1 // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            address2: freezed == address2
+                ? _value.address2
+                : address2 // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            city: freezed == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            postalCode: freezed == postalCode
+                ? _value.postalCode
+                : postalCode // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            state: freezed == state
+                ? _value.state
+                : state // ignore: cast_nullable_to_non_nullable
                       as String?,
             vehicleType: freezed == vehicleType
                 ? _value.vehicleType
@@ -210,7 +238,11 @@ abstract class _$$UserModelImplCopyWith<$Res>
     String? gender,
     String? phoneNumber,
     String? password,
-    String? address,
+    String? address1,
+    String? address2,
+    String? city,
+    String? postalCode,
+    String? state,
     String? vehicleType,
     String? vehiclePlateNumber,
     String? companyName,
@@ -245,7 +277,11 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? gender = freezed,
     Object? phoneNumber = freezed,
     Object? password = freezed,
-    Object? address = freezed,
+    Object? address1 = freezed,
+    Object? address2 = freezed,
+    Object? city = freezed,
+    Object? postalCode = freezed,
+    Object? state = freezed,
     Object? vehicleType = freezed,
     Object? vehiclePlateNumber = freezed,
     Object? companyName = freezed,
@@ -293,9 +329,25 @@ class __$$UserModelImplCopyWithImpl<$Res>
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
                   as String?,
-        address: freezed == address
-            ? _value.address
-            : address // ignore: cast_nullable_to_non_nullable
+        address1: freezed == address1
+            ? _value.address1
+            : address1 // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        address2: freezed == address2
+            ? _value.address2
+            : address2 // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        city: freezed == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        postalCode: freezed == postalCode
+            ? _value.postalCode
+            : postalCode // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        state: freezed == state
+            ? _value.state
+            : state // ignore: cast_nullable_to_non_nullable
                   as String?,
         vehicleType: freezed == vehicleType
             ? _value.vehicleType
@@ -347,7 +399,11 @@ class _$UserModelImpl implements _UserModel {
     this.gender,
     this.phoneNumber,
     this.password,
-    this.address,
+    this.address1,
+    this.address2,
+    this.city,
+    this.postalCode,
+    this.state,
     this.vehicleType,
     this.vehiclePlateNumber,
     this.companyName,
@@ -380,7 +436,15 @@ class _$UserModelImpl implements _UserModel {
   @override
   final String? password;
   @override
-  final String? address;
+  final String? address1;
+  @override
+  final String? address2;
+  @override
+  final String? city;
+  @override
+  final String? postalCode;
+  @override
+  final String? state;
   @override
   final String? vehicleType;
   @override
@@ -400,7 +464,7 @@ class _$UserModelImpl implements _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address: $address, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, approvalStatus: $approvalStatus, accountRejectMessage: $accountRejectMessage, currentPoint: $currentPoint, createdDate: $createdDate)';
+    return 'UserModel(userID: $userID, userRole: $userRole, fullName: $fullName, firstName: $firstName, lastName: $lastName, emailAddress: $emailAddress, gender: $gender, phoneNumber: $phoneNumber, password: $password, address1: $address1, address2: $address2, city: $city, postalCode: $postalCode, state: $state, vehicleType: $vehicleType, vehiclePlateNumber: $vehiclePlateNumber, companyName: $companyName, profileImageURL: $profileImageURL, approvalStatus: $approvalStatus, accountRejectMessage: $accountRejectMessage, currentPoint: $currentPoint, createdDate: $createdDate)';
   }
 
   @override
@@ -424,7 +488,14 @@ class _$UserModelImpl implements _UserModel {
                 other.phoneNumber == phoneNumber) &&
             (identical(other.password, password) ||
                 other.password == password) &&
-            (identical(other.address, address) || other.address == address) &&
+            (identical(other.address1, address1) ||
+                other.address1 == address1) &&
+            (identical(other.address2, address2) ||
+                other.address2 == address2) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.postalCode, postalCode) ||
+                other.postalCode == postalCode) &&
+            (identical(other.state, state) || other.state == state) &&
             (identical(other.vehicleType, vehicleType) ||
                 other.vehicleType == vehicleType) &&
             (identical(other.vehiclePlateNumber, vehiclePlateNumber) ||
@@ -445,7 +516,7 @@ class _$UserModelImpl implements _UserModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     userID,
     userRole,
@@ -456,7 +527,11 @@ class _$UserModelImpl implements _UserModel {
     gender,
     phoneNumber,
     password,
-    address,
+    address1,
+    address2,
+    city,
+    postalCode,
+    state,
     vehicleType,
     vehiclePlateNumber,
     companyName,
@@ -465,7 +540,7 @@ class _$UserModelImpl implements _UserModel {
     accountRejectMessage,
     currentPoint,
     createdDate,
-  );
+  ]);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -492,7 +567,11 @@ abstract class _UserModel implements UserModel {
     final String? gender,
     final String? phoneNumber,
     final String? password,
-    final String? address,
+    final String? address1,
+    final String? address2,
+    final String? city,
+    final String? postalCode,
+    final String? state,
     final String? vehicleType,
     final String? vehiclePlateNumber,
     final String? companyName,
@@ -525,7 +604,15 @@ abstract class _UserModel implements UserModel {
   @override
   String? get password;
   @override
-  String? get address;
+  String? get address1;
+  @override
+  String? get address2;
+  @override
+  String? get city;
+  @override
+  String? get postalCode;
+  @override
+  String? get state;
   @override
   String? get vehicleType;
   @override

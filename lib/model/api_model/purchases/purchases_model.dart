@@ -6,10 +6,11 @@ part 'purchases_model.g.dart';
 @freezed
 class PurchasesModel with _$PurchasesModel {
   const factory PurchasesModel({
-    String? purchaseID,
+    int? purchaseID,
     String? buyerUserID,
     String? sellerUserID,
     int? itemListingID,
+    String? purchaseGroupID,
     String? itemName,
     double? itemPrice,
     String? itemCondition,
@@ -17,7 +18,7 @@ class PurchasesModel with _$PurchasesModel {
     List<String>? itemImageURL,
     String? deliveryAddress,
     bool? isDelivered,
-    DateTime? purchasedDate,
+    DateTime? purchaseDate,
     DateTime? deliveredDate,
   }) = _PurchasesModel;
 
