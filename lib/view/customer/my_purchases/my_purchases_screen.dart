@@ -71,7 +71,7 @@ class _MyPurchasesScreenState extends BaseStatefulState<_MyPurchasesScreen> {
     final purchaseVM = context.read<PurchaseViewModel>();
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Column(
         children: [
           getTabBar(),
@@ -88,13 +88,19 @@ class _MyPurchasesScreenState extends BaseStatefulState<_MyPurchasesScreen> {
                 buildTabContent(
                   groupedPurchaseItems: purchaseVM.filterGroupsByStatus(
                     groupedItems: groupedPurchaseItems,
-                    status: ['In Progress', 'Shipped'],
+                    status: 'In Progress',
                   ),
                 ),
                 buildTabContent(
                   groupedPurchaseItems: purchaseVM.filterGroupsByStatus(
                     groupedItems: groupedPurchaseItems,
-                    status: ['Completed'],
+                    status: 'Shipped',
+                  ),
+                ),
+                buildTabContent(
+                  groupedPurchaseItems: purchaseVM.filterGroupsByStatus(
+                    groupedItems: groupedPurchaseItems,
+                    status: 'Completed',
                   ),
                 ),
               ],
@@ -171,7 +177,12 @@ extension _Actions on _MyPurchasesScreenState {
 extension _WidgetFactories on _MyPurchasesScreenState {
   Widget getTabBar() {
     return CustomTabBar(
-      tabs: [Text('All'), Text('In Progress'), Text('Completed')],
+      tabs: [
+        Text('All'),
+        Text('In Progress'),
+        Text('Shipped'),
+        Text('Completed'),
+      ],
     );
   }
 

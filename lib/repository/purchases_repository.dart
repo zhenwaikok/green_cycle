@@ -30,6 +30,22 @@ class PurchasesRepository {
     return response;
   }
 
+  Future<MyResponse> getPurchasesWithSellerUserID({
+    required String sellerUserID,
+  }) async {
+    final response = await _purchasesServices.getPurchasesWithSellerUserID(
+      sellerUserID: sellerUserID,
+    );
+
+    if (response.data is List) {
+      final resultModel = (response.data as List)
+          .map((json) => PurchasesModel.fromJson(json))
+          .toList();
+      return MyResponse.complete(resultModel);
+    }
+    return response;
+  }
+
   Future<MyResponse> getPurchasesWithUserID({required String userID}) async {
     final response = await _purchasesServices.getPurchasesWithUserID(
       userID: userID,

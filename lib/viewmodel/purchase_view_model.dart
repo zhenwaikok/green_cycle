@@ -25,22 +25,36 @@ class PurchaseViewModel extends BaseViewModel {
   groupPurchaseItemsByPurchaseGroupID({
     required List<PurchasesModel> purchaseList,
     required UserViewModel userViewModel,
+    bool needBuyerName = false,
   }) async {
     final groupedByPurchaseGroupID = <String, Map<String, dynamic>>{};
     for (var item in purchaseList) {
       final sellerUserID = item.sellerUserID ?? '';
+      final buyerUserID = item.buyerUserID ?? '';
 
       final purchaseGroupID = item.purchaseGroupID ?? '';
 
       if (!groupedByPurchaseGroupID.containsKey(purchaseGroupID)) {
-        await userViewModel.getUserDetails(
-          userID: sellerUserID,
-          noNeedUpdateUserSharedPreference: true,
-        );
+        if (!needBuyerName) {
+          await userViewModel.getUserDetails(
+            userID: sellerUserID,
+            noNeedUpdateUserSharedPreference: true,
+          );
+        } else {
+          await userViewModel.getUserDetails(
+            userID: buyerUserID,
+            noNeedUpdateUserSharedPreference: true,
+          );
+        }
+
         groupedByPurchaseGroupID[purchaseGroupID] = {
           'purchaseGroupID': purchaseGroupID,
-          'sellerName':
-              '${userViewModel.userDetails?.firstName} ${userViewModel.userDetails?.lastName}',
+          if (needBuyerName)
+            'buyerName':
+                '${userViewModel.userDetails?.firstName} ${userViewModel.userDetails?.lastName}'
+          else
+            'sellerName':
+                '${userViewModel.userDetails?.firstName} ${userViewModel.userDetails?.lastName}',
           'items': <PurchasesModel>[],
         };
       }
@@ -48,6 +62,42 @@ class PurchaseViewModel extends BaseViewModel {
       groupedByPurchaseGroupID[purchaseGroupID]?['items'].add(item);
     }
     return groupedByPurchaseGroupID;
+  }
+
+  Future<void> getPurchasesWithSellerUserID({
+    required String sellerUserID,
+    UserViewModel? userVM,
+    bool? groupPurchase,
+  }) async {
+    final response = await purchasesRepository.getPurchasesWithSellerUserID(
+      sellerUserID: sellerUserID,
+    );
+
+    if (response.data is List<PurchasesModel>) {
+      _purchaseList = response.data;
+
+      if (groupPurchase == true) {
+        _groupedPurchaseItems = await groupPurchaseItemsByPurchaseGroupID(
+          purchaseList: _purchaseList,
+          userViewModel:
+              userVM ??
+              UserViewModel(
+                userRepository: UserRepository(
+                  sharePreferenceHandler: SharedPreferenceHandler(),
+                  userServices: UserServices(),
+                ),
+                firebaseRepository: FirebaseRepository(
+                  firebaseServices: FirebaseServices(),
+                ),
+              ),
+          needBuyerName: true,
+        );
+      }
+
+      notifyListeners();
+    }
+
+    checkError(response);
   }
 
   Future<void> getPurchasesWithUserID({
@@ -182,12 +232,30 @@ class PurchaseViewModel extends BaseViewModel {
 
   List<MapEntry<String, Map<String, dynamic>>> filterGroupsByStatus({
     required List<MapEntry<String, Map<String, dynamic>>> groupedItems,
-    List<String>? status,
+    String? status,
   }) {
     return groupedItems.where((entry) {
       final items = entry.value['items'] as List<PurchasesModel>;
       if (status == null) return true;
-      return items.any((item) => status.contains(item.status));
+      return items.any((item) => item.status == status);
     }).toList();
+  }
+
+  bool isMatch({
+    required PurchasesModel purchase,
+    required String searchQuery,
+    String? buyerName,
+  }) {
+    final query = searchQuery.toLowerCase().trim();
+
+    if (query.isEmpty) return true;
+
+    final matchesSearch =
+        (purchase.purchaseGroupID?.toLowerCase().contains(query) ?? false) ||
+        (purchase.deliveryAddress?.toLowerCase().contains(query) ?? false) ||
+        (purchase.itemName?.toLowerCase().contains(query) ?? false) ||
+        (buyerName?.toLowerCase().contains(query) ?? false);
+
+    return matchesSearch;
   }
 }

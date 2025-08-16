@@ -22,6 +22,14 @@ class PurchasesServices extends BaseServices {
     );
   }
 
+  Future<MyResponse> getPurchasesWithSellerUserID({
+    required String sellerUserID,
+  }) async {
+    String path = '${apiUrl()}/Purchases/Seller/$sellerUserID';
+
+    return callAPI(httpMethod: HttpMethod.get, path: path);
+  }
+
   Future<MyResponse> getPurchasesWithUserID({required String userID}) async {
     String path = '${apiUrl()}/Purchases/User/$userID';
 

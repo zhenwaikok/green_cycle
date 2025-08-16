@@ -122,6 +122,10 @@ extension _Actions on _ProfileScreenState {
     context.router.push(MyPurchasesRoute());
   }
 
+  void onSalesOrderPressed() {
+    context.router.push(SalesOrderRoute());
+  }
+
   void onMyListingPressed() {
     context.router.push(MyListingRoute());
   }
@@ -264,6 +268,11 @@ extension _WidgetFactories on _ProfileScreenState {
           icon: Icons.shopping_bag,
           text: 'My Purchases',
           onPressed: onMyPurchasesPressed,
+        ),
+        CustomProfileRowElement(
+          icon: Icons.task,
+          text: 'Sales Order',
+          onPressed: onSalesOrderPressed,
         ),
         CustomProfileRowElement(
           icon: Icons.logout,
