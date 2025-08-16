@@ -107,6 +107,19 @@ class WidgetUtil {
     }
   }
 
+  static Color getPurchaseStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return ColorManager.primary;
+      case 'in progress':
+        return ColorManager.orangeColor;
+      case 'shipped':
+        return ColorManager.purpleColor;
+      default:
+        return ColorManager.primary;
+    }
+  }
+
   static String getButtonLabel(String status) {
     return switch (status) {
       'Accepted' => 'On My Way',
