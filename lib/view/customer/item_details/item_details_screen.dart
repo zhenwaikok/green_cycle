@@ -16,6 +16,7 @@ import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/view/common/loading_screen.dart';
 import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
@@ -131,7 +132,7 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
     final sellerInfo = context.select((UserViewModel vm) => vm.userDetails);
 
     if (_isLoading) {
-      return SizedBox.shrink();
+      return Center(child: LoadingScreen());
     }
 
     return SingleChildScrollView(
@@ -143,7 +144,7 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
                 itemImages: itemListingDetails?.itemImageURL ?? [],
               ),
               Positioned(top: 25, left: 15, child: getBackButton()),
-              if (isUserItemOwner) ...[
+              if (isUserItemOwner && itemListingDetails?.isSold == false) ...[
                 Positioned(
                   top: 25,
                   right: 15,
@@ -161,6 +162,8 @@ class _ItemDetailsScreenState extends BaseStatefulState<_ItemDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                getItemStatus(isSold: itemListingDetails?.isSold ?? false),
+                SizedBox(height: 10),
                 getConditionAndPosted(
                   itemStatus: itemListingDetails?.itemCondition ?? '-',
                   createdDate:
@@ -403,6 +406,13 @@ extension _WidgetFactories on _ItemDetailsScreenState {
     );
   }
 
+  Widget getItemStatus({required bool isSold}) {
+    return Text(
+      'Status: ${isSold ? 'Sold' : 'Active'}',
+      style: _Styles.statusTextStyle(isSold: isSold),
+    );
+  }
+
   Widget getConditionAndPosted({
     required String itemStatus,
     required DateTime createdDate,
@@ -610,8 +620,6 @@ extension _WidgetFactories on _ItemDetailsScreenState {
   }
 }
 
-class ItemListingDetails {}
-
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
@@ -637,6 +645,12 @@ class _Styles {
   static const screenPadding = EdgeInsets.symmetric(
     horizontal: 20,
     vertical: 20,
+  );
+
+  static TextStyle statusTextStyle({required bool isSold}) => TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeightManager.regular,
+    color: isSold ? ColorManager.redColor : ColorManager.primary,
   );
 
   static const productNameTextStyle = TextStyle(

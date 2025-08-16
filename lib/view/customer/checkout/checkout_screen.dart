@@ -167,6 +167,7 @@ extension _Actions on _CheckoutScreenState {
   }) async {
     final purchaseVM = context.read<PurchaseViewModel>();
     final purchaseGroupID = purchaseVM.generatePurchaseID();
+    final purchaseDate = DateTime.now();
     bool allSuccess = true;
 
     for (var item in cartItemList) {
@@ -183,6 +184,7 @@ extension _Actions on _CheckoutScreenState {
           itemCategory: item.itemListing?.itemCategory ?? '',
           itemImageURL: item.itemListing?.itemImageURL ?? [],
           deliveryAddress: deliveryAddress,
+          purchaseDate: purchaseDate,
         ),
       );
 
