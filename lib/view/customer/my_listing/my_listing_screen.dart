@@ -89,11 +89,11 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
     );
 
     final activeItemListingList = allItemListingList
-        .where((itemListing) => itemListing.status == 'Active')
+        .where((itemListing) => itemListing.isSold == false)
         .toList();
 
     final soldItemListingList = allItemListingList
-        .where((itemListing) => itemListing.status == 'Sold')
+        .where((itemListing) => itemListing.isSold == true)
         .toList();
 
     return DefaultTabController(
@@ -223,39 +223,6 @@ extension _Actions on _MyListingScreenState {
       WidgetUtil.showSnackBar(text: 'Failed to remove item listing.');
     }
   }
-
-  void sortListings(List<ItemListingModel> itemListingList) {
-    if (selectedSort == sortByItems[1]) {
-      itemListingList.sort(
-        (a, b) =>
-            a.itemName?.toLowerCase().compareTo(
-              b.itemName?.toLowerCase() ?? '',
-            ) ??
-            0,
-      );
-    } else if (selectedSort == sortByItems[2]) {
-      itemListingList.sort(
-        (a, b) =>
-            b.itemName?.toLowerCase().compareTo(
-              a.itemName?.toLowerCase() ?? '',
-            ) ??
-            0,
-      );
-    } else if (selectedSort == sortByItems[3]) {
-      itemListingList.sort(
-        (a, b) => a.itemPrice?.compareTo(b.itemPrice ?? 0) ?? 0,
-      );
-    } else if (selectedSort == sortByItems[4]) {
-      itemListingList.sort(
-        (a, b) => b.itemPrice?.compareTo(a.itemPrice ?? 0) ?? 0,
-      );
-    } else {
-      itemListingList.sort(
-        (a, b) =>
-            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
-      );
-    }
-  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -298,7 +265,11 @@ extension _WidgetFactories on _MyListingScreenState {
     required List<ItemListingModel> itemListingList,
     required bool isLoading,
   }) {
-    sortListings(itemListingList);
+    context.read<ItemListingViewModel>().sortListings(
+      itemListingList: itemListingList,
+      selectedSort: selectedSort ?? '',
+      sortByItems: sortByItems,
+    );
 
     if (itemListingList.isEmpty) {
       return [

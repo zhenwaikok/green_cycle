@@ -189,4 +189,41 @@ class ItemListingViewModel extends BaseViewModel {
     checkError(response);
     return response.data;
   }
+
+  void sortListings({
+    required List<ItemListingModel> itemListingList,
+    required String selectedSort,
+    required List<String> sortByItems,
+  }) {
+    if (selectedSort == sortByItems[1]) {
+      itemListingList.sort(
+        (a, b) =>
+            a.itemName?.toLowerCase().compareTo(
+              b.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[2]) {
+      itemListingList.sort(
+        (a, b) =>
+            b.itemName?.toLowerCase().compareTo(
+              a.itemName?.toLowerCase() ?? '',
+            ) ??
+            0,
+      );
+    } else if (selectedSort == sortByItems[3]) {
+      itemListingList.sort(
+        (a, b) => a.itemPrice?.compareTo(b.itemPrice ?? 0) ?? 0,
+      );
+    } else if (selectedSort == sortByItems[4]) {
+      itemListingList.sort(
+        (a, b) => b.itemPrice?.compareTo(a.itemPrice ?? 0) ?? 0,
+      );
+    } else {
+      itemListingList.sort(
+        (a, b) =>
+            b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
+      );
+    }
+  }
 }

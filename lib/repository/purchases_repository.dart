@@ -1,3 +1,4 @@
+import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/purchases_services.dart';
@@ -34,8 +35,10 @@ class PurchasesRepository {
       userID: userID,
     );
 
-    if (response.data is Map<String, dynamic>) {
-      final resultModel = PurchasesModel.fromJson(response.data);
+    if (response.data is List) {
+      final resultModel = (response.data as List)
+          .map((json) => PurchasesModel.fromJson(json))
+          .toList();
       return MyResponse.complete(resultModel);
     }
     return response;
@@ -54,7 +57,7 @@ class PurchasesRepository {
   }
 
   Future<MyResponse> updatePurchases({
-    required String purchaseID,
+    required int purchaseID,
     required PurchasesModel purchasesModel,
   }) async {
     final response = await _purchasesServices.updatePurchases(
@@ -63,7 +66,7 @@ class PurchasesRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = PurchasesModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

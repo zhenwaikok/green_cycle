@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class MyPurchasesTab extends StatelessWidget {
-  const MyPurchasesTab({super.key, required this.purchaseStatus});
+class MyPurchasesTab extends StatefulWidget {
+  const MyPurchasesTab({
+    super.key,
+    required this.purchaseItems,
+    required this.purchaseGroupID,
+    required this.sellerName,
+    required this.isLoading,
+    required this.onOrderReceivedButtonPressed,
+  });
 
-  final String purchaseStatus;
+  final String purchaseGroupID;
+  final String sellerName;
+  final List<PurchasesModel> purchaseItems;
+  final bool isLoading;
+  final VoidCallback onOrderReceivedButtonPressed;
 
+  @override
+  State<MyPurchasesTab> createState() => _MyPurchasesTabState();
+}
+
+class _MyPurchasesTabState extends State<MyPurchasesTab> {
   @override
   Widget build(BuildContext context) {
     return getPurchaseCard();
@@ -21,27 +42,41 @@ class MyPurchasesTab extends StatelessWidget {
 extension _Actions on MyPurchasesTab {}
 
 // * ------------------------ WidgetFactories ------------------------
-extension _WidgetFactories on MyPurchasesTab {
+extension _WidgetFactories on _MyPurchasesTabState {
   Widget getPurchaseCard() {
     return Padding(
       padding: _Styles.cardPadding,
       child: CustomCard(
         padding: _Styles.customCardPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getOrderDetails(),
-            getDivider(),
-            getItemList(),
-            getDivider(),
-            getBottomDetails(),
-          ],
+        child: Skeletonizer(
+          enabled: widget.isLoading,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getOrderDetails(
+                sellerName: widget.sellerName,
+                purchaseGroupID: widget.purchaseGroupID,
+                purchaseDate:
+                    widget.purchaseItems.first.purchaseDate ?? DateTime.now(),
+                purchaseStatus: widget.purchaseItems.first.status ?? '',
+              ),
+              getDivider(),
+              getItemList(purchaseItems: widget.purchaseItems),
+              getDivider(),
+              getBottomDetails(purchaseItems: widget.purchaseItems),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget getOrderDetails() {
+  Widget getOrderDetails({
+    required String sellerName,
+    required String purchaseGroupID,
+    required DateTime purchaseDate,
+    required String purchaseStatus,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -53,7 +88,7 @@ extension _WidgetFactories on MyPurchasesTab {
               size: _Styles.iconSize,
             ),
             SizedBox(width: 8),
-            Text('Seller Name', style: _Styles.sellerTextStyle),
+            Text(sellerName, style: _Styles.sellerTextStyle),
           ],
         ),
         SizedBox(height: 10),
@@ -62,24 +97,33 @@ extension _WidgetFactories on MyPurchasesTab {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Order ID', style: _Styles.greyTextStyle),
-                Text('#14334', style: _Styles.blackTextStyle),
+                Text('#$purchaseGroupID', style: _Styles.blackTextStyle),
               ],
             ),
-            CustomStatusBar(text: 'Shipped'),
+            CustomStatusBar(text: purchaseStatus),
           ],
         ),
-        Text('Purchase On: 29/4/2025, 11:22 PM', style: _Styles.greyTextStyle),
+        Text(
+          'Purchase On: ${WidgetUtil.dateTimeFormatter(purchaseDate)}',
+          style: _Styles.greyTextStyle,
+        ),
       ],
     );
   }
 
-  Widget getItemList() {
-    return Column(children: List.generate(2, (index) => getItemDetails()));
+  Widget getItemList({required List<PurchasesModel> purchaseItems}) {
+    return Column(
+      children: List.generate(
+        purchaseItems.length,
+        (index) => getItemDetails(purchaseItemDetails: purchaseItems[index]),
+      ),
+    );
   }
 
-  Widget getItemDetails() {
+  Widget getItemDetails({required PurchasesModel purchaseItemDetails}) {
     return Padding(
       padding: _Styles.itemListPadding,
       child: Row(
@@ -87,8 +131,7 @@ extension _WidgetFactories on MyPurchasesTab {
         children: [
           CustomImage(
             imageSize: _Styles.itemImageSize,
-            imageURL:
-                'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            imageURL: purchaseItemDetails.itemImageURL?.first ?? '',
             borderRadius: _Styles.itemImageBorderRadius,
           ),
           SizedBox(width: 15),
@@ -100,19 +143,21 @@ extension _WidgetFactories on MyPurchasesTab {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Item Name',
+                    purchaseItemDetails.itemName ?? '',
                     style: _Styles.itemNameTextStyle,
                     maxLines: _Styles.maxTextLines,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  CustomStatusBar(text: 'Like New'),
+                  CustomStatusBar(
+                    text: purchaseItemDetails.itemCondition ?? '',
+                  ),
                 ],
               ),
             ),
           ),
 
           Text(
-            'RM xx.xx',
+            'RM ${WidgetUtil.priceFormatter(purchaseItemDetails.itemPrice ?? 0.0)}',
             style: _Styles.priceTextStyle,
             overflow: TextOverflow.ellipsis,
           ),
@@ -121,16 +166,18 @@ extension _WidgetFactories on MyPurchasesTab {
     );
   }
 
-  Widget getBottomDetails() {
+  Widget getBottomDetails({required List<PurchasesModel> purchaseItems}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTotalAmount(),
-        if (purchaseStatus == 'Completed') ...[
+        getTotalAmount(purchaseItems: purchaseItems),
+        if (purchaseItems.first.status == 'Completed') ...[
           SizedBox(height: 10),
-          getDeliveredDetails(),
+          getDeliveredDetails(
+            deliveredDate: purchaseItems.first.deliveredDate ?? DateTime.now(),
+          ),
         ],
-        if (purchaseStatus == 'Shipped') ...[
+        if (purchaseItems.first.status == 'Shipped') ...[
           SizedBox(height: 10),
           getOrderReceivedButton(),
         ],
@@ -138,24 +185,31 @@ extension _WidgetFactories on MyPurchasesTab {
     );
   }
 
-  Widget getTotalAmount() {
+  Widget getTotalAmount({required List<PurchasesModel> purchaseItems}) {
+    final totalAmount = context.read<PurchaseViewModel>().calculateTotalAmount(
+      purchaseList: purchaseItems,
+    );
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text('Total Amount:', style: _Styles.blackTextStyle),
-        Text('RM xx.xx', style: _Styles.totalPriceTextStyle),
+        Text(
+          'RM ${WidgetUtil.priceFormatter(totalAmount)}',
+          style: _Styles.totalPriceTextStyle,
+        ),
       ],
     );
   }
 
-  Widget getDeliveredDetails() {
+  Widget getDeliveredDetails({required DateTime deliveredDate}) {
     return RichText(
       text: TextSpan(
         text: 'Delivered On: ',
         style: _Styles.greyTextStyle,
         children: [
           TextSpan(
-            text: '29/4/2025, 11:22 PM',
+            text: WidgetUtil.dateTimeFormatter(deliveredDate),
             style: _Styles.deliveredDateTextStyle,
           ),
         ],
@@ -167,7 +221,7 @@ extension _WidgetFactories on MyPurchasesTab {
     return CustomButton(
       text: 'Order Received',
       textColor: ColorManager.whiteColor,
-      onPressed: () {},
+      onPressed: widget.onOrderReceivedButtonPressed,
       backgroundColor: ColorManager.primary,
     );
   }

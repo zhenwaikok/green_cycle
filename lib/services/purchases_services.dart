@@ -35,7 +35,7 @@ class PurchasesServices extends BaseServices {
   }
 
   Future<MyResponse> updatePurchases({
-    required String purchaseID,
+    required int purchaseID,
     required PurchasesModel purchasesModel,
   }) async {
     String path = '${apiUrl()}/Purchases/$purchaseID';

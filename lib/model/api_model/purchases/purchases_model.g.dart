@@ -22,6 +22,7 @@ _$PurchasesModelImpl _$$PurchasesModelImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       deliveryAddress: json['deliveryAddress'] as String?,
       isDelivered: json['isDelivered'] as bool?,
+      status: json['status'] as String?,
       purchaseDate: json['purchaseDate'] == null
           ? null
           : DateTime.parse(json['purchaseDate'] as String),
@@ -45,6 +46,7 @@ Map<String, dynamic> _$$PurchasesModelImplToJson(
   'itemImageURL': instance.itemImageURL,
   'deliveryAddress': instance.deliveryAddress,
   'isDelivered': instance.isDelivered,
+  'status': instance.status,
   'purchaseDate': instance.purchaseDate?.toIso8601String(),
   'deliveredDate': instance.deliveredDate?.toIso8601String(),
 };

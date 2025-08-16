@@ -48,7 +48,7 @@ extension _WidgetFactories on MyListingTab {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 getStatus(
-                  listingStatus: itemListingDetails.status ?? '',
+                  isSold: itemListingDetails.isSold == true,
                   createdDate: itemListingDetails.createdDate ?? DateTime.now(),
                 ),
                 SizedBox(height: 10),
@@ -69,14 +69,14 @@ extension _WidgetFactories on MyListingTab {
     );
   }
 
-  Widget getStatus({
-    required String listingStatus,
-    required DateTime createdDate,
-  }) {
+  Widget getStatus({required DateTime createdDate, required bool isSold}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Status: $listingStatus', style: _Styles.greyTextStyle),
+        Text(
+          'Status: ${isSold ? 'Sold' : 'Active'}',
+          style: _Styles.statusTextStyle(isSold: isSold),
+        ),
         Text(
           'Posted On: ${WidgetUtil.dateFormatter(createdDate)}',
           style: _Styles.greyTextStyle,
@@ -193,5 +193,11 @@ class _Styles {
     fontSize: 15,
     fontWeight: FontWeightManager.bold,
     color: ColorManager.redColor,
+  );
+
+  static TextStyle statusTextStyle({required bool isSold}) => TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeightManager.regular,
+    color: isSold ? ColorManager.redColor : ColorManager.primary,
   );
 }
