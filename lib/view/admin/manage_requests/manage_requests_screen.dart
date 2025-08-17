@@ -177,8 +177,10 @@ extension _Helpers on _ManageRequestsScreenState {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _ManageRequestsScreenState {
-  void onRequestCardPressed() {
-    context.router.push(PickupRequestDetailsRoute());
+  void onRequestCardPressed({required String pickupRequestID}) {
+    context.router.push(
+      PickupRequestDetailsRoute(pickupRequestID: pickupRequestID),
+    );
   }
 
   void _onTabChanged() {
@@ -247,7 +249,9 @@ extension _WidgetFactories on _ManageRequestsScreenState {
           delegate: SliverChildBuilderDelegate((context, index) {
             return ManageRequestTab(
               isLoading: isLoading,
-              onTap: () => onRequestCardPressed(),
+              onTap: () => onRequestCardPressed(
+                pickupRequestID: pickupRequestList[index].pickupRequestID ?? '',
+              ),
               request: pickupRequestList[index],
             );
           }, childCount: pickupRequestList.length),

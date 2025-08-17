@@ -60,7 +60,7 @@ class RewardRepository {
     final response = await _rewardServices.deleteReward(rewardID: rewardID);
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = RewardModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

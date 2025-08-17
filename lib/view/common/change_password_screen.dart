@@ -114,7 +114,6 @@ extension _Actions on _ChangePasswordScreenState {
           false;
 
       if (result) {
-        print('Password changed successfully');
         unawaited(
           WidgetUtil.showSnackBar(text: 'Password changed successfully'),
         );

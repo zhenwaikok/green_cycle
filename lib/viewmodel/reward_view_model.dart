@@ -113,6 +113,12 @@ class RewardViewModel extends BaseViewModel {
     return updateRewardResponse.data is ApiResponseModel;
   }
 
+  Future<bool> deleteReward({required int rewardID}) async {
+    final response = await rewardRepository.deleteReward(rewardID: rewardID);
+    checkError(response);
+    return response.data is ApiResponseModel;
+  }
+
   Future<String> uploadImage({
     required String storageRef,
     File? image,

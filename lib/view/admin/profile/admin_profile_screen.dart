@@ -44,6 +44,12 @@ class _AdminProfileScreen extends BaseStatefulPage {
 
 class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
   @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  @override
   EdgeInsets bottomNavigationBarPadding() {
     return EdgeInsets.zero;
   }
@@ -55,11 +61,17 @@ class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
 
   @override
   Widget body() {
+    final userDetails = context.select((UserViewModel vm) => vm.userDetails);
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getProfileDetails(),
+          getProfileDetails(
+            profileImageURL: userDetails?.profileImageURL ?? '',
+            username: userDetails?.fullName ?? '-',
+            userRole: userDetails?.userRole ?? '-',
+          ),
           SizedBox(height: 25),
           Divider(color: ColorManager.lightGreyColor),
           SizedBox(height: 25),
@@ -76,9 +88,19 @@ extension _Actions on _AdminProfileScreenState {
     context.router.push(ChangePasswordRoute());
   }
 
-  void onEditProfilePressed() {
-    //TODO: Pass correct role ltr
-    // context.router.push(EditProfileRoute(selectedRole: 'Admin'));
+  void onEditProfilePressed() async {
+    final userVM = context.read<UserViewModel>();
+
+    final userRole = userVM.user?.userRole ?? '';
+    final userID = userVM.user?.userID ?? '';
+
+    final result = await context.router.push(
+      EditProfileRoute(userRole: userRole, userID: userID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
   }
 
   Future<void> onSignOutPressed() async {
@@ -90,18 +112,25 @@ extension _Actions on _AdminProfileScreenState {
       if (mounted) await context.router.replaceAll([LoginRoute()]);
     }
   }
+
+  Future<void> fetchData() async {
+    final userVM = context.read<UserViewModel>();
+    final userID = userVM.user?.userID ?? '';
+
+    await tryLoad(context, () => userVM.getUserDetails(userID: userID));
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _AdminProfileScreenState {
-  Widget getProfileDetails() {
+  Widget getProfileDetails({
+    required String profileImageURL,
+    required String username,
+    required String userRole,
+  }) {
     return Row(
       children: [
-        CustomProfileImage(
-          imageURL:
-              'https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D',
-          imageSize: 80.0,
-        ),
+        CustomProfileImage(imageURL: profileImageURL, imageSize: 80.0),
         SizedBox(width: 20),
         Expanded(
           child: Column(
@@ -109,13 +138,13 @@ extension _WidgetFactories on _AdminProfileScreenState {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Username',
+                username,
                 style: _Styles.usernameTextStyle,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 15),
-              Text('Admin', style: _Styles.adminTextStyle),
+              Text(userRole, style: _Styles.adminTextStyle),
             ],
           ),
         ),

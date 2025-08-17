@@ -2,23 +2,52 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/dot_indicator.dart';
 import 'package:green_cycle_fyp/widget/image_slider.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
 class PickupRequestDetailsScreen extends StatelessWidget {
-  const PickupRequestDetailsScreen({super.key});
+  const PickupRequestDetailsScreen({super.key, required this.pickupRequestID});
+
+  final String pickupRequestID;
 
   @override
   Widget build(BuildContext context) {
-    return _PickupRequestDetailsScreen();
+    return ChangeNotifierProvider(
+      create: (_) => PickupRequestViewModel(
+        firebaseRepository: FirebaseRepository(
+          firebaseServices: FirebaseServices(),
+        ),
+        pickupRequestRepository: PickupRequestRepository(),
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _PickupRequestDetailsScreen(pickupRequestID: pickupRequestID),
+    );
   }
 }
 
 class _PickupRequestDetailsScreen extends BaseStatefulPage {
+  const _PickupRequestDetailsScreen({required this.pickupRequestID});
+
+  final String pickupRequestID;
+
   @override
   State<_PickupRequestDetailsScreen> createState() =>
       _PickupRequestDetailsScreenState();
@@ -26,18 +55,21 @@ class _PickupRequestDetailsScreen extends BaseStatefulPage {
 
 class _PickupRequestDetailsScreenState
     extends BaseStatefulState<_PickupRequestDetailsScreen> {
-  final List<String> imgItems = [
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-    'https://media.istockphoto.com/id/1181727539/photo/portrait-of-young-malaysian-man-behind-the-wheel.jpg?s=2048x2048&w=is&k=20&c=aVO02Y3tPJNKlQyv3ADJ6vm_Hp2LuXkLRSAClBznq3I=',
-    'https://images.pexels.com/photos/1667088/pexels-photo-1667088.jpeg',
-  ];
-
   int currentIndex = 0;
+  String? collectorName;
+  String? requesterName;
+  bool isLoading = true;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
       setState(fn);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
   }
 
   @override
@@ -56,17 +88,35 @@ class _PickupRequestDetailsScreenState
 
   @override
   Widget body() {
+    final pickupRequestDetails = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestDetails,
+    );
+
+    if (isLoading) {
+      return Center(child: SizedBox.shrink());
+    }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getRequestStatusAndRequestDetails(),
+          getRequestStatusAndRequestDetails(
+            status: pickupRequestDetails?.pickupRequestStatus ?? '',
+            requesterName: requesterName ?? '',
+          ),
           SizedBox(height: 10),
-          getImageSlider(),
+          getImageSlider(
+            imgItems: pickupRequestDetails?.pickupItemImageURL ?? [],
+          ),
           SizedBox(height: 10),
-          getDotIndicator(),
+          getDotIndicator(
+            imgItems: pickupRequestDetails?.pickupItemImageURL ?? [],
+          ),
           SizedBox(height: 20),
-          getRequestDetails(),
+          getRequestDetails(
+            pickupRequestDetails: pickupRequestDetails ?? PickupRequestModel(),
+            collectorName: collectorName ?? '',
+          ),
         ],
       ),
     );
@@ -84,19 +134,68 @@ extension _Actions on _PickupRequestDetailsScreenState {
       currentIndex = index;
     });
   }
+
+  Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+    final pickupRequestVM = context.read<PickupRequestViewModel>();
+
+    await tryLoad(
+      context,
+      () => pickupRequestVM.getPickupRequestDetails(
+        pickupRequestID: widget.pickupRequestID,
+      ),
+    );
+
+    final fetchedCollectorName = await getName(
+      userID: pickupRequestVM.pickupRequestDetails?.collectorUserID ?? '',
+      isCollectorName: true,
+    );
+
+    final fetchedRequesterName = await getName(
+      userID: pickupRequestVM.pickupRequestDetails?.userID ?? '',
+      isCollectorName: false,
+    );
+
+    _setState(() {
+      collectorName = fetchedCollectorName;
+      requesterName = fetchedRequesterName;
+      isLoading = false;
+    });
+  }
+
+  Future<String> getName({
+    required String userID,
+    required bool isCollectorName,
+  }) async {
+    final userVM = context.read<UserViewModel>();
+    await tryCatch(
+      context,
+      () => userVM.getUserDetails(
+        userID: userID,
+        noNeedUpdateUserSharedPreference: true,
+      ),
+    );
+
+    return isCollectorName
+        ? userVM.userDetails?.fullName ?? ''
+        : '${userVM.userDetails?.firstName} ${userVM.userDetails?.lastName}';
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _PickupRequestDetailsScreenState {
-  Widget getRequestStatusAndRequestDetails() {
+  Widget getRequestStatusAndRequestDetails({
+    required String status,
+    required String requesterName,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomStatusBar(text: 'Accepted'),
+        CustomStatusBar(text: status),
         SizedBox(width: 40),
         Expanded(
           child: Text(
-            'Requested by xxx',
+            'Requested by $requesterName',
             style: _Styles.smallGreyTextStyle,
             textAlign: TextAlign.right,
             maxLines: _Styles.maxLines,
@@ -107,7 +206,7 @@ extension _WidgetFactories on _PickupRequestDetailsScreenState {
     );
   }
 
-  Widget getImageSlider() {
+  Widget getImageSlider({required List<String> imgItems}) {
     return ImageSlider(
       items: imgItems,
       imageBorderRadius: _Styles.imageBorderRadius,
@@ -117,7 +216,7 @@ extension _WidgetFactories on _PickupRequestDetailsScreenState {
     );
   }
 
-  Widget getDotIndicator() {
+  Widget getDotIndicator({required List<String> imgItems}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -134,51 +233,57 @@ extension _WidgetFactories on _PickupRequestDetailsScreenState {
     );
   }
 
-  Widget getRequestDetails() {
+  Widget getRequestDetails({
+    required PickupRequestModel pickupRequestDetails,
+    required String collectorName,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Picked Up by xxx: 30/4/2025, 11:22 PM',
-          style: _Styles.smallGreyTextStyle,
-          textAlign: TextAlign.right,
-          maxLines: _Styles.maxLines,
-          overflow: TextOverflow.ellipsis,
+        if (pickupRequestDetails.pickupRequestStatus == 'Completed') ...[
+          Text(
+            'Picked Up by $collectorName: ${WidgetUtil.dateTimeFormatter(pickupRequestDetails.completedDate ?? DateTime.now())}',
+            style: _Styles.smallGreyTextStyle,
+            textAlign: TextAlign.right,
+            maxLines: _Styles.maxLines,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 15),
+        ],
+        getTitleDescription(
+          title: 'Request ID',
+          description: '#${pickupRequestDetails.pickupRequestID}',
         ),
-        SizedBox(height: 15),
-        getTitleDescription(title: 'Request ID', description: '#REQ13113'),
         getDivider(),
         getTitleDescription(
           title: 'Pickup Location',
-          description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+          description: pickupRequestDetails.pickupLocation ?? '',
         ),
         getDivider(),
         getTitleDescription(
-          title: 'Pickup Time',
+          title: 'Pickup Date & Time',
           description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+              '${WidgetUtil.dateFormatter(pickupRequestDetails.pickupDate ?? DateTime.now())}, ${pickupRequestDetails.pickupTimeRange}',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Item Description',
-          description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius urna eu ultricies egestas.',
+          description: pickupRequestDetails.pickupItemDescription ?? '',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Category',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: pickupRequestDetails.pickupItemCategory ?? '',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Quantity',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: '${pickupRequestDetails.pickupItemQuantity ?? 0}',
         ),
         getDivider(),
         getTitleDescription(
           title: 'Condition & Usage Info',
-          description: 'Lorem ipsum dolor sit amet, consectetur',
+          description: pickupRequestDetails.pickupItemCondition ?? '',
         ),
         getDivider(),
       ],

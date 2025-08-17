@@ -209,7 +209,6 @@ extension _Actions on _AddEditRewardScreenState {
           unawaited(WidgetUtil.showSnackBar(text: 'Failed to add reward'));
         }
       } else {
-        print('reward id: ${widget.rewardId}');
         final result =
             await tryLoad(
               context,
@@ -226,8 +225,6 @@ extension _Actions on _AddEditRewardScreenState {
               ),
             ) ??
             false;
-
-        print('result: $result');
 
         if (result) {
           unawaited(
@@ -430,14 +427,11 @@ class _Styles {
 
   static const borderRadius = 15.0;
   static const datePickerIconSize = 20.0;
-
   static const imageHeight = 200.0;
-
   static const sliderPadding = EdgeInsets.zero;
+  static const errorTextPadding = EdgeInsets.only(top: 5);
 
   static const errorTextStyle = TextStyle(fontSize: 12, color: Colors.red);
-
-  static const errorTextPadding = EdgeInsets.only(top: 5);
 
   static const titleTextStyle = TextStyle(
     fontSize: 18,
