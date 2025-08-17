@@ -1145,18 +1145,49 @@ class PickupHistoryRoute extends _i52.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i38.PickupRequestDetailsScreen]
-class PickupRequestDetailsRoute extends _i52.PageRouteInfo<void> {
-  const PickupRequestDetailsRoute({List<_i52.PageRouteInfo>? children})
-    : super(PickupRequestDetailsRoute.name, initialChildren: children);
+class PickupRequestDetailsRoute
+    extends _i52.PageRouteInfo<PickupRequestDetailsRouteArgs> {
+  PickupRequestDetailsRoute({
+    _i53.Key? key,
+    required String pickupRequestID,
+    List<_i52.PageRouteInfo>? children,
+  }) : super(
+         PickupRequestDetailsRoute.name,
+         args: PickupRequestDetailsRouteArgs(
+           key: key,
+           pickupRequestID: pickupRequestID,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'PickupRequestDetailsRoute';
 
   static _i52.PageInfo page = _i52.PageInfo(
     name,
     builder: (data) {
-      return const _i38.PickupRequestDetailsScreen();
+      final args = data.argsAs<PickupRequestDetailsRouteArgs>();
+      return _i38.PickupRequestDetailsScreen(
+        key: args.key,
+        pickupRequestID: args.pickupRequestID,
+      );
     },
   );
+}
+
+class PickupRequestDetailsRouteArgs {
+  const PickupRequestDetailsRouteArgs({
+    this.key,
+    required this.pickupRequestID,
+  });
+
+  final _i53.Key? key;
+
+  final String pickupRequestID;
+
+  @override
+  String toString() {
+    return 'PickupRequestDetailsRouteArgs{key: $key, pickupRequestID: $pickupRequestID}';
+  }
 }
 
 /// generated route for

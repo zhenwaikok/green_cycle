@@ -152,6 +152,7 @@ class DropDownItems {
     'All',
     'Pending',
     'Approved',
+    'Rejected',
   ];
   static const List<String> itemCategoryItems = [
     'Large Household Appliances',

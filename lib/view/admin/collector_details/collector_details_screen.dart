@@ -58,6 +58,13 @@ class _CollectorDetailsScreen extends BaseStatefulPage {
 class _CollectorDetailsScreenState
     extends BaseStatefulState<_CollectorDetailsScreen> {
   final _formKey = GlobalKey<FormBuilderState>();
+  bool refreshData = false;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
 
   @override
   void initState() {
@@ -130,7 +137,7 @@ extension _Helpers on _CollectorDetailsScreenState {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _CollectorDetailsScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(refreshData);
   }
 
   Future<void> initialLoad() async {
@@ -208,9 +215,10 @@ extension _Actions on _CollectorDetailsScreenState {
             text: 'Rejected collector profile successfully',
           ),
         );
-        if (mounted) {
-          await context.router.maybePop(true);
-        }
+        await initialLoad();
+        _setState(() {
+          refreshData = true;
+        });
       } else {
         unawaited(
           WidgetUtil.showSnackBar(text: 'Failed to reject collector profile'),
@@ -234,9 +242,10 @@ extension _Actions on _CollectorDetailsScreenState {
 
     if (result ?? false) {
       WidgetUtil.showSnackBar(text: 'Approved collector profile successfully');
-      if (mounted) {
-        context.router.maybePop(true);
-      }
+      await initialLoad();
+      _setState(() {
+        refreshData = true;
+      });
     } else {
       WidgetUtil.showSnackBar(text: 'Failed to approve collector profile');
     }

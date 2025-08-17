@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -135,6 +137,32 @@ extension _Actions on _ManageRewardsScreenState {
     });
   }
 
+  Future<void> onToggleSwitchChanged({
+    required RewardModel reward,
+    required bool isSwitched,
+  }) async {
+    final index = _rewardList.indexWhere((r) => r.rewardID == reward.rewardID);
+    if (index == -1) return;
+
+    _setState(() {
+      _rewardList[index] = _rewardList[index].copyWith(isActive: isSwitched);
+    });
+
+    await tryCatch(
+      context,
+      () => context.read<RewardViewModel>().updateReward(
+        rewardID: reward.rewardID ?? 0,
+        rewardName: reward.rewardName ?? '',
+        rewardDescription: reward.rewardDescription ?? '',
+        pointsRequired: reward.pointsRequired ?? 0,
+        rewardImageURL: reward.rewardImageURL ?? '',
+        createdDate: reward.createdDate ?? DateTime.now(),
+        expiryDate: reward.expiryDate ?? DateTime.now(),
+        isActive: isSwitched,
+      ),
+    );
+  }
+
   void onBackButtonPressed() {
     context.router.maybePop();
   }
@@ -145,20 +173,54 @@ extension _Actions on _ManageRewardsScreenState {
     });
   }
 
-  void onPlusButtonPressed() {
-    context.router.push(AddOrEditRewardRoute(isEdit: false));
+  void onPlusButtonPressed() async {
+    final result = await context.router.push(
+      AddOrEditRewardRoute(isEdit: false),
+    );
+
+    if (result == true && mounted) {
+      await fetchData();
+    }
   }
 
-  void onDeleteButtonPressed() {
+  void onDeleteButtonPressed({required int rewardID}) {
     WidgetUtil.showAlertDialog(
       context,
       title: 'Delete Confirmation',
       content: 'Are you sure to delete this reward?',
       actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Yes'),
+        getAlertDialogTextButton(
+          onPressed: () => context.router.maybePop(),
+          text: 'No',
+        ),
+        getAlertDialogTextButton(
+          onPressed: () => deleteReward(rewardID: rewardID),
+          text: 'Yes',
+        ),
       ],
     );
+  }
+
+  Future<void> deleteReward({required int rewardID}) async {
+    await context.router.maybePop();
+    if (mounted) {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<RewardViewModel>().deleteReward(
+              rewardID: rewardID,
+            ),
+          ) ??
+          false;
+
+      if (result) {
+        unawaited(WidgetUtil.showSnackBar(text: 'Reward deleted successfully'));
+        if (mounted) {
+          await context.router.maybePop();
+        }
+        await fetchData();
+      }
+    }
   }
 
   void onRewardCardPressed({required RewardModel rewardDetails}) async {
@@ -268,10 +330,7 @@ extension _WidgetFactories on _ManageRewardsScreenState {
                 ),
               ),
               SizedBox(width: 15),
-              IconButton(
-                onPressed: onDeleteButtonPressed,
-                icon: Icon(Icons.delete, color: ColorManager.redColor),
-              ),
+              getToggleButton(reward: reward),
             ],
           ),
         ),
@@ -371,11 +430,26 @@ extension _WidgetFactories on _ManageRewardsScreenState {
                   color: ColorManager.whiteColor,
                   size: _Styles.iconButtonSize,
                 ),
-                onPressed: onDeleteButtonPressed,
+                onPressed: () => onDeleteButtonPressed(
+                  rewardID: rewardDetails.rewardID ?? 0,
+                ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget getToggleButton({required RewardModel reward}) {
+    return Transform.scale(
+      scale: 0.8,
+      child: Switch.adaptive(
+        activeColor: ColorManager.primary,
+        value: reward.isActive ?? false,
+        onChanged: (value) {
+          onToggleSwitchChanged(reward: reward, isSwitched: value);
+        },
       ),
     );
   }
