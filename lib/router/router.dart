@@ -69,5 +69,6 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SuccessRoute.page),
     AutoRoute(page: AddOrEditAddressRoute.page),
     AutoRoute(page: SalesOrderRoute.page),
+    AutoRoute(page: CollectorProfileStatusRoute.page),
   ];
 }

@@ -21,6 +21,7 @@ import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -197,48 +198,91 @@ extension _Actions on _AvailablePickupRequestScreenState {
 
   void onAcceptJobButtonPressed({
     required PickupRequestModel pickupRequestDetails,
-  }) {
-    WidgetUtil.showAlertDialog(
-      context,
-      title: 'Accept Confirmation',
-      content: 'Are you sure to accept this pickup request?',
-      actions: [
-        getAlertDialogTextButton(
-          onPressed: () {
-            context.router.maybePop();
-          },
-          text: 'No',
-        ),
-        getAlertDialogTextButton(
-          onPressed: () =>
-              acceptPickuprequest(pickupRequestDetails: pickupRequestDetails),
-          text: 'Yes',
-        ),
-      ],
-    );
+  }) async {
+    final isCollectorProfileApproved = await checkIfCollectorProfileApproved();
+
+    if (!isCollectorProfileApproved) {
+      if (mounted) {
+        WidgetUtil.showAlertDialog(
+          context,
+          title: 'Account Approval',
+          content:
+              'Your account is still under review or not approved so you cannot accept this pickup request.',
+          actions: [
+            getAlertDialogTextButton(
+              onPressed: () {
+                context.router.maybePop();
+              },
+              text: 'OK',
+            ),
+          ],
+        );
+      }
+    } else {
+      if (mounted) {
+        WidgetUtil.showAlertDialog(
+          context,
+          title: 'Accept Confirmation',
+          content: 'Are you sure to accept this pickup request?',
+          actions: [
+            getAlertDialogTextButton(
+              onPressed: () {
+                context.router.maybePop();
+              },
+              text: 'No',
+            ),
+            getAlertDialogTextButton(
+              onPressed: () => acceptPickuprequest(
+                pickupRequestDetails: pickupRequestDetails,
+              ),
+              text: 'Yes',
+            ),
+          ],
+        );
+      }
+    }
   }
 
   Future<void> acceptPickuprequest({
     required PickupRequestModel pickupRequestDetails,
   }) async {
-    context.router.maybePop();
-    final result =
-        await tryLoad(
-          context,
-          () => context.read<PickupRequestViewModel>().updatePickupRequest(
-            pickupRequestDetails: pickupRequestDetails,
-            pickupRequestStatus: 'Accepted',
-            isCollectorUpdate: true,
-          ),
-        ) ??
-        false;
+    await context.router.maybePop();
 
-    if (result) {
-      unawaited(
-        WidgetUtil.showSnackBar(text: 'You have accepted this pickup request.'),
-      );
-      await setUp();
+    if (mounted) {
+      final result =
+          await tryLoad(
+            context,
+            () => context.read<PickupRequestViewModel>().updatePickupRequest(
+              pickupRequestDetails: pickupRequestDetails,
+              pickupRequestStatus: 'Accepted',
+              isCollectorUpdate: true,
+            ),
+          ) ??
+          false;
+
+      if (result) {
+        unawaited(
+          WidgetUtil.showSnackBar(
+            text: 'You have accepted this pickup request.',
+          ),
+        );
+        await setUp();
+      }
     }
+  }
+
+  Future<bool> checkIfCollectorProfileApproved() async {
+    final userVM = context.read<UserViewModel>();
+    final userID = userVM.user?.userID ?? '';
+    await tryLoad(
+      context,
+      () => userVM.getUserDetails(
+        userID: userID,
+        noNeedUpdateUserSharedPreference: true,
+      ),
+    );
+
+    return userVM.userDetails?.approvalStatus == 'Approved';
   }
 
   Future<void> setUp() async {

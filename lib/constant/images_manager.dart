@@ -17,4 +17,5 @@ class Images {
   static const homeMarkerIcon = 'assets/images/home_marker.png';
   static const carMarkerIcon = 'assets/images/car_marker.png';
   static const successTickImage = 'assets/images/success_tick_image.png';
+  static const reviewProfileImage = 'assets/images/review_profile_image.png';
 }

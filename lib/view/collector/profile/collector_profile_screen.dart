@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
@@ -9,10 +10,14 @@ import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
+import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
 import 'package:provider/provider.dart';
@@ -69,19 +74,42 @@ class _CollectorProfileScreenState
     final user =
         context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
 
+    final pickupRequestList = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestList,
+    );
+
+    final ongoingPickupRequestList = pickupRequestList
+        .where(
+          (request) =>
+              request.pickupRequestStatus ==
+                  DropDownItems.requestDropdownItems[3] &&
+              request.collectorUserID == user.userID,
+        )
+        .toList();
+
+    final completedPickupRequestList = pickupRequestList
+        .where(
+          (request) =>
+              request.pickupRequestStatus ==
+                  DropDownItems.requestDropdownItems[5] &&
+              request.collectorUserID == user.userID,
+        )
+        .toList();
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getProfileDetails(
-            imageURL: user.profileImageURL ?? '',
-            fullName: user.fullName ?? '-',
-            userRole: user.userRole ?? '-',
-          ),
+          getProfileStatusButton(),
+          SizedBox(height: 30),
+          getProfileDetails(userDetails: user),
           SizedBox(height: 25),
           Divider(color: ColorManager.lightGreyColor),
           SizedBox(height: 25),
-          getCollectorStatsCard(),
+          getCollectorStatsCard(
+            numOfOngoing: ongoingPickupRequestList.length,
+            numOfCompleted: completedPickupRequestList.length,
+          ),
           SizedBox(height: 30),
           getProfileCard(
             userRole: user.userRole ?? '',
@@ -116,6 +144,14 @@ extension _Actions on _CollectorProfileScreenState {
     context.router.push(PickupHistoryRoute());
   }
 
+  void onProfileStatusButtonPressed() async {
+    final result = await context.router.push(CollectorProfileStatusRoute());
+
+    if (result == true && mounted) {
+      fetchData();
+    }
+  }
+
   Future<void> onSignOutPressed() async {
     final result = await tryLoad(
       context,
@@ -131,23 +167,47 @@ extension _Actions on _CollectorProfileScreenState {
 
     await tryLoad(
       context,
-      () => context.read<UserViewModel>().getUserDetails(
-        userID: user?.userID ?? '',
-      ),
+      () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );
+
+    if (mounted) {
+      await tryLoad(
+        context,
+        () => context.read<UserViewModel>().getUserDetails(
+          userID: user?.userID ?? '',
+        ),
+      );
+    }
   }
 }
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CollectorProfileScreenState {
-  Widget getProfileDetails({
-    required String imageURL,
-    required String fullName,
-    required String userRole,
-  }) {
+  Widget getProfileStatusButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: _Styles.profileStatusButtonWidth,
+          child: CustomButton(
+            text: 'Profile Status',
+            textColor: ColorManager.blackColor,
+            backgroundColor: ColorManager.lightGreyColor3,
+            shadowColor: WidgetStateProperty.all(ColorManager.whiteColor),
+            onPressed: onProfileStatusButtonPressed,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getProfileDetails({required UserModel userDetails}) {
     return Row(
       children: [
-        CustomProfileImage(imageURL: imageURL, imageSize: 80.0),
+        CustomProfileImage(
+          imageURL: userDetails.profileImageURL ?? '',
+          imageSize: _Styles.profileImageSize,
+        ),
         SizedBox(width: 20),
         Expanded(
           child: Column(
@@ -155,13 +215,17 @@ extension _WidgetFactories on _CollectorProfileScreenState {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                fullName,
+                userDetails.fullName ?? '-',
                 style: _Styles.usernameTextStyle,
                 maxLines: _Styles.maxTextLines,
                 overflow: TextOverflow.ellipsis,
               ),
+              Text(
+                userDetails.userRole ?? '-',
+                style: _Styles.collectorTextStyle,
+              ),
               SizedBox(height: 15),
-              Text(userRole, style: _Styles.collectorTextStyle),
+              getAccountStatus(status: userDetails.approvalStatus ?? ''),
             ],
           ),
         ),
@@ -169,7 +233,15 @@ extension _WidgetFactories on _CollectorProfileScreenState {
     );
   }
 
-  Widget getCollectorStatsCard() {
+  Widget getAccountStatus({required String status}) {
+    final backgroundColor = WidgetUtil.getAccountStatusColor(status);
+    return CustomStatusBar(text: status, backgroundColor: backgroundColor);
+  }
+
+  Widget getCollectorStatsCard({
+    required int numOfOngoing,
+    required int numOfCompleted,
+  }) {
     return CustomCard(
       needBoxShadow: false,
       backgroundColor: ColorManager.primaryLight,
@@ -177,7 +249,10 @@ extension _WidgetFactories on _CollectorProfileScreenState {
         child: Row(
           children: [
             Expanded(
-              child: getCollectorStatsItem(title: 'Ongoing', value: '1'),
+              child: getCollectorStatsItem(
+                title: 'Ongoing',
+                value: '$numOfOngoing',
+              ),
             ),
             VerticalDivider(
               color: ColorManager.primary,
@@ -185,7 +260,10 @@ extension _WidgetFactories on _CollectorProfileScreenState {
               width: 30,
             ),
             Expanded(
-              child: getCollectorStatsItem(title: 'Completed', value: '15'),
+              child: getCollectorStatsItem(
+                title: 'Completed',
+                value: '$numOfCompleted',
+              ),
             ),
           ],
         ),
@@ -248,6 +326,8 @@ class _Styles {
   _Styles._();
 
   static const maxTextLines = 2;
+  static const profileImageSize = 100.0;
+  static const profileStatusButtonWidth = 150.0;
 
   static const customCardPadding = EdgeInsets.symmetric(
     horizontal: 20,

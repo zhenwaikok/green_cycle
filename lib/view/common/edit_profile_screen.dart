@@ -33,10 +33,12 @@ class EditProfileScreen extends StatelessWidget {
     super.key,
     required this.userRole,
     required this.userID,
+    this.isResubmit,
   });
 
   final String userRole;
   final String userID;
+  final bool? isResubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +52,25 @@ class EditProfileScreen extends StatelessWidget {
           firebaseServices: FirebaseServices(),
         ),
       ),
-      child: _EditProfileScreen(userRole: userRole, userID: userID),
+      child: _EditProfileScreen(
+        userRole: userRole,
+        userID: userID,
+        isResubmit: isResubmit,
+      ),
     );
   }
 }
 
 class _EditProfileScreen extends BaseStatefulPage {
-  const _EditProfileScreen({required this.userRole, required this.userID});
+  const _EditProfileScreen({
+    required this.userRole,
+    required this.userID,
+    this.isResubmit,
+  });
 
   final String userRole;
   final String userID;
+  final bool? isResubmit;
 
   @override
   State<_EditProfileScreen> createState() => _EditProfileScreenState();
@@ -68,6 +79,7 @@ class _EditProfileScreen extends BaseStatefulPage {
 class _EditProfileScreenState extends BaseStatefulState<_EditProfileScreen> {
   final roles = DropDownItems.roles;
   final genders = DropDownItems.genders;
+  final vehicleTypes = DropDownItems.vehicleTypes;
   String? _phoneNumber;
   File? _selectedImage;
   UserModel? get userDetails => context.read<UserViewModel>().userDetails;
@@ -115,7 +127,10 @@ class _EditProfileScreenState extends BaseStatefulState<_EditProfileScreen> {
               if (userDetails != null) ...[
                 getProfileImage(imageURL: userDetails.profileImageURL ?? ''),
                 SizedBox(height: 60),
-                getProfileTextFields(userDetails: userDetails),
+                getProfileTextFields(
+                  userDetails: userDetails,
+                  isResubmit: widget.isResubmit,
+                ),
               ],
             ],
           ),
@@ -153,6 +168,21 @@ extension _Helpers on _EditProfileScreenState {
   String? get gender => _formKey
       .currentState
       ?.fields[EditProfileFormFieldsEnum.gender.name]
+      ?.value;
+
+  String? get vehiclePlateNumberFromField => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.vehiclePlateNum.name]
+      ?.value;
+
+  String? get companyNameFromField => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.companyName.name]
+      ?.value;
+
+  String? get vehicleTypeFromField => _formKey
+      .currentState
+      ?.fields[EditProfileFormFieldsEnum.vehicleType.name]
       ?.value;
 
   String? get phoneNumber => _phoneNumber;
@@ -219,9 +249,15 @@ extension _Actions on _EditProfileScreenState {
               password: password,
               userRole: userRole,
               fullName: fullName,
-              vehicleType: vehicleType,
-              vehiclePlateNumber: vehiclePlateNumber,
-              companyName: companyName,
+              vehicleType: widget.isResubmit == true
+                  ? vehicleTypeFromField
+                  : vehicleType,
+              vehiclePlateNumber: widget.isResubmit == true
+                  ? vehiclePlateNumberFromField
+                  : vehiclePlateNumber,
+              companyName: widget.isResubmit == true
+                  ? companyNameFromField
+                  : companyName,
               profileImageURL: profileImageURL,
               approvalStatus: approvalStatus,
               accountRejectMessage: accountRejectMessage,
@@ -275,7 +311,10 @@ extension _WidgetFactories on _EditProfileScreenState {
     );
   }
 
-  Widget getProfileTextFields({required UserModel userDetails}) {
+  Widget getProfileTextFields({
+    required UserModel userDetails,
+    bool? isResubmit,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -295,6 +334,7 @@ extension _WidgetFactories on _EditProfileScreenState {
         if (widget.userRole == 'Collector') ...[
           SizedBox(height: 20),
           getCollectorAdditionalInfo(
+            isResubmit: isResubmit ?? false,
             vehicleNumber: userDetails.vehiclePlateNumber ?? '',
             companyName: userDetails.companyName ?? '',
             vehicleType: userDetails.vehicleType ?? '',
@@ -427,6 +467,7 @@ extension _WidgetFactories on _EditProfileScreenState {
   }
 
   Widget getCollectorAdditionalInfo({
+    bool? isResubmit,
     required String vehicleNumber,
     required String companyName,
     required String vehicleType,
@@ -434,21 +475,64 @@ extension _WidgetFactories on _EditProfileScreenState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getCollectorAdditionalInfoItem(
-          title: 'Vehicle Plate Number',
-          value: vehicleNumber,
-        ),
-        SizedBox(height: 20),
-        getCollectorAdditionalInfoItem(
-          title: 'Company/Organization',
-          value: companyName,
-        ),
-        SizedBox(height: 20),
-        getCollectorAdditionalInfoItem(
-          title: 'Vehicle Type',
-          value: vehicleType,
-        ),
+        if (isResubmit == true) ...[
+          getVehiclePlateNumberField(vehiclePlateNumber: vehicleNumber),
+          SizedBox(height: 20),
+
+          getCompanyNameField(companyName: companyName),
+          SizedBox(height: 20),
+
+          getVehicleTypeDropdown(vehicleType: vehicleType),
+        ] else ...[
+          getCollectorAdditionalInfoItem(
+            title: 'Vehicle Plate Number',
+            value: vehicleNumber,
+          ),
+          SizedBox(height: 20),
+          getCollectorAdditionalInfoItem(
+            title: 'Company/Organization',
+            value: companyName,
+          ),
+          SizedBox(height: 20),
+          getCollectorAdditionalInfoItem(
+            title: 'Vehicle Type',
+            value: vehicleType,
+          ),
+        ],
       ],
+    );
+  }
+
+  Widget getVehiclePlateNumberField({required String vehiclePlateNumber}) {
+    return CustomTextField(
+      fontSize: _Styles.editProfileFormFieldFontSize,
+      color: _Styles.editProfileFormFieldColor,
+      title: 'Vehicle Plate Number',
+      formName: EditProfileFormFieldsEnum.vehiclePlateNum.name,
+      initialValue: vehiclePlateNumber,
+      validator: FormBuilderValidators.required(),
+    );
+  }
+
+  Widget getCompanyNameField({required String companyName}) {
+    return CustomTextField(
+      fontSize: _Styles.editProfileFormFieldFontSize,
+      color: _Styles.editProfileFormFieldColor,
+      title: 'Company Name',
+      formName: EditProfileFormFieldsEnum.companyName.name,
+      initialValue: companyName,
+      validator: FormBuilderValidators.required(),
+    );
+  }
+
+  Widget getVehicleTypeDropdown({required String vehicleType}) {
+    return CustomDropdown(
+      formName: EditProfileFormFieldsEnum.vehicleType.name,
+      items: vehicleTypes,
+      title: 'Vehicle Type',
+      fontSize: _Styles.editProfileFormFieldFontSize,
+      color: _Styles.editProfileFormFieldColor,
+      initialValue: vehicleType,
     );
   }
 
@@ -468,7 +552,7 @@ extension _WidgetFactories on _EditProfileScreenState {
 
   Widget getButton() {
     return CustomButton(
-      text: 'Save',
+      text: widget.isResubmit == true ? 'Resubmit' : 'Save',
       textColor: ColorManager.whiteColor,
       onPressed: onSaveButtonPressed,
     );
