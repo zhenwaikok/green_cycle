@@ -32,6 +32,9 @@ enum EditProfileFormFieldsEnum {
   phoneNum,
   password,
   address,
+  vehiclePlateNum,
+  companyName,
+  vehicleType,
 }
 
 enum CreateOrEditListingFormFieldsEnum {

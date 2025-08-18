@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.image,
+    this.shadowColor,
   });
 
   final String text;
@@ -20,6 +21,7 @@ class CustomButton extends StatelessWidget {
   final void Function()? onPressed;
   final Icon? icon;
   final String? image;
+  final WidgetStateProperty<Color?>? shadowColor;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class CustomButton extends StatelessWidget {
               overlayColor: WidgetStateProperty.all(
                 ColorManager.greyColor.withValues(alpha: 0.1),
               ),
+              shadowColor: shadowColor,
             ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

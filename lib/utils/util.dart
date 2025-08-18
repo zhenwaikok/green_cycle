@@ -120,6 +120,19 @@ class WidgetUtil {
     }
   }
 
+  static Color getAccountStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'rejected':
+        return ColorManager.redColor;
+      case 'pending':
+        return ColorManager.orangeColor;
+      case 'approved':
+        return ColorManager.primary;
+      default:
+        return ColorManager.primary;
+    }
+  }
+
   static String getButtonLabel(String status) {
     return switch (status) {
       'Accepted' => 'On My Way',
@@ -153,6 +166,19 @@ class WidgetUtil {
       return 'Expired';
     } else {
       return 'Active';
+    }
+  }
+
+  static String getProfileStatusNoteTest({required String status}) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'Your profile is currently under review. Please check back later.';
+      case 'approved':
+        return 'Your profile has been approved. You can now start accepting pickup requests.';
+      case 'rejected':
+        return 'Your profile has been rejected. Please review the reason below and update your details to resubmit.';
+      default:
+        return 'Your profile is currently under review. Please check back later.';
     }
   }
 
