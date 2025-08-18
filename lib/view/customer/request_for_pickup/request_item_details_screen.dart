@@ -44,9 +44,21 @@ class _RequestItemDetailsScreen extends BaseStatefulPage {
 class _RequestItemDetailsScreenState
     extends BaseStatefulState<_RequestItemDetailsScreen> {
   late MultiImagePickerController controller;
-  List<XFile> images = [];
   final _formkey = GlobalKey<FormBuilderState>();
   final categoryItems = DropDownItems.itemCategoryItems;
+  bool hasEdited = false;
+
+  List<XFile> images = [];
+  String? initialPickupItemDescription;
+  String? initialPickupItemCategory;
+  int? initialPickupItemQuantity;
+  String? initialPickupItemCondition;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
 
   @override
   void initState() {
@@ -77,7 +89,6 @@ class _RequestItemDetailsScreenState
 
   @override
   Widget body() {
-    final vm = context.select((PickupRequestViewModel vm) => vm);
     return SingleChildScrollView(
       child: FormBuilder(
         key: _formkey,
@@ -89,17 +100,17 @@ class _RequestItemDetailsScreenState
             getItemPhotoField(),
             SizedBox(height: 25),
             getItemDescriptionSection(
-              itemDescription: vm.pickupItemDescription ?? '',
+              itemDescription: initialPickupItemDescription ?? '',
             ),
             SizedBox(height: 25),
             getCategorySection(
-              itemCategory: vm.pickupItemCategory ?? categoryItems.first,
+              itemCategory: initialPickupItemCategory ?? categoryItems.first,
             ),
             SizedBox(height: 25),
-            getQuantitySection(quantity: vm.pickupItemQuantity ?? 1),
+            getQuantitySection(quantity: initialPickupItemQuantity ?? 1),
             SizedBox(height: 25),
             getConditionInfoSection(
-              conditionInfo: vm.pickupItemCondition ?? '',
+              conditionInfo: initialPickupItemCondition ?? '',
             ),
           ],
         ),
@@ -140,7 +151,7 @@ extension _Helpers on _RequestItemDetailsScreenState {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _RequestItemDetailsScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(hasEdited);
   }
 
   void loadData() {
@@ -148,9 +159,24 @@ extension _Actions on _RequestItemDetailsScreenState {
     if (vm.pickupItemImages.isNotEmpty) {
       controller.images = vm.pickupItemImages;
     }
+    _setState(() {
+      initialPickupItemDescription = vm.pickupItemDescription;
+      initialPickupItemCategory = vm.pickupItemCategory;
+      initialPickupItemQuantity = vm.pickupItemQuantity;
+      initialPickupItemCondition = vm.pickupItemCondition;
+    });
+
+    if (hasEdited) {
+      _formkey.currentState?.patchValue({
+        'itemDescription': vm.pickupItemDescription,
+        'category': vm.pickupItemCategory ?? categoryItems.first,
+        'quantity': vm.pickupItemQuantity?.toString() ?? '1',
+        'conditionInfo': vm.pickupItemCondition,
+      });
+    }
   }
 
-  void onNextButtonPressed({required bool isEdit}) {
+  void onNextButtonPressed({required bool isEdit}) async {
     final formValid = _formkey.currentState?.saveAndValidate() ?? false;
 
     if (formValid) {
@@ -163,9 +189,16 @@ extension _Actions on _RequestItemDetailsScreenState {
       );
       if (isEdit) {
         WidgetUtil.showSnackBar(text: 'Updated successfully');
-        context.router.maybePop();
+        context.router.maybePop(true);
       } else {
-        context.router.push(RequestSummaryRoute());
+        final result = await context.router.push(RequestSummaryRoute());
+
+        if (result == true && mounted) {
+          _setState(() {
+            hasEdited = true;
+          });
+          loadData();
+        }
       }
     }
   }

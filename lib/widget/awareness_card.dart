@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomAwarenessCard extends StatelessWidget {
   const CustomAwarenessCard({
@@ -56,16 +57,18 @@ class CustomAwarenessCard extends StatelessWidget {
             ),
           ),
           SizedBox(width: 35),
-          Container(
-            padding: _Styles.iconContainerPadding,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: ColorManager.primary,
-            ),
-            child: Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: _Styles.arrowIconSize,
-              color: ColorManager.whiteColor,
+          Skeleton.shade(
+            child: Container(
+              padding: _Styles.iconContainerPadding,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ColorManager.primary,
+              ),
+              child: Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: _Styles.arrowIconSize,
+                color: ColorManager.whiteColor,
+              ),
             ),
           ),
         ],

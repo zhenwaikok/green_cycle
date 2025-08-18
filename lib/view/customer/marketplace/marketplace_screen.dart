@@ -121,10 +121,14 @@ class _MarketplaceScreenState extends BaseStatefulState<_MarketplaceScreen> {
 
   @override
   Widget body() {
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
     final itemListingList = context.watch<ItemListingViewModel>().itemListings;
 
     final filteredItems = itemListingList
-        .where((item) => isMatch(item) && item.isSold == false)
+        .where(
+          (item) =>
+              isMatch(item) && item.isSold == false && item.userID != userID,
+        )
         .toList();
     final sortedItems = [...filteredItems]
       ..sort(

@@ -15,6 +15,7 @@ import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
@@ -92,9 +93,13 @@ class _MarketplaceCategoryScreenState
       (ItemListingViewModel vm) => vm.itemListings.where(isMatch).toList(),
     );
 
-    final categoryItemListingList = itemListingList
-        .where((item) => item.itemCategory == widget.category)
-        .toList();
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+
+    final categoryItemListingList = itemListingList.where((item) {
+      return item.itemCategory == widget.category &&
+          item.isSold == false &&
+          item.userID != userID;
+    }).toList();
 
     return Column(
       children: [
