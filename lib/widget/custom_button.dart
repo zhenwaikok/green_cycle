@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -25,44 +26,46 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: _Styles.buttonHeight,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style:
-            ElevatedButton.styleFrom(
-              backgroundColor: backgroundColor ?? ColorManager.primary,
-              side: BorderSide(
-                color: borderColor ?? Colors.transparent,
-                width: _Styles.borderWidth,
+    return Skeleton.shade(
+      child: SizedBox(
+        width: double.infinity,
+        height: _Styles.buttonHeight,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style:
+              ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor ?? ColorManager.primary,
+                side: BorderSide(
+                  color: borderColor ?? Colors.transparent,
+                  width: _Styles.borderWidth,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(5.0),
+                ),
+              ).copyWith(
+                overlayColor: WidgetStateProperty.all(
+                  ColorManager.greyColor.withValues(alpha: 0.1),
+                ),
+                shadowColor: shadowColor,
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadiusGeometry.circular(5.0),
-              ),
-            ).copyWith(
-              overlayColor: WidgetStateProperty.all(
-                ColorManager.greyColor.withValues(alpha: 0.1),
-              ),
-              shadowColor: shadowColor,
-            ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            image != null
-                ? Image.asset(image ?? '', height: 15, width: 15)
-                : SizedBox.shrink(),
-            image != null ? SizedBox(width: 5) : SizedBox(width: 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              image != null
+                  ? Image.asset(image ?? '', height: 15, width: 15)
+                  : SizedBox.shrink(),
+              image != null ? SizedBox(width: 5) : SizedBox(width: 0),
 
-            icon ?? SizedBox.shrink(),
-            icon != null ? SizedBox(width: 10) : SizedBox(width: 0),
+              icon ?? SizedBox.shrink(),
+              icon != null ? SizedBox(width: 10) : SizedBox(width: 0),
 
-            Text(
-              text,
-              style: _Styles.buttonTextStyle(color: textColor),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              Text(
+                text,
+                style: _Styles.buttonTextStyle(color: textColor),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

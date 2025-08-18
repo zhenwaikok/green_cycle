@@ -215,11 +215,13 @@ extension _Actions on _RequestScreenState {
     }
   }
 
-  void resetAll() {
+  void resetAll({bool? clearSearchText}) {
     _setState(() {
       searchQuery = null;
       searchController.clear();
-      selectedValue = requestItems.first;
+      if (!(clearSearchText ?? false)) {
+        selectedValue = requestItems.first;
+      }
     });
   }
 
@@ -272,7 +274,7 @@ extension _WidgetFactories on _RequestScreenState {
       onChanged: (value) {
         onSearchChanged(value);
       },
-      onPressed: resetAll,
+      onPressed: () => resetAll(clearSearchText: true),
       hintText: 'Search request here',
     );
   }

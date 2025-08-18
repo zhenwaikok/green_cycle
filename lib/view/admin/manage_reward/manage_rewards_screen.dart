@@ -444,12 +444,14 @@ extension _WidgetFactories on _ManageRewardsScreenState {
   Widget getToggleButton({required RewardModel reward}) {
     return Transform.scale(
       scale: 0.8,
-      child: Switch.adaptive(
-        activeColor: ColorManager.primary,
-        value: reward.isActive ?? false,
-        onChanged: (value) {
-          onToggleSwitchChanged(reward: reward, isSwitched: value);
-        },
+      child: Skeleton.shade(
+        child: Switch.adaptive(
+          activeColor: ColorManager.primary,
+          value: reward.isActive ?? false,
+          onChanged: (value) {
+            onToggleSwitchChanged(reward: reward, isSwitched: value);
+          },
+        ),
       ),
     );
   }

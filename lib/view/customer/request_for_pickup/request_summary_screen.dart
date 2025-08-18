@@ -31,6 +31,14 @@ class _RequestSummaryScreen extends BaseStatefulPage {
 
 class _RequestSummaryScreenState
     extends BaseStatefulState<_RequestSummaryScreen> {
+  bool hasEdited = false;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   PreferredSizeWidget? appbar() {
     return CustomAppBar(
@@ -81,19 +89,39 @@ class _RequestSummaryScreenState
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _RequestSummaryScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(hasEdited);
   }
 
-  void onEditPickupLocationPressed() {
-    context.router.push(SelectLocationRoute(isEdit: true));
+  void onEditPickupLocationPressed() async {
+    final result = await context.router.push(SelectLocationRoute(isEdit: true));
+
+    if (result == true) {
+      _setState(() {
+        hasEdited = true;
+      });
+    }
   }
 
-  void onEditPickupDateAndTimePressed() {
-    context.router.push(SchedulePickupRoute(isEdit: true));
+  void onEditPickupDateAndTimePressed() async {
+    final result = await context.router.push(SchedulePickupRoute(isEdit: true));
+
+    if (result == true) {
+      _setState(() {
+        hasEdited = true;
+      });
+    }
   }
 
-  void onEditItemDetailsPressed() {
-    context.router.push(RequestItemDetailsRoute(isEdit: true));
+  void onEditItemDetailsPressed() async {
+    final result = await context.router.push(
+      RequestItemDetailsRoute(isEdit: true),
+    );
+
+    if (result == true) {
+      _setState(() {
+        hasEdited = true;
+      });
+    }
   }
 
   Future<void> onConfirmRequestButtonPressed() async {

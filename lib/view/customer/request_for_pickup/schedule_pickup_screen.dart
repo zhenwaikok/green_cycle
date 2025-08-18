@@ -41,6 +41,8 @@ class _SchedulePickupScreenState
   final pickUpTimeOptions = DropDownItems.pickUpTimeOptions;
 
   int selectedPickUpTimeOptionIndex = 0;
+  DateTime? selectedPickupDate;
+  bool hasEdited = false;
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -78,7 +80,9 @@ class _SchedulePickupScreenState
           children: [
             getTitle(),
             SizedBox(height: 35),
-            getPickupDateSection(),
+            getPickupDateSection(
+              initialDate: selectedPickupDate ?? DateTime.now(),
+            ),
             SizedBox(height: 25),
             getPickupTimeSection(),
           ],
@@ -102,7 +106,7 @@ extension _Helpers on _SchedulePickupScreenState {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _SchedulePickupScreenState {
   void onBackButtonPressed() {
-    context.router.maybePop();
+    context.router.maybePop(hasEdited);
   }
 
   void onPickupTimeOptionPressed(int index) {
@@ -111,25 +115,46 @@ extension _Actions on _SchedulePickupScreenState {
     });
   }
 
-  void onNextButtonPressed({required bool isEdit}) {
+  void onNextButtonPressed({required bool isEdit}) async {
     context.read<PickupRequestViewModel>().updatePickupDateAndTime(
       pickupDate: pickupDate,
       pickupTimeRange: pickupTimeRange,
     );
     if (isEdit) {
       WidgetUtil.showSnackBar(text: 'Updated successfully');
-      context.router.maybePop();
+      context.router.maybePop(true);
     } else {
-      context.router.push(RequestItemDetailsRoute(isEdit: false));
+      final result = await context.router.push(
+        RequestItemDetailsRoute(isEdit: false),
+      );
+
+      if (result == true && mounted) {
+        _setState(() {
+          hasEdited = true;
+        });
+        loadData();
+      }
     }
   }
 
   void loadData() {
     final vm = context.read<PickupRequestViewModel>();
     if (vm.pickupTimeRange != null) {
-      selectedPickUpTimeOptionIndex = pickUpTimeOptions.indexOf(
-        vm.pickupTimeRange ?? '',
-      );
+      _setState(() {
+        selectedPickUpTimeOptionIndex = pickUpTimeOptions.indexOf(
+          vm.pickupTimeRange ?? '',
+        );
+      });
+    }
+
+    if (vm.pickupDate != null) {
+      _setState(() {
+        selectedPickupDate = vm.pickupDate;
+      });
+    }
+
+    if (hasEdited) {
+      _formkey.currentState?.patchValue({'pickupDate': vm.pickupDate});
     }
   }
 }
@@ -150,8 +175,7 @@ extension _WidgetFactories on _SchedulePickupScreenState {
     );
   }
 
-  Widget getPickupDateSection() {
-    final vm = context.read<PickupRequestViewModel>();
+  Widget getPickupDateSection({required DateTime initialDate}) {
     return Column(
       children: [
         getSectionTitle(
@@ -166,7 +190,7 @@ extension _WidgetFactories on _SchedulePickupScreenState {
             color: ColorManager.greyColor,
             size: _Styles.datePickerIconSize,
           ),
-          initialValue: vm.pickupDate,
+          initialValue: initialDate,
         ),
       ],
     );

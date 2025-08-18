@@ -51,9 +51,10 @@ class _SelectLocationScreen extends BaseStatefulPage {
 class _SelectLocationScreenState
     extends BaseStatefulState<_SelectLocationScreen> {
   final _formkey = GlobalKey<FormBuilderState>();
-  final searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  final focusNode = FocusNode();
 
   String? _pickupAddress;
   String? googleAPIKey = EnvValues.googleApiKey;
@@ -61,7 +62,7 @@ class _SelectLocationScreenState
   Set<Marker> markers = {};
 
   CameraPosition get cameraPosition =>
-      CameraPosition(target: selectedLatLng ?? LatLng(0, 0), zoom: 20);
+      CameraPosition(target: selectedLatLng ?? LatLng(0, 0), zoom: 15);
 
   void _setState(VoidCallback fn) {
     if (mounted) {
@@ -136,11 +137,22 @@ extension _Helpers on _SelectLocationScreenState {
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _SelectLocationScreenState {
   void onBackButtonPressed() {
-    context.read<PickupRequestViewModel>().clearAll();
+    if (!widget.isEdit) {
+      context.read<PickupRequestViewModel>().clearAll();
+    }
+
     context.router.maybePop();
   }
 
-  void onNextButtonPressed({required bool isEdit}) {
+  Future<void> loadData() async {
+    final vm = context.read<PickupRequestViewModel>();
+    _setState(() {
+      selectedLatLng = vm.selectedLatLng;
+      _pickupAddress = vm.pickupLocation;
+    });
+  }
+
+  void onNextButtonPressed({required bool isEdit}) async {
     if (_pickupAddress != null) {
       context.read<PickupRequestViewModel>().updateLocation(
         pickupLocation: pickupLocation,
@@ -150,14 +162,21 @@ extension _Actions on _SelectLocationScreenState {
 
       if (isEdit) {
         WidgetUtil.showSnackBar(text: 'Updated successfully');
-        context.router.maybePop();
+        context.router.maybePop(true);
       } else {
-        context.router.push(SchedulePickupRoute(isEdit: false));
+        final result = await context.router.push(
+          SchedulePickupRoute(isEdit: false),
+        );
+
+        if (result == true && mounted) {
+          await loadData();
+          await animateToSelectedLocation();
+        }
       }
     }
   }
 
-  void searchBarTextChanged(Prediction prediction) {
+  void onSuggestionPlaceClick(Prediction prediction) {
     searchController.text = prediction.description ?? '';
     searchController.selection = TextSelection.fromPosition(
       TextPosition(offset: prediction.description?.length ?? 0),
@@ -232,13 +251,15 @@ extension _Actions on _SelectLocationScreenState {
 
     print('Selected latlng: $selectedLatLng');
 
-    markers.clear();
-    markers.add(
-      Marker(
-        markerId: MarkerId('Current Location'),
-        position: selectedLatLng ?? LatLng(0, 0),
-      ),
-    );
+    _setState(() {
+      markers.clear();
+      markers.add(
+        Marker(
+          markerId: MarkerId('Current Location'),
+          position: selectedLatLng ?? LatLng(0, 0),
+        ),
+      );
+    });
   }
 
   Future<void> getCurrentLocation() async {
@@ -305,7 +326,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
     final maxChildSize = 450 / screenHeight;
 
     return DraggableScrollableSheet(
-      initialChildSize: maxChildSize,
+      initialChildSize: maxChildSize / 2,
       minChildSize: minChildSize,
       maxChildSize: maxChildSize,
       builder: (context, scrollController) {
@@ -377,6 +398,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
       ),
       child: GooglePlaceAutoCompleteTextField(
         textEditingController: searchController,
+        focusNode: focusNode,
         googleAPIKey: googleAPIkey ?? '',
         countries: ['my'],
         debounceTime: _Styles.debounceTime,
@@ -414,7 +436,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
           ],
         ),
         itemClick: (Prediction prediction) {
-          searchBarTextChanged(prediction);
+          onSuggestionPlaceClick(prediction);
         },
         itemBuilder: (context, index, Prediction prediction) {
           return Container(

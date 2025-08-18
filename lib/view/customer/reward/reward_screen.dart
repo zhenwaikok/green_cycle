@@ -117,7 +117,8 @@ class _RewardSreenState extends BaseStatefulState<_RewardScreen> {
       return !redeemedRewardIDs.contains(reward.rewardID) &&
           !WidgetUtil.isRewardDateExpired(
             expiryDate: reward.expiryDate ?? DateTime.now(),
-          );
+          ) &&
+          reward.isActive == true;
     }).toList();
 
     final loadingRewardList = List.generate(
