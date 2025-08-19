@@ -56,6 +56,11 @@ class UserRepository {
     return response;
   }
 
+  Future<MyResponse> passwordReset({required String email}) async {
+    final response = await userServices.passwordReset(email: email);
+    return response;
+  }
+
   Future<MyResponse> getAllUsers() async {
     final response = await userServices.getAllUsers();
 

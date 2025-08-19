@@ -18,4 +18,5 @@ class Images {
   static const carMarkerIcon = 'assets/images/car_marker.png';
   static const successTickImage = 'assets/images/success_tick_image.png';
   static const reviewProfileImage = 'assets/images/review_profile_image.png';
+  static const forgotPasswordImage = 'assets/images/forgot_password_image.png';
 }

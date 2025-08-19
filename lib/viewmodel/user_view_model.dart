@@ -123,6 +123,12 @@ class UserViewModel extends BaseViewModel {
     return response.data;
   }
 
+  Future<bool> passwordReset({required String email}) async {
+    final response = await userRepository.passwordReset(email: email);
+    checkError(response);
+    return response.data;
+  }
+
   Future<bool> insertUser({required UserModel userModel}) async {
     final response = await userRepository.insertUser(userModel: userModel);
     checkError(response);
@@ -317,7 +323,7 @@ class UserViewModel extends BaseViewModel {
         createdDate: user?.createdDate,
       );
 
-      return updateUserResponse;
+      return updateUserResponse is ApiResponseModel;
     }
 
     return false;
