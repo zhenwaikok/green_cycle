@@ -22,6 +22,8 @@ enum ChangePasswordFormFieldsEnum {
   confirmNewPassword,
 }
 
+enum ForgotPasswordFormFieldsEnum { email }
+
 enum EditProfileFormFieldsEnum {
   role,
   firstName,

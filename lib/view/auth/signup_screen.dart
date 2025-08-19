@@ -492,11 +492,11 @@ extension _WidgetFactories on _SignUpScreenState {
       onPressed: () => togglePasswordVisibility(passwordField: passwordField),
       icon: passwordField
           ? (isPasswordObscure
-                ? Icon(Icons.visibility_off)
-                : Icon(Icons.visibility))
+                ? Icon(Icons.visibility)
+                : Icon(Icons.visibility_off))
           : (isConfirmPasswordObscure
-                ? Icon(Icons.visibility_off)
-                : Icon(Icons.visibility)),
+                ? Icon(Icons.visibility)
+                : Icon(Icons.visibility_off)),
     );
   }
 }

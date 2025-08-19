@@ -108,6 +108,19 @@ mixin FirebaseBaseServices {
     }
   }
 
+  Future<MyResponse> passwordReset({required String email}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+      return MyResponse.complete(true);
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.message);
+      return MyResponse.error(_handleFirebaseAuthError(e, true));
+    } catch (e) {
+      debugPrint('Password reset error: ${e.toString()}');
+      return MyResponse.error('Unexpected error: $e');
+    }
+  }
+
   String _handleFirebaseAuthError(
     FirebaseAuthException e,
     bool isUpdatePassword,

@@ -126,6 +126,10 @@ extension _Actions on _LoginScreenState {
       isPasswordObscure = !isPasswordObscure;
     });
   }
+
+  void onForgotPasswordPressed() {
+    context.router.push(ForgotPasswordRoute());
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -216,8 +220,8 @@ extension _WidgetFactories on _LoginScreenState {
     return IconButton(
       onPressed: () => togglePasswordVisibility(),
       icon: isPasswordObscure
-          ? Icon(Icons.visibility_off)
-          : Icon(Icons.visibility),
+          ? Icon(Icons.visibility)
+          : Icon(Icons.visibility_off),
     );
   }
 
@@ -226,7 +230,7 @@ extension _WidgetFactories on _LoginScreenState {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
-          onPressed: () {},
+          onPressed: onForgotPasswordPressed,
           style: _Styles.forgotPasswordButtonStyle,
           child: Text(
             'Forgot Password?',
