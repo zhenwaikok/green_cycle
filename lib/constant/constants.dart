@@ -44,6 +44,12 @@ class EnvValues {
     'stripePublishableKey',
   );
   static const stripeSecretKey = String.fromEnvironment('stripeSecretKey');
+  static const googleSignInClientID = String.fromEnvironment(
+    'googleSignInClientID',
+  );
+  static const googleSignInServerClientID = String.fromEnvironment(
+    'googleSignInServerClientID',
+  );
 }
 
 List<SingleChildWidget> providerAssets() => [

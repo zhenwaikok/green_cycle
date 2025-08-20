@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>GIDClientID</key>
+		<string>931591092978-ur0bbv3lbb78sg13218lmdhbuorbulap.apps.googleusercontent.com</string>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.931591092978-ur0bbv3lbb78sg13218lmdhbuorbulap</string>
+				</array>
+			</dict>
+		</array>
 		<key>NSCameraUsageDescription</key>
 		<string>Scan your card to add it automatically</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
@@ -79,5 +92,12 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>sms</string>
+			<string>tel</string>
+			<string>http</string>
+			<string>https</string>
+		</array>
 	</dict>
 </plist>

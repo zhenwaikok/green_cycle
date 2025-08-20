@@ -21,8 +21,8 @@ AuthRequestModel _$AuthRequestModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthRequestModel {
-  String get email => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
+  String? get email => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
 
   /// Serializes this AuthRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +41,7 @@ abstract class $AuthRequestModelCopyWith<$Res> {
     $Res Function(AuthRequestModel) then,
   ) = _$AuthRequestModelCopyWithImpl<$Res, AuthRequestModel>;
   @useResult
-  $Res call({String email, String password});
+  $Res call({String? email, String? password});
 }
 
 /// @nodoc
@@ -58,17 +58,17 @@ class _$AuthRequestModelCopyWithImpl<$Res, $Val extends AuthRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? email = null, Object? password = null}) {
+  $Res call({Object? email = freezed, Object? password = freezed}) {
     return _then(
       _value.copyWith(
-            email: null == email
+            email: freezed == email
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
-                      as String,
-            password: null == password
+                      as String?,
+            password: freezed == password
                 ? _value.password
                 : password // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
           )
           as $Val,
     );
@@ -84,7 +84,7 @@ abstract class _$$AuthRequestModelImplCopyWith<$Res>
   ) = __$$AuthRequestModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String email, String password});
+  $Res call({String? email, String? password});
 }
 
 /// @nodoc
@@ -100,17 +100,17 @@ class __$$AuthRequestModelImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? email = null, Object? password = null}) {
+  $Res call({Object? email = freezed, Object? password = freezed}) {
     return _then(
       _$AuthRequestModelImpl(
-        email: null == email
+        email: freezed == email
             ? _value.email
             : email // ignore: cast_nullable_to_non_nullable
-                  as String,
-        password: null == password
+                  as String?,
+        password: freezed == password
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
       ),
     );
   }
@@ -119,15 +119,15 @@ class __$$AuthRequestModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AuthRequestModelImpl implements _AuthRequestModel {
-  const _$AuthRequestModelImpl({required this.email, required this.password});
+  const _$AuthRequestModelImpl({this.email, this.password});
 
   factory _$AuthRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthRequestModelImplFromJson(json);
 
   @override
-  final String email;
+  final String? email;
   @override
-  final String password;
+  final String? password;
 
   @override
   String toString() {
@@ -167,17 +167,17 @@ class _$AuthRequestModelImpl implements _AuthRequestModel {
 
 abstract class _AuthRequestModel implements AuthRequestModel {
   const factory _AuthRequestModel({
-    required final String email,
-    required final String password,
+    final String? email,
+    final String? password,
   }) = _$AuthRequestModelImpl;
 
   factory _AuthRequestModel.fromJson(Map<String, dynamic> json) =
       _$AuthRequestModelImpl.fromJson;
 
   @override
-  String get email;
+  String? get email;
   @override
-  String get password;
+  String? get password;
 
   /// Create a copy of AuthRequestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 
-enum AuthType { signUp, login, logout }
+enum AuthType { signUp, login, logout, googleSignIn }
 
 mixin FirebaseBaseServices {
   Future<MyResponse> authenticate({
@@ -13,6 +15,7 @@ mixin FirebaseBaseServices {
   }) async {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
       switch (authType) {
         case AuthType.signUp:
@@ -27,8 +30,41 @@ mixin FirebaseBaseServices {
             password: requestBody?['password'],
           );
           return MyResponse.complete(userCredential.user);
+        case AuthType.googleSignIn:
+          await googleSignIn.signOut();
+          final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+          print('goolgle user: $googleUser');
+
+          if (googleUser == null) {
+            print('no user null');
+            return MyResponse.complete(null);
+          }
+
+          final GoogleSignInAuthentication googleAuth =
+              await googleUser.authentication;
+
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+
+          final userCredential = await auth.signInWithCredential(credential);
+
+          if (requestBody?['password'] != null) {
+            final emailCredential = EmailAuthProvider.credential(
+              email: googleUser.email,
+              password: requestBody?['password'],
+            );
+
+            await auth.currentUser?.linkWithCredential(emailCredential);
+          }
+
+          print('user credential: ${userCredential.user}');
+
+          return MyResponse.complete(userCredential.user);
         case AuthType.logout:
           await auth.signOut();
+          await googleSignIn.signOut();
           return MyResponse.complete(true);
       }
     } on FirebaseAuthException catch (e) {
@@ -85,16 +121,21 @@ mixin FirebaseBaseServices {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
+      print('user: $user');
+
       if (user != null) {
         final credential = EmailAuthProvider.credential(
           email: user.email ?? '',
           password: oldPassword,
         );
+        print('credential: $credential');
         final reauthenticated = await user.reauthenticateWithCredential(
           credential,
         );
+        print('reauthenticated: $reauthenticated');
         if (reauthenticated.user != null) {
           await user.updatePassword(newPassword);
+          print('Password updated successfully');
           return MyResponse.complete(true);
         }
       }
@@ -142,6 +183,12 @@ mixin FirebaseBaseServices {
         return isUpdatePassword
             ? 'Incorrect current password, please try again'
             : 'Invalid email or password';
+      case 'provider-already-linked':
+        return 'This provider is already linked to the account';
+      case 'credential-already-in-use':
+        return 'This email is already linked to another account';
+      case 'operation-not-allowed':
+        return 'This sign-in method is not allowed';
       default:
         return 'Authentication error: ${e.message}';
     }

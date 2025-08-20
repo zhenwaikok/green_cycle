@@ -305,25 +305,31 @@ extension _Actions on _AvailablePickupRequestScreenState {
 
     await tryLoad(context, () => pickupRequestVM.getAllPickupRequests());
 
-    for (var request in pickupRequestVM.pickupRequestList) {
-      final pickupRequestID = request.pickupRequestID ?? '';
+    if (collectorLatLng != LatLng(0, 0)) {
+      for (var request in pickupRequestVM.pickupRequestList) {
+        final pickupRequestID = request.pickupRequestID ?? '';
 
-      final destinationLocation = LatLng(
-        request.pickupLatitude ?? 0,
-        request.pickupLongtitude ?? 0,
+        final destinationLocation = LatLng(
+          request.pickupLatitude ?? 0,
+          request.pickupLongtitude ?? 0,
+        );
+
+        if (mounted) {
+          final distance = await tryCatch(
+            context,
+            () => locationVM.calculateDistance(
+              originLatLng: collectorLocation,
+              destinationLatLng: destinationLocation,
+            ),
+          );
+
+          requestDistance[pickupRequestID] = distance ?? 0;
+        }
+      }
+    } else {
+      WidgetUtil.showSnackBar(
+        text: 'Enable GPS to check which pickup request near you',
       );
-
-      final distance = mounted
-          ? await tryCatch(
-              context,
-              () => locationVM.calculateDistance(
-                originLatLng: collectorLocation,
-                destinationLatLng: destinationLocation,
-              ),
-            )
-          : 0;
-
-      requestDistance[pickupRequestID] = distance ?? 0;
     }
 
     _setState(() {
