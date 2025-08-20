@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
@@ -27,10 +26,6 @@ class UserRepository {
     final response = await userServices.signUpWithEmailPassword(
       authRequestModel: authRequestModel,
     );
-
-    if (response.data is User) {
-      await getUserDetails(userID: (response.data as User).uid);
-    }
     return response;
   }
 
@@ -43,10 +38,14 @@ class UserRepository {
     final response = await userServices.loginWithEmailPassword(
       authRequestModel: authRequestModel,
     );
+    return response;
+  }
 
-    if (response.data is User) {
-      await getUserDetails(userID: (response.data as User).uid);
-    }
+  Future<MyResponse> loginWithGoogle({String? password}) async {
+    final response = await userServices.loginWithGoogle(
+      authRequestModel: AuthRequestModel(password: password),
+    );
+    print('response repo: ${response.data}');
     return response;
   }
 

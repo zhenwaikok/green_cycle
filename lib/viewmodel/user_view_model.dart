@@ -116,6 +116,20 @@ class UserViewModel extends BaseViewModel {
     return null;
   }
 
+  Future<dynamic> loginWithGoogle({String? password}) async {
+    final response = await userRepository.loginWithGoogle(password: password);
+
+    print('response: ${response.data}');
+
+    if (response.data is User) {
+      await getUserDetails(userID: response.data.uid);
+      return _userDetails;
+    }
+
+    checkError(response);
+    return null;
+  }
+
   Future<bool> logout() async {
     final response = await userRepository.logout();
 
@@ -323,7 +337,7 @@ class UserViewModel extends BaseViewModel {
         createdDate: user?.createdDate,
       );
 
-      return updateUserResponse is ApiResponseModel;
+      return updateUserResponse;
     }
 
     return false;

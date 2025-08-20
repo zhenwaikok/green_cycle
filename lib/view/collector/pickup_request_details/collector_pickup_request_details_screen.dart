@@ -425,6 +425,10 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
       }
     }
   }
+
+  void onCallButtonPressed({required String phoneNum}) async {
+    await WidgetUtil.dialPhoneNum(phoneNum: phoneNum);
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -528,7 +532,7 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
           description: pickupRequestDetails.pickupItemCondition ?? '-',
         ),
         getDivider(),
-        getRequestedBy(userDetails: userDetails),
+        getRequestedBy(userDetails: userDetails, isCompleted: isCompleted),
       ],
     );
   }
@@ -568,7 +572,7 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
         SizedBox(width: 10),
         Expanded(
           child: getNavigationButton(
-            image: Images.googleLogo,
+            image: Images.googleMapLogo,
             text: 'Google Map',
             onPressed: () =>
                 onGoogleMapsPressed(latitude: latitude, longitude: longitude),
@@ -600,7 +604,10 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
     );
   }
 
-  Widget getRequestedBy({required UserModel userDetails}) {
+  Widget getRequestedBy({
+    required UserModel userDetails,
+    required bool isCompleted,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -634,14 +641,18 @@ extension _WidgetFactories on _CollectorPickupRequestDetailsScreenState {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.call,
-                  color: ColorManager.primary,
-                  size: _Styles.iconSize,
+              if (!isCompleted) ...[
+                IconButton(
+                  onPressed: () => onCallButtonPressed(
+                    phoneNum: userDetails.phoneNumber ?? '',
+                  ),
+                  icon: Icon(
+                    Icons.call,
+                    color: ColorManager.primary,
+                    size: _Styles.iconSize,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

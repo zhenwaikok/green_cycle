@@ -54,15 +54,17 @@ class _ForgotPasswordScreenState
     return Center(
       child: FormBuilder(
         key: _formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            getImage(),
-            SizedBox(height: 40),
-            getForgotPasswordMessage(),
-            SizedBox(height: 20),
-            getEmailTextField(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              getImage(),
+              SizedBox(height: 40),
+              getForgotPasswordMessage(),
+              SizedBox(height: 20),
+              getEmailTextField(),
+            ],
+          ),
         ),
       ),
     );

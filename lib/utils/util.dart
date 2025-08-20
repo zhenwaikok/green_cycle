@@ -12,6 +12,7 @@ import 'package:green_cycle_fyp/widget/custom_text_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WidgetUtil {
   static String dateFormatter(DateTime date) {
@@ -349,5 +350,19 @@ class WidgetUtil {
           ),
         )
         .toList();
+  }
+
+  static Future<void> dialPhoneNum({required String phoneNum}) async {
+    final url = Uri.parse('tel:$phoneNum');
+
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.platformDefault);
+      } else {
+        debugPrint("No app can handle tel: URI");
+      }
+    } catch (e) {
+      debugPrint("Failed to launch dialer: $e");
+    }
   }
 }

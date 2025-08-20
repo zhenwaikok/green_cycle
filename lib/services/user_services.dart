@@ -24,6 +24,13 @@ class UserServices extends BaseServices with FirebaseBaseServices {
     );
   }
 
+  Future<MyResponse> loginWithGoogle({AuthRequestModel? authRequestModel}) {
+    return authenticate(
+      authType: AuthType.googleSignIn,
+      requestBody: authRequestModel?.toJson(),
+    );
+  }
+
   Future<MyResponse> logout() {
     return authenticate(authType: AuthType.logout);
   }

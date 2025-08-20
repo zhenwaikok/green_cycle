@@ -264,11 +264,17 @@ extension _Actions on _SelectLocationScreenState {
 
   Future<void> getCurrentLocation() async {
     print('get current location');
-    Position position = await context
+    Position? position = await context
         .read<LocationViewModel>()
         .currentLocation();
     print('Current position: $position');
-    await onLocationSelected(LatLng(position.latitude, position.longitude));
+    if (position != null) {
+      await onLocationSelected(LatLng(position.latitude, position.longitude));
+    } else {
+      WidgetUtil.showSnackBar(
+        text: 'Unable to get current location, please enable GPS',
+      );
+    }
   }
 }
 
