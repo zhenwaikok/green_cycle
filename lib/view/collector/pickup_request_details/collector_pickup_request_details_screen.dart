@@ -115,7 +115,7 @@ class _CollectorPickupRequestDetailsScreenState
 
   @override
   EdgeInsets bottomNavigationBarPadding() {
-    if (isCompleted) {
+    if (isCompleted || pickupRequestDetails == null) {
       return EdgeInsets.zero;
     }
     return super.bottomNavigationBarPadding();
@@ -123,7 +123,7 @@ class _CollectorPickupRequestDetailsScreenState
 
   @override
   Widget bottomNavigationBar() {
-    if (isLoading) {
+    if (isLoading || pickupRequestDetails == null) {
       return SizedBox.shrink();
     }
     return getButtonBasedOnStatus(
@@ -265,12 +265,13 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
               false
         : false;
 
-    if (result) {}
-    await initializeService();
-    if (mounted) {
-      context.read<LocationViewModel>().startTrackingService(
-        collectorUserID: pickupRequestDetails.collectorUserID ?? '',
-      );
+    if (result) {
+      await initializeService();
+      if (mounted) {
+        context.read<LocationViewModel>().startTrackingService(
+          collectorUserID: pickupRequestDetails.collectorUserID ?? '',
+        );
+      }
     }
   }
 
@@ -340,13 +341,6 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
         ),
       );
       await initialLoad();
-    } else {
-      unawaited(
-        WidgetUtil.showSnackBar(
-          text:
-              'Failed to update pickup request status, please try again later',
-        ),
-      );
     }
   }
 

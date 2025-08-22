@@ -215,7 +215,7 @@ extension _Actions on _ManageCollectorsScreenState {
       selectedSort = sortByItems.first;
       selectedStatus = statusItems.first;
     });
-    await tryLoad(context, () => context.read<UserViewModel>().getAllUsers());
+    await tryCatch(context, () => context.read<UserViewModel>().getAllUsers());
     _setState(() => _isLoading = false);
   }
 }

@@ -96,6 +96,12 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
         .where((itemListing) => itemListing.isSold == true)
         .toList();
 
+    final loadingList = List.generate(
+      5,
+      (index) =>
+          ItemListingModel(itemName: 'Loading...', itemCategory: 'Loading...'),
+    );
+
     return DefaultTabController(
       length: 3,
       child: Column(
@@ -111,9 +117,21 @@ class _MyListingScreenState extends BaseStatefulState<_MyListingScreen> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      buildTabContent(itemListingList: allItemListingList),
-                      buildTabContent(itemListingList: activeItemListingList),
-                      buildTabContent(itemListingList: soldItemListingList),
+                      buildTabContent(
+                        itemListingList: isLoading
+                            ? loadingList
+                            : allItemListingList,
+                      ),
+                      buildTabContent(
+                        itemListingList: isLoading
+                            ? loadingList
+                            : activeItemListingList,
+                      ),
+                      buildTabContent(
+                        itemListingList: isLoading
+                            ? loadingList
+                            : soldItemListingList,
+                      ),
                     ],
                   ),
                 ),
@@ -193,7 +211,7 @@ extension _Actions on _MyListingScreenState {
       isLoading = true;
     });
     selectedSort = sortByItems.first;
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<ItemListingViewModel>().getItemListingWithUserID(),
     );

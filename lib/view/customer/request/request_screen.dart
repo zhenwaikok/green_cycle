@@ -135,45 +135,22 @@ class _RequestScreenState extends BaseStatefulState<_RequestScreen> {
               color: ColorManager.blackColor,
               refreshIndicatorBackgroundColor: ColorManager.whiteColor,
               slivers: [
-                if (filteredPickupRequestList.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: NoDataAvailableLabel(
-                        noDataText: 'No Requests Found',
-                      ),
-                    ),
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final request = _isLoading
-                            ? PickupRequestModel(
-                                pickupRequestID: 'Loading...',
-                                pickupItemDescription: 'Loading...',
-                                pickupItemCategory: 'Loading...',
-                              )
-                            : filteredPickupRequestList[index];
-
-                        return getRequestCard(
-                          isLoading: _isLoading,
-                          requestID: request.pickupRequestID ?? '',
-                          pickupItemImageURL:
-                              request.pickupItemImageURL?.first ?? '',
-                          itemDescription: request.pickupItemDescription ?? '',
-                          category: request.pickupItemCategory ?? '',
-                          quantity: request.pickupItemQuantity ?? 0,
-                          pickupDate: request.pickupDate ?? DateTime.now(),
-                          pickupTimeRange: request.pickupTimeRange ?? '',
-                          status: request.pickupRequestStatus ?? '',
-                        );
-                      },
-                      childCount: _isLoading
-                          ? 5
-                          : filteredPickupRequestList.length,
-                    ),
-                  ),
+                ...getPickupRequestList(
+                  pickupRequestModel: _isLoading
+                      ? List.generate(
+                          5,
+                          (_) => PickupRequestModel(
+                            pickupRequestID: 'Loading...',
+                            pickupItemDescription: 'Loading...',
+                            pickupItemCategory: 'Loading...',
+                            pickupLocation: 'Loading...',
+                            pickupDate: DateTime.now(),
+                            pickupTimeRange: 'Loading...',
+                          ),
+                        )
+                      : filteredPickupRequestList,
+                  isLoading: _isLoading,
+                ),
               ],
             ),
           ),
@@ -255,7 +232,7 @@ extension _Actions on _RequestScreenState {
     _setState(() {
       _isLoading = true;
     });
-    await tryLoad(
+    await tryCatch(
       context,
       () =>
           context.read<PickupRequestViewModel>().getPickupRequestsWithUserID(),
@@ -289,6 +266,41 @@ extension _WidgetFactories on _RequestScreenState {
       isExpanded: false,
       needBorder: false,
     );
+  }
+
+  List<Widget> getPickupRequestList({
+    required List<PickupRequestModel> pickupRequestModel,
+    required bool isLoading,
+  }) {
+    if (pickupRequestModel.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Requests Found'),
+          ),
+        ),
+      ];
+    }
+
+    return [
+      SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final request = pickupRequestModel[index];
+          return getRequestCard(
+            isLoading: _isLoading,
+            requestID: request.pickupRequestID ?? '',
+            pickupItemImageURL: request.pickupItemImageURL?.first ?? '',
+            itemDescription: request.pickupItemDescription ?? '',
+            category: request.pickupItemCategory ?? '',
+            quantity: request.pickupItemQuantity ?? 0,
+            pickupDate: request.pickupDate ?? DateTime.now(),
+            pickupTimeRange: request.pickupTimeRange ?? '',
+            status: request.pickupRequestStatus ?? '',
+          );
+        }, childCount: pickupRequestModel.length),
+      ),
+    ];
   }
 
   Widget getRequestCard({

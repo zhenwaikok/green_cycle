@@ -210,12 +210,13 @@ extension _Actions on _MyPickupScreenState {
               false
         : false;
 
-    if (result) {}
-    await initializeService();
-    if (mounted) {
-      context.read<LocationViewModel>().startTrackingService(
-        collectorUserID: pickupRequestDetails.collectorUserID ?? '',
-      );
+    if (result) {
+      await initializeService();
+      if (mounted) {
+        context.read<LocationViewModel>().startTrackingService(
+          collectorUserID: pickupRequestDetails.collectorUserID ?? '',
+        );
+      }
     }
   }
 
@@ -261,13 +262,6 @@ extension _Actions on _MyPickupScreenState {
     if (result) {
       unawaited(WidgetUtil.showSnackBar(text: 'Updated successfully'));
       await fetchData();
-    } else {
-      unawaited(
-        WidgetUtil.showSnackBar(
-          text:
-              'Failed to update pickup request status, please try again later',
-        ),
-      );
     }
   }
 
@@ -275,7 +269,7 @@ extension _Actions on _MyPickupScreenState {
     _setState(() {
       isLoading = true;
     });
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );

@@ -230,7 +230,7 @@ extension _Actions on _SalesOrderScreenState {
     final userVM = context.read<UserViewModel>();
     final sellerUserID = userVM.user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PurchaseViewModel>().getPurchasesWithSellerUserID(
         sellerUserID: sellerUserID,
@@ -364,6 +364,22 @@ extension _WidgetFactories on _SalesOrderScreenState {
           PurchasesModel(itemName: 'Loading...', deliveryAddress: 'Loading...'),
     );
 
+    if (isLoading) {
+      return [
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return SalesOrderTab(
+              purchaseItems: loadingList,
+              purchaseGroupID: '',
+              buyerName: 'Loading...',
+              isLoading: isLoading,
+              onMarkAsShippedButtonPressed: () {},
+            );
+          }, childCount: loadingList.length),
+        ),
+      ];
+    }
+
     if (groupedPurchaseItems.isEmpty) {
       return [
         SliverFillRemaining(
@@ -377,28 +393,23 @@ extension _WidgetFactories on _SalesOrderScreenState {
 
     return [
       SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final purchaseGroupID =
-                groupedPurchaseItems[index].value['purchaseGroupID'];
-            final buyerName = groupedPurchaseItems[index].value['buyerName'];
-            final items =
-                groupedPurchaseItems[index].value['items']
-                    as List<PurchasesModel>;
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final purchaseGroupID =
+              groupedPurchaseItems[index].value['purchaseGroupID'];
+          final buyerName = groupedPurchaseItems[index].value['buyerName'];
+          final items =
+              groupedPurchaseItems[index].value['items']
+                  as List<PurchasesModel>;
 
-            return SalesOrderTab(
-              purchaseItems: isLoading ? loadingList : items,
-              purchaseGroupID: purchaseGroupID,
-              buyerName: buyerName,
-              isLoading: isLoading,
-              onMarkAsShippedButtonPressed: () =>
-                  onMarkAsShippedButtonPressed(purchaseItems: items),
-            );
-          },
-          childCount: groupedPurchaseItems.isEmpty
-              ? (isLoading ? 5 : 0)
-              : groupedPurchaseItems.length,
-        ),
+          return SalesOrderTab(
+            purchaseItems: items,
+            purchaseGroupID: purchaseGroupID,
+            buyerName: buyerName,
+            isLoading: isLoading,
+            onMarkAsShippedButtonPressed: () =>
+                onMarkAsShippedButtonPressed(purchaseItems: items),
+          );
+        }, childCount: groupedPurchaseItems.length),
       ),
     ];
   }

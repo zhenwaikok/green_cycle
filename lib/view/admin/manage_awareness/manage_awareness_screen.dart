@@ -201,7 +201,7 @@ extension _Actions on _ManageAwarenessScreenState {
 
       selectedSortBy = sortByItems.first;
     });
-    final awarenessList = await tryLoad(
+    final awarenessList = await tryCatch(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessList(),
     );

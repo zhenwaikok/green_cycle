@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -65,6 +66,11 @@ class _CollectorProfileScreenState
   }
 
   @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
   EdgeInsets bottomNavigationBarPadding() {
     return EdgeInsets.zero;
   }
@@ -96,27 +102,41 @@ class _CollectorProfileScreenState
         )
         .toList();
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getProfileStatusButton(),
-          SizedBox(height: 30),
-          getProfileDetails(userDetails: user),
-          SizedBox(height: 25),
-          Divider(color: ColorManager.lightGreyColor),
-          SizedBox(height: 25),
-          getCollectorStatsCard(
-            numOfOngoing: ongoingPickupRequestList.length,
-            numOfCompleted: completedPickupRequestList.length,
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      color: ColorManager.blackColor,
+      slivers: [
+        SliverPadding(
+          padding: _Styles.screenPadding,
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(child: getProfileStatusButton()),
+              SliverToBoxAdapter(child: SizedBox(height: 30)),
+              SliverToBoxAdapter(child: getProfileDetails(userDetails: user)),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: Divider(color: ColorManager.lightGreyColor),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: getCollectorStatsCard(
+                  numOfOngoing: ongoingPickupRequestList.length,
+                  numOfCompleted: completedPickupRequestList.length,
+                ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 30)),
+              SliverToBoxAdapter(
+                child: getProfileCard(
+                  userRole: user.userRole ?? '',
+                  userID: user.userID ?? '',
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 30),
-          getProfileCard(
-            userRole: user.userRole ?? '',
-            userID: user.userID ?? '',
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -328,6 +348,8 @@ class _Styles {
   static const maxTextLines = 2;
   static const profileImageSize = 100.0;
   static const profileStatusButtonWidth = 150.0;
+
+  static const screenPadding = EdgeInsets.all(20);
 
   static const customCardPadding = EdgeInsets.symmetric(
     horizontal: 20,

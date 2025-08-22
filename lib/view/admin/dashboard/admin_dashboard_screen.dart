@@ -1,12 +1,28 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/awareness/awareness_model.dart';
+import 'package:green_cycle_fyp/repository/awareness_repository.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
+import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/awareness_services.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class AdminDashboardScreen extends StatelessWidget {
@@ -14,7 +30,38 @@ class AdminDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AdminDashboardScreen();
+    return ChangeNotifierProvider(
+      create: (_) {
+        UserViewModel(
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+        PickupRequestViewModel(
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+          pickupRequestRepository: PickupRequestRepository(),
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+        );
+        AwarenessViewModel(
+          awarenessRepository: AwarenessRepository(
+            awarenessServices: AwarenessServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+      },
+      child: _AdminDashboardScreen(),
+    );
   }
 }
 
@@ -25,12 +72,26 @@ class _AdminDashboardScreen extends BaseStatefulPage {
 
 class _AdminDashboardScreenState
     extends BaseStatefulState<_AdminDashboardScreen> {
+  bool isLoading = true;
+  List<AwarenessModel> awarenessList = [];
   final List<String> dashboardCardTitle = [
     'Total Collectors',
-    'Total Users',
-    'Request Completed',
+    'Total Customers',
+    'Completed Requests',
     'Articles',
   ];
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
   @override
   EdgeInsets bottomNavigationBarPadding() {
@@ -44,17 +105,46 @@ class _AdminDashboardScreenState
 
   @override
   Widget body() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getWelcomeMessage(),
-          SizedBox(height: 35),
-          getDashboarDetails(),
-          SizedBox(height: 30),
-          getQuickActionSection(),
-        ],
+    final allUsers = context.select((UserViewModel vm) => vm.userList);
+    final collectors = allUsers
+        .where((user) => user.userRole == DropDownItems.roles[1])
+        .toList();
+    final customers = allUsers
+        .where((user) => user.userRole == DropDownItems.roles[0])
+        .toList();
+    final pickupRequest = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestList.where(
+        (requet) =>
+            requet.pickupRequestStatus == DropDownItems.requestDropdownItems[5],
       ),
+    );
+    final awareness = awarenessList;
+
+    final dashboardNumbers = [
+      collectors.length.toString(),
+      customers.length.toString(),
+      pickupRequest.length.toString(),
+      awareness.length.toString(),
+    ];
+
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      color: ColorManager.blackColor,
+      slivers: [
+        SliverMainAxisGroup(
+          slivers: [
+            SliverToBoxAdapter(child: getWelcomeMessage()),
+            SliverToBoxAdapter(child: SizedBox(height: 35)),
+            SliverToBoxAdapter(
+              child: getDashboarDetails(dashboardNumbers: dashboardNumbers),
+            ),
+            SliverToBoxAdapter(child: SizedBox(height: 30)),
+            SliverToBoxAdapter(child: getQuickActionSection()),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -72,6 +162,27 @@ extension _Actions on _AdminDashboardScreenState {
   void onManageRewardsPressed() {
     context.router.push(ManageRewardsRoute());
   }
+
+  Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+    await tryCatch(context, () => context.read<UserViewModel>().getAllUsers());
+    mounted
+        ? await tryCatch(
+            context,
+            () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
+          )
+        : null;
+    final awarenessList = mounted
+        ? await tryCatch(
+            context,
+            () => context.read<AwarenessViewModel>().getAwarenessList(),
+          )
+        : null;
+    _setState(() {
+      this.awarenessList = awarenessList ?? [];
+      isLoading = false;
+    });
+  }
 }
 
 // * ------------------------ WidgetFactories ------------------------
@@ -80,7 +191,7 @@ extension _WidgetFactories on _AdminDashboardScreenState {
     return Text('Welcome, Admin', style: _Styles.welcomeMessageTextStyle);
   }
 
-  Widget getDashboarDetails() {
+  Widget getDashboarDetails({required List<String>? dashboardNumbers}) {
     return GridView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -92,7 +203,10 @@ extension _WidgetFactories on _AdminDashboardScreenState {
       ),
       itemCount: 4,
       itemBuilder: (context, index) {
-        return getDashboardCard(title: dashboardCardTitle[index], number: '5');
+        return getDashboardCard(
+          title: dashboardCardTitle[index],
+          number: dashboardNumbers?[index] ?? '0',
+        );
       },
     );
   }
@@ -100,13 +214,16 @@ extension _WidgetFactories on _AdminDashboardScreenState {
   Widget getDashboardCard({required String title, required String number}) {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: _Styles.dashboardCardTitleTextStyle),
-          Text(number, style: _Styles.dashboardCardNumberTextStyle),
-        ],
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: _Styles.dashboardCardTitleTextStyle),
+            Text(number, style: _Styles.dashboardCardNumberTextStyle),
+          ],
+        ),
       ),
     );
   }

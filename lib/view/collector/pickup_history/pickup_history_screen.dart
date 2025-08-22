@@ -241,7 +241,7 @@ extension _Actions on _PickupHistoryScreenState {
     _setState(() {
       isLoading = true;
     });
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );

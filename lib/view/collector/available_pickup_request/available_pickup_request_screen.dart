@@ -119,6 +119,17 @@ class _AvailablePickupRequestScreenState
           .toList(),
     );
 
+    final loadingList = List.generate(
+      5,
+      (_) => PickupRequestModel(
+        pickupItemDescription: 'Loading...',
+        pickupItemCategory: 'Loading...',
+        pickupLocation: 'Loading...',
+        pickupDate: DateTime.now(),
+        pickupTimeRange: 'Loading...',
+      ),
+    );
+
     sortAvailablePickupRequestList(
       availablePickupRequestList: availablePickupRequestList,
     );
@@ -135,33 +146,12 @@ class _AvailablePickupRequestScreenState
             color: ColorManager.blackColor,
             refreshIndicatorBackgroundColor: ColorManager.whiteColor,
             slivers: [
-              if (availablePickupRequestList.isEmpty) ...[
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: NoDataAvailableLabel(
-                      noDataText: 'No Available Pickup Requests Found',
-                    ),
-                  ),
-                ),
-              ] else ...[
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return getAvailablePickupRequestItem(
-                      request: isLoading
-                          ? PickupRequestModel(
-                              pickupItemDescription: 'Loading...',
-                              pickupItemCategory: 'Loading...',
-                              pickupLocation: 'Loading...',
-                              pickupDate: DateTime.now(),
-                              pickupTimeRange: 'Loading...',
-                            )
-                          : availablePickupRequestList[index],
-                      isLoading: isLoading,
-                    );
-                  }, childCount: availablePickupRequestList.length),
-                ),
-              ],
+              ...getCompletedRequestList(
+                availablePickupRequestList: isLoading
+                    ? loadingList
+                    : availablePickupRequestList,
+                isLoading: isLoading,
+              ),
             ],
           ),
         ),
@@ -287,23 +277,22 @@ extension _Actions on _AvailablePickupRequestScreenState {
 
   Future<void> setUp() async {
     _setState(() {
+      isLoading = true;
       selectedSort = sortByItems.first;
     });
     await getCollectorCurrentLocation();
     await fetchData();
+    _setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> fetchData() async {
-    _setState(() {
-      isLoading = true;
-      selectedSort = sortByItems.first;
-    });
-
     final pickupRequestVM = context.read<PickupRequestViewModel>();
     final locationVM = context.read<LocationViewModel>();
     final collectorLocation = collectorLatLng ?? LatLng(0, 0);
 
-    await tryLoad(context, () => pickupRequestVM.getAllPickupRequests());
+    await tryCatch(context, () => pickupRequestVM.getAllPickupRequests());
 
     if (collectorLatLng != LatLng(0, 0)) {
       for (var request in pickupRequestVM.pickupRequestList) {
@@ -331,14 +320,10 @@ extension _Actions on _AvailablePickupRequestScreenState {
         text: 'Enable GPS to check which pickup request near you',
       );
     }
-
-    _setState(() {
-      isLoading = false;
-    });
   }
 
   Future<void> getCollectorCurrentLocation() async {
-    Position? position = await tryLoad(
+    Position? position = await tryCatch(
       context,
       () => context.read<LocationViewModel>().currentLocation(),
     );
@@ -391,6 +376,35 @@ extension _WidgetFactories on _AvailablePickupRequestScreenState {
       selectedValue: selectedSort,
       onChanged: onSortByChanged,
     );
+  }
+
+  List<Widget> getCompletedRequestList({
+    required List<PickupRequestModel> availablePickupRequestList,
+    required bool isLoading,
+  }) {
+    if (availablePickupRequestList.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(
+              noDataText: 'No Available Pickup Requests Found',
+            ),
+          ),
+        ),
+      ];
+    } else {
+      return [
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return getAvailablePickupRequestItem(
+              request: availablePickupRequestList[index],
+              isLoading: isLoading,
+            );
+          }, childCount: availablePickupRequestList.length),
+        ),
+      ];
+    }
   }
 
   Widget getAvailablePickupRequestItem({

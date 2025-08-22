@@ -1,3 +1,4 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -55,6 +56,11 @@ class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
   }
 
   @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
   PreferredSizeWidget? appbar() {
     return CustomAppBar(title: 'Profile', isBackButtonVisible: false);
   }
@@ -63,21 +69,33 @@ class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
   Widget body() {
     final userDetails = context.select((UserViewModel vm) => vm.userDetails);
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getProfileDetails(
-            profileImageURL: userDetails?.profileImageURL ?? '',
-            username: userDetails?.fullName ?? '-',
-            userRole: userDetails?.userRole ?? '-',
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      color: ColorManager.blackColor,
+      slivers: [
+        SliverPadding(
+          padding: _Styles.screenPadding,
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(
+                child: getProfileDetails(
+                  profileImageURL: userDetails?.profileImageURL ?? '',
+                  username: userDetails?.fullName ?? '-',
+                  userRole: userDetails?.userRole ?? '-',
+                ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: Divider(color: ColorManager.lightGreyColor),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(child: getProfileCard()),
+            ],
           ),
-          SizedBox(height: 25),
-          Divider(color: ColorManager.lightGreyColor),
-          SizedBox(height: 25),
-          getProfileCard(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -189,6 +207,8 @@ class _Styles {
   _Styles._();
 
   static const maxTextLines = 2;
+
+  static const screenPadding = EdgeInsets.all(20);
 
   static const customCardPadding = EdgeInsets.symmetric(
     horizontal: 20,

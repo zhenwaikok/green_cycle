@@ -112,7 +112,17 @@ class _MarketplaceCategoryScreenState
             color: ColorManager.blackColor,
             refreshIndicatorBackgroundColor: ColorManager.whiteColor,
             slivers: [
-              if (categoryItemListingList.isEmpty)
+              if (_isLoading)
+                SliverToBoxAdapter(
+                  child: getCategoryItems(
+                    itemListingList: List.generate(
+                      5,
+                      (index) => ItemListingModel(itemName: 'Loading...'),
+                    ),
+                    isLoading: _isLoading,
+                  ),
+                )
+              else if (categoryItemListingList.isEmpty)
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Center(
@@ -123,7 +133,7 @@ class _MarketplaceCategoryScreenState
                 SliverToBoxAdapter(
                   child: getCategoryItems(
                     itemListingList: categoryItemListingList,
-                    isLoading: _isLoading,
+                    isLoading: false,
                   ),
                 ),
             ],
@@ -180,7 +190,7 @@ extension _Actions on _MarketplaceCategoryScreenState {
     });
     selectedSort = sortByItems.first;
     selectedCondition = conditionItems.first;
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<ItemListingViewModel>().getAllItemListings(),
     );

@@ -154,7 +154,7 @@ extension _Actions on _PointsScreenState {
     });
     final userID = context.read<UserViewModel>().user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<UserViewModel>().getUserDetails(
         userID: userID,
@@ -163,7 +163,7 @@ extension _Actions on _PointsScreenState {
     );
 
     if (mounted) {
-      await tryLoad(
+      await tryCatch(
         context,
         () => context
             .read<PointTransactionViewModel>()
