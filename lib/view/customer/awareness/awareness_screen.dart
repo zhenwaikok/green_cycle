@@ -102,7 +102,7 @@ class _AwarenessScreenState extends BaseStatefulState<_AwarenessScreen> {
 extension _Actions on _AwarenessScreenState {
   Future<void> initialLoad() async {
     _setState(() => _isLoading = true);
-    final awarenessList = await tryLoad(
+    final awarenessList = await tryCatch(
       context,
       () => context.read<AwarenessViewModel>().getAwarenessList(),
     );
@@ -134,20 +134,21 @@ extension _WidgetFactories on _AwarenessScreenState {
     required List<AwarenessModel> awarenessModel,
     required bool isLoading,
   }) {
+    if (awarenessModel.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
+          ),
+        ),
+      ];
+    }
+
     return [
       SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final item = awarenessModel[index];
-
-          if (awarenessModel.isEmpty) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
-              ),
-            );
-          }
-
           return Column(
             children: [
               Padding(

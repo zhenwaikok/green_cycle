@@ -121,7 +121,7 @@ extension _Actions on _ManageRewardsScreenState {
       _isLoading = true;
     });
 
-    final rewardList = await tryLoad(
+    final rewardList = await tryCatch(
       context,
       () => context.read<RewardViewModel>().getRewardList(),
     );

@@ -77,6 +77,8 @@ extension _WidgetFactories on _MyPurchasesTabState {
     required DateTime purchaseDate,
     required String purchaseStatus,
   }) {
+    final backgroundColor = WidgetUtil.getPurchaseStatusColor(purchaseStatus);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -103,7 +105,10 @@ extension _WidgetFactories on _MyPurchasesTabState {
                 Text('#$purchaseGroupID', style: _Styles.blackTextStyle),
               ],
             ),
-            CustomStatusBar(text: purchaseStatus),
+            CustomStatusBar(
+              text: purchaseStatus,
+              backgroundColor: backgroundColor,
+            ),
           ],
         ),
         Text(

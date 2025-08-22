@@ -13,8 +13,8 @@ class BaseViewModel with ChangeNotifier, CheckMountedMixin {
   void checkError(MyResponse response) {
     if (response.status == ResponseStatus.error) {
       if (response.error != null) {
-        if (response.error is ApiResponseModel) {
-          ApiResponseModel error = response.error;
+        if (response.error is Map<String, dynamic>) {
+          ApiResponseModel error = ApiResponseModel.fromJson(response.error);
           if (error.isUrgentError) {
             throw UrgentErrorException(
               error.message ??

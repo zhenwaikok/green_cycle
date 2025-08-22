@@ -229,7 +229,7 @@ extension _Actions on _CompletedRequestScreenState {
     _setState(() {
       isLoading = true;
     });
-    await tryLoad(
+    await tryCatch(
       context,
       () =>
           context.read<PickupRequestViewModel>().getPickupRequestsWithUserID(),

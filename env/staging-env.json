@@ -1,5 +1,5 @@
 {
-    "hostUrl": "https://192.168.68.110:7068/GreenCycleAPI",
+    "hostUrl": "https://10.0.2.2:7068/GreenCycleAPI",
     "stripeHostUrl": "https://api.stripe.com/v1",
     "googleApiKey": "AIzaSyBENljie1BW8RkJgR_bD-L3vApUIMYDs5Q",
     "stripePublishableKey": "pk_test_51Rvx9zIstsoX9jkiIUrMUxXdbUlnrADLnYNDczgOm4wn741M7y5Dlyov6PrEqzGxWByMwMIQn7KIjPI9UFJBUaMi00POZarCbN",

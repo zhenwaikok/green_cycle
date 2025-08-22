@@ -105,37 +105,11 @@ class _CartScreenState extends BaseStatefulState<_CartScreen> {
       color: ColorManager.blackColor,
       refreshIndicatorBackgroundColor: ColorManager.whiteColor,
       slivers: [
-        if (groupCartItemsBySeller.isEmpty)
-          (SliverFillRemaining(
-            hasScrollBody: false,
-            child: Center(
-              child: NoDataAvailableLabel(noDataText: 'Your cart is empty'),
-            ),
-          ))
-        else
-          (SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final sellerName =
-                    groupCartItemsBySeller[index].value['sellerName'];
-                final items =
-                    groupCartItemsBySeller[index].value['items']
-                        as List<CartModel>;
-
-                return Padding(
-                  padding: _Styles.cardPadding,
-                  child: getCartCard(
-                    cartItemList: isLoading ? loadingList : items,
-                    isLoading: isLoading,
-                    sellerNamee: isLoading ? 'Loading...' : sellerName,
-                  ),
-                );
-              },
-              childCount: groupCartItemsBySeller.isEmpty
-                  ? (isLoading ? 5 : 0)
-                  : groupCartItemsBySeller.length,
-            ),
-          )),
+        getcartList(
+          isLoading: isLoading,
+          groupCartItemsBySeller: groupCartItemsBySeller,
+          loadingList: loadingList,
+        ),
       ],
     );
   }
@@ -199,7 +173,7 @@ extension _Actions on _CartScreenState {
     final userVM = context.read<UserViewModel>();
     final userID = context.read<UserViewModel>().user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<CartViewModel>().getUserCartItems(
         userID: userID,
@@ -213,6 +187,53 @@ extension _Actions on _CartScreenState {
 
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _CartScreenState {
+  Widget getcartList({
+    required bool isLoading,
+    required List<CartModel> loadingList,
+    required List groupCartItemsBySeller,
+  }) {
+    if (isLoading) {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Padding(
+            padding: _Styles.cardPadding,
+            child: getCartCard(
+              cartItemList: loadingList,
+              isLoading: isLoading,
+              sellerNamee: 'Loading...',
+            ),
+          );
+        }, childCount: 3),
+      );
+    }
+
+    if (groupCartItemsBySeller.isEmpty) {
+      return const SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: NoDataAvailableLabel(noDataText: 'Your cart is empty'),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final sellerName = groupCartItemsBySeller[index].value['sellerName'];
+        final items =
+            groupCartItemsBySeller[index].value['items'] as List<CartModel>;
+
+        return Padding(
+          padding: _Styles.cardPadding,
+          child: getCartCard(
+            cartItemList: items,
+            isLoading: false,
+            sellerNamee: sellerName,
+          ),
+        );
+      }, childCount: groupCartItemsBySeller.length),
+    );
+  }
+
   Widget getCartCard({
     required List<CartModel> cartItemList,
     required String sellerNamee,

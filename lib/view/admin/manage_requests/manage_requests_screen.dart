@@ -207,7 +207,7 @@ extension _Actions on _ManageRequestsScreenState {
       isLoading = true;
     });
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );

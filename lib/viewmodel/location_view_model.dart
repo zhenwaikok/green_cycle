@@ -141,7 +141,7 @@ class LocationViewModel extends BaseViewModel {
     );
 
     checkError(response);
-    return response.data is ApiResponseModel;
+    return response.data is CollectorLocationsModel;
   }
 
   Future<bool> updateCollectorLocations({
@@ -159,6 +159,17 @@ class LocationViewModel extends BaseViewModel {
     final response = await locationRepository.updateCollectorLocations(
       collectorUserID: collectorUserID,
       collectorLocationsModel: collectorLocationsModel,
+    );
+
+    checkError(response);
+    return response.data is ApiResponseModel;
+  }
+
+  Future<bool> deleteCollectorLocations({
+    required String collectorUserID,
+  }) async {
+    final response = await locationRepository.deleteCollectorLocations(
+      collectorUserID: collectorUserID,
     );
 
     checkError(response);

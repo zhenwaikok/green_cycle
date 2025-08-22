@@ -173,13 +173,13 @@ extension _Actions on _RewardSreenState {
       this.userID = userID;
     });
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<UserViewModel>().getUserDetails(userID: userID),
     );
 
     final rewardList = mounted
-        ? await tryLoad(
+        ? await tryCatch(
             context,
             () => context.read<RewardViewModel>().getRewardList(),
           )
@@ -190,7 +190,7 @@ extension _Actions on _RewardSreenState {
     }
 
     if (mounted) {
-      await tryLoad(
+      await tryCatch(
         context,
         () => context
             .read<RewardRedemptionViewModel>()

@@ -161,7 +161,7 @@ extension _Actions on _MyPurchasesScreenState {
     final userVM = context.read<UserViewModel>();
     final userID = userVM.user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PurchaseViewModel>().getPurchasesWithUserID(
         userID: userID,
@@ -210,6 +210,22 @@ extension _WidgetFactories on _MyPurchasesScreenState {
       (index) => PurchasesModel(itemName: 'Loading...'),
     );
 
+    if (isLoading) {
+      return [
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return MyPurchasesTab(
+              purchaseItems: loadingList,
+              purchaseGroupID: '',
+              sellerName: 'Loading...',
+              isLoading: isLoading,
+              onOrderReceivedButtonPressed: () {},
+            );
+          }, childCount: loadingList.length),
+        ),
+      ];
+    }
+
     if (groupedPurchaseItems.isEmpty) {
       return [
         SliverFillRemaining(
@@ -223,28 +239,23 @@ extension _WidgetFactories on _MyPurchasesScreenState {
 
     return [
       SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final purchaseGroupID =
-                groupedPurchaseItems[index].value['purchaseGroupID'];
-            final sellerName = groupedPurchaseItems[index].value['sellerName'];
-            final items =
-                groupedPurchaseItems[index].value['items']
-                    as List<PurchasesModel>;
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final purchaseGroupID =
+              groupedPurchaseItems[index].value['purchaseGroupID'];
+          final sellerName = groupedPurchaseItems[index].value['sellerName'];
+          final items =
+              groupedPurchaseItems[index].value['items']
+                  as List<PurchasesModel>;
 
-            return MyPurchasesTab(
-              purchaseItems: isLoading ? loadingList : items,
-              purchaseGroupID: purchaseGroupID,
-              sellerName: sellerName,
-              isLoading: isLoading,
-              onOrderReceivedButtonPressed: () =>
-                  onOrderReceivedButtonPressed(purchaseItems: items),
-            );
-          },
-          childCount: groupedPurchaseItems.isEmpty
-              ? (isLoading ? 5 : 0)
-              : groupedPurchaseItems.length,
-        ),
+          return MyPurchasesTab(
+            purchaseItems: items,
+            purchaseGroupID: purchaseGroupID,
+            sellerName: sellerName,
+            isLoading: isLoading,
+            onOrderReceivedButtonPressed: () =>
+                onOrderReceivedButtonPressed(purchaseItems: items),
+          );
+        }, childCount: groupedPurchaseItems.length),
       ),
     ];
   }

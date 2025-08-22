@@ -248,7 +248,7 @@ extension _Actions on _MarketplaceScreenState {
     final userID = context.read<UserViewModel>().user?.userID ?? '';
     final cartVM = context.read<CartViewModel>();
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<ItemListingViewModel>().getAllItemListings(),
     );

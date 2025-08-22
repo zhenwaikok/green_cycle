@@ -8,6 +8,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
@@ -112,7 +113,7 @@ extension _Actions on _CompletePickupScreenState {
         ),
       );
     } else {
-      final result =
+      final updatePickupRequestResult =
           await tryLoad(
             context,
             () => context.read<PickupRequestViewModel>().updatePickupRequest(
@@ -124,8 +125,23 @@ extension _Actions on _CompletePickupScreenState {
             ),
           ) ??
           false;
-      if (result) {
-        await updateCustomerPoints();
+      if (updatePickupRequestResult) {
+        if (mounted) {
+          final removeCollectorLocationResult =
+              await tryLoad(
+                context,
+                () =>
+                    context.read<LocationViewModel>().deleteCollectorLocations(
+                      collectorUserID:
+                          widget.pickupRequestDetails.collectorUserID ?? '',
+                    ),
+              ) ??
+              false;
+
+          if (removeCollectorLocationResult) {
+            await updateCustomerPoints();
+          }
+        }
       }
     }
   }
