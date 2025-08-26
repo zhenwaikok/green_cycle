@@ -82,7 +82,7 @@ class _EditProfileScreenState extends BaseStatefulState<_EditProfileScreen> {
   final vehicleTypes = DropDownItems.vehicleTypes;
   String? _phoneNumber;
   File? _selectedImage;
-  UserModel? get userDetails => context.read<UserViewModel>().userDetails;
+  UserModel? userDetails;
 
   final _formKey = GlobalKey<FormBuilderState>();
 
@@ -223,11 +223,11 @@ extension _Actions on _EditProfileScreenState {
   }
 
   Future<void> initialLoad({required String userID}) async {
-    await tryLoad(
-      context,
-      () => context.read<UserViewModel>().getUserDetails(userID: userID),
-    );
+    final userVM = context.read<UserViewModel>();
+    await tryLoad(context, () => userVM.getUserDetails(userID: userID));
+    final userDetail = userVM.userDetails;
     _setState(() {
+      userDetails = userDetail;
       _phoneNumber = userDetails?.phoneNumber?.trim();
     });
   }
@@ -244,6 +244,11 @@ extension _Actions on _EditProfileScreenState {
               lastName: lastName,
               gender: gender,
               phoneNumber: phoneNumber,
+              address1: userDetails?.address1,
+              address2: userDetails?.address2,
+              city: userDetails?.city,
+              postalCode: userDetails?.postalCode,
+              state: userDetails?.state,
               profileImage: profileImageFile,
               emailAddress: emailAddress,
               password: password,

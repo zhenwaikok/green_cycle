@@ -16,15 +16,23 @@ import 'package:provider/provider.dart';
 
 @RoutePage()
 class CollectorProfileStatusScreen extends StatelessWidget {
-  const CollectorProfileStatusScreen({super.key});
+  const CollectorProfileStatusScreen({
+    super.key,
+    @PathParam() required this.collectorUserID,
+  });
+
+  final String collectorUserID;
 
   @override
   Widget build(BuildContext context) {
-    return _CollectorProfileStatusScreen();
+    return _CollectorProfileStatusScreen(collectorUserID: collectorUserID);
   }
 }
 
 class _CollectorProfileStatusScreen extends BaseStatefulPage {
+  const _CollectorProfileStatusScreen({required this.collectorUserID});
+
+  final String collectorUserID;
   @override
   State<_CollectorProfileStatusScreen> createState() =>
       _CollectorProfileStatusScreenState();
@@ -103,10 +111,12 @@ extension _Actions on _CollectorProfileStatusScreenState {
   }
 
   Future<void> fetchData() async {
-    final userVM = context.read<UserViewModel>();
-    final userID = userVM.user?.userID ?? '';
-
-    await tryLoad(context, () => userVM.getUserDetails(userID: userID));
+    await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getUserDetails(
+        userID: widget.collectorUserID,
+      ),
+    );
   }
 }
 

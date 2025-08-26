@@ -9,6 +9,7 @@ import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/sales_order/sales_order_tab.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -20,15 +21,20 @@ import 'package:provider/provider.dart';
 
 @RoutePage()
 class SalesOrderScreen extends StatelessWidget {
-  const SalesOrderScreen({super.key});
+  const SalesOrderScreen({super.key, @PathParam() required this.sellerUserID});
+
+  final String sellerUserID;
 
   @override
   Widget build(BuildContext context) {
-    return _SalesOrderScreen();
+    return _SalesOrderScreen(sellerUserID: sellerUserID);
   }
 }
 
 class _SalesOrderScreen extends BaseStatefulPage {
+  const _SalesOrderScreen({required this.sellerUserID});
+
+  final String sellerUserID;
   @override
   State<_SalesOrderScreen> createState() => _SalesOrderScreenState();
 }
@@ -220,20 +226,51 @@ extension _Actions on _SalesOrderScreenState {
     }
 
     if (allSuccess) {
-      unawaited(WidgetUtil.showSnackBar(text: 'Order marked as shipped'));
-      await fetchData();
+      if (mounted) {
+        await sendPushNotification(
+          buyerUserID: purchaseItems.first.buyerUserID ?? '',
+          title: 'Order Shipped',
+          body: '#${purchaseItems.first.purchaseGroupID} has been shipped.',
+        );
+
+        unawaited(WidgetUtil.showSnackBar(text: 'Order marked as shipped'));
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String buyerUserID,
+    required String title,
+    required String body,
+  }) async {
+    final fcmToken = await tryCatch(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: buyerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'my-purchases/$buyerUserID',
+        ),
+      );
     }
   }
 
   Future<void> fetchData() async {
     _setState(() => isLoading = true);
-    final userVM = context.read<UserViewModel>();
-    final sellerUserID = userVM.user?.userID ?? '';
 
     await tryCatch(
       context,
       () => context.read<PurchaseViewModel>().getPurchasesWithSellerUserID(
-        sellerUserID: sellerUserID,
+        sellerUserID: widget.sellerUserID,
         groupPurchase: true,
       ),
     );

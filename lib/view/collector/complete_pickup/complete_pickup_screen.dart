@@ -9,6 +9,7 @@ import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_mo
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
@@ -146,6 +147,30 @@ extension _Actions on _CompletePickupScreenState {
     }
   }
 
+  Future<void> sendPushNotification({
+    required String customerUserID,
+    required String title,
+    required String body,
+  }) async {
+    final fcmToken = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: customerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+        ),
+      );
+    }
+  }
+
   Future<void> updateCustomerPoints() async {
     final userVM = context.read<UserViewModel>();
 
@@ -191,6 +216,12 @@ extension _Actions on _CompletePickupScreenState {
         false;
 
     if (result) {
+      await sendPushNotification(
+        customerUserID: widget.pickupRequestDetails.userID ?? '',
+        title: 'Pickup Completed',
+        body:
+            'Your pickup request is completed. You have earned $completedRequestPoints points!',
+      );
       unawaited(
         WidgetUtil.showSnackBar(
           text: 'Congrats! Successfully completed the pickup',

@@ -23,7 +23,10 @@ import 'package:provider/provider.dart';
 
 @RoutePage()
 class RequestDetailsScreen extends StatelessWidget {
-  const RequestDetailsScreen({super.key, required this.pickupRequestID});
+  const RequestDetailsScreen({
+    super.key,
+    @PathParam() required this.pickupRequestID,
+  });
 
   final String pickupRequestID;
 

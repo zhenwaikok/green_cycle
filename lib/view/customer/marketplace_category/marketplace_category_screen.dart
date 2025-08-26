@@ -7,11 +7,8 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
@@ -37,10 +34,6 @@ class MarketplaceCategoryScreen extends StatelessWidget {
         itemListingRepository: ItemListingRepository(),
         firebaseRepository: FirebaseRepository(
           firebaseServices: FirebaseServices(),
-        ),
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
         ),
       ),
       child: _MarketplaceCategoryScreen(category: category),

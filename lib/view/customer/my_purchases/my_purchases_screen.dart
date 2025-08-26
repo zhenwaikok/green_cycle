@@ -3,9 +3,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
+import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/purchases_repository.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/services/firebase_services.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/my_purchases/my_purchases_tab.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -15,19 +21,35 @@ import 'package:provider/provider.dart';
 
 @RoutePage()
 class MyPurchasesScreen extends StatelessWidget {
-  const MyPurchasesScreen({super.key});
+  const MyPurchasesScreen({super.key, @PathParam() required this.userID});
+
+  final String userID;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) =>
-          PurchaseViewModel(purchasesRepository: PurchasesRepository()),
-      child: _MyPurchasesScreen(),
+      create: (_) {
+        PurchaseViewModel(purchasesRepository: PurchasesRepository());
+        UserViewModel(
+          userRepository: UserRepository(
+            sharePreferenceHandler: SharedPreferenceHandler(),
+            userServices: UserServices(),
+          ),
+          firebaseRepository: FirebaseRepository(
+            firebaseServices: FirebaseServices(),
+          ),
+        );
+      },
+      child: _MyPurchasesScreen(userID: userID),
     );
   }
 }
 
 class _MyPurchasesScreen extends BaseStatefulPage {
+  const _MyPurchasesScreen({required this.userID});
+
+  final String userID;
+
   @override
   State<_MyPurchasesScreen> createState() => _MyPurchasesScreenState();
 }
@@ -152,19 +174,49 @@ extension _Actions on _MyPurchasesScreenState {
     }
 
     if (allSuccess) {
+      await sendPushNotification(
+        sellerUserID: purchaseItems.first.sellerUserID ?? '',
+        title: 'Order Completed',
+        body:
+            'Your order #${purchaseItems.first.purchaseGroupID} has been received by the buyer.',
+      );
       await fetchData();
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String sellerUserID,
+    required String title,
+    required String body,
+  }) async {
+    final fcmToken = await tryCatch(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: sellerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'sales-order/$sellerUserID',
+        ),
+      );
     }
   }
 
   Future<void> fetchData() async {
     _setState(() => isLoading = true);
     final userVM = context.read<UserViewModel>();
-    final userID = userVM.user?.userID ?? '';
 
     await tryCatch(
       context,
       () => context.read<PurchaseViewModel>().getPurchasesWithUserID(
-        userID: userID,
+        userID: widget.userID,
         userVM: userVM,
         groupPurchase: true,
       ),

@@ -1,4 +1,5 @@
 import 'package:green_cycle_fyp/constant/constants.dart';
+import 'package:green_cycle_fyp/model/api_model/fcm_token_model/fcm_token_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
@@ -81,5 +82,29 @@ class UserServices extends BaseServices with FirebaseBaseServices {
     required String newPassword,
   }) async {
     return updatePassword(oldPassword: oldPassword, newPassword: newPassword);
+  }
+
+  Future<MyResponse> getFcmTokenWithUserID({required String userID}) async {
+    String path = '${apiUrl()}/FcmToken/$userID';
+
+    return callAPI(httpMethod: HttpMethod.get, path: path);
+  }
+
+  Future<MyResponse> updateFcmToken({
+    required FcmTokenModel fcmTokenModel,
+  }) async {
+    String path = '${apiUrl()}/FcmToken';
+
+    return callAPI(
+      httpMethod: HttpMethod.post,
+      path: path,
+      postBody: fcmTokenModel.toJson(),
+    );
+  }
+
+  Future<MyResponse> deleteFcmToken({required String userID}) async {
+    String path = '${apiUrl()}/FcmToken/$userID';
+
+    return callAPI(httpMethod: HttpMethod.delete, path: path);
   }
 }

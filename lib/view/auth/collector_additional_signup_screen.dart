@@ -8,13 +8,6 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
-import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
-import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -46,24 +39,13 @@ class CollectorAdditionalSignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
-        ),
-      ),
-      child: _CollectorAdditionalSignupScreen(
-        userRole: userRole,
-        fullName: fullName,
-        emailAddress: emailAddress,
-        gender: gender,
-        phoneNumber: phoneNumber,
-        password: password,
-      ),
+    return _CollectorAdditionalSignupScreen(
+      userRole: userRole,
+      fullName: fullName,
+      emailAddress: emailAddress,
+      gender: gender,
+      phoneNumber: phoneNumber,
+      password: password,
     );
   }
 }
@@ -180,32 +162,22 @@ extension _Actions on _CollectorAdditionalSignupScreenState {
   }
 
   void onSubmitButtonPressed() async {
-    if (_formkey.currentState?.validate() ?? false) {
-      final result =
-          await tryLoad(
-            context,
-            () => context.read<UserViewModel>().signUpWithEmailPassword(
-              userRole: widget.userRole,
-              fullName: widget.fullName,
-              email: widget.emailAddress,
-              gender: widget.gender,
-              phoneNumber: widget.phoneNumber,
-              password: widget.password,
-              vehicleType: vehicleType,
-              vehiclePlateNumber: vehiclePlateNumber,
-              companyName: organizationName,
-              profileImage: facePhoto,
-            ),
-          ) ??
-          false;
-      if (result) {
-        if (mounted) {
-          unawaited(WidgetUtil.showSnackBar(text: 'Sign Up Successful'));
-          await context.router.replaceAll([
-            CustomBottomNavBar(userRole: widget.userRole),
-          ]);
-        }
-      }
+    if (_formkey.currentState?.saveAndValidate() ?? false) {
+      await tryLoad(
+        context,
+        () => context.read<UserViewModel>().signUpWithEmailPassword(
+          userRole: widget.userRole,
+          fullName: widget.fullName,
+          email: widget.emailAddress,
+          gender: widget.gender,
+          phoneNumber: widget.phoneNumber,
+          password: widget.password,
+          vehicleType: vehicleType,
+          vehiclePlateNumber: vehiclePlateNumber,
+          companyName: organizationName,
+          profileImage: facePhoto,
+        ),
+      );
     }
   }
 }

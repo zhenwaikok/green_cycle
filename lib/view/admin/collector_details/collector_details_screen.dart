@@ -15,6 +15,7 @@ import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -157,7 +158,9 @@ extension _Actions on _CollectorDetailsScreenState {
       content: 'Are you sure to approve this collector\'s profile?',
       actions: [
         getAlertDialogTextButton(
-          onPressed: onBackButtonPressed,
+          onPressed: () {
+            context.router.maybePop();
+          },
           text: 'Cancel',
         ),
         getAlertDialogTextButton(
@@ -180,7 +183,9 @@ extension _Actions on _CollectorDetailsScreenState {
       formKey: _formKey,
       actions: [
         getAlertDialogTextButton(
-          onPressed: onBackButtonPressed,
+          onPressed: () {
+            context.router.maybePop();
+          },
           text: 'Cancel',
         ),
         getAlertDialogTextButton(
@@ -210,6 +215,12 @@ extension _Actions on _CollectorDetailsScreenState {
           : null;
 
       if (result ?? false) {
+        await sendPushNotification(
+          collectorUserID: widget.collectorID,
+          title: 'Account Rejected',
+          body:
+              'Your account has been rejected. Please review the rejection reason.',
+        );
         unawaited(
           WidgetUtil.showSnackBar(
             text: 'Rejected collector profile successfully',
@@ -241,6 +252,12 @@ extension _Actions on _CollectorDetailsScreenState {
         : null;
 
     if (result ?? false) {
+      await sendPushNotification(
+        collectorUserID: widget.collectorID,
+        title: 'Account Approval',
+        body:
+            'Your account has been approved. You can now start accepting pickup request.',
+      );
       WidgetUtil.showSnackBar(text: 'Approved collector profile successfully');
       await initialLoad();
       _setState(() {
@@ -248,6 +265,31 @@ extension _Actions on _CollectorDetailsScreenState {
       });
     } else {
       WidgetUtil.showSnackBar(text: 'Failed to approve collector profile');
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String collectorUserID,
+    required String title,
+    required String body,
+  }) async {
+    final fcmToken = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: collectorUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'profile-status/$collectorUserID',
+        ),
+      );
     }
   }
 }

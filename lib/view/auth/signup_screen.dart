@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -8,13 +6,7 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
-import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -30,18 +22,7 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
-        ),
-      ),
-      child: _SignUpScreen(),
-    );
+    return _SignUpScreen();
   }
 }
 
@@ -174,33 +155,18 @@ extension _Actions on _SignUpScreenState {
       );
     } else {
       if (formValid) {
-        final result =
-            await tryLoad(
-              context,
-              () => context.read<UserViewModel>().signUpWithEmailPassword(
-                userRole: userRole,
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                gender: gender,
-                phoneNumber: phoneNumber,
-                password: password,
-              ),
-            ) ??
-            false;
-
-        if (result) {
-          final userRole = mounted
-              ? context.read<UserViewModel>().user?.userRole ?? ''
-              : '';
-          if (mounted) {
-            unawaited(WidgetUtil.showSnackBar(text: 'Sign Up Successful'));
-
-            await context.router.replaceAll([
-              CustomBottomNavBar(userRole: userRole),
-            ]);
-          }
-        }
+        await tryLoad(
+          context,
+          () => context.read<UserViewModel>().signUpWithEmailPassword(
+            userRole: userRole,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            gender: gender,
+            phoneNumber: phoneNumber,
+            password: password,
+          ),
+        );
       }
     }
   }

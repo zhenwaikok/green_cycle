@@ -3,13 +3,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -24,13 +23,10 @@ class AdminProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
+      create: (_) => ProfileScreenViewModel(
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _AdminProfileScreen(),
@@ -67,7 +63,9 @@ class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
 
   @override
   Widget body() {
-    final userDetails = context.select((UserViewModel vm) => vm.userDetails);
+    final userDetails = context.select(
+      (ProfileScreenViewModel vm) => vm.userDetails,
+    );
 
     return AdaptiveWidgets.buildRefreshableScrollView(
       context,
@@ -122,20 +120,18 @@ extension _Actions on _AdminProfileScreenState {
   }
 
   Future<void> onSignOutPressed() async {
-    final result = await tryLoad(
-      context,
-      () => context.read<UserViewModel>().logout(),
-    );
-    if (result ?? false) {
-      if (mounted) await context.router.replaceAll([LoginRoute()]);
-    }
+    await tryLoad(context, () => context.read<UserViewModel>().logout());
   }
 
   Future<void> fetchData() async {
     final userVM = context.read<UserViewModel>();
     final userID = userVM.user?.userID ?? '';
 
-    await tryLoad(context, () => userVM.getUserDetails(userID: userID));
+    await tryLoad(
+      context,
+      () =>
+          context.read<ProfileScreenViewModel>().getUserDetails(userID: userID),
+    );
   }
 }
 

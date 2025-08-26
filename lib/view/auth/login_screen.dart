@@ -8,12 +8,7 @@ import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/constant/images_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
@@ -27,18 +22,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
-        ),
-      ),
-      child: _LoginScreen(),
-    );
+    return _LoginScreen();
   }
 }
 
@@ -101,21 +85,13 @@ extension _Helper on _LoginScreenState {
 extension _Actions on _LoginScreenState {
   void onSignInButtonPressed() async {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final userDetails = await tryLoad(
+      await tryLoad(
         context,
         () => context.read<UserViewModel>().loginWithEmailPassword(
           email: email,
           password: password,
         ),
       );
-      if (userDetails != null) {
-        if (mounted) {
-          unawaited(WidgetUtil.showSnackBar(text: 'Sign In Successful'));
-          await context.router.replaceAll([
-            CustomBottomNavBar(userRole: userDetails.userRole ?? ''),
-          ]);
-        }
-      }
     }
   }
 

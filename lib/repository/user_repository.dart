@@ -1,8 +1,10 @@
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
+import 'package:green_cycle_fyp/model/api_model/fcm_token_model/fcm_token_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/model/auth_request_model/auth_request_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/notification_handler.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 
 class UserRepository {
@@ -139,6 +141,43 @@ class UserRepository {
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
+    return response;
+  }
+
+  Future<MyResponse> getFcmTokenWithUserID({required String userID}) async {
+    final response = await userServices.getFcmTokenWithUserID(userID: userID);
+
+    if (response.data is Map<String, dynamic>) {
+      final resultModel = FcmTokenModel.fromJson(response.data);
+      return MyResponse.complete(resultModel);
+    }
+    return response;
+  }
+
+  Future<MyResponse> updateFcmToken() async {
+    FcmTokenModel fcmTokenModel = FcmTokenModel(
+      userID: user?.userID ?? '',
+      token: NotificationHandler.instance.token ?? '',
+    );
+
+    final response = await userServices.updateFcmToken(
+      fcmTokenModel: fcmTokenModel,
+    );
+
+    if (response.data is Map<String, dynamic>) {
+      final resultModel = ApiResponseModel.fromJson(response.data);
+      return MyResponse.complete(resultModel);
+    }
+    return response;
+  }
+
+  Future<MyResponse> deleteFcmToken({required String userID}) async {
+    final response = await userServices.deleteFcmToken(userID: userID);
+
+    if (response.data is Map<String, dynamic>) {
+      final resultModel = ApiResponseModel.fromJson(response.data);
+      return MyResponse.complete(resultModel);
+    }
     return response;
   }
 }

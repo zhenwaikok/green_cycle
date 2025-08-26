@@ -5,13 +5,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
@@ -27,13 +26,10 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
+      create: (_) => ProfileScreenViewModel(
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _ProfileScreen(),
@@ -71,7 +67,8 @@ class _ProfileScreenState extends BaseStatefulState<_ProfileScreen> {
   @override
   Widget body() {
     final user =
-        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+        context.select((ProfileScreenViewModel vm) => vm.userDetails) ??
+        UserModel();
 
     return AdaptiveWidgets.buildRefreshableScrollView(
       context,
@@ -139,11 +136,13 @@ extension _Actions on _ProfileScreenState {
   }
 
   void onMyPurchasesPressed() {
-    context.router.push(MyPurchasesRoute());
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+    context.router.push(MyPurchasesRoute(userID: userID));
   }
 
   void onSalesOrderPressed() {
-    context.router.push(SalesOrderRoute());
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+    context.router.push(SalesOrderRoute(sellerUserID: userID));
   }
 
   void onMyListingPressed() {
@@ -155,18 +154,13 @@ extension _Actions on _ProfileScreenState {
 
     await tryLoad(
       context,
-      () => context.read<UserViewModel>().getUserDetails(userID: userID),
+      () =>
+          context.read<ProfileScreenViewModel>().getUserDetails(userID: userID),
     );
   }
 
   Future<void> onSignOutPressed() async {
-    final result = await tryLoad(
-      context,
-      () => context.read<UserViewModel>().logout(),
-    );
-    if (result ?? false) {
-      if (mounted) context.router.replaceAll([LoginRoute()]);
-    }
+    await tryLoad(context, () => context.read<UserViewModel>().logout());
   }
 }
 

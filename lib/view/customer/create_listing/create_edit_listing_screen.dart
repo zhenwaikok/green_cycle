@@ -12,13 +12,11 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
@@ -46,10 +44,6 @@ class CreateEditListingScreen extends StatelessWidget {
         itemListingRepository: ItemListingRepository(),
         firebaseRepository: FirebaseRepository(
           firebaseServices: FirebaseServices(),
-        ),
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
         ),
       ),
       child: _CreateEditListingScreen(
@@ -230,6 +224,7 @@ extension _Actions on _CreateListingScreenState {
 
   Future<void> onSubmitButtonPressed() async {
     final formValid = _formKey.currentState?.saveAndValidate() ?? false;
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
     if (formValid) {
       if (!widget.isEdit) {
         final result =
@@ -242,6 +237,7 @@ extension _Actions on _CreateListingScreenState {
                 itemPrice: itemPrice ?? 0.0,
                 itemCondition: itemCondition ?? '',
                 itemCategory: itemCategory ?? '',
+                userID: userID,
               ),
             ) ??
             false;
@@ -267,6 +263,7 @@ extension _Actions on _CreateListingScreenState {
                 itemPrice: itemPrice ?? 0.0,
                 itemCondition: itemCondition ?? '',
                 itemCategory: itemCategory ?? '',
+                userID: userID,
               ),
             ) ??
             false;

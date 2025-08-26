@@ -13,7 +13,7 @@ class StripeServices extends BaseServices {
       httpMethod: HttpMethod.post,
       path: path,
       postBody: stripeRequestModel.toJson(),
-      isAuthRequired: true,
+      isStripe: true,
     );
   }
 }
