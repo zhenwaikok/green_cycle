@@ -14,9 +14,11 @@ abstract class BaseServices {
   static BaseServices? _instance;
   static String? hostUrl = EnvValues.hostUrl;
   static String? stripeHostUrl = EnvValues.stripeHostUrl;
+  static String? fcmHostUrl = EnvValues.fcmHostUrl;
 
   String apiUrl() => hostUrl ?? '';
   String stripeUrl() => stripeHostUrl ?? '';
+  String fcmUrl() => fcmHostUrl ?? '';
 
   Dio? _dio;
 
@@ -52,15 +54,22 @@ abstract class BaseServices {
     required HttpMethod httpMethod,
     required String path,
     dynamic postBody,
-    bool isAuthRequired = false,
+    bool isStripe = false,
+    bool isNotification = false,
+    String? notificationAuth,
   }) async {
     try {
       Response? response;
 
-      if (isAuthRequired) {
+      if (isStripe) {
         dio?.options.headers['Content-Type'] =
             'application/x-www-form-urlencoded';
         dio?.options.headers['Authorization'] = auth;
+      }
+
+      if (isNotification) {
+        dio?.options.headers['Content-Type'] = 'application/json';
+        dio?.options.headers['Authorization'] = notificationAuth;
       }
 
       switch (httpMethod) {

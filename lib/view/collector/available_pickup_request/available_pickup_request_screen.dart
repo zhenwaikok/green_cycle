@@ -20,6 +20,7 @@ import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
@@ -256,8 +257,42 @@ extension _Actions on _AvailablePickupRequestScreenState {
             text: 'You have accepted this pickup request.',
           ),
         );
+
+        await sendPushNotification(
+          customerUserID: pickupRequestDetails.userID ?? '',
+          title: 'Pickup Request',
+          body: 'Your pickup request has been accepted.',
+          pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+        );
+
         await setUp();
       }
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String customerUserID,
+    required String title,
+    required String body,
+    required String pickupRequestID,
+  }) async {
+    final fcmToken = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: customerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'request-details/$pickupRequestID',
+        ),
+      );
     }
   }
 

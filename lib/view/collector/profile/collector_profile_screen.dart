@@ -5,15 +5,14 @@ import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
-import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/services/firebase_services.dart';
 import 'package:green_cycle_fyp/services/user_services.dart';
 import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -30,13 +29,10 @@ class CollectorProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => UserViewModel(
+      create: (_) => ProfileScreenViewModel(
         userRepository: UserRepository(
           sharePreferenceHandler: SharedPreferenceHandler(),
           userServices: UserServices(),
-        ),
-        firebaseRepository: FirebaseRepository(
-          firebaseServices: FirebaseServices(),
         ),
       ),
       child: _CollectorProfileScreen(),
@@ -78,7 +74,8 @@ class _CollectorProfileScreenState
   @override
   Widget body() {
     final user =
-        context.select((UserViewModel vm) => vm.userDetails) ?? UserModel();
+        context.select((ProfileScreenViewModel vm) => vm.userDetails) ??
+        UserModel();
 
     final pickupRequestList = context.select(
       (PickupRequestViewModel vm) => vm.pickupRequestList,
@@ -165,7 +162,11 @@ extension _Actions on _CollectorProfileScreenState {
   }
 
   void onProfileStatusButtonPressed() async {
-    final result = await context.router.push(CollectorProfileStatusRoute());
+    final user = context.read<UserViewModel>().user;
+
+    final result = await context.router.push(
+      CollectorProfileStatusRoute(collectorUserID: user?.userID ?? ''),
+    );
 
     if (result == true && mounted) {
       fetchData();
@@ -173,13 +174,7 @@ extension _Actions on _CollectorProfileScreenState {
   }
 
   Future<void> onSignOutPressed() async {
-    final result = await tryLoad(
-      context,
-      () => context.read<UserViewModel>().logout(),
-    );
-    if (result ?? false) {
-      if (mounted) context.router.replaceAll([LoginRoute()]);
-    }
+    await tryLoad(context, () => context.read<UserViewModel>().logout());
   }
 
   Future<void> fetchData() async {
@@ -193,7 +188,7 @@ extension _Actions on _CollectorProfileScreenState {
     if (mounted) {
       await tryLoad(
         context,
-        () => context.read<UserViewModel>().getUserDetails(
+        () => context.read<ProfileScreenViewModel>().getUserDetails(
           userID: user?.userID ?? '',
         ),
       );

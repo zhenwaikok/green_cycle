@@ -12,6 +12,7 @@ import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/stripe_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
@@ -143,6 +144,12 @@ extension _Actions on _CheckoutScreenState {
               );
 
               if (updateItemListingResult) {
+                await sendPushNotification(
+                  sellerUserID: cartItemList.first.sellerUserID ?? '',
+                  title: 'Sales Order Received',
+                  body:
+                      'Your item(s) have been successfully purchased. Kindly please check your sales order for more details.',
+                );
                 await clearAllCartItems(cartItemList: cartItemList);
               }
             }
@@ -158,6 +165,31 @@ extension _Actions on _CheckoutScreenState {
       }
     } else {
       WidgetUtil.showSnackBar(text: 'Please provide a delivery address');
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String sellerUserID,
+    required String title,
+    required String body,
+  }) async {
+    final fcmToken = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: sellerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'sales-order/$sellerUserID',
+        ),
+      );
     }
   }
 
@@ -212,7 +244,7 @@ extension _Actions on _CheckoutScreenState {
           itemCategory: item.itemListing?.itemCategory ?? '',
           isSold: true,
           itemListingID: item.itemListingID,
-          userID: item.sellerUserID,
+          userID: item.sellerUserID ?? '',
           status: item.itemListing?.status ?? '',
           createdDate: item.itemListing?.createdDate,
         ),

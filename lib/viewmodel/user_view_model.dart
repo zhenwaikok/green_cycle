@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
+import 'package:green_cycle_fyp/model/api_model/fcm_token_model/fcm_token_model.dart';
 import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/user_repository.dart';
@@ -90,6 +91,9 @@ class UserViewModel extends BaseViewModel {
       );
 
       final result = await insertUser(userModel: userModel);
+
+      notifyListeners();
+
       checkError(response);
       return result;
     }
@@ -132,6 +136,8 @@ class UserViewModel extends BaseViewModel {
 
   Future<bool> logout() async {
     final response = await userRepository.logout();
+
+    notifyListeners();
 
     checkError(response);
     return response.data;
@@ -341,5 +347,18 @@ class UserViewModel extends BaseViewModel {
     }
 
     return false;
+  }
+
+  Future<FcmTokenModel?> getFcmTokenWithUserID({required String userID}) async {
+    final response = await userRepository.getFcmTokenWithUserID(userID: userID);
+
+    if (response.data is FcmTokenModel) {
+      final fcmToken = response.data as FcmTokenModel;
+      return fcmToken;
+    }
+
+    checkError(response);
+
+    return null;
   }
 }

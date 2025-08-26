@@ -14,6 +14,7 @@ import 'package:flutter/material.dart' as _i55;
 import 'package:green_cycle_fyp/model/api_model/cart/cart_model.dart' as _i56;
 import 'package:green_cycle_fyp/model/api_model/pickup_request/pickup_request_model.dart'
     as _i57;
+import 'package:green_cycle_fyp/router/root_navigator_screen.dart' as _i48;
 import 'package:green_cycle_fyp/view/admin/collector_details/collector_details_screen.dart'
     as _i13;
 import 'package:green_cycle_fyp/view/admin/dashboard/admin_dashboard_screen.dart'
@@ -21,23 +22,23 @@ import 'package:green_cycle_fyp/view/admin/dashboard/admin_dashboard_screen.dart
 import 'package:green_cycle_fyp/view/admin/manage_awareness/add_edit_awareness_screen.dart'
     as _i2;
 import 'package:green_cycle_fyp/view/admin/manage_awareness/manage_awareness_screen.dart'
-    as _i29;
+    as _i28;
 import 'package:green_cycle_fyp/view/admin/manage_collectors/manage_collectors_screen.dart'
-    as _i30;
+    as _i29;
 import 'package:green_cycle_fyp/view/admin/manage_requests/manage_requests_screen.dart'
-    as _i31;
+    as _i30;
 import 'package:green_cycle_fyp/view/admin/manage_reward/add_edit_reward_screen.dart'
     as _i3;
 import 'package:green_cycle_fyp/view/admin/manage_reward/manage_rewards_screen.dart'
-    as _i32;
+    as _i31;
 import 'package:green_cycle_fyp/view/admin/pickup_request_details/pickup_request_details_screen.dart'
-    as _i40;
+    as _i39;
 import 'package:green_cycle_fyp/view/admin/profile/admin_profile_screen.dart'
     as _i5;
 import 'package:green_cycle_fyp/view/auth/collector_additional_signup_screen.dart'
     as _i12;
 import 'package:green_cycle_fyp/view/auth/forgot_password_screen.dart' as _i24;
-import 'package:green_cycle_fyp/view/auth/login_screen.dart' as _i28;
+import 'package:green_cycle_fyp/view/auth/login_screen.dart' as _i27;
 import 'package:green_cycle_fyp/view/auth/signup_screen.dart' as _i52;
 import 'package:green_cycle_fyp/view/collector/available_pickup_request/available_pickup_request_screen.dart'
     as _i6;
@@ -46,9 +47,9 @@ import 'package:green_cycle_fyp/view/collector/collector_home/collector_home_scr
 import 'package:green_cycle_fyp/view/collector/complete_pickup/complete_pickup_screen.dart'
     as _i18;
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_screen.dart'
-    as _i36;
+    as _i35;
 import 'package:green_cycle_fyp/view/collector/pickup_history/pickup_history_screen.dart'
-    as _i39;
+    as _i38;
 import 'package:green_cycle_fyp/view/collector/pickup_request_details/collector_pickup_request_details_screen.dart'
     as _i15;
 import 'package:green_cycle_fyp/view/collector/profile/collector_profile_screen.dart'
@@ -60,8 +61,7 @@ import 'package:green_cycle_fyp/view/common/awareness_details_screen.dart'
 import 'package:green_cycle_fyp/view/common/change_password_screen.dart'
     as _i10;
 import 'package:green_cycle_fyp/view/common/edit_profile_screen.dart' as _i23;
-import 'package:green_cycle_fyp/view/common/init_screen.dart' as _i25;
-import 'package:green_cycle_fyp/view/common/loading_screen.dart' as _i27;
+import 'package:green_cycle_fyp/view/common/loading_screen.dart' as _i26;
 import 'package:green_cycle_fyp/view/common/success_screen.dart' as _i53;
 import 'package:green_cycle_fyp/view/customer/add_edit_address/add_edit_address_screen.dart'
     as _i1;
@@ -76,38 +76,38 @@ import 'package:green_cycle_fyp/view/customer/create_listing/create_edit_listing
     as _i20;
 import 'package:green_cycle_fyp/view/customer/home/home_screen.dart' as _i22;
 import 'package:green_cycle_fyp/view/customer/item_details/item_details_screen.dart'
-    as _i26;
+    as _i25;
 import 'package:green_cycle_fyp/view/customer/marketplace/marketplace_screen.dart'
-    as _i34;
-import 'package:green_cycle_fyp/view/customer/marketplace_category/marketplace_category_screen.dart'
     as _i33;
+import 'package:green_cycle_fyp/view/customer/marketplace_category/marketplace_category_screen.dart'
+    as _i32;
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_screen.dart'
-    as _i35;
+    as _i34;
 import 'package:green_cycle_fyp/view/customer/my_purchases/my_purchases_screen.dart'
-    as _i37;
+    as _i36;
 import 'package:green_cycle_fyp/view/customer/points/points_screen.dart'
-    as _i41;
+    as _i40;
 import 'package:green_cycle_fyp/view/customer/profile/profile_screen.dart'
-    as _i42;
+    as _i41;
 import 'package:green_cycle_fyp/view/customer/request/request_screen.dart'
-    as _i46;
+    as _i45;
 import 'package:green_cycle_fyp/view/customer/request_details/request_details_screen.dart'
-    as _i43;
+    as _i42;
 import 'package:green_cycle_fyp/view/customer/request_for_pickup/request_item_details_screen.dart'
-    as _i44;
+    as _i43;
 import 'package:green_cycle_fyp/view/customer/request_for_pickup/request_summary_screen.dart'
-    as _i47;
+    as _i46;
 import 'package:green_cycle_fyp/view/customer/request_for_pickup/schedule_pickup_screen.dart'
     as _i50;
 import 'package:green_cycle_fyp/view/customer/request_for_pickup/select_location_screen.dart'
     as _i51;
 import 'package:green_cycle_fyp/view/customer/request_location_tracking/request_location_tracking_screen.dart'
-    as _i45;
+    as _i44;
 import 'package:green_cycle_fyp/view/customer/reward/reward_screen.dart'
-    as _i48;
+    as _i47;
 import 'package:green_cycle_fyp/view/customer/sales_order/sales_order_screen.dart'
     as _i49;
-import 'package:green_cycle_fyp/view/onboarding_screen.dart' as _i38;
+import 'package:green_cycle_fyp/view/onboarding_screen.dart' as _i37;
 import 'package:green_cycle_fyp/widget/custom_bottom_nav_bar.dart' as _i21;
 
 /// generated route for
@@ -642,18 +642,55 @@ class CollectorProfileRoute extends _i54.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i17.CollectorProfileStatusScreen]
-class CollectorProfileStatusRoute extends _i54.PageRouteInfo<void> {
-  const CollectorProfileStatusRoute({List<_i54.PageRouteInfo>? children})
-    : super(CollectorProfileStatusRoute.name, initialChildren: children);
+class CollectorProfileStatusRoute
+    extends _i54.PageRouteInfo<CollectorProfileStatusRouteArgs> {
+  CollectorProfileStatusRoute({
+    _i55.Key? key,
+    required String collectorUserID,
+    List<_i54.PageRouteInfo>? children,
+  }) : super(
+         CollectorProfileStatusRoute.name,
+         args: CollectorProfileStatusRouteArgs(
+           key: key,
+           collectorUserID: collectorUserID,
+         ),
+         rawPathParams: {'collectorUserID': collectorUserID},
+         initialChildren: children,
+       );
 
   static const String name = 'CollectorProfileStatusRoute';
 
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i17.CollectorProfileStatusScreen();
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<CollectorProfileStatusRouteArgs>(
+        orElse: () => CollectorProfileStatusRouteArgs(
+          collectorUserID: pathParams.getString('collectorUserID'),
+        ),
+      );
+      return _i17.CollectorProfileStatusScreen(
+        key: args.key,
+        collectorUserID: args.collectorUserID,
+      );
     },
   );
+}
+
+class CollectorProfileStatusRouteArgs {
+  const CollectorProfileStatusRouteArgs({
+    this.key,
+    required this.collectorUserID,
+  });
+
+  final _i55.Key? key;
+
+  final String collectorUserID;
+
+  @override
+  String toString() {
+    return 'CollectorProfileStatusRouteArgs{key: $key, collectorUserID: $collectorUserID}';
+  }
 }
 
 /// generated route for
@@ -896,23 +933,7 @@ class ForgotPasswordRoute extends _i54.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i25.InitScreen]
-class InitRoute extends _i54.PageRouteInfo<void> {
-  const InitRoute({List<_i54.PageRouteInfo>? children})
-    : super(InitRoute.name, initialChildren: children);
-
-  static const String name = 'InitRoute';
-
-  static _i54.PageInfo page = _i54.PageInfo(
-    name,
-    builder: (data) {
-      return const _i25.InitScreen();
-    },
-  );
-}
-
-/// generated route for
-/// [_i26.ItemDetailsScreen]
+/// [_i25.ItemDetailsScreen]
 class ItemDetailsRoute extends _i54.PageRouteInfo<ItemDetailsRouteArgs> {
   ItemDetailsRoute({
     _i55.Key? key,
@@ -930,7 +951,7 @@ class ItemDetailsRoute extends _i54.PageRouteInfo<ItemDetailsRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<ItemDetailsRouteArgs>();
-      return _i26.ItemDetailsScreen(
+      return _i25.ItemDetailsScreen(
         key: args.key,
         itemListingID: args.itemListingID,
       );
@@ -952,7 +973,7 @@ class ItemDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i27.LoadingScreen]
+/// [_i26.LoadingScreen]
 class LoadingRoute extends _i54.PageRouteInfo<void> {
   const LoadingRoute({List<_i54.PageRouteInfo>? children})
     : super(LoadingRoute.name, initialChildren: children);
@@ -962,13 +983,13 @@ class LoadingRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i27.LoadingScreen();
+      return const _i26.LoadingScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i28.LoginScreen]
+/// [_i27.LoginScreen]
 class LoginRoute extends _i54.PageRouteInfo<void> {
   const LoginRoute({List<_i54.PageRouteInfo>? children})
     : super(LoginRoute.name, initialChildren: children);
@@ -978,13 +999,13 @@ class LoginRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i28.LoginScreen();
+      return const _i27.LoginScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i29.ManageAwarenessScreen]
+/// [_i28.ManageAwarenessScreen]
 class ManageAwarenessRoute extends _i54.PageRouteInfo<void> {
   const ManageAwarenessRoute({List<_i54.PageRouteInfo>? children})
     : super(ManageAwarenessRoute.name, initialChildren: children);
@@ -994,13 +1015,13 @@ class ManageAwarenessRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i29.ManageAwarenessScreen();
+      return const _i28.ManageAwarenessScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i30.ManageCollectorsScreen]
+/// [_i29.ManageCollectorsScreen]
 class ManageCollectorsRoute extends _i54.PageRouteInfo<void> {
   const ManageCollectorsRoute({List<_i54.PageRouteInfo>? children})
     : super(ManageCollectorsRoute.name, initialChildren: children);
@@ -1010,13 +1031,13 @@ class ManageCollectorsRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i30.ManageCollectorsScreen();
+      return const _i29.ManageCollectorsScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i31.ManageRequestsScreen]
+/// [_i30.ManageRequestsScreen]
 class ManageRequestsRoute extends _i54.PageRouteInfo<void> {
   const ManageRequestsRoute({List<_i54.PageRouteInfo>? children})
     : super(ManageRequestsRoute.name, initialChildren: children);
@@ -1026,13 +1047,13 @@ class ManageRequestsRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i31.ManageRequestsScreen();
+      return const _i30.ManageRequestsScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i32.ManageRewardsScreen]
+/// [_i31.ManageRewardsScreen]
 class ManageRewardsRoute extends _i54.PageRouteInfo<void> {
   const ManageRewardsRoute({List<_i54.PageRouteInfo>? children})
     : super(ManageRewardsRoute.name, initialChildren: children);
@@ -1042,13 +1063,13 @@ class ManageRewardsRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i32.ManageRewardsScreen();
+      return const _i31.ManageRewardsScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i33.MarketplaceCategoryScreen]
+/// [_i32.MarketplaceCategoryScreen]
 class MarketplaceCategoryRoute
     extends _i54.PageRouteInfo<MarketplaceCategoryRouteArgs> {
   MarketplaceCategoryRoute({
@@ -1067,7 +1088,7 @@ class MarketplaceCategoryRoute
     name,
     builder: (data) {
       final args = data.argsAs<MarketplaceCategoryRouteArgs>();
-      return _i33.MarketplaceCategoryScreen(
+      return _i32.MarketplaceCategoryScreen(
         key: args.key,
         category: args.category,
       );
@@ -1089,7 +1110,7 @@ class MarketplaceCategoryRouteArgs {
 }
 
 /// generated route for
-/// [_i34.MarketplaceScreen]
+/// [_i33.MarketplaceScreen]
 class MarketplaceRoute extends _i54.PageRouteInfo<void> {
   const MarketplaceRoute({List<_i54.PageRouteInfo>? children})
     : super(MarketplaceRoute.name, initialChildren: children);
@@ -1099,13 +1120,13 @@ class MarketplaceRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i34.MarketplaceScreen();
+      return const _i33.MarketplaceScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i35.MyListingScreen]
+/// [_i34.MyListingScreen]
 class MyListingRoute extends _i54.PageRouteInfo<void> {
   const MyListingRoute({List<_i54.PageRouteInfo>? children})
     : super(MyListingRoute.name, initialChildren: children);
@@ -1115,13 +1136,13 @@ class MyListingRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i35.MyListingScreen();
+      return const _i34.MyListingScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i36.MyPickupScreen]
+/// [_i35.MyPickupScreen]
 class MyPickupRoute extends _i54.PageRouteInfo<void> {
   const MyPickupRoute({List<_i54.PageRouteInfo>? children})
     : super(MyPickupRoute.name, initialChildren: children);
@@ -1131,29 +1152,55 @@ class MyPickupRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i36.MyPickupScreen();
+      return const _i35.MyPickupScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i37.MyPurchasesScreen]
-class MyPurchasesRoute extends _i54.PageRouteInfo<void> {
-  const MyPurchasesRoute({List<_i54.PageRouteInfo>? children})
-    : super(MyPurchasesRoute.name, initialChildren: children);
+/// [_i36.MyPurchasesScreen]
+class MyPurchasesRoute extends _i54.PageRouteInfo<MyPurchasesRouteArgs> {
+  MyPurchasesRoute({
+    _i55.Key? key,
+    required String userID,
+    List<_i54.PageRouteInfo>? children,
+  }) : super(
+         MyPurchasesRoute.name,
+         args: MyPurchasesRouteArgs(key: key, userID: userID),
+         rawPathParams: {'userID': userID},
+         initialChildren: children,
+       );
 
   static const String name = 'MyPurchasesRoute';
 
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i37.MyPurchasesScreen();
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<MyPurchasesRouteArgs>(
+        orElse: () =>
+            MyPurchasesRouteArgs(userID: pathParams.getString('userID')),
+      );
+      return _i36.MyPurchasesScreen(key: args.key, userID: args.userID);
     },
   );
 }
 
+class MyPurchasesRouteArgs {
+  const MyPurchasesRouteArgs({this.key, required this.userID});
+
+  final _i55.Key? key;
+
+  final String userID;
+
+  @override
+  String toString() {
+    return 'MyPurchasesRouteArgs{key: $key, userID: $userID}';
+  }
+}
+
 /// generated route for
-/// [_i38.OnboardingScreen]
+/// [_i37.OnboardingScreen]
 class OnboardingRoute extends _i54.PageRouteInfo<void> {
   const OnboardingRoute({List<_i54.PageRouteInfo>? children})
     : super(OnboardingRoute.name, initialChildren: children);
@@ -1163,13 +1210,13 @@ class OnboardingRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i38.OnboardingScreen();
+      return const _i37.OnboardingScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i39.PickupHistoryScreen]
+/// [_i38.PickupHistoryScreen]
 class PickupHistoryRoute extends _i54.PageRouteInfo<void> {
   const PickupHistoryRoute({List<_i54.PageRouteInfo>? children})
     : super(PickupHistoryRoute.name, initialChildren: children);
@@ -1179,13 +1226,13 @@ class PickupHistoryRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i39.PickupHistoryScreen();
+      return const _i38.PickupHistoryScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i40.PickupRequestDetailsScreen]
+/// [_i39.PickupRequestDetailsScreen]
 class PickupRequestDetailsRoute
     extends _i54.PageRouteInfo<PickupRequestDetailsRouteArgs> {
   PickupRequestDetailsRoute({
@@ -1207,7 +1254,7 @@ class PickupRequestDetailsRoute
     name,
     builder: (data) {
       final args = data.argsAs<PickupRequestDetailsRouteArgs>();
-      return _i40.PickupRequestDetailsScreen(
+      return _i39.PickupRequestDetailsScreen(
         key: args.key,
         pickupRequestID: args.pickupRequestID,
       );
@@ -1232,7 +1279,7 @@ class PickupRequestDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i41.PointsScreen]
+/// [_i40.PointsScreen]
 class PointsRoute extends _i54.PageRouteInfo<void> {
   const PointsRoute({List<_i54.PageRouteInfo>? children})
     : super(PointsRoute.name, initialChildren: children);
@@ -1242,13 +1289,13 @@ class PointsRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i41.PointsScreen();
+      return const _i40.PointsScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i42.ProfileScreen]
+/// [_i41.ProfileScreen]
 class ProfileRoute extends _i54.PageRouteInfo<void> {
   const ProfileRoute({List<_i54.PageRouteInfo>? children})
     : super(ProfileRoute.name, initialChildren: children);
@@ -1258,13 +1305,13 @@ class ProfileRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i42.ProfileScreen();
+      return const _i41.ProfileScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i43.RequestDetailsScreen]
+/// [_i42.RequestDetailsScreen]
 class RequestDetailsRoute extends _i54.PageRouteInfo<RequestDetailsRouteArgs> {
   RequestDetailsRoute({
     _i55.Key? key,
@@ -1276,6 +1323,7 @@ class RequestDetailsRoute extends _i54.PageRouteInfo<RequestDetailsRouteArgs> {
            key: key,
            pickupRequestID: pickupRequestID,
          ),
+         rawPathParams: {'pickupRequestID': pickupRequestID},
          initialChildren: children,
        );
 
@@ -1284,8 +1332,13 @@ class RequestDetailsRoute extends _i54.PageRouteInfo<RequestDetailsRouteArgs> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<RequestDetailsRouteArgs>();
-      return _i43.RequestDetailsScreen(
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<RequestDetailsRouteArgs>(
+        orElse: () => RequestDetailsRouteArgs(
+          pickupRequestID: pathParams.getString('pickupRequestID'),
+        ),
+      );
+      return _i42.RequestDetailsScreen(
         key: args.key,
         pickupRequestID: args.pickupRequestID,
       );
@@ -1307,7 +1360,7 @@ class RequestDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i44.RequestItemDetailsScreen]
+/// [_i43.RequestItemDetailsScreen]
 class RequestItemDetailsRoute
     extends _i54.PageRouteInfo<RequestItemDetailsRouteArgs> {
   RequestItemDetailsRoute({
@@ -1326,7 +1379,7 @@ class RequestItemDetailsRoute
     name,
     builder: (data) {
       final args = data.argsAs<RequestItemDetailsRouteArgs>();
-      return _i44.RequestItemDetailsScreen(key: args.key, isEdit: args.isEdit);
+      return _i43.RequestItemDetailsScreen(key: args.key, isEdit: args.isEdit);
     },
   );
 }
@@ -1345,7 +1398,7 @@ class RequestItemDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i45.RequestLocationTrackingScreen]
+/// [_i44.RequestLocationTrackingScreen]
 class RequestLocationTrackingRoute
     extends _i54.PageRouteInfo<RequestLocationTrackingRouteArgs> {
   RequestLocationTrackingRoute({
@@ -1367,7 +1420,7 @@ class RequestLocationTrackingRoute
     name,
     builder: (data) {
       final args = data.argsAs<RequestLocationTrackingRouteArgs>();
-      return _i45.RequestLocationTrackingScreen(
+      return _i44.RequestLocationTrackingScreen(
         key: args.key,
         pickupRequestID: args.pickupRequestID,
       );
@@ -1392,7 +1445,7 @@ class RequestLocationTrackingRouteArgs {
 }
 
 /// generated route for
-/// [_i46.RequestScreen]
+/// [_i45.RequestScreen]
 class RequestRoute extends _i54.PageRouteInfo<void> {
   const RequestRoute({List<_i54.PageRouteInfo>? children})
     : super(RequestRoute.name, initialChildren: children);
@@ -1402,13 +1455,13 @@ class RequestRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i46.RequestScreen();
+      return const _i45.RequestScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i47.RequestSummaryScreen]
+/// [_i46.RequestSummaryScreen]
 class RequestSummaryRoute extends _i54.PageRouteInfo<void> {
   const RequestSummaryRoute({List<_i54.PageRouteInfo>? children})
     : super(RequestSummaryRoute.name, initialChildren: children);
@@ -1418,13 +1471,13 @@ class RequestSummaryRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i47.RequestSummaryScreen();
+      return const _i46.RequestSummaryScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i48.RewardScreen]
+/// [_i47.RewardScreen]
 class RewardRoute extends _i54.PageRouteInfo<void> {
   const RewardRoute({List<_i54.PageRouteInfo>? children})
     : super(RewardRoute.name, initialChildren: children);
@@ -1434,25 +1487,71 @@ class RewardRoute extends _i54.PageRouteInfo<void> {
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i48.RewardScreen();
+      return const _i47.RewardScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [_i48.RootNavigatorScreen]
+class RootNavigatorRoute extends _i54.PageRouteInfo<void> {
+  const RootNavigatorRoute({List<_i54.PageRouteInfo>? children})
+    : super(RootNavigatorRoute.name, initialChildren: children);
+
+  static const String name = 'RootNavigatorRoute';
+
+  static _i54.PageInfo page = _i54.PageInfo(
+    name,
+    builder: (data) {
+      return const _i48.RootNavigatorScreen();
     },
   );
 }
 
 /// generated route for
 /// [_i49.SalesOrderScreen]
-class SalesOrderRoute extends _i54.PageRouteInfo<void> {
-  const SalesOrderRoute({List<_i54.PageRouteInfo>? children})
-    : super(SalesOrderRoute.name, initialChildren: children);
+class SalesOrderRoute extends _i54.PageRouteInfo<SalesOrderRouteArgs> {
+  SalesOrderRoute({
+    _i55.Key? key,
+    required String sellerUserID,
+    List<_i54.PageRouteInfo>? children,
+  }) : super(
+         SalesOrderRoute.name,
+         args: SalesOrderRouteArgs(key: key, sellerUserID: sellerUserID),
+         rawPathParams: {'sellerUserID': sellerUserID},
+         initialChildren: children,
+       );
 
   static const String name = 'SalesOrderRoute';
 
   static _i54.PageInfo page = _i54.PageInfo(
     name,
     builder: (data) {
-      return const _i49.SalesOrderScreen();
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<SalesOrderRouteArgs>(
+        orElse: () => SalesOrderRouteArgs(
+          sellerUserID: pathParams.getString('sellerUserID'),
+        ),
+      );
+      return _i49.SalesOrderScreen(
+        key: args.key,
+        sellerUserID: args.sellerUserID,
+      );
     },
   );
+}
+
+class SalesOrderRouteArgs {
+  const SalesOrderRouteArgs({this.key, required this.sellerUserID});
+
+  final _i55.Key? key;
+
+  final String sellerUserID;
+
+  @override
+  String toString() {
+    return 'SalesOrderRouteArgs{key: $key, sellerUserID: $sellerUserID}';
+  }
 }
 
 /// generated route for

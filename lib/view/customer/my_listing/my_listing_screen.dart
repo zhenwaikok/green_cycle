@@ -8,15 +8,13 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
 import 'package:green_cycle_fyp/services/firebase_services.dart';
-import 'package:green_cycle_fyp/services/user_services.dart';
-import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/my_listing/my_listing_tab.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/bottom_sheet_action.dart';
 import 'package:green_cycle_fyp/widget/custom_sort_by.dart';
@@ -35,10 +33,6 @@ class MyListingScreen extends StatelessWidget {
         itemListingRepository: ItemListingRepository(),
         firebaseRepository: FirebaseRepository(
           firebaseServices: FirebaseServices(),
-        ),
-        userRepository: UserRepository(
-          sharePreferenceHandler: SharedPreferenceHandler(),
-          userServices: UserServices(),
         ),
       ),
       child: _MyListingScreen(),
@@ -211,9 +205,12 @@ extension _Actions on _MyListingScreenState {
       isLoading = true;
     });
     selectedSort = sortByItems.first;
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
     await tryCatch(
       context,
-      () => context.read<ItemListingViewModel>().getItemListingWithUserID(),
+      () => context.read<ItemListingViewModel>().getItemListingWithUserID(
+        userID: userID,
+      ),
     );
     _setState(() {
       isLoading = false;

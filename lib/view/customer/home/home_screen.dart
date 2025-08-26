@@ -56,10 +56,6 @@ class CustomerHomeScreen extends StatelessWidget {
           firebaseRepository: FirebaseRepository(
             firebaseServices: FirebaseServices(),
           ),
-          userRepository: UserRepository(
-            sharePreferenceHandler: SharedPreferenceHandler(),
-            userServices: UserServices(),
-          ),
         );
         AwarenessViewModel(
           awarenessRepository: AwarenessRepository(

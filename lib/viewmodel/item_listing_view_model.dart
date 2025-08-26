@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/api_model/item_listing/item_listing_model.dart';
-import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
-import 'package:green_cycle_fyp/repository/user_repository.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/viewmodel/base_view_model.dart';
 import 'package:multi_image_picker_view/multi_image_picker_view.dart';
@@ -13,20 +11,16 @@ class ItemListingViewModel extends BaseViewModel {
   ItemListingViewModel({
     required this.itemListingRepository,
     required this.firebaseRepository,
-    required this.userRepository,
   });
 
   ItemListingRepository itemListingRepository;
   FirebaseRepository firebaseRepository;
-  UserRepository userRepository;
 
   ItemListingModel? _itemListingDetails;
   List<ItemListingModel> _itemListings = [];
-  UserModel? _user;
 
   ItemListingModel? get itemListingDetails => _itemListingDetails;
   List<ItemListingModel> get itemListings => _itemListings;
-  UserModel? get user => _user;
 
   Future<void> getAllItemListings() async {
     final response = await itemListingRepository.getAllItemListings();
@@ -39,9 +33,7 @@ class ItemListingViewModel extends BaseViewModel {
     checkError(response);
   }
 
-  Future<void> getItemListingWithUserID() async {
-    final userID = userRepository.user?.userID ?? '';
-
+  Future<void> getItemListingWithUserID({required String userID}) async {
     final response = await itemListingRepository.getItemListingWithUserID(
       userID: userID,
     );
@@ -74,6 +66,7 @@ class ItemListingViewModel extends BaseViewModel {
     required double itemPrice,
     required String itemCondition,
     required String itemCategory,
+    required String userID,
   }) async {
     List<String> imageURL = [];
 
@@ -86,7 +79,7 @@ class ItemListingViewModel extends BaseViewModel {
     imageURL = uploadImageResponse;
 
     ItemListingModel itemListingModel = ItemListingModel(
-      userID: _user?.userID ?? '',
+      userID: userID,
       itemImageURL: imageURL,
       itemName: itemName,
       itemDescription: itemDescription,
@@ -115,7 +108,7 @@ class ItemListingViewModel extends BaseViewModel {
     required String itemCategory,
     bool? isSold,
     int? itemListingID,
-    String? userID,
+    required String userID,
     String? status,
     DateTime? createdDate,
     List<String>? imageURLs,
@@ -147,7 +140,7 @@ class ItemListingViewModel extends BaseViewModel {
 
     ItemListingModel itemListingModel = ItemListingModel(
       itemListingID: itemListingID ?? _itemListingDetails?.itemListingID ?? 0,
-      userID: userID ?? userRepository.user?.userID ?? '',
+      userID: userID,
       itemImageURL: imageURLs ?? finalImageURLs,
       itemName: itemName,
       itemDescription: itemDescription,

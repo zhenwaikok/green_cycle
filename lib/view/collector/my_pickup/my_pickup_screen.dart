@@ -18,7 +18,9 @@ import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/collector/my_pickup/my_pickup_tab.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
@@ -211,6 +213,12 @@ extension _Actions on _MyPickupScreenState {
         : false;
 
     if (result) {
+      await sendPushNotification(
+        customerUserID: pickupRequestDetails.userID ?? '',
+        title: 'Pickup Request',
+        body: 'Your collector is on the way to your location.',
+        pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+      );
       await initializeService();
       if (mounted) {
         context.read<LocationViewModel>().startTrackingService(
@@ -226,6 +234,12 @@ extension _Actions on _MyPickupScreenState {
     await updatePickupRequestStatus(
       pickupRequestDetails: pickupRequestDetails,
       pickupRequestStatus: pickupRequestStatus[4],
+    );
+    await sendPushNotification(
+      customerUserID: pickupRequestDetails.userID ?? '',
+      title: 'Pickup Request',
+      body: 'Your collector has arrived.',
+      pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
     );
     if (mounted) {
       context.read<LocationViewModel>().stopBackgroundTrackingService();
@@ -262,6 +276,32 @@ extension _Actions on _MyPickupScreenState {
     if (result) {
       unawaited(WidgetUtil.showSnackBar(text: 'Updated successfully'));
       await fetchData();
+    }
+  }
+
+  Future<void> sendPushNotification({
+    required String customerUserID,
+    required String title,
+    required String body,
+    required String pickupRequestID,
+  }) async {
+    final fcmToken = await tryLoad(
+      context,
+      () => context.read<UserViewModel>().getFcmTokenWithUserID(
+        userID: customerUserID,
+      ),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<NotificationViewModel>().sendPushNotification(
+          fcmToken: fcmToken?.token ?? '',
+          title: title,
+          body: body,
+          deeplink: 'request-details/$pickupRequestID',
+        ),
+      );
     }
   }
 

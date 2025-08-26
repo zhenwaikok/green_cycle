@@ -214,16 +214,16 @@ extension _WidgetFactories on _AdminDashboardScreenState {
   Widget getDashboardCard({required String title, required String number}) {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      child: Skeletonizer(
-        enabled: isLoading,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(title, style: _Styles.dashboardCardTitleTextStyle),
-            Text(number, style: _Styles.dashboardCardNumberTextStyle),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: _Styles.dashboardCardTitleTextStyle),
+          Skeletonizer(
+            enabled: isLoading,
+            child: Text(number, style: _Styles.dashboardCardNumberTextStyle),
+          ),
+        ],
       ),
     );
   }

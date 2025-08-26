@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/repository/cart_repository.dart';
 import 'package:green_cycle_fyp/repository/firebase_repository.dart';
 import 'package:green_cycle_fyp/repository/item_listing_repository.dart';
 import 'package:green_cycle_fyp/repository/location_repository.dart';
+import 'package:green_cycle_fyp/repository/notification_repository.dart';
 import 'package:green_cycle_fyp/repository/pickup_request_repository.dart';
 import 'package:green_cycle_fyp/repository/point_transaction_repository.dart';
 import 'package:green_cycle_fyp/repository/purchases_repository.dart';
@@ -20,8 +21,10 @@ import 'package:green_cycle_fyp/viewmodel/awareness_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/cart_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/item_listing_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/point_transaction_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/purchase_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_redemption_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/reward_view_model.dart';
@@ -50,6 +53,10 @@ class EnvValues {
   static const googleSignInServerClientID = String.fromEnvironment(
     'googleSignInServerClientID',
   );
+  static const fcmScope = String.fromEnvironment('fcmScope');
+  static const projectID = String.fromEnvironment('projectID');
+  static const fcmKeyFilePath = 'assets/fcm/FCM-key.json';
+  static const fcmHostUrl = String.fromEnvironment('fcmHostUrl');
 }
 
 List<SingleChildWidget> providerAssets() => [
@@ -103,10 +110,6 @@ List<SingleChildWidget> providerAssets() => [
       firebaseRepository: FirebaseRepository(
         firebaseServices: FirebaseServices(),
       ),
-      userRepository: UserRepository(
-        sharePreferenceHandler: SharedPreferenceHandler(),
-        userServices: UserServices(),
-      ),
     ),
   ),
   ChangeNotifierProvider.value(
@@ -133,6 +136,19 @@ List<SingleChildWidget> providerAssets() => [
   ),
   ChangeNotifierProvider.value(
     value: PurchaseViewModel(purchasesRepository: PurchasesRepository()),
+  ),
+  ChangeNotifierProvider.value(
+    value: NotificationViewModel(
+      notificationRepository: NotificationRepository(),
+    ),
+  ),
+  ChangeNotifierProvider.value(
+    value: ProfileScreenViewModel(
+      userRepository: UserRepository(
+        sharePreferenceHandler: SharedPreferenceHandler(),
+        userServices: UserServices(),
+      ),
+    ),
   ),
 ];
 
