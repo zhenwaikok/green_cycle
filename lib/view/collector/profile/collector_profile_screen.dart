@@ -21,6 +21,7 @@ import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class CollectorProfileScreen extends StatelessWidget {
@@ -48,6 +49,16 @@ class _CollectorProfileScreen extends BaseStatefulPage {
 
 class _CollectorProfileScreenState
     extends BaseStatefulState<_CollectorProfileScreen> {
+  bool isLoading = true;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(() {
+        fn();
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -178,21 +189,25 @@ extension _Actions on _CollectorProfileScreenState {
   }
 
   Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+
     final user = context.read<UserViewModel>().user;
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );
 
     if (mounted) {
-      await tryLoad(
+      await tryCatch(
         context,
         () => context.read<ProfileScreenViewModel>().getUserDetails(
           userID: user?.userID ?? '',
         ),
       );
     }
+
+    _setState(() => isLoading = false);
   }
 }
 
@@ -217,34 +232,37 @@ extension _WidgetFactories on _CollectorProfileScreenState {
   }
 
   Widget getProfileDetails({required UserModel userDetails}) {
-    return Row(
-      children: [
-        CustomProfileImage(
-          imageURL: userDetails.profileImageURL ?? '',
-          imageSize: _Styles.profileImageSize,
-        ),
-        SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                userDetails.fullName ?? '-',
-                style: _Styles.usernameTextStyle,
-                maxLines: _Styles.maxTextLines,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                userDetails.userRole ?? '-',
-                style: _Styles.collectorTextStyle,
-              ),
-              SizedBox(height: 15),
-              getAccountStatus(status: userDetails.approvalStatus ?? ''),
-            ],
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Row(
+        children: [
+          CustomProfileImage(
+            imageURL: userDetails.profileImageURL ?? '',
+            imageSize: _Styles.profileImageSize,
           ),
-        ),
-      ],
+          SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  userDetails.fullName ?? '-',
+                  style: _Styles.usernameTextStyle,
+                  maxLines: _Styles.maxTextLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  userDetails.userRole ?? '-',
+                  style: _Styles.collectorTextStyle,
+                ),
+                SizedBox(height: 15),
+                getAccountStatus(status: userDetails.approvalStatus ?? ''),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -257,30 +275,33 @@ extension _WidgetFactories on _CollectorProfileScreenState {
     required int numOfOngoing,
     required int numOfCompleted,
   }) {
-    return CustomCard(
-      needBoxShadow: false,
-      backgroundColor: ColorManager.primaryLight,
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: getCollectorStatsItem(
-                title: 'Ongoing',
-                value: '$numOfOngoing',
+    return Skeletonizer(
+      enabled: isLoading,
+      child: CustomCard(
+        needBoxShadow: false,
+        backgroundColor: ColorManager.primaryLight,
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: getCollectorStatsItem(
+                  title: 'Ongoing',
+                  value: '$numOfOngoing',
+                ),
               ),
-            ),
-            VerticalDivider(
-              color: ColorManager.primary,
-              thickness: 2,
-              width: 30,
-            ),
-            Expanded(
-              child: getCollectorStatsItem(
-                title: 'Completed',
-                value: '$numOfCompleted',
+              VerticalDivider(
+                color: ColorManager.primary,
+                thickness: 2,
+                width: 30,
               ),
-            ),
-          ],
+              Expanded(
+                child: getCollectorStatsItem(
+                  title: 'Completed',
+                  value: '$numOfCompleted',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

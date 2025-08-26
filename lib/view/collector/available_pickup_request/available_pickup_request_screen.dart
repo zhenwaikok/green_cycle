@@ -200,9 +200,9 @@ extension _Actions on _AvailablePickupRequestScreenState {
           content:
               'Your account is still under review or not approved so you cannot accept this pickup request.',
           actions: [
-            getAlertDialogTextButton(
+            (dialogContext) => getAlertDialogTextButton(
               onPressed: () {
-                context.router.maybePop();
+                Navigator.of(dialogContext).pop();
               },
               text: 'OK',
             ),
@@ -216,13 +216,13 @@ extension _Actions on _AvailablePickupRequestScreenState {
           title: 'Accept Confirmation',
           content: 'Are you sure to accept this pickup request?',
           actions: [
-            getAlertDialogTextButton(
+            (dialogContext) => getAlertDialogTextButton(
               onPressed: () {
-                context.router.maybePop();
+                Navigator.of(dialogContext).pop();
               },
               text: 'No',
             ),
-            getAlertDialogTextButton(
+            (dialogContext) => getAlertDialogTextButton(
               onPressed: () => acceptPickuprequest(
                 pickupRequestDetails: pickupRequestDetails,
               ),

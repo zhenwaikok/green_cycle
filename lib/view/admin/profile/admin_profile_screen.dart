@@ -15,6 +15,7 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class AdminProfileScreen extends StatelessWidget {
@@ -40,6 +41,14 @@ class _AdminProfileScreen extends BaseStatefulPage {
 }
 
 class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
+  bool isLoading = true;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -124,14 +133,18 @@ extension _Actions on _AdminProfileScreenState {
   }
 
   Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+
     final userVM = context.read<UserViewModel>();
     final userID = userVM.user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () =>
           context.read<ProfileScreenViewModel>().getUserDetails(userID: userID),
     );
+
+    _setState(() => isLoading = false);
   }
 }
 
@@ -142,27 +155,30 @@ extension _WidgetFactories on _AdminProfileScreenState {
     required String username,
     required String userRole,
   }) {
-    return Row(
-      children: [
-        CustomProfileImage(imageURL: profileImageURL, imageSize: 80.0),
-        SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                username,
-                style: _Styles.usernameTextStyle,
-                maxLines: _Styles.maxTextLines,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 15),
-              Text(userRole, style: _Styles.adminTextStyle),
-            ],
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Row(
+        children: [
+          CustomProfileImage(imageURL: profileImageURL, imageSize: 80.0),
+          SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  username,
+                  style: _Styles.usernameTextStyle,
+                  maxLines: _Styles.maxTextLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 15),
+                Text(userRole, style: _Styles.adminTextStyle),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

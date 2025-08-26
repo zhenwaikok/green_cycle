@@ -162,15 +162,15 @@ extension _Actions on _MyPickupScreenState {
         pickupRequestDetails.pickupRequestStatus ?? '',
       ),
       actions: [
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () {
-            context.router.maybePop();
+            Navigator.of(dialogContext).pop();
           },
           text: 'No',
         ),
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () async {
-            await context.router.maybePop();
+            Navigator.of(dialogContext).pop();
             onButtonPressed(pickupRequestDetails: pickupRequestDetails);
           },
           text: 'Yes',

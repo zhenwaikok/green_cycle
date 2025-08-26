@@ -227,7 +227,7 @@ class WidgetUtil {
     BuildContext context, {
     required String? title,
     String? content,
-    required List<Widget>? actions,
+    required List<Widget Function(BuildContext dialogContext)>? actions,
     String? formName,
     bool dismissible = true,
     bool needTextField = false,
@@ -239,7 +239,7 @@ class WidgetUtil {
   }) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding: const EdgeInsets.all(20),
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -266,7 +266,7 @@ class WidgetUtil {
                     ),
                   )
                 : Text(content ?? '', style: TextStyle(fontSize: 16))),
-        actions: actions,
+        actions: actions?.map((builder) => builder(dialogContext)).toList(),
         backgroundColor: ColorManager.whiteColor,
       ),
       barrierDismissible: dismissible,

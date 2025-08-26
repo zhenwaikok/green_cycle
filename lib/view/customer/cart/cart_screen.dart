@@ -127,12 +127,15 @@ extension _Actions on _CartScreenState {
       title: 'Delete Confirmation',
       content: 'Are you sure you want to delete this item from your cart?',
       actions: [
-        getAlertDialogTextButton(
-          onPressed: () => context.router.maybePop(),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
           text: 'No',
         ),
-        getAlertDialogTextButton(
-          onPressed: () => removeFromCart(cartID: cartID),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            removeFromCart(cartID: cartID);
+          },
           text: 'Yes',
         ),
       ],
@@ -140,8 +143,6 @@ extension _Actions on _CartScreenState {
   }
 
   Future<void> removeFromCart({required int cartID}) async {
-    await context.router.maybePop();
-
     if (mounted) {
       final result =
           await tryLoad(

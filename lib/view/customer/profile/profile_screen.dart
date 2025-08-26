@@ -18,6 +18,7 @@ import 'package:green_cycle_fyp/widget/profile_image.dart';
 import 'package:green_cycle_fyp/widget/profile_row_element.dart';
 import 'package:green_cycle_fyp/widget/touchable_capacity.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class ProfileScreen extends StatelessWidget {
@@ -43,6 +44,14 @@ class _ProfileScreen extends BaseStatefulPage {
 }
 
 class _ProfileScreenState extends BaseStatefulState<_ProfileScreen> {
+  bool isLoading = true;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(fn);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -150,13 +159,20 @@ extension _Actions on _ProfileScreenState {
   }
 
   Future<void> fetchData() async {
+    _setState(() {
+      isLoading = true;
+    });
     final userID = context.read<UserViewModel>().user?.userID ?? '';
 
-    await tryLoad(
+    await tryCatch(
       context,
       () =>
           context.read<ProfileScreenViewModel>().getUserDetails(userID: userID),
     );
+
+    _setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> onSignOutPressed() async {
@@ -167,33 +183,36 @@ extension _Actions on _ProfileScreenState {
 // * ------------------------ WidgetFactories ------------------------
 extension _WidgetFactories on _ProfileScreenState {
   Widget getProfileDetails({required UserModel user}) {
-    return Row(
-      children: [
-        CustomProfileImage(
-          imageURL: user.profileImageURL ?? '',
-          imageSize: _Styles.imageSize,
-        ),
-        SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                '${user.firstName ?? '-'} ${user.lastName ?? ''}',
-                style: _Styles.usernameTextStyle,
-                maxLines: _Styles.maxTextLines,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 10),
-              Text(
-                '${user.currentPoint ?? 0} points',
-                style: _Styles.pointTextStyle,
-              ),
-            ],
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Row(
+        children: [
+          CustomProfileImage(
+            imageURL: user.profileImageURL ?? '',
+            imageSize: _Styles.imageSize,
           ),
-        ),
-      ],
+          SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${user.firstName ?? '-'} ${user.lastName ?? ''}',
+                  style: _Styles.usernameTextStyle,
+                  maxLines: _Styles.maxTextLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  '${user.currentPoint ?? 0} points',
+                  style: _Styles.pointTextStyle,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -172,14 +172,17 @@ extension _Actions on _MyListingScreenState {
         title: 'Delete Confirmation',
         content: 'Are you sure you want to delete this item from your listing?',
         actions: [
-          getAlertDialogTextButton(
+          (dialogContext) => getAlertDialogTextButton(
             onPressed: () {
-              onBackButtonPressed();
+              Navigator.of(dialogContext).pop();
             },
             text: 'No',
           ),
-          getAlertDialogTextButton(
-            onPressed: () => onYesRemovePressed(itemListingID: itemListingID),
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              onYesRemovePressed(itemListingID: itemListingID);
+            },
             text: 'Yes',
           ),
         ],
@@ -188,7 +191,6 @@ extension _Actions on _MyListingScreenState {
   }
 
   void onEditPressed({required int itemListingID}) async {
-    await context.router.maybePop();
     if (mounted) {
       final result = await context.router.push(
         CreateEditListingRoute(isEdit: true, itemListingID: itemListingID),

@@ -181,9 +181,15 @@ extension _Actions on _SalesOrderScreenState {
       title: 'Shipped Confirmation',
       content: 'Are you sure to mark this order as shipped?',
       actions: [
-        getAlertDialogTextButton(onPressed: onBackButtonPressed, text: 'No'),
-        getAlertDialogTextButton(
-          onPressed: () => onYesButtonPressed(purchaseItems: purchaseItems),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          text: 'No',
+        ),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            onYesButtonPressed(purchaseItems: purchaseItems);
+          },
           text: 'Yes',
         ),
       ],
@@ -193,8 +199,6 @@ extension _Actions on _SalesOrderScreenState {
   Future<void> onYesButtonPressed({
     required List<PurchasesModel> purchaseItems,
   }) async {
-    await context.router.maybePop();
-
     bool allSuccess = true;
 
     for (var item in purchaseItems) {
