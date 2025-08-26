@@ -160,8 +160,10 @@ extension _Actions on _AwarenessDetailsScreenState {
       title: 'Delete Confirmation',
       content: 'Are you sure you want to delete this awareness content?',
       actions: [
-        getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
-        getAlertDialogTextButton(onPressed: () {}, text: 'Confirm'),
+        (dialogContext) =>
+            getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
+        (dialogContext) =>
+            getAlertDialogTextButton(onPressed: () {}, text: 'Confirm'),
       ],
     );
   }

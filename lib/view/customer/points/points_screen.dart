@@ -19,6 +19,7 @@ import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class PointsScreen extends StatelessWidget {
@@ -115,7 +116,10 @@ class _PointsScreenState extends BaseStatefulState<_PointsScreen> {
         padding: _Styles.screenPadding,
         child: Column(
           children: [
-            getCurrentPoints(currentPoints: currentPoints),
+            Skeletonizer(
+              enabled: isLoading,
+              child: getCurrentPoints(currentPoints: currentPoints),
+            ),
             SizedBox(height: 20),
             getTabBar(),
             SizedBox(height: 15),

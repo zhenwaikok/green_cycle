@@ -262,27 +262,30 @@ extension _WidgetFactories on _AdminDashboardScreenState {
   }) {
     return TouchableOpacity(
       onPressed: onTap,
-      child: CustomCard(
-        padding: _Styles.customCardPadding,
-        backgroundColor: ColorManager.primary,
-        needBoxShadow: false,
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: ColorManager.whiteColor,
-              size: _Styles.actionIconSize,
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Text(actionText, style: _Styles.quickActionTextStyle),
-            ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: ColorManager.whiteColor,
-              size: _Styles.arrowIconSize,
-            ),
-          ],
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: CustomCard(
+          padding: _Styles.customCardPadding,
+          backgroundColor: ColorManager.primary,
+          needBoxShadow: false,
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: ColorManager.whiteColor,
+                size: _Styles.actionIconSize,
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: Text(actionText, style: _Styles.quickActionTextStyle),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: ColorManager.whiteColor,
+                size: _Styles.arrowIconSize,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -139,14 +139,17 @@ class _CollectorHomeScreenState
                 slivers: [
                   SliverToBoxAdapter(child: SizedBox(height: 20)),
                   SliverToBoxAdapter(
-                    child: getAvailablePickupRequestSection(
-                      numberOfAvailable: availableRequest.length,
+                    child: Skeletonizer(
+                      enabled: isLoading,
+                      child: getAvailablePickupRequestSection(
+                        numberOfAvailable: availableRequest.length,
+                      ),
                     ),
                   ),
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                   SliverToBoxAdapter(child: getOngoingPickupRequestSection()),
                   SliverToBoxAdapter(child: SizedBox(height: 10)),
-                  if (ongoingPickupRequestList.isEmpty) ...[
+                  if (ongoingPickupRequestList.isEmpty && !isLoading) ...[
                     SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
@@ -257,15 +260,15 @@ extension _Actions on _CollectorHomeScreenState {
         pickupRequestDetails.pickupRequestStatus ?? '',
       ),
       actions: [
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () {
-            context.router.maybePop();
+            Navigator.of(dialogContext).pop();
           },
           text: 'No',
         ),
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () async {
-            await context.router.maybePop();
+            Navigator.of(dialogContext).pop();
             onButtonPressed(pickupRequestDetails: pickupRequestDetails);
           },
           text: 'Yes',
@@ -311,7 +314,7 @@ extension _Actions on _CollectorHomeScreenState {
       isLoading = true;
     });
 
-    await tryLoad(
+    await tryCatch(
       context,
       () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
     );

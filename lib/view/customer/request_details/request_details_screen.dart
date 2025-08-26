@@ -175,9 +175,15 @@ extension _Actions on _RequestDetailsScreenState {
       title: 'Delete Confirmation',
       content: 'Are you sure you want to delete this pickup request?',
       actions: [
-        getAlertDialogTextButton(onPressed: onBackButtonPressed, text: 'No'),
-        getAlertDialogTextButton(
-          onPressed: onYesAlertDialogPressed,
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          text: 'No',
+        ),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            onYesAlertDialogPressed();
+          },
           text: 'Yes',
         ),
       ],
@@ -218,8 +224,6 @@ extension _Actions on _RequestDetailsScreenState {
   }
 
   Future<void> onYesAlertDialogPressed() async {
-    await context.router.maybePop();
-
     final result = mounted
         ? await tryLoad(
                 context,

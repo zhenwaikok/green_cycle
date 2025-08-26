@@ -172,7 +172,10 @@ class _CustomerHomeScreenState extends BaseStatefulState<_CustomerHomeScreen> {
                     offset: const Offset(0, -40),
                     child: Padding(
                       padding: _Styles.requestContainerPadding,
-                      child: getRequestPickupCard(),
+                      child: Skeletonizer(
+                        enabled: isLoading,
+                        child: getRequestPickupCard(),
+                      ),
                     ),
                   ),
                 ],
@@ -183,7 +186,12 @@ class _CustomerHomeScreenState extends BaseStatefulState<_CustomerHomeScreen> {
               padding: _Styles.screenPadding,
               sliver: SliverMainAxisGroup(
                 slivers: [
-                  SliverToBoxAdapter(child: getStartSellingSection()),
+                  SliverToBoxAdapter(
+                    child: Skeletonizer(
+                      enabled: isLoading,
+                      child: getStartSellingSection(),
+                    ),
+                  ),
                   SliverToBoxAdapter(child: SizedBox(height: 40)),
                   SliverToBoxAdapter(
                     child: getRequestList(
@@ -251,21 +259,21 @@ extension _Helpers on _CustomerHomeScreenState {
 extension _Actions on _CustomerHomeScreenState {
   Future<void> fetchData() async {
     _setState(() => isLoading = true);
-    await tryLoad(
+    await tryCatch(
       context,
       () =>
           context.read<PickupRequestViewModel>().getPickupRequestsWithUserID(),
     );
 
     if (mounted) {
-      await tryLoad(
+      await tryCatch(
         context,
         () => context.read<ItemListingViewModel>().getAllItemListings(),
       );
     }
 
     final awarenessList = mounted
-        ? await tryLoad(
+        ? await tryCatch(
             context,
             () => context.read<AwarenessViewModel>().getAwarenessList(),
           )
@@ -682,12 +690,15 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                 onPressed: () => onItemListingCardPressed(
                   itemListingID: itemListingDetails.itemListingID ?? 0,
                 ),
-                child: SecondHandItem(
-                  imageURL: itemListingDetails.itemImageURL?.first ?? '',
-                  productName: itemListingDetails.itemName ?? '',
-                  productPrice:
-                      'RM ${WidgetUtil.priceFormatter(itemListingDetails.itemPrice ?? 0.0)}',
-                  text: itemListingDetails.itemCondition ?? '',
+                child: Skeletonizer(
+                  enabled: isLoading,
+                  child: SecondHandItem(
+                    imageURL: itemListingDetails.itemImageURL?.first ?? '',
+                    productName: itemListingDetails.itemName ?? '',
+                    productPrice:
+                        'RM ${WidgetUtil.priceFormatter(itemListingDetails.itemPrice ?? 0.0)}',
+                    text: itemListingDetails.itemCondition ?? '',
+                  ),
                 ),
               ),
             ),

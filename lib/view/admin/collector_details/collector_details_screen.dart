@@ -157,13 +157,13 @@ extension _Actions on _CollectorDetailsScreenState {
       title: 'Approval Confirmation',
       content: 'Are you sure to approve this collector\'s profile?',
       actions: [
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () {
-            context.router.maybePop();
+            Navigator.of(dialogContext).pop();
           },
           text: 'Cancel',
         ),
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: onApproveSubmitPressed,
           text: 'Submit',
         ),
@@ -182,13 +182,13 @@ extension _Actions on _CollectorDetailsScreenState {
       hintText: 'Reason',
       formKey: _formKey,
       actions: [
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () {
-            context.router.maybePop();
+            Navigator.of(dialogContext).pop();
           },
           text: 'Cancel',
         ),
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () =>
               onRejectSubmitPressed(rejectMessage: accountRejectMessage),
           text: 'Submit',

@@ -117,27 +117,7 @@ class _ManageCollectorsScreenState
             color: ColorManager.blackColor,
             refreshIndicatorBackgroundColor: ColorManager.whiteColor,
             slivers: [
-              if (filteredCollectorList.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: NoDataAvailableLabel(
-                      noDataText: 'No Collectors Found',
-                    ),
-                  ),
-                )
-              else
-                ...getCollectorList(
-                  collectorList: _isLoading
-                      ? List.generate(
-                          5,
-                          (index) => UserModel(
-                            fullName: 'Loading...',
-                            companyName: 'Loading...',
-                          ),
-                        )
-                      : filteredCollectorList,
-                ),
+              ...getCollectorList(collectorList: filteredCollectorList),
             ],
           ),
         ),
@@ -281,6 +261,35 @@ extension _WidgetFactories on _ManageCollectorsScreenState {
   }
 
   List<Widget> getCollectorList({required List<UserModel> collectorList}) {
+    if (_isLoading) {
+      return [
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Padding(
+              padding: _Styles.cardPadding,
+              child: getCollectorCard(
+                user: UserModel(
+                  fullName: 'Loading...',
+                  companyName: 'Loading...',
+                ),
+              ),
+            );
+          }, childCount: 5),
+        ),
+      ];
+    }
+
+    if (collectorList.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Collectors Found'),
+          ),
+        ),
+      ];
+    }
+
     return [
       SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {

@@ -27,6 +27,7 @@ import 'package:green_cycle_fyp/widget/custom_tab_bar.dart';
 import 'package:green_cycle_fyp/widget/no_data_label.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 @RoutePage()
 class RewardScreen extends StatelessWidget {
@@ -135,7 +136,10 @@ class _RewardSreenState extends BaseStatefulState<_RewardScreen> {
       length: 2,
       child: Column(
         children: [
-          getCurrentPoints(currentPoints: userCurrentPoint),
+          Skeletonizer(
+            enabled: _isLoading,
+            child: getCurrentPoints(currentPoints: userCurrentPoint),
+          ),
           SizedBox(height: 20),
           getTabBar(),
           Expanded(
@@ -330,8 +334,8 @@ extension _Actions on _RewardSreenState {
         rewardRedemptionDetails: rewardRedemptionDetails,
       ),
       actions: [
-        getAlertDialogTextButton(
-          onPressed: () => context.router.maybePop(),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
           text: 'Done',
         ),
       ],

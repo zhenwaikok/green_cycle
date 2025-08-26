@@ -189,11 +189,11 @@ extension _Actions on _ManageRewardsScreenState {
       title: 'Delete Confirmation',
       content: 'Are you sure to delete this reward?',
       actions: [
-        getAlertDialogTextButton(
-          onPressed: () => context.router.maybePop(),
+        (dialogContext) => getAlertDialogTextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(),
           text: 'No',
         ),
-        getAlertDialogTextButton(
+        (dialogContext) => getAlertDialogTextButton(
           onPressed: () => deleteReward(rewardID: rewardID),
           text: 'Yes',
         ),

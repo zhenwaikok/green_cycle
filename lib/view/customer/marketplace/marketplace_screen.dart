@@ -307,26 +307,29 @@ extension _WidgetFactories on _MarketplaceScreenState {
   Widget getCategoryCard({required String category}) {
     return Padding(
       padding: _Styles.categoryCardPadding,
-      child: TouchableOpacity(
-        onPressed: () => onCategoryCardPressed(category: category),
-        child: Container(
-          padding: _Styles.categoriesPadding,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              _Styles.categoryCardBorderRadius,
-            ),
-            color: ColorManager.whiteColor,
-            boxShadow: [
-              BoxShadow(
-                color: ColorManager.blackColor.withValues(alpha: 0.15),
-                blurRadius: 8,
-                spreadRadius: 0.2,
-                offset: Offset(0, 4),
+      child: Skeletonizer(
+        enabled: _isLoading,
+        child: TouchableOpacity(
+          onPressed: () => onCategoryCardPressed(category: category),
+          child: Container(
+            padding: _Styles.categoriesPadding,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(
+                _Styles.categoryCardBorderRadius,
               ),
-            ],
-          ),
-          child: Center(
-            child: Text(category, style: _Styles.categoryCardTextStyle),
+              color: ColorManager.whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: ColorManager.blackColor.withValues(alpha: 0.15),
+                  blurRadius: 8,
+                  spreadRadius: 0.2,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(category, style: _Styles.categoryCardTextStyle),
+            ),
           ),
         ),
       ),
