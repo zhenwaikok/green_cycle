@@ -67,7 +67,7 @@ class AwarenessRepository {
     );
 
     if (response.data is Map<String, dynamic>) {
-      final resultModel = AwarenessModel.fromJson(response.data);
+      final resultModel = ApiResponseModel.fromJson(response.data);
       return MyResponse.complete(resultModel);
     }
     return response;

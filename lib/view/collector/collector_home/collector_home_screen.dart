@@ -452,11 +452,11 @@ extension _WidgetFactories on _CollectorHomeScreenState {
               child: Column(
                 children: [
                   Text(
-                    numberOfAvailable >= 0
+                    numberOfAvailable > 0
                         ? numberOfAvailable == 1
                               ? '$numberOfAvailable Available Pickup Request Found!'
-                              : 'No Available Pickup Request Found!'
-                        : '$numberOfAvailable Available Pickup Requests Found!',
+                              : '$numberOfAvailable Available Pickup Requests Found!'
+                        : 'No Available Pickup Request Found!',
                     style: _Styles.availablePickupTextStyle,
                   ),
                   Row(

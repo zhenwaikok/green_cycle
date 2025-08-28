@@ -198,7 +198,7 @@ extension _WidgetFactories on _ProfileScreenState {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '${user.firstName ?? '-'} ${user.lastName ?? ''}',
+                  '${user.firstName ?? 'Loading...'} ${user.lastName ?? ''}',
                   style: _Styles.usernameTextStyle,
                   maxLines: _Styles.maxTextLines,
                   overflow: TextOverflow.ellipsis,
@@ -322,7 +322,7 @@ extension _WidgetFactories on _ProfileScreenState {
 class _Styles {
   _Styles._();
 
-  static const iconSize = 35.0;
+  static const iconSize = 28.0;
   static const maxTextLines = 2;
   static const imageSize = 80.0;
 
@@ -342,7 +342,7 @@ class _Styles {
   );
 
   static const profileElementTextStyle = TextStyle(
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeightManager.regular,
     color: ColorManager.blackColor,
   );

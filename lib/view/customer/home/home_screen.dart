@@ -144,12 +144,29 @@ class _CustomerHomeScreenState extends BaseStatefulState<_CustomerHomeScreen> {
           .toList(),
     );
 
+    final loadingItemListingList = List.generate(
+      5,
+      (index) => ItemListingModel(
+        itemName: 'Loading...',
+        itemDescription: 'Loading...',
+        itemCategory: 'Loading...',
+        itemCondition: 'Loading...',
+      ),
+    );
+
     final awarenessList = _awarenessList
       ..sort(
         (a, b) =>
             b.createdDate?.compareTo(a.createdDate ?? DateTime.now()) ?? 0,
       );
     final latest5AwarenessList = awarenessList.take(5).toList();
+    final loadingAwarenessList = List.generate(
+      5,
+      (index) => AwarenessModel(
+        awarenessTitle: 'Loading...',
+        createdDate: DateTime.now(),
+      ),
+    );
 
     return AdaptiveWidgets.buildRefreshableScrollView(
       context,
@@ -204,13 +221,17 @@ class _CustomerHomeScreenState extends BaseStatefulState<_CustomerHomeScreen> {
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                   SliverToBoxAdapter(
                     child: getMarketplaceSection(
-                      itemListingList: itemListingList,
+                      itemListingList: isLoading
+                          ? loadingItemListingList
+                          : itemListingList,
                     ),
                   ),
                   SliverToBoxAdapter(child: SizedBox(height: 30)),
                   SliverToBoxAdapter(
                     child: getWhatNewSection(
-                      awarenessList: latest5AwarenessList,
+                      awarenessList: isLoading
+                          ? loadingAwarenessList
+                          : latest5AwarenessList,
                       isLoading: isLoading,
                     ),
                   ),
@@ -514,9 +535,11 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     required bool isLoading,
   }) {
     return TouchableOpacity(
-      onPressed: () => onPickupRequestCardPressed(
-        pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
-      ),
+      onPressed: () => isLoading
+          ? null
+          : onPickupRequestCardPressed(
+              pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+            ),
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
@@ -671,7 +694,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   }
 
   Widget getMarketplaceList({required List<ItemListingModel> itemListingList}) {
-    if (itemListingList.isEmpty) {
+    if (itemListingList.isEmpty && !isLoading) {
       return Text('No item listing found yet from others.');
     }
 
@@ -687,9 +710,11 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TouchableOpacity(
-                onPressed: () => onItemListingCardPressed(
-                  itemListingID: itemListingDetails.itemListingID ?? 0,
-                ),
+                onPressed: () => isLoading
+                    ? null
+                    : onItemListingCardPressed(
+                        itemListingID: itemListingDetails.itemListingID ?? 0,
+                      ),
                 child: Skeletonizer(
                   enabled: isLoading,
                   child: SecondHandItem(
@@ -744,7 +769,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     required List<AwarenessModel> awarenessList,
     required bool isLoading,
   }) {
-    if (awarenessList.isEmpty) {
+    if (awarenessList.isEmpty && !isLoading) {
       return Text('No awarness feed found.');
     }
 
@@ -759,9 +784,11 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TouchableOpacity(
-                onPressed: () => onNewsCardPressed(
-                  awarenessID: awarenessList[index].awarenessID ?? 0,
-                ),
+                onPressed: () => isLoading
+                    ? null
+                    : onNewsCardPressed(
+                        awarenessID: awarenessList[index].awarenessID ?? 0,
+                      ),
                 child: SizedBox(
                   child: Skeletonizer(
                     enabled: isLoading,

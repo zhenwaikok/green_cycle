@@ -43,14 +43,6 @@ class UserRepository {
     return response;
   }
 
-  Future<MyResponse> loginWithGoogle({String? password}) async {
-    final response = await userServices.loginWithGoogle(
-      authRequestModel: AuthRequestModel(password: password),
-    );
-    print('response repo: ${response.data}');
-    return response;
-  }
-
   Future<MyResponse> logout() async {
     final response = await userServices.logout();
     await sharePreferenceHandler.removeAllSP();

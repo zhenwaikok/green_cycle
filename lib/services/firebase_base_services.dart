@@ -3,10 +3,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
 
-enum AuthType { signUp, login, logout, googleSignIn }
+enum AuthType { signUp, login, logout }
 
 mixin FirebaseBaseServices {
   Future<MyResponse> authenticate({
@@ -15,7 +14,6 @@ mixin FirebaseBaseServices {
   }) async {
     try {
       final FirebaseAuth auth = FirebaseAuth.instance;
-      final GoogleSignIn googleSignIn = GoogleSignIn();
 
       switch (authType) {
         case AuthType.signUp:
@@ -30,41 +28,8 @@ mixin FirebaseBaseServices {
             password: requestBody?['password'],
           );
           return MyResponse.complete(userCredential.user);
-        case AuthType.googleSignIn:
-          await googleSignIn.signOut();
-          final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-          print('goolgle user: $googleUser');
-
-          if (googleUser == null) {
-            print('no user null');
-            return MyResponse.complete(null);
-          }
-
-          final GoogleSignInAuthentication googleAuth =
-              await googleUser.authentication;
-
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken,
-          );
-
-          final userCredential = await auth.signInWithCredential(credential);
-
-          if (requestBody?['password'] != null) {
-            final emailCredential = EmailAuthProvider.credential(
-              email: googleUser.email,
-              password: requestBody?['password'],
-            );
-
-            await auth.currentUser?.linkWithCredential(emailCredential);
-          }
-
-          print('user credential: ${userCredential.user}');
-
-          return MyResponse.complete(userCredential.user);
         case AuthType.logout:
           await auth.signOut();
-          await googleSignIn.signOut();
           return MyResponse.complete(true);
       }
     } on FirebaseAuthException catch (e) {

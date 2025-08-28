@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
@@ -155,17 +157,49 @@ extension _Actions on _AwarenessDetailsScreenState {
   }
 
   void onRemovePressed() async {
-    WidgetUtil.showAlertDialog(
-      context,
-      title: 'Delete Confirmation',
-      content: 'Are you sure you want to delete this awareness content?',
-      actions: [
-        (dialogContext) =>
-            getAlertDialogTextButton(onPressed: () {}, text: 'Cancel'),
-        (dialogContext) =>
-            getAlertDialogTextButton(onPressed: () {}, text: 'Confirm'),
-      ],
-    );
+    await context.router.maybePop();
+    if (mounted) {
+      WidgetUtil.showAlertDialog(
+        context,
+        title: 'Delete Confirmation',
+        content: 'Are you sure you want to delete this awareness content?',
+        actions: [
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            text: 'Cancel',
+          ),
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              onConfirmPressed();
+            },
+            text: 'Confirm',
+          ),
+        ],
+      );
+    }
+  }
+
+  Future<void> onConfirmPressed() async {
+    final result =
+        await tryLoad(
+          context,
+          () => context.read<AwarenessViewModel>().deleteAwareness(
+            awarenessID: widget.awarenessId,
+          ),
+        ) ??
+        false;
+
+    if (result) {
+      if (mounted) {
+        await context.router.maybePop(true);
+        unawaited(
+          WidgetUtil.showSnackBar(text: 'Awareness deleted successfully'),
+        );
+      }
+    }
   }
 }
 

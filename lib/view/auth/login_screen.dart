@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -6,10 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
-import 'package:green_cycle_fyp/constant/images_manager.dart';
-import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -92,23 +88,6 @@ extension _Actions on _LoginScreenState {
           password: password,
         ),
       );
-    }
-  }
-
-  void onContinueWithGoogleButtonPressed() async {
-    final userDetails = await tryLoad(
-      context,
-      () => context.read<UserViewModel>().loginWithGoogle(),
-    );
-    if (userDetails != null) {
-      if (mounted) {
-        unawaited(WidgetUtil.showSnackBar(text: 'Sign In Successful'));
-        await context.router.replaceAll([
-          CustomBottomNavBar(
-            userRole: (userDetails as UserModel).userRole ?? '',
-          ),
-        ]);
-      }
     }
   }
 
@@ -244,8 +223,6 @@ extension _WidgetFactories on _LoginScreenState {
           textColor: ColorManager.whiteColor,
           onPressed: onSignInButtonPressed,
         ),
-        SizedBox(height: 15),
-        getGoogleLoginButton(),
         TextButton(
           style: _Styles.createAccButtonStyle,
           onPressed: onCreateAccountButtonPressed,
@@ -260,17 +237,6 @@ extension _WidgetFactories on _LoginScreenState {
           ),
         ),
       ],
-    );
-  }
-
-  Widget getGoogleLoginButton() {
-    return CustomButton(
-      image: Images.googleLogo,
-      text: 'Continue with Google',
-      textColor: ColorManager.blackColor,
-      backgroundColor: ColorManager.whiteColor,
-      borderColor: ColorManager.blackColor,
-      onPressed: onContinueWithGoogleButtonPressed,
     );
   }
 }

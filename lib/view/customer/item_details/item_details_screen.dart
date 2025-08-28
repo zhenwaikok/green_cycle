@@ -239,6 +239,7 @@ extension _Actions on _ItemDetailsScreenState {
   }
 
   void onEditPressed({required int itemListingID}) async {
+    await context.router.maybePop();
     if (mounted) {
       final result = await context.router.push(
         CreateEditListingRoute(isEdit: true, itemListingID: itemListingID),
