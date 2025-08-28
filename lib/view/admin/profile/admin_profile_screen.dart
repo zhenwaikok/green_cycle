@@ -89,8 +89,8 @@ class _AdminProfileScreenState extends BaseStatefulState<_AdminProfileScreen> {
               SliverToBoxAdapter(
                 child: getProfileDetails(
                   profileImageURL: userDetails?.profileImageURL ?? '',
-                  username: userDetails?.fullName ?? '-',
-                  userRole: userDetails?.userRole ?? '-',
+                  username: userDetails?.fullName ?? 'Loading...',
+                  userRole: userDetails?.userRole ?? 'Loading...',
                 ),
               ),
               SliverToBoxAdapter(child: SizedBox(height: 25)),

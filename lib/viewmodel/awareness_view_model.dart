@@ -104,6 +104,15 @@ class AwarenessViewModel extends BaseViewModel {
     return response.data is ApiResponseModel;
   }
 
+  Future<bool> deleteAwareness({required int awarenessID}) async {
+    final response = await awarenessRepository.deleteAwareness(
+      awarenessID: awarenessID,
+    );
+
+    checkError(response);
+    return response.data is ApiResponseModel;
+  }
+
   Future<String> uploadImage({
     required String storageRef,
     File? image,

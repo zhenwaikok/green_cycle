@@ -247,13 +247,13 @@ extension _WidgetFactories on _CollectorProfileScreenState {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  userDetails.fullName ?? '-',
+                  userDetails.fullName ?? 'Loading...',
                   style: _Styles.usernameTextStyle,
                   maxLines: _Styles.maxTextLines,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  userDetails.userRole ?? '-',
+                  userDetails.userRole ?? 'Loading...',
                   style: _Styles.collectorTextStyle,
                 ),
                 SizedBox(height: 15),

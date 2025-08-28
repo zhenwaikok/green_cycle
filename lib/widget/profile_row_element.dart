@@ -42,7 +42,7 @@ class CustomProfileRowElement extends StatelessWidget {
             if (isSignOut == false)
               Icon(
                 Icons.arrow_forward_ios_outlined,
-                color: ColorManager.blackColor,
+                color: ColorManager.greyColor,
                 size: _Styles.arrowIconSize,
               ),
           ],
@@ -56,8 +56,8 @@ class CustomProfileRowElement extends StatelessWidget {
 class _Styles {
   _Styles._();
 
-  static const iconSize = 35.0;
-  static const arrowIconSize = 20.0;
+  static const iconSize = 28.0;
+  static const arrowIconSize = 18.0;
 
   static TextStyle labelTextStyle({required bool isSignOut}) => TextStyle(
     fontSize: 16,

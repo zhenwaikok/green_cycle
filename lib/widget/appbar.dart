@@ -43,7 +43,10 @@ extension _WidgetFactories on CustomAppBar {
   Widget getBackButton({required VoidCallback onPressed}) {
     return IconButton(
       onPressed: onPressed,
-      icon: Icon(Icons.arrow_back_rounded, color: ColorManager.whiteColor),
+      icon: Icon(
+        Icons.arrow_back_ios_new_rounded,
+        color: ColorManager.whiteColor,
+      ),
       iconSize: _Styles.backButtonSize,
     );
   }
@@ -53,7 +56,7 @@ extension _WidgetFactories on CustomAppBar {
 class _Styles {
   _Styles._();
 
-  static const backButtonSize = 30.0;
+  static const backButtonSize = 25.0;
 
   static const titleTextStyle = TextStyle(
     fontSize: 20,

@@ -204,29 +204,52 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
 
   void onStatusButtonPressed({
     required PickupRequestModel pickupRequestDetails,
-  }) {
-    WidgetUtil.showAlertDialog(
-      context,
-      title: 'Pickup Request Confirmation',
-      content: WidgetUtil.getAlertDialogContentLabel(
-        pickupRequestDetails.pickupRequestStatus ?? '',
-      ),
-      actions: [
-        (dialogContext) => getAlertDialogTextButton(
-          onPressed: () {
-            Navigator.of(dialogContext).pop();
-          },
-          text: 'No',
-        ),
-        (dialogContext) => getAlertDialogTextButton(
-          onPressed: () async {
-            Navigator.of(dialogContext).pop();
-            onButtonPressed(pickupRequestDetails: pickupRequestDetails);
-          },
-          text: 'Yes',
-        ),
-      ],
-    );
+  }) async {
+    final isCollectorProfileApproved = await checkIfCollectorProfileApproved();
+
+    if (!isCollectorProfileApproved) {
+      if (mounted) {
+        WidgetUtil.showAlertDialog(
+          context,
+          title: 'Account Approval',
+          content:
+              'Your account is still under review or not approved so you cannot accept this pickup request.',
+          actions: [
+            (dialogContext) => getAlertDialogTextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              text: 'OK',
+            ),
+          ],
+        );
+      }
+    } else {
+      if (mounted) {
+        WidgetUtil.showAlertDialog(
+          context,
+          title: 'Pickup Request Confirmation',
+          content: WidgetUtil.getAlertDialogContentLabel(
+            pickupRequestDetails.pickupRequestStatus ?? '',
+          ),
+          actions: [
+            (dialogContext) => getAlertDialogTextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              text: 'No',
+            ),
+            (dialogContext) => getAlertDialogTextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                onButtonPressed(pickupRequestDetails: pickupRequestDetails);
+              },
+              text: 'Yes',
+            ),
+          ],
+        );
+      }
+    }
   }
 
   void onButtonPressed({required PickupRequestModel pickupRequestDetails}) {
@@ -275,6 +298,8 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
           body: 'Your collector is on the way to your location.',
           pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
         );
+      }
+      if (mounted) {
         context.read<LocationViewModel>().startTrackingService(
           collectorUserID: pickupRequestDetails.collectorUserID ?? '',
         );
@@ -330,6 +355,20 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
       body: 'Your pickup request has been accepted.',
       pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
     );
+  }
+
+  Future<bool> checkIfCollectorProfileApproved() async {
+    final userVM = context.read<UserViewModel>();
+    final userID = userVM.user?.userID ?? '';
+    await tryLoad(
+      context,
+      () => userVM.getUserDetails(
+        userID: userID,
+        noNeedUpdateUserSharedPreference: true,
+      ),
+    );
+
+    return userVM.userDetails?.approvalStatus == 'Approved';
   }
 
   Future<void> sendPushNotification({

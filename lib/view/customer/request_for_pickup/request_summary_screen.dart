@@ -130,11 +130,15 @@ extension _Actions on _RequestSummaryScreenState {
         await tryLoad(context, () => vm.insertPickupRequest()) ?? false;
     if (result) {
       vm.clearAll();
-      unawaited(
-        WidgetUtil.showSnackBar(text: 'Request submitted successfully'),
-      );
       if (mounted) {
-        context.router.popUntil((route) => route.isFirst);
+        context.router.replaceAll([
+          SuccessRoute(
+            title: 'Request Submitted',
+            message:
+                'Your pickup request has been successfully submitted. Kindly track the details of your pickup request in the "Request" tab.',
+            buttonText: 'Continue',
+          ),
+        ]);
       }
     } else {
       unawaited(WidgetUtil.showSnackBar(text: 'Failed to submit request'));

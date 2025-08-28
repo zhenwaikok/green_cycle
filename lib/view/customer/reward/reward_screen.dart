@@ -212,9 +212,17 @@ extension _Actions on _RewardSreenState {
 
     if ((reward.pointsRequired ?? 0) > userCurrentPoint) {
       unawaited(
-        WidgetUtil.showDefaultErrorDialog(
+        WidgetUtil.showAlertDialog(
           context,
-          'Insufficient points, earn more points by requesting for pickup services!',
+          title: 'Insufficient points',
+          content:
+              'You need ${reward.pointsRequired} points to claim this reward.',
+          actions: [
+            (dialogContext) => getAlertDialogTextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              text: 'Ok',
+            ),
+          ],
         ),
       );
     } else {
