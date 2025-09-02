@@ -301,6 +301,7 @@ extension _WidgetFactories on _ManageCollectorsScreenState {
 
   Widget getCollectorCard({required UserModel user}) {
     return TouchableOpacity(
+      isLoading: _isLoading,
       onPressed: () => onCollectorCardPressed(collectorID: user.userID ?? ''),
       child: Padding(
         padding: _Styles.cardPadding,

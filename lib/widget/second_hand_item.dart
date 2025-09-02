@@ -4,6 +4,7 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/widget/custom_card.dart';
 import 'package:green_cycle_fyp/widget/custom_image.dart';
 import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class SecondHandItem extends StatelessWidget {
   const SecondHandItem({
@@ -12,12 +13,14 @@ class SecondHandItem extends StatelessWidget {
     required this.productName,
     required this.productPrice,
     required this.text,
+    required this.isLoading,
   });
 
   final String imageURL;
   final String productName;
   final String productPrice;
   final String text;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +36,26 @@ extension _WidgetFactories on SecondHandItem {
   Widget getSecondHandItem() {
     return CustomCard(
       padding: _Styles.customCardPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          getItemImage(),
-          SizedBox(height: 10),
-          Padding(
-            padding: _Styles.productDetailsPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                getItemStatus(text: text),
-                SizedBox(height: 10),
-                getItemDetails(),
-              ],
+      child: Skeletonizer(
+        enabled: isLoading,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            getItemImage(),
+            SizedBox(height: 10),
+            Padding(
+              padding: _Styles.productDetailsPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  getItemStatus(text: text),
+                  SizedBox(height: 10),
+                  getItemDetails(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

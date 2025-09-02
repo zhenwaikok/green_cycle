@@ -40,6 +40,7 @@ extension _WidgetFactories on _ManageRequestTabState {
   Widget getRequestCard({required PickupRequestModel request}) {
     return TouchableOpacity(
       onPressed: widget.onTap,
+      isLoading: widget.isLoading,
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(

@@ -4,6 +4,7 @@ class Images {
   static const onboarding3 = 'assets/images/onboarding3.jpg';
   static const googleLogo = 'assets/images/google_logo.png';
   static const logo = 'assets/images/GreenCycleLogo.png';
+  static const greyLogo = 'assets/images/grey_GreenCycleLogo.png';
   static const fpxLogo = 'assets/images/fpx_logo.png';
   static const googleMapLogo = 'assets/images/google_map_logo.png';
   static const wazeLogo = 'assets/images/waze_logo.png';

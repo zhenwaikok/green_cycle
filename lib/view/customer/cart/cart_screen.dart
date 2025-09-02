@@ -289,6 +289,7 @@ extension _WidgetFactories on _CartScreenState {
 
   Widget getCartItemDetails({required CartModel cartItemDetails}) {
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: () => onCartItemPressed(
         itemListingID: cartItemDetails.itemListing?.itemListingID ?? 0,
       ),

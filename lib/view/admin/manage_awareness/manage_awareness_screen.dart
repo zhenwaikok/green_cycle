@@ -248,6 +248,7 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
               Padding(
                 padding: _Styles.awarenessContentPadding,
                 child: TouchableOpacity(
+                  isLoading: isLoading,
                   onPressed: () => onAwarenessCardPressed(
                     awarenessId: item.awarenessID ?? 0,
                   ),

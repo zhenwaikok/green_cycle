@@ -308,6 +308,7 @@ extension _WidgetFactories on _CompletedRequestScreenState {
     return Padding(
       padding: _Styles.cardPadding,
       child: TouchableOpacity(
+        isLoading: isLoading,
         onPressed: () => onPickupRequestCardPressed(
           pickupRequestID: pickupRequest.pickupRequestID ?? '',
         ),

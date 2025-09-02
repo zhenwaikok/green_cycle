@@ -310,6 +310,7 @@ extension _WidgetFactories on _MarketplaceScreenState {
       child: Skeletonizer(
         enabled: _isLoading,
         child: TouchableOpacity(
+          isLoading: _isLoading,
           onPressed: () => onCategoryCardPressed(category: category),
           child: Container(
             padding: _Styles.categoriesPadding,
@@ -361,17 +362,16 @@ extension _WidgetFactories on _MarketplaceScreenState {
           itemBuilder: (context, index) {
             final item = itemListingList[index];
             return TouchableOpacity(
+              isLoading: _isLoading,
               onPressed: () =>
                   onItemPressed(itemListingID: item.itemListingID ?? 0),
-              child: Skeletonizer(
-                enabled: isLoading,
-                child: SecondHandItem(
-                  imageURL: item.itemImageURL?.first ?? '',
-                  productName: item.itemName ?? '',
-                  productPrice:
-                      'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
-                  text: item.itemCondition ?? '',
-                ),
+              child: SecondHandItem(
+                imageURL: item.itemImageURL?.first ?? '',
+                productName: item.itemName ?? '',
+                productPrice:
+                    'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
+                text: item.itemCondition ?? '',
+                isLoading: isLoading,
               ),
             );
           },

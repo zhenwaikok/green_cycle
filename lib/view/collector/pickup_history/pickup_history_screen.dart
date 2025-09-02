@@ -332,6 +332,7 @@ extension _WidgetFactories on _PickupHistoryScreenState {
     required bool isLoading,
   }) {
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: () => onPickupRequestCardPressed(
         pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
       ),
