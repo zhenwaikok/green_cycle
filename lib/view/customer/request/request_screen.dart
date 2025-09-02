@@ -315,6 +315,7 @@ extension _WidgetFactories on _RequestScreenState {
     required bool isLoading,
   }) {
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: () => onRequestCardPressed(pickupRequestID: requestID),
       child: Padding(
         padding: _Styles.cardPadding,

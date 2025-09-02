@@ -36,6 +36,7 @@ extension _Actions on MyListingTab {}
 extension _WidgetFactories on MyListingTab {
   Widget getMyListingCard({required ItemListingModel itemListingDetails}) {
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: onTap,
       onLongPress: onLongPress,
       child: Padding(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/images_manager.dart';
 
 class CustomImage extends StatelessWidget {
   const CustomImage({
@@ -27,11 +28,7 @@ class CustomImage extends StatelessWidget {
           color: ColorManager.lightGreyColor2,
           borderRadius: BorderRadius.circular(borderRadius ?? 0),
         ),
-        child: Icon(
-          Icons.broken_image,
-          size: 40,
-          color: ColorManager.greyColor,
-        ),
+        child: Image.asset(Images.greyLogo, fit: BoxFit.cover),
       );
     }
 

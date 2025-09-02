@@ -451,6 +451,7 @@ extension _WidgetFactories on _AvailablePickupRequestScreenState {
     );
 
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: () =>
           onPickUpItemPressed(pickupRequestID: request.pickupRequestID ?? ''),
       child: Padding(

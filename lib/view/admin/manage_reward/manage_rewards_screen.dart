@@ -300,6 +300,7 @@ extension _WidgetFactories on _ManageRewardsScreenState {
       SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           return TouchableOpacity(
+            isLoading: isLoading,
             onPressed: () =>
                 onRewardCardPressed(rewardDetails: rewardList[index]),
             child: getRewardCard(

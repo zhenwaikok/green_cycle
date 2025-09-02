@@ -532,6 +532,7 @@ extension _WidgetFactories on _CollectorHomeScreenState {
     required bool isLoading,
   }) {
     return TouchableOpacity(
+      isLoading: isLoading,
       onPressed: () => onOngoingPickupRequestPressed(
         pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
       ),

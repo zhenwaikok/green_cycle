@@ -355,6 +355,7 @@ extension _WidgetFactories on _MyPickupScreenState {
           delegate: SliverChildBuilderDelegate((context, index) {
             final pickupRequestDetails = pickupRequestList[index];
             return TouchableOpacity(
+              isLoading: isLoading,
               onPressed: () => onRequestCardPressed(
                 pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
               ),

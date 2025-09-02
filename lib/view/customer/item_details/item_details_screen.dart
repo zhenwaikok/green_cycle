@@ -529,6 +529,7 @@ extension _WidgetFactories on _ItemDetailsScreenState {
         Row(
           children: [
             TouchableOpacity(
+              //
               onPressed: () {},
               child: Icon(
                 Icons.phone,

@@ -38,6 +38,7 @@ class _MyRewardsTabState extends State<MyRewardsTab> {
     );
 
     return TouchableOpacity(
+      isLoading: widget.isLoading,
       onPressed: () => showRewardBottomSheet(
         rewardRedemptionDetails: widget.rewardRedemptionDetails,
         isRewardUsed: isUsed,

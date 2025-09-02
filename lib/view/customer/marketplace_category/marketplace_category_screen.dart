@@ -288,17 +288,16 @@ extension _WidgetFactories on _MarketplaceCategoryScreenState {
         return Padding(
           padding: _Styles.itemPadding,
           child: TouchableOpacity(
+            isLoading: _isLoading,
             onPressed: () =>
                 onItemPressed(itemListingID: item.itemListingID ?? 0),
-            child: Skeletonizer(
-              enabled: isLoading,
-              child: SecondHandItem(
-                imageURL: item.itemImageURL?.first ?? '',
-                productName: item.itemName ?? '',
-                productPrice:
-                    'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
-                text: item.itemCondition ?? '',
-              ),
+            child: SecondHandItem(
+              imageURL: item.itemImageURL?.first ?? '',
+              productName: item.itemName ?? '',
+              productPrice:
+                  'RM ${WidgetUtil.priceFormatter(item.itemPrice ?? 0.0)}',
+              text: item.itemCondition ?? '',
+              isLoading: isLoading,
             ),
           ),
         );

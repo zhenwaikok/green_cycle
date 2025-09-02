@@ -11,6 +11,7 @@ class TouchableOpacity extends StatelessWidget {
     this.backgroundColor,
     this.pressedBackgroundColor,
     this.onLongPress,
+    this.isLoading,
   });
 
   final Widget child;
@@ -20,6 +21,7 @@ class TouchableOpacity extends StatelessWidget {
   final Alignment alignment;
   final Color? backgroundColor;
   final Color? pressedBackgroundColor;
+  final bool? isLoading;
 
   /// The opacity that the button will fade to when it is pressed.
   /// The button will have an opacity of 1.0 when it is not pressed.
@@ -31,11 +33,11 @@ class TouchableOpacity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-      onLongPress: onLongPress,
-      onPressed: onPressed,
+      onLongPress: isLoading == true ? null : onLongPress,
+      onPressed: isLoading == true ? null : onPressed,
       alignment: alignment,
       padding: padding,
-      pressedOpacity: pressedOpacity,
+      pressedOpacity: isLoading != true ? pressedOpacity : 1.0,
       minimumSize: Size(0, 0),
       child: child,
     );

@@ -459,6 +459,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
   Widget getStartSellingSection() {
     return TouchableOpacity(
       onPressed: onStartSellingButtonPressed,
+      isLoading: isLoading,
       child: CustomCard(
         padding: _Styles.customCardPadding,
         child: Row(
@@ -535,11 +536,10 @@ extension _WidgetFactories on _CustomerHomeScreenState {
     required bool isLoading,
   }) {
     return TouchableOpacity(
-      onPressed: () => isLoading
-          ? null
-          : onPickupRequestCardPressed(
-              pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
-            ),
+      onPressed: () => onPickupRequestCardPressed(
+        pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+      ),
+      isLoading: isLoading,
       child: Padding(
         padding: _Styles.cardPadding,
         child: CustomCard(
@@ -710,20 +710,17 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TouchableOpacity(
-                onPressed: () => isLoading
-                    ? null
-                    : onItemListingCardPressed(
-                        itemListingID: itemListingDetails.itemListingID ?? 0,
-                      ),
-                child: Skeletonizer(
-                  enabled: isLoading,
-                  child: SecondHandItem(
-                    imageURL: itemListingDetails.itemImageURL?.first ?? '',
-                    productName: itemListingDetails.itemName ?? '',
-                    productPrice:
-                        'RM ${WidgetUtil.priceFormatter(itemListingDetails.itemPrice ?? 0.0)}',
-                    text: itemListingDetails.itemCondition ?? '',
-                  ),
+                onPressed: () => onItemListingCardPressed(
+                  itemListingID: itemListingDetails.itemListingID ?? 0,
+                ),
+                isLoading: isLoading,
+                child: SecondHandItem(
+                  imageURL: itemListingDetails.itemImageURL?.first ?? '',
+                  productName: itemListingDetails.itemName ?? '',
+                  productPrice:
+                      'RM ${WidgetUtil.priceFormatter(itemListingDetails.itemPrice ?? 0.0)}',
+                  text: itemListingDetails.itemCondition ?? '',
+                  isLoading: isLoading,
                 ),
               ),
             ),
@@ -784,11 +781,10 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.4,
               child: TouchableOpacity(
-                onPressed: () => isLoading
-                    ? null
-                    : onNewsCardPressed(
-                        awarenessID: awarenessList[index].awarenessID ?? 0,
-                      ),
+                onPressed: () => onNewsCardPressed(
+                  awarenessID: awarenessList[index].awarenessID ?? 0,
+                ),
+                isLoading: isLoading,
                 child: SizedBox(
                   child: Skeletonizer(
                     enabled: isLoading,

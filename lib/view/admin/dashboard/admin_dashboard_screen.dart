@@ -262,6 +262,7 @@ extension _WidgetFactories on _AdminDashboardScreenState {
   }) {
     return TouchableOpacity(
       onPressed: onTap,
+      isLoading: isLoading,
       child: Skeletonizer(
         enabled: isLoading,
         child: CustomCard(
