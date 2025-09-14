@@ -105,7 +105,9 @@ extension _WidgetFactories on _ManageRequestTabState {
   }
 
   Widget getRequestStatus({required String status}) {
-    return CustomStatusBar(text: status);
+    final backgroundColor = WidgetUtil.getPickupRequestStatusColor(status);
+
+    return CustomStatusBar(text: status, backgroundColor: backgroundColor);
   }
 
   Widget getItemDetails({

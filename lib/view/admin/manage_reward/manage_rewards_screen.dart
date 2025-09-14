@@ -194,7 +194,10 @@ extension _Actions on _ManageRewardsScreenState {
           text: 'No',
         ),
         (dialogContext) => getAlertDialogTextButton(
-          onPressed: () => deleteReward(rewardID: rewardID),
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            deleteReward(rewardID: rewardID);
+          },
           text: 'Yes',
         ),
       ],
@@ -202,7 +205,6 @@ extension _Actions on _ManageRewardsScreenState {
   }
 
   Future<void> deleteReward({required int rewardID}) async {
-    await context.router.maybePop();
     if (mounted) {
       final result =
           await tryLoad(
@@ -292,7 +294,12 @@ extension _WidgetFactories on _ManageRewardsScreenState {
     sortRewardList(rewardList: rewardList);
     if (rewardList.isEmpty) {
       return [
-        Center(child: NoDataAvailableLabel(noDataText: 'No Rewards Found')),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Rewards Found'),
+          ),
+        ),
       ];
     }
 

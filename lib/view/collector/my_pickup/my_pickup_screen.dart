@@ -130,6 +130,7 @@ class _MyPickupScreenState extends BaseStatefulState<_MyPickupScreen> {
                   pickupRequestList: isLoading
                       ? loadingPickupRequestList
                       : upcomingPickupRequestList,
+                  ongoingRequestList: ongoingPickupRequestList,
                 ),
               ],
             ),
@@ -154,29 +155,48 @@ extension _Actions on _MyPickupScreenState {
 
   void onStatusButtonPressed({
     required PickupRequestModel pickupRequestDetails,
+    required List<PickupRequestModel> ongoingRequestList,
   }) {
-    WidgetUtil.showAlertDialog(
-      context,
-      title: 'Pickup Request Confirmation',
-      content: WidgetUtil.getAlertDialogContentLabel(
-        pickupRequestDetails.pickupRequestStatus ?? '',
-      ),
-      actions: [
-        (dialogContext) => getAlertDialogTextButton(
-          onPressed: () {
-            Navigator.of(dialogContext).pop();
-          },
-          text: 'No',
+    if (pickupRequestDetails.pickupRequestStatus == pickupRequestStatus[2] &&
+        ongoingRequestList.isNotEmpty) {
+      WidgetUtil.showAlertDialog(
+        context,
+        title: 'Ongoing Pickup Request',
+        content:
+            'You have an ongoing pickup request. Please complete it before starting a new one.',
+        actions: [
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            text: 'Ok',
+          ),
+        ],
+      );
+    } else {
+      WidgetUtil.showAlertDialog(
+        context,
+        title: 'Pickup Request Confirmation',
+        content: WidgetUtil.getAlertDialogContentLabel(
+          pickupRequestDetails.pickupRequestStatus ?? '',
         ),
-        (dialogContext) => getAlertDialogTextButton(
-          onPressed: () async {
-            Navigator.of(dialogContext).pop();
-            onButtonPressed(pickupRequestDetails: pickupRequestDetails);
-          },
-          text: 'Yes',
-        ),
-      ],
-    );
+        actions: [
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            text: 'No',
+          ),
+          (dialogContext) => getAlertDialogTextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              onButtonPressed(pickupRequestDetails: pickupRequestDetails);
+            },
+            text: 'Yes',
+          ),
+        ],
+      );
+    }
   }
 
   void onButtonPressed({required PickupRequestModel pickupRequestDetails}) {
@@ -327,18 +347,23 @@ extension _WidgetFactories on _MyPickupScreenState {
 
   Widget buildTabContent({
     required List<PickupRequestModel> pickupRequestList,
+    List<PickupRequestModel>? ongoingRequestList,
   }) {
     return AdaptiveWidgets.buildRefreshableScrollView(
       context,
       onRefresh: fetchData,
       refreshIndicatorBackgroundColor: ColorManager.whiteColor,
       color: ColorManager.blackColor,
-      slivers: getRequestList(pickupRequestList: pickupRequestList),
+      slivers: getRequestList(
+        pickupRequestList: pickupRequestList,
+        ongoingRequestList: ongoingRequestList,
+      ),
     );
   }
 
   List<Widget> getRequestList({
     required List<PickupRequestModel> pickupRequestList,
+    List<PickupRequestModel>? ongoingRequestList,
   }) {
     if (pickupRequestList.isEmpty) {
       return [
@@ -362,6 +387,7 @@ extension _WidgetFactories on _MyPickupScreenState {
               child: MyPickupTab(
                 onPressed: () => onStatusButtonPressed(
                   pickupRequestDetails: pickupRequestDetails,
+                  ongoingRequestList: ongoingRequestList ?? [],
                 ),
                 pickupRequestDetails: pickupRequestDetails,
                 isLoading: isLoading,

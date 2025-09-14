@@ -151,6 +151,7 @@ extension _Actions on _CompletePickupScreenState {
     required String customerUserID,
     required String title,
     required String body,
+    required String pickupRequestID,
   }) async {
     final fcmToken = await tryLoad(
       context,
@@ -166,6 +167,7 @@ extension _Actions on _CompletePickupScreenState {
           fcmToken: fcmToken?.token ?? '',
           title: title,
           body: body,
+          deeplink: 'request-details/$pickupRequestID',
         ),
       );
     }
@@ -221,6 +223,7 @@ extension _Actions on _CompletePickupScreenState {
         title: 'Pickup Completed',
         body:
             'Your pickup request is completed. You have earned $completedRequestPoints points!',
+        pickupRequestID: widget.pickupRequestDetails.pickupRequestID ?? '',
       );
       unawaited(
         WidgetUtil.showSnackBar(

@@ -164,7 +164,10 @@ extension _Actions on _CollectorDetailsScreenState {
           text: 'Cancel',
         ),
         (dialogContext) => getAlertDialogTextButton(
-          onPressed: onApproveSubmitPressed,
+          onPressed: () {
+            Navigator.of(dialogContext).pop();
+            onApproveSubmitPressed();
+          },
           text: 'Submit',
         ),
       ],
@@ -189,19 +192,26 @@ extension _Actions on _CollectorDetailsScreenState {
           text: 'Cancel',
         ),
         (dialogContext) => getAlertDialogTextButton(
-          onPressed: () =>
-              onRejectSubmitPressed(rejectMessage: accountRejectMessage),
+          onPressed: () {
+            onRejectSubmitPressed(
+              rejectMessage: accountRejectMessage,
+              dialogContext: dialogContext,
+            );
+          },
           text: 'Submit',
         ),
       ],
     );
   }
 
-  Future<void> onRejectSubmitPressed({required String rejectMessage}) async {
+  Future<void> onRejectSubmitPressed({
+    required String rejectMessage,
+    required BuildContext dialogContext,
+  }) async {
     final formValid = _formKey.currentState?.saveAndValidate() ?? false;
 
     if (formValid) {
-      await context.router.maybePop();
+      Navigator.of(dialogContext).pop();
       final result = mounted
           ? await tryLoad(
               context,
@@ -239,7 +249,6 @@ extension _Actions on _CollectorDetailsScreenState {
   }
 
   Future<void> onApproveSubmitPressed() async {
-    await context.router.maybePop();
     final result = mounted
         ? await tryLoad(
             context,

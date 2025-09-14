@@ -86,21 +86,21 @@ mixin FirebaseBaseServices {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
-      print('user: $user');
+      debugPrint('user: $user');
 
       if (user != null) {
         final credential = EmailAuthProvider.credential(
           email: user.email ?? '',
           password: oldPassword,
         );
-        print('credential: $credential');
+        debugPrint('credential: $credential');
         final reauthenticated = await user.reauthenticateWithCredential(
           credential,
         );
-        print('reauthenticated: $reauthenticated');
+        debugPrint('reauthenticated: $reauthenticated');
         if (reauthenticated.user != null) {
           await user.updatePassword(newPassword);
-          print('Password updated successfully');
+          debugPrint('Password updated successfully');
           return MyResponse.complete(true);
         }
       }

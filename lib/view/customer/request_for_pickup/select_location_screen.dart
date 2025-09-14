@@ -57,6 +57,7 @@ class _SelectLocationScreenState
   final focusNode = FocusNode();
 
   String? _pickupAddress;
+  String? _remarks;
   String? googleAPIKey = EnvValues.googleApiKey;
   LatLng? selectedLatLng;
   Set<Marker> markers = {};
@@ -149,7 +150,10 @@ extension _Actions on _SelectLocationScreenState {
     _setState(() {
       selectedLatLng = vm.selectedLatLng;
       _pickupAddress = vm.pickupLocation;
+      _remarks = vm.remarks;
     });
+
+    _formkey.currentState?.patchValue({'remarks': _remarks});
   }
 
   void onNextButtonPressed({required bool isEdit}) async {
@@ -189,9 +193,13 @@ extension _Actions on _SelectLocationScreenState {
 
   Future<void> initializeCurrentLocation({required bool isEdit}) async {
     if (isEdit) {
-      final initialLatLng = context
-          .read<PickupRequestViewModel>()
-          .selectedLatLng;
+      final vm = context.read<PickupRequestViewModel>();
+
+      final initialLatLng = vm.selectedLatLng;
+
+      _setState(() {
+        _remarks = vm.remarks;
+      });
 
       await onLocationSelected(initialLatLng ?? LatLng(0, 0));
     } else {
@@ -356,6 +364,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
               pickupLocation: _pickupAddress ?? '-',
               formKey: formKey,
               isEdit: isEdit,
+              remarks: _remarks ?? '',
             ),
           ),
         );
@@ -367,6 +376,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
     required TextEditingController searchController,
     required String? googleAPIkey,
     required String pickupLocation,
+    required String remarks,
     required GlobalKey<FormBuilderState> formKey,
     required bool isEdit,
   }) {
@@ -385,7 +395,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
             SizedBox(height: 25),
             getPickupLocationSection(pickupLocation: pickupLocation),
             SizedBox(height: 20),
-            getRemarkSection(),
+            getRemarkSection(remarks: remarks),
             SizedBox(height: 40),
             getNextButton(isEdit: isEdit),
           ],
@@ -479,7 +489,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
     );
   }
 
-  Widget getRemarkSection() {
+  Widget getRemarkSection({required String remarks}) {
     return Column(
       children: [
         getSectionTitle(
@@ -492,6 +502,7 @@ extension _WidgetFactories on _SelectLocationScreenState {
           color: ColorManager.primary,
           formName: RequestForPickupFormFieldsEnum.remarks.name,
           needTitle: false,
+          initialValue: remarks,
         ),
       ],
     );

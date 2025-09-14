@@ -92,19 +92,23 @@ class _ManageRequestsScreenState
   @override
   Widget body() {
     final allPickupRequestList = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestList,
+    );
+
+    final filteredPickupRequestList = context.select(
       (PickupRequestViewModel vm) =>
           vm.pickupRequestList.where(isMatch).toList(),
     );
 
-    final pendingPickupRequestList = allPickupRequestList
+    final pendingPickupRequestList = filteredPickupRequestList
         .where((request) => request.pickupRequestStatus == 'Pending')
         .toList();
 
-    final ongoingPickupRequestList = allPickupRequestList
+    final ongoingPickupRequestList = filteredPickupRequestList
         .where((request) => request.pickupRequestStatus == 'Ongoing')
         .toList();
 
-    final completedPickupRequestList = allPickupRequestList
+    final completedPickupRequestList = filteredPickupRequestList
         .where((request) => request.pickupRequestStatus == 'Completed')
         .toList();
 
@@ -134,7 +138,7 @@ class _ManageRequestsScreenState
                 buildTabContent(
                   pickupRequestList: isLoading
                       ? loadingPickupRequestList
-                      : allPickupRequestList,
+                      : filteredPickupRequestList,
                 ),
                 buildTabContent(
                   pickupRequestList: isLoading

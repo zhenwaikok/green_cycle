@@ -94,6 +94,7 @@ class _RootNavigatorScreenState extends State<RootNavigatorScreen> {
       _isUserLoggedIn = _userVM.isLoggedIn;
       // Since we're in a listener, we might need to schedule the navigation after the current frame
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        NotificationHandler.instance.updateTokenToServer();
         _navigateBasedOnState();
       });
     }

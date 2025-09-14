@@ -38,6 +38,7 @@ extension _Actions on _ToRedeemTabState {
   void showRewardBottomSheet({required RewardModel rewardDetails}) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: ColorManager.whiteColor,
       builder: (context) {
         return getBottomSheetCard(rewardDetails: rewardDetails);
