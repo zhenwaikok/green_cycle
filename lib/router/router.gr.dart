@@ -584,12 +584,14 @@ class CollectorPickupRequestDetailsRoute
   CollectorPickupRequestDetailsRoute({
     _i55.Key? key,
     required String pickupRequestID,
+    List<_i57.PickupRequestModel>? ongoingRequestList,
     List<_i54.PageRouteInfo>? children,
   }) : super(
          CollectorPickupRequestDetailsRoute.name,
          args: CollectorPickupRequestDetailsRouteArgs(
            key: key,
            pickupRequestID: pickupRequestID,
+           ongoingRequestList: ongoingRequestList,
          ),
          initialChildren: children,
        );
@@ -603,6 +605,7 @@ class CollectorPickupRequestDetailsRoute
       return _i15.CollectorPickupRequestDetailsScreen(
         key: args.key,
         pickupRequestID: args.pickupRequestID,
+        ongoingRequestList: args.ongoingRequestList,
       );
     },
   );
@@ -612,15 +615,18 @@ class CollectorPickupRequestDetailsRouteArgs {
   const CollectorPickupRequestDetailsRouteArgs({
     this.key,
     required this.pickupRequestID,
+    this.ongoingRequestList,
   });
 
   final _i55.Key? key;
 
   final String pickupRequestID;
 
+  final List<_i57.PickupRequestModel>? ongoingRequestList;
+
   @override
   String toString() {
-    return 'CollectorPickupRequestDetailsRouteArgs{key: $key, pickupRequestID: $pickupRequestID}';
+    return 'CollectorPickupRequestDetailsRouteArgs{key: $key, pickupRequestID: $pickupRequestID, ongoingRequestList: $ongoingRequestList}';
   }
 }
 

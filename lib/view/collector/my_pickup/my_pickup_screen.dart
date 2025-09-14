@@ -143,9 +143,15 @@ class _MyPickupScreenState extends BaseStatefulState<_MyPickupScreen> {
 
 // * ---------------------------- Actions ----------------------------
 extension _Actions on _MyPickupScreenState {
-  void onRequestCardPressed({required String pickupRequestID}) async {
+  void onRequestCardPressed({
+    required String pickupRequestID,
+    required List<PickupRequestModel> ongoingRequestList,
+  }) async {
     final result = await context.router.push(
-      CollectorPickupRequestDetailsRoute(pickupRequestID: pickupRequestID),
+      CollectorPickupRequestDetailsRoute(
+        pickupRequestID: pickupRequestID,
+        ongoingRequestList: ongoingRequestList,
+      ),
     );
 
     if (result == true && mounted) {
@@ -383,6 +389,7 @@ extension _WidgetFactories on _MyPickupScreenState {
               isLoading: isLoading,
               onPressed: () => onRequestCardPressed(
                 pickupRequestID: pickupRequestDetails.pickupRequestID ?? '',
+                ongoingRequestList: ongoingRequestList ?? [],
               ),
               child: MyPickupTab(
                 onPressed: () => onStatusButtonPressed(
