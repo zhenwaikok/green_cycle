@@ -40,9 +40,11 @@ class CollectorPickupRequestDetailsScreen extends StatelessWidget {
   const CollectorPickupRequestDetailsScreen({
     super.key,
     required this.pickupRequestID,
+    this.ongoingRequestList,
   });
 
   final String pickupRequestID;
+  final List<PickupRequestModel>? ongoingRequestList;
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +72,20 @@ class CollectorPickupRequestDetailsScreen extends StatelessWidget {
       },
       child: _CollectorPickupRequestDetailsScreen(
         pickupRequestID: pickupRequestID,
+        ongoingRequestList: ongoingRequestList ?? [],
       ),
     );
   }
 }
 
 class _CollectorPickupRequestDetailsScreen extends BaseStatefulPage {
-  const _CollectorPickupRequestDetailsScreen({required this.pickupRequestID});
+  const _CollectorPickupRequestDetailsScreen({
+    required this.pickupRequestID,
+    required this.ongoingRequestList,
+  });
 
   final String pickupRequestID;
+  final List<PickupRequestModel> ongoingRequestList;
 
   @override
   State<_CollectorPickupRequestDetailsScreen> createState() =>
@@ -227,28 +234,47 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
       }
     } else {
       if (mounted) {
-        WidgetUtil.showAlertDialog(
-          context,
-          title: 'Pickup Request Confirmation',
-          content: WidgetUtil.getAlertDialogContentLabel(
-            pickupRequestDetails.pickupRequestStatus ?? '',
-          ),
-          actions: [
-            (dialogContext) => getAlertDialogTextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              text: 'No',
+        if (pickupRequestDetails.pickupRequestStatus ==
+                pickupRequestStatus[2] &&
+            widget.ongoingRequestList.isNotEmpty) {
+          WidgetUtil.showAlertDialog(
+            context,
+            title: 'Ongoing Pickup Request',
+            content:
+                'You have an ongoing pickup request. Please complete it before starting a new one.',
+            actions: [
+              (dialogContext) => getAlertDialogTextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+                text: 'Ok',
+              ),
+            ],
+          );
+        } else {
+          WidgetUtil.showAlertDialog(
+            context,
+            title: 'Pickup Request Confirmation',
+            content: WidgetUtil.getAlertDialogContentLabel(
+              pickupRequestDetails.pickupRequestStatus ?? '',
             ),
-            (dialogContext) => getAlertDialogTextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                onButtonPressed(pickupRequestDetails: pickupRequestDetails);
-              },
-              text: 'Yes',
-            ),
-          ],
-        );
+            actions: [
+              (dialogContext) => getAlertDialogTextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                },
+                text: 'No',
+              ),
+              (dialogContext) => getAlertDialogTextButton(
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+                  onButtonPressed(pickupRequestDetails: pickupRequestDetails);
+                },
+                text: 'Yes',
+              ),
+            ],
+          );
+        }
       }
     }
   }
