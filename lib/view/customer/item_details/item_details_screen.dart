@@ -212,6 +212,10 @@ extension _Actions on _ItemDetailsScreenState {
     );
   }
 
+  void onCallButtonPressed({required String phoneNum}) async {
+    await WidgetUtil.dialPhoneNum(phoneNum: phoneNum);
+  }
+
   void onRemovePressed({required int itemListingID}) async {
     await context.router.maybePop();
     if (mounted) {
@@ -529,8 +533,7 @@ extension _WidgetFactories on _ItemDetailsScreenState {
         Row(
           children: [
             TouchableOpacity(
-              //
-              onPressed: () {},
+              onPressed: () => onCallButtonPressed(phoneNum: sellerPhoneNum),
               child: Icon(
                 Icons.phone,
                 size: _Styles.iconSize,

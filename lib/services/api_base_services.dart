@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/model/api_model/api_response_model/api_response_model.dart';
 import 'package:green_cycle_fyp/model/network/my_response.dart';
@@ -41,13 +41,6 @@ abstract class BaseServices {
         headers: <String, String>{'Content-Type': ContentType.json.value},
       ),
     );
-
-    // For development only - accept self-signed certificates
-    (_dio?.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-        (client) {
-          client.badCertificateCallback = (cert, host, port) => true;
-          return client;
-        };
   }
 
   Future<MyResponse> callAPI({
@@ -89,14 +82,14 @@ abstract class BaseServices {
           break;
       }
 
-      print('Response: ${response?.statusCode}');
+      debugPrint('Response: ${response?.statusCode}');
 
       if (response?.statusCode == HttpStatus.ok ||
           response?.statusCode == HttpStatus.created) {
-        print('OK');
+        debugPrint('OK');
         return MyResponse.complete(response?.data);
       } else {
-        print('Error: ${response?.statusCode}');
+        debugPrint('Error: ${response?.statusCode}');
       }
     } catch (e) {
       if (e is DioException && e.response?.data != null) {
@@ -104,10 +97,10 @@ abstract class BaseServices {
           e.response?.data,
         ).copyWith(status: e.response?.statusCode);
 
-        print('error status code: ${e.response?.statusCode}');
-        print('error: ${e.response?.data}');
+        debugPrint('error status code: ${e.response?.statusCode}');
+        debugPrint('error: ${e.response?.data}');
 
-        print('API Call Error: ${processedError.message}');
+        debugPrint('API Call Error: ${processedError.message}');
 
         return MyResponse.error(processedError.toJson());
       } else if (e is DioException) {
@@ -116,17 +109,17 @@ abstract class BaseServices {
         switch (e.type) {
           case DioExceptionType.connectionTimeout:
             message = 'Opps, something went wrong. Please try again later.';
-            print('Connection timeout');
+            debugPrint('Connection timeout');
           case DioExceptionType.connectionError:
             message =
                 'Network connection failed. Please check your internet connection.';
-            print('Network connection failed');
+            debugPrint('Network connection failed');
           default:
             message = e.message;
-            print('Error: ${e.message}');
+            debugPrint('Error: ${e.message}');
         }
 
-        print('Error calling API: $message');
+        debugPrint('Error calling API: $message');
 
         return MyResponse.error(
           ApiResponseModel(
@@ -138,7 +131,7 @@ abstract class BaseServices {
       return MyResponse.error(e.toString());
     }
 
-    print('Error calling API');
+    debugPrint('Error calling API');
     return MyResponse.error(
       DioException(requestOptions: RequestOptions(path: path)),
     );

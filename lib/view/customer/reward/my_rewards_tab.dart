@@ -63,6 +63,7 @@ extension _Actions on _MyRewardsTabState {
   }) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: ColorManager.whiteColor,
       builder: (context) {
         return getBottomSheetCard(
@@ -172,9 +173,9 @@ extension _WidgetFactories on _MyRewardsTabState {
         expiryDate: rewardRedemptionDetails.expiryDate ?? DateTime.now(),
 
         descriptionText: rewardRedemptionDetails.rewardDescription ?? '',
-        buttonText: isRewardExpired
+        buttonText: isRewardExpired && !isRewardUsed
             ? 'Expired'
-            : isRewardUsed
+            : isRewardUsed || (isRewardUsed && isRewardExpired)
             ? 'Used'
             : 'Use',
         onPressed: widget.onUseButtonPressed,

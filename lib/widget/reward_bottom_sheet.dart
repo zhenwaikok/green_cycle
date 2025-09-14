@@ -55,7 +55,7 @@ extension _WidgetFactories on _RewardBottomSheetState {
         getExpiryDate(expiryDate: widget.expiryDate),
         SizedBox(height: 20),
         getDescription(descriptionText: widget.descriptionText),
-        SizedBox(height: 60),
+        SizedBox(height: 50),
         getBottomSheetCardClaimButton(
           buttonText: widget.buttonText,
           onPressed: widget.onPressed,

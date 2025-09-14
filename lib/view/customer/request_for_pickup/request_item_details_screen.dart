@@ -288,8 +288,8 @@ extension _WidgetFactories on _RequestItemDetailsScreenState {
 
     return SizedBox(
       height: hasImages
-          ? MediaQuery.of(context).size.height * 0.13
-          : MediaQuery.of(context).size.height * 0.11,
+          ? _Styles.hasImagePhotoFieldHeight
+          : _Styles.noImagePhotoFieldHeight,
       child: MultiImagePickerView(
         controller: controller,
         builder: (context, ImageFile imageFile) {
@@ -416,6 +416,8 @@ class _Styles {
 
   static const iconSize = 30.0;
   static const maxTextLines = 2;
+  static const hasImagePhotoFieldHeight = 120.0;
+  static const noImagePhotoFieldHeight = 100.0;
 
   static const closeButtonPadding = EdgeInsets.all(3);
 

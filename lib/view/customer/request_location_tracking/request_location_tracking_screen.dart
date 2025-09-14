@@ -141,6 +141,7 @@ class _RequestLocationTrackingScreenState
             collectorName: collectorDetails?.fullName ?? '-',
             vehicle: collectorDetails?.vehicleType ?? '-',
             vehiclePlatNum: collectorDetails?.vehiclePlateNumber ?? '-',
+            phoneNum: collectorDetails?.phoneNumber ?? '',
           ),
         ),
       ],
@@ -152,6 +153,10 @@ class _RequestLocationTrackingScreenState
 extension _Actions on _RequestLocationTrackingScreenState {
   void onBackButtonPressed() {
     context.router.maybePop();
+  }
+
+  void onCallButtonPressed({required String phoneNum}) async {
+    await WidgetUtil.dialPhoneNum(phoneNum: phoneNum);
   }
 
   void initialLoad() async {
@@ -381,6 +386,7 @@ extension _WidgetFactories on _RequestLocationTrackingScreenState {
     required String collectorName,
     required String vehicle,
     required String vehiclePlatNum,
+    required String phoneNum,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -408,6 +414,7 @@ extension _WidgetFactories on _RequestLocationTrackingScreenState {
               collectorName: collectorName,
               vehicle: vehicle,
               vehiclePlatNum: vehiclePlatNum,
+              phoneNum: phoneNum,
             ),
           ],
         ),
@@ -447,6 +454,7 @@ extension _WidgetFactories on _RequestLocationTrackingScreenState {
     required String collectorName,
     required String vehicle,
     required String vehiclePlatNum,
+    required String phoneNum,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,7 +488,7 @@ extension _WidgetFactories on _RequestLocationTrackingScreenState {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () => onCallButtonPressed(phoneNum: phoneNum),
               icon: Icon(
                 Icons.phone,
                 color: ColorManager.primary,

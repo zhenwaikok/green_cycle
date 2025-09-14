@@ -188,10 +188,12 @@ extension _WidgetFactories on _PickupRequestDetailsScreenState {
     required String status,
     required String requesterName,
   }) {
+    final backgroundColor = WidgetUtil.getPickupRequestStatusColor(status);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomStatusBar(text: status),
+        CustomStatusBar(text: status, backgroundColor: backgroundColor),
         SizedBox(width: 40),
         Expanded(
           child: Text(

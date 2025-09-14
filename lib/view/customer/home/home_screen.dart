@@ -649,11 +649,16 @@ extension _WidgetFactories on _CustomerHomeScreenState {
             children: [
               Text(
                 itemDescription,
-                maxLines: _Styles.maxTextLines,
+                maxLines: _Styles.maxTextLinesPickupRequest,
                 overflow: TextOverflow.ellipsis,
                 style: _Styles.itemDescriptionTextStyle,
               ),
-              Text(itemCategory, style: _Styles.itemDescriptionTextStyle),
+              Text(
+                itemCategory,
+                style: _Styles.itemDescriptionTextStyle,
+                maxLines: _Styles.maxTextLinesPickupRequest,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
           Text('Quantity: $itemQuantity', style: _Styles.quantityTextStyle),
@@ -805,7 +810,7 @@ extension _WidgetFactories on _CustomerHomeScreenState {
                             Text(
                               awarenessList[index].awarenessTitle ?? '',
                               style: _Styles.newsTitleTextStyle,
-                              maxLines: _Styles.maxTextLines,
+                              maxLines: _Styles.maxTextLinesAwareness,
                             ),
                             SizedBox(height: 5),
                             Text(
@@ -925,7 +930,8 @@ class _Styles {
 
   static const imageSize = 80.0;
   static const imageBorderRadius = 5.0;
-  static const maxTextLines = 2;
+  static const maxTextLinesAwareness = 2;
+  static const maxTextLinesPickupRequest = 2;
 
   static const dividerPadding = EdgeInsets.symmetric(vertical: 6);
 

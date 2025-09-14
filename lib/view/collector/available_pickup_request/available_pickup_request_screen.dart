@@ -299,7 +299,7 @@ extension _Actions on _AvailablePickupRequestScreenState {
   Future<bool> checkIfCollectorProfileApproved() async {
     final userVM = context.read<UserViewModel>();
     final userID = userVM.user?.userID ?? '';
-    await tryLoad(
+    await tryCatch(
       context,
       () => userVM.getUserDetails(
         userID: userID,

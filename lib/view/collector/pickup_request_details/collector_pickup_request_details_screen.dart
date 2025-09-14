@@ -22,6 +22,7 @@ import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/viewmodel/location_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/notification_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
 import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/appbar.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
@@ -358,9 +359,9 @@ extension _Actions on _CollectorPickupRequestDetailsScreenState {
   }
 
   Future<bool> checkIfCollectorProfileApproved() async {
-    final userVM = context.read<UserViewModel>();
-    final userID = userVM.user?.userID ?? '';
-    await tryLoad(
+    final userVM = context.read<ProfileScreenViewModel>();
+    final userID = context.read<UserViewModel>().user?.userID ?? '';
+    await tryCatch(
       context,
       () => userVM.getUserDetails(
         userID: userID,

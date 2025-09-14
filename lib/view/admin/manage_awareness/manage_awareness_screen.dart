@@ -229,19 +229,22 @@ extension _WidgetFactories on _ManageAwarenessScreenState {
     required bool isLoading,
   }) {
     sortAwarenessList(awarenessList: awarenessList);
+
+    if (awarenessList.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
+          ),
+        ),
+      ];
+    }
+
     return [
       SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
           final item = awarenessList[index];
-
-          if (awarenessList.isEmpty) {
-            return SliverFillRemaining(
-              hasScrollBody: false,
-              child: Center(
-                child: NoDataAvailableLabel(noDataText: 'No Awareness Found'),
-              ),
-            );
-          }
 
           return Column(
             children: [
