@@ -160,8 +160,14 @@ extension _Actions on _MyListingScreenState {
     );
   }
 
-  void onListingPressed({required int itemListingID}) {
-    context.router.push(ItemDetailsRoute(itemListingID: itemListingID));
+  void onListingPressed({required int itemListingID}) async {
+    final result = await context.router.push(
+      ItemDetailsRoute(itemListingID: itemListingID),
+    );
+
+    if (result == true && mounted) {
+      await fetchData();
+    }
   }
 
   void onRemovePressed({required int itemListingID}) async {
@@ -328,13 +334,6 @@ extension _WidgetFactories on _MyListingScreenState {
             color: ColorManager.blackColor,
             text: 'Edit',
             onTap: () => onEditPressed(itemListingID: itemListingID),
-          ),
-          SizedBox(height: 10),
-          BottomSheetAction(
-            icon: Icons.check,
-            color: ColorManager.blackColor,
-            text: 'Mark as sold',
-            onTap: () {},
           ),
           SizedBox(height: 10),
           BottomSheetAction(

@@ -259,7 +259,6 @@ extension _Actions on _ItemDetailsScreenState {
   }
 
   Future<void> onYesRemovePressed({required int itemListingID}) async {
-    await context.router.maybePop();
     final result = mounted
         ? await tryLoad(
                 context,
@@ -271,10 +270,12 @@ extension _Actions on _ItemDetailsScreenState {
         : false;
 
     if (result) {
+      if (mounted) {
+        await context.router.maybePop(true);
+      }
       unawaited(
         WidgetUtil.showSnackBar(text: 'Item listing removed successfully.'),
       );
-      await fetchItemData();
     } else {
       WidgetUtil.showSnackBar(text: 'Failed to remove item listing.');
     }
