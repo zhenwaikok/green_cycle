@@ -117,10 +117,12 @@ class _CreateListingScreenState
             if (!widget.isEdit) ...[
               getItemListingTitleDescription(),
               SizedBox(height: 20),
+              getAddListingTextFields(),
             ],
-            getListingTextFields(
-              itemListingDetails: itemListingDetails ?? ItemListingModel(),
-            ),
+
+            if (widget.isEdit && itemListingDetails != null) ...[
+              getEditListingTextFields(itemListingDetails: itemListingDetails),
+            ],
           ],
         ),
       ),
@@ -130,34 +132,44 @@ class _CreateListingScreenState
 
 // * ---------------------------- Helpers ----------------------------
 extension _Helpers on _CreateListingScreenState {
-  List<ImageFile> get itemImages => controller.images.toList();
+  List<ImageFile>? get itemImages => controller.images.toList();
 
-  String? get itemName => _formKey
-      .currentState
-      ?.fields[CreateOrEditListingFormFieldsEnum.name.name]
-      ?.value;
+  String get itemName =>
+      _formKey
+          .currentState
+          ?.fields[CreateOrEditListingFormFieldsEnum.name.name]
+          ?.value ??
+      '';
 
-  String? get itemDescription => _formKey
-      .currentState
-      ?.fields[CreateOrEditListingFormFieldsEnum.description.name]
-      ?.value;
+  String get itemDescription =>
+      _formKey
+          .currentState
+          ?.fields[CreateOrEditListingFormFieldsEnum.description.name]
+          ?.value ??
+      '';
 
-  double? get itemPrice => double.tryParse(
-    _formKey
-        .currentState
-        ?.fields[CreateOrEditListingFormFieldsEnum.price.name]
-        ?.value,
-  );
+  double get itemPrice =>
+      double.tryParse(
+        _formKey
+            .currentState
+            ?.fields[CreateOrEditListingFormFieldsEnum.price.name]
+            ?.value,
+      ) ??
+      0.0;
 
-  String? get itemCondition => _formKey
-      .currentState
-      ?.fields[CreateOrEditListingFormFieldsEnum.condition.name]
-      ?.value;
+  String get itemCondition =>
+      _formKey
+          .currentState
+          ?.fields[CreateOrEditListingFormFieldsEnum.condition.name]
+          ?.value ??
+      '';
 
-  String? get itemCategory => _formKey
-      .currentState
-      ?.fields[CreateOrEditListingFormFieldsEnum.category.name]
-      ?.value;
+  String get itemCategory =>
+      _formKey
+          .currentState
+          ?.fields[CreateOrEditListingFormFieldsEnum.category.name]
+          ?.value ??
+      '';
 }
 
 // * ---------------------------- Actions ----------------------------
@@ -231,12 +243,12 @@ extension _Actions on _CreateListingScreenState {
             await tryLoad(
               context,
               () => context.read<ItemListingViewModel>().insertItemListing(
-                itemImages: itemImages,
-                itemName: itemName ?? '',
-                itemDescription: itemDescription ?? '',
-                itemPrice: itemPrice ?? 0.0,
-                itemCondition: itemCondition ?? '',
-                itemCategory: itemCategory ?? '',
+                itemImages: itemImages ?? [],
+                itemName: itemName,
+                itemDescription: itemDescription,
+                itemPrice: itemPrice,
+                itemCondition: itemCondition,
+                itemCategory: itemCategory,
                 userID: userID,
               ),
             ) ??
@@ -258,11 +270,11 @@ extension _Actions on _CreateListingScreenState {
               context,
               () => context.read<ItemListingViewModel>().updateItemListing(
                 itemImages: itemImages,
-                itemName: itemName ?? '',
-                itemDescription: itemDescription ?? '',
-                itemPrice: itemPrice ?? 0.0,
-                itemCondition: itemCondition ?? '',
-                itemCategory: itemCategory ?? '',
+                itemName: itemName,
+                itemDescription: itemDescription,
+                itemPrice: itemPrice,
+                itemCondition: itemCondition,
+                itemCategory: itemCategory,
                 userID: userID,
               ),
             ) ??
@@ -298,63 +310,48 @@ extension _WidgetFactories on _CreateListingScreenState {
     );
   }
 
-  Widget getListingTextFields({required ItemListingModel itemListingDetails}) {
+  Widget getAddListingTextFields() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getItemPhotoField(),
         SizedBox(height: 15),
-        CustomTextField(
-          fontSize: _Styles.createListingFormFieldFontSize,
-          color: _Styles.createListingFormFieldColor,
-          title: 'Item Name',
-          formName: CreateOrEditListingFormFieldsEnum.name.name,
-          validator: FormBuilderValidators.required(),
-          initialValue: itemListingDetails.itemName ?? '',
+        getItemNameField(),
+        SizedBox(height: 15),
+        getItemDescriptionField(),
+        SizedBox(height: 15),
+        getPriceField(),
+        SizedBox(height: 15),
+        getConditionField(),
+        SizedBox(height: 15),
+        getCategoryField(),
+      ],
+    );
+  }
+
+  Widget getEditListingTextFields({
+    required ItemListingModel itemListingDetails,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getItemPhotoField(),
+        SizedBox(height: 15),
+        getItemNameField(itemName: itemListingDetails.itemName ?? ''),
+        SizedBox(height: 15),
+        getItemDescriptionField(
+          itemDescription: itemListingDetails.itemDescription ?? '',
         ),
         SizedBox(height: 15),
-        CustomTextField(
-          fontSize: _Styles.createListingFormFieldFontSize,
-          color: _Styles.createListingFormFieldColor,
-          title: 'Description',
-          formName: CreateOrEditListingFormFieldsEnum.description.name,
-          validator: FormBuilderValidators.required(),
-          initialValue: itemListingDetails.itemDescription ?? '',
+        getPriceField(
+          itemPrice: itemListingDetails.itemPrice?.toString() ?? '',
         ),
         SizedBox(height: 15),
-        CustomTextField(
-          fontSize: _Styles.createListingFormFieldFontSize,
-          color: _Styles.createListingFormFieldColor,
-          title: 'Price',
-          formName: CreateOrEditListingFormFieldsEnum.price.name,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegexConstants.priceRegex),
-          ],
-          validator: FormBuilderValidators.required(),
-          initialValue: itemListingDetails.itemPrice?.toString() ?? '',
+        getConditionField(
+          itemCondition: itemListingDetails.itemCondition ?? '',
         ),
         SizedBox(height: 15),
-        CustomDropdown(
-          formName: CreateOrEditListingFormFieldsEnum.condition.name,
-          items: conditionItems,
-          title: 'Condition',
-          fontSize: _Styles.createListingFormFieldFontSize,
-          color: _Styles.createListingFormFieldColor,
-          validator: FormBuilderValidators.required(),
-          initialValue:
-              itemListingDetails.itemCondition ?? conditionItems.first,
-        ),
-        SizedBox(height: 15),
-        CustomDropdown(
-          formName: CreateOrEditListingFormFieldsEnum.category.name,
-          items: categoryItems,
-          title: 'Category',
-          fontSize: _Styles.createListingFormFieldFontSize,
-          color: _Styles.createListingFormFieldColor,
-          validator: FormBuilderValidators.required(),
-          initialValue: itemListingDetails.itemCategory ?? categoryItems.first,
-        ),
+        getCategoryField(itemCategory: itemListingDetails.itemCategory ?? ''),
       ],
     );
   }
@@ -389,6 +386,67 @@ extension _WidgetFactories on _CreateListingScreenState {
           ],
         );
       },
+    );
+  }
+
+  Widget getItemNameField({String? itemName}) {
+    return CustomTextField(
+      fontSize: _Styles.createListingFormFieldFontSize,
+      color: _Styles.createListingFormFieldColor,
+      title: 'Item Name',
+      formName: CreateOrEditListingFormFieldsEnum.name.name,
+      validator: FormBuilderValidators.required(),
+      initialValue: itemName,
+    );
+  }
+
+  Widget getItemDescriptionField({String? itemDescription}) {
+    return CustomTextField(
+      fontSize: _Styles.createListingFormFieldFontSize,
+      color: _Styles.createListingFormFieldColor,
+      title: 'Description',
+      formName: CreateOrEditListingFormFieldsEnum.description.name,
+      validator: FormBuilderValidators.required(),
+      initialValue: itemDescription,
+    );
+  }
+
+  Widget getPriceField({String? itemPrice}) {
+    return CustomTextField(
+      fontSize: _Styles.createListingFormFieldFontSize,
+      color: _Styles.createListingFormFieldColor,
+      title: 'Price',
+      formName: CreateOrEditListingFormFieldsEnum.price.name,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegexConstants.priceRegex),
+      ],
+      validator: FormBuilderValidators.required(),
+      initialValue: itemPrice,
+    );
+  }
+
+  Widget getConditionField({String? itemCondition}) {
+    return CustomDropdown(
+      formName: CreateOrEditListingFormFieldsEnum.condition.name,
+      items: conditionItems,
+      title: 'Condition',
+      fontSize: _Styles.createListingFormFieldFontSize,
+      color: _Styles.createListingFormFieldColor,
+      validator: FormBuilderValidators.required(),
+      initialValue: itemCondition ?? conditionItems.first,
+    );
+  }
+
+  Widget getCategoryField({String? itemCategory}) {
+    return CustomDropdown(
+      formName: CreateOrEditListingFormFieldsEnum.category.name,
+      items: categoryItems,
+      title: 'Category',
+      fontSize: _Styles.createListingFormFieldFontSize,
+      color: _Styles.createListingFormFieldColor,
+      validator: FormBuilderValidators.required(),
+      initialValue: itemCategory ?? categoryItems.first,
     );
   }
 
