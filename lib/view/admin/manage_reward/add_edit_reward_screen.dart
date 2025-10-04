@@ -120,15 +120,19 @@ extension _Helpers on _AddEditRewardScreenState {
       ?.fields[AddEditRewardFormFieldsEnum.rewardPhoto.name]
       ?.value;
 
-  String get rewardName => _formKey
-      .currentState
-      ?.fields[AddEditRewardFormFieldsEnum.rewardTitle.name]
-      ?.value;
+  String get rewardName =>
+      _formKey
+          .currentState
+          ?.fields[AddEditRewardFormFieldsEnum.rewardTitle.name]
+          ?.value ??
+      '';
 
-  String get rewardDescription => _formKey
-      .currentState
-      ?.fields[AddEditRewardFormFieldsEnum.rewardDescription.name]
-      ?.value;
+  String get rewardDescription =>
+      _formKey
+          .currentState
+          ?.fields[AddEditRewardFormFieldsEnum.rewardDescription.name]
+          ?.value ??
+      '';
 
   DateTime get rewardExpiryDate => _formKey
       .currentState
@@ -263,19 +267,21 @@ extension _WidgetFactories on _AddEditRewardScreenState {
     return Column(
       children: [
         getPhotoField(
-          rewardImageURL: _rewardDetails?.rewardImageURL,
+          rewardImageURL: _rewardDetails?.rewardImageURL ?? '',
           isEdit: widget.isEdit,
         ),
         SizedBox(height: 25),
-        getRewardTitleField(rewardName: _rewardDetails?.rewardName),
+        getRewardTitleField(rewardName: _rewardDetails?.rewardName ?? ''),
         SizedBox(height: 25),
         getRewardDescriptionField(
-          rewardDescription: _rewardDetails?.rewardDescription,
+          rewardDescription: _rewardDetails?.rewardDescription ?? '',
         ),
         SizedBox(height: 25),
         getPointsRequiredField(),
         SizedBox(height: 25),
-        getExpiryDateField(expiryDate: _rewardDetails?.expiryDate),
+        getExpiryDateField(
+          expiryDate: _rewardDetails?.expiryDate ?? DateTime.now(),
+        ),
       ],
     );
   }

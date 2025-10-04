@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/model/api_model/purchases/purchases_model.dart';
+import 'package:green_cycle_fyp/repository/purchases_repository.dart';
 import 'package:green_cycle_fyp/utils/util.dart';
 import 'package:green_cycle_fyp/view/base_stateful_page.dart';
 import 'package:green_cycle_fyp/view/customer/sales_order/sales_order_tab.dart';
@@ -27,7 +28,11 @@ class SalesOrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SalesOrderScreen(sellerUserID: sellerUserID);
+    return ChangeNotifierProvider(
+      create: (_) =>
+          PurchaseViewModel(purchasesRepository: PurchasesRepository()),
+      child: _SalesOrderScreen(sellerUserID: sellerUserID),
+    );
   }
 }
 
