@@ -1,0 +1,398 @@
+import 'package:adaptive_widgets_flutter/adaptive_widgets.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
+import 'package:green_cycle_fyp/constant/font_manager.dart';
+import 'package:green_cycle_fyp/model/api_model/user/user_model.dart';
+import 'package:green_cycle_fyp/repository/user_repository.dart';
+import 'package:green_cycle_fyp/router/router.gr.dart';
+import 'package:green_cycle_fyp/services/user_services.dart';
+import 'package:green_cycle_fyp/utils/shared_prefrences_handler.dart';
+import 'package:green_cycle_fyp/utils/util.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/pickup_request_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/profile_screen_view_model.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
+import 'package:green_cycle_fyp/widget/appbar.dart';
+import 'package:green_cycle_fyp/widget/custom_button.dart';
+import 'package:green_cycle_fyp/widget/custom_card.dart';
+import 'package:green_cycle_fyp/widget/custom_status_bar.dart';
+import 'package:green_cycle_fyp/widget/profile_image.dart';
+import 'package:green_cycle_fyp/widget/profile_row_element.dart';
+import 'package:provider/provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+@RoutePage()
+class CollectorProfileScreen extends StatelessWidget {
+  const CollectorProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ProfileScreenViewModel(
+        userRepository: UserRepository(
+          sharePreferenceHandler: SharedPreferenceHandler(),
+          userServices: UserServices(),
+        ),
+      ),
+      child: _CollectorProfileScreen(),
+    );
+  }
+}
+
+class _CollectorProfileScreen extends BaseStatefulPage {
+  @override
+  State<_CollectorProfileScreen> createState() =>
+      _CollectorProfileScreenState();
+}
+
+class _CollectorProfileScreenState
+    extends BaseStatefulState<_CollectorProfileScreen> {
+  bool isLoading = true;
+
+  void _setState(VoidCallback fn) {
+    if (mounted) {
+      setState(() {
+        fn();
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData();
+    });
+  }
+
+  @override
+  PreferredSizeWidget? appbar() {
+    return CustomAppBar(title: 'Profile', isBackButtonVisible: false);
+  }
+
+  @override
+  EdgeInsets defaultPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    final user =
+        context.select((ProfileScreenViewModel vm) => vm.userDetails) ??
+        UserModel();
+
+    final pickupRequestList = context.select(
+      (PickupRequestViewModel vm) => vm.pickupRequestList,
+    );
+
+    final ongoingPickupRequestList = pickupRequestList
+        .where(
+          (request) =>
+              request.pickupRequestStatus ==
+                  DropDownItems.requestDropdownItems[3] &&
+              request.collectorUserID == user.userID,
+        )
+        .toList();
+
+    final completedPickupRequestList = pickupRequestList
+        .where(
+          (request) =>
+              request.pickupRequestStatus ==
+                  DropDownItems.requestDropdownItems[5] &&
+              request.collectorUserID == user.userID,
+        )
+        .toList();
+
+    return AdaptiveWidgets.buildRefreshableScrollView(
+      context,
+      onRefresh: fetchData,
+      refreshIndicatorBackgroundColor: ColorManager.whiteColor,
+      color: ColorManager.blackColor,
+      slivers: [
+        SliverPadding(
+          padding: _Styles.screenPadding,
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(child: getProfileStatusButton()),
+              SliverToBoxAdapter(child: SizedBox(height: 30)),
+              SliverToBoxAdapter(child: getProfileDetails(userDetails: user)),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: Divider(color: ColorManager.lightGreyColor),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 25)),
+              SliverToBoxAdapter(
+                child: getCollectorStatsCard(
+                  numOfOngoing: ongoingPickupRequestList.length,
+                  numOfCompleted: completedPickupRequestList.length,
+                ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 30)),
+              SliverToBoxAdapter(
+                child: getProfileCard(
+                  userRole: user.userRole ?? '',
+                  userID: user.userID ?? '',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// * ---------------------------- Actions ----------------------------
+extension _Actions on _CollectorProfileScreenState {
+  void onChangePasswordPressed() {
+    context.router.push(ChangePasswordRoute());
+  }
+
+  void onEditProfilePressed({
+    required String userRole,
+    required String userID,
+  }) async {
+    final result = await context.router.push(
+      EditProfileRoute(userRole: userRole, userID: userID),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
+  }
+
+  void onPickupHistoryPressed() {
+    context.router.push(PickupHistoryRoute());
+  }
+
+  void onProfileStatusButtonPressed() async {
+    final user = context.read<UserViewModel>().user;
+
+    final result = await context.router.push(
+      CollectorProfileStatusRoute(collectorUserID: user?.userID ?? ''),
+    );
+
+    if (result == true && mounted) {
+      fetchData();
+    }
+  }
+
+  Future<void> onSignOutPressed() async {
+    await tryLoad(context, () => context.read<UserViewModel>().logout());
+  }
+
+  Future<void> fetchData() async {
+    _setState(() => isLoading = true);
+
+    final user = context.read<UserViewModel>().user;
+
+    await tryCatch(
+      context,
+      () => context.read<PickupRequestViewModel>().getAllPickupRequests(),
+    );
+
+    if (mounted) {
+      await tryCatch(
+        context,
+        () => context.read<ProfileScreenViewModel>().getUserDetails(
+          userID: user?.userID ?? '',
+        ),
+      );
+    }
+
+    _setState(() => isLoading = false);
+  }
+}
+
+// * ------------------------ WidgetFactories ------------------------
+extension _WidgetFactories on _CollectorProfileScreenState {
+  Widget getProfileStatusButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          width: _Styles.profileStatusButtonWidth,
+          child: CustomButton(
+            text: 'Profile Status',
+            textColor: ColorManager.blackColor,
+            backgroundColor: ColorManager.lightGreyColor3,
+            shadowColor: WidgetStateProperty.all(ColorManager.whiteColor),
+            onPressed: onProfileStatusButtonPressed,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getProfileDetails({required UserModel userDetails}) {
+    return Skeletonizer(
+      enabled: isLoading,
+      child: Row(
+        children: [
+          CustomProfileImage(
+            imageURL: userDetails.profileImageURL ?? '',
+            imageSize: _Styles.profileImageSize,
+          ),
+          SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  userDetails.fullName ?? 'Loading...',
+                  style: _Styles.usernameTextStyle,
+                  maxLines: _Styles.maxTextLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  userDetails.userRole ?? 'Loading...',
+                  style: _Styles.collectorTextStyle,
+                ),
+                SizedBox(height: 15),
+                getAccountStatus(status: userDetails.approvalStatus ?? ''),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getAccountStatus({required String status}) {
+    final backgroundColor = WidgetUtil.getAccountStatusColor(status);
+    return CustomStatusBar(text: status, backgroundColor: backgroundColor);
+  }
+
+  Widget getCollectorStatsCard({
+    required int numOfOngoing,
+    required int numOfCompleted,
+  }) {
+    return Skeletonizer(
+      enabled: isLoading,
+      child: CustomCard(
+        needBoxShadow: false,
+        backgroundColor: ColorManager.primaryLight,
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: getCollectorStatsItem(
+                  title: 'Ongoing',
+                  value: '$numOfOngoing',
+                ),
+              ),
+              VerticalDivider(
+                color: ColorManager.primary,
+                thickness: 2,
+                width: 30,
+              ),
+              Expanded(
+                child: getCollectorStatsItem(
+                  title: 'Completed',
+                  value: '$numOfCompleted',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget getCollectorStatsItem({required String title, required String value}) {
+    return Column(
+      children: [
+        Text(value, style: _Styles.valueTextStyle),
+        SizedBox(height: 5),
+        Text(title, style: _Styles.titleTextStyle),
+      ],
+    );
+  }
+
+  Widget getProfileCard({required String userRole, required String userID}) {
+    return CustomCard(
+      padding: _Styles.customCardPadding,
+      child: getProfileCardItems(userRole: userRole, userID: userID),
+    );
+  }
+
+  Widget getProfileCardItems({
+    required String userRole,
+    required String userID,
+  }) {
+    return Column(
+      children: [
+        CustomProfileRowElement(
+          icon: Icons.person,
+          text: 'Edit Profile',
+          onPressed: () =>
+              onEditProfilePressed(userRole: userRole, userID: userID),
+        ),
+        CustomProfileRowElement(
+          icon: Icons.lock,
+          text: 'Change Password',
+          onPressed: onChangePasswordPressed,
+        ),
+        CustomProfileRowElement(
+          icon: Icons.history,
+          text: 'Pickup History',
+          onPressed: onPickupHistoryPressed,
+        ),
+        CustomProfileRowElement(
+          icon: Icons.logout,
+          text: 'Sign Out',
+          isSignOut: true,
+          onPressed: onSignOutPressed,
+        ),
+      ],
+    );
+  }
+}
+
+// * ----------------------------- Styles -----------------------------
+class _Styles {
+  _Styles._();
+
+  static const maxTextLines = 2;
+  static const profileImageSize = 100.0;
+  static const profileStatusButtonWidth = 150.0;
+
+  static const screenPadding = EdgeInsets.all(20);
+
+  static const customCardPadding = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 10,
+  );
+
+  static const usernameTextStyle = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.blackColor,
+  );
+
+  static const collectorTextStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
+
+  static const titleTextStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.primary,
+  );
+
+  static const valueTextStyle = TextStyle(
+    fontSize: 25,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
+  );
+}

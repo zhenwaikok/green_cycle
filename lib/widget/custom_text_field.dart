@@ -7,9 +7,9 @@ import 'package:green_cycle_fyp/constant/font_manager.dart';
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
-    required this.fontSize,
-    required this.color,
-    required this.title,
+    this.fontSize,
+    this.color,
+    this.title,
     this.prefixIcon,
     this.suffixIcon,
     this.onTap,
@@ -20,21 +20,33 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.readonly,
     required this.formName,
+    this.needTitle = true,
+    this.maxLines,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
+    this.isPassword = false,
+    this.initialValue,
+    this.labelText,
   });
 
   final String formName;
-  final double fontSize;
-  final Color color;
-  final String title;
+  final double? fontSize;
+  final Color? color;
+  final String? title;
   final Icon? prefixIcon;
   final IconButton? suffixIcon;
   final void Function()? onTap;
   final void Function(String? value)? onChanged;
   final TextInputType? keyboardType;
-  final FormFieldValidator<String>? validator;
+  final String? Function(String? value)? validator;
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
   final bool? readonly;
+  final bool? needTitle;
+  final int? maxLines;
+  final AutovalidateMode autovalidateMode;
+  final bool? isPassword;
+  final String? initialValue;
+  final String? labelText;
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -45,14 +57,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        getTitle(
-          title: widget.title,
-          fontSize: widget.fontSize,
-          color: widget.color,
-        ),
+        if (widget.needTitle ?? true)
+          getTitle(
+            title: widget.title ?? '',
+            fontSize: widget.fontSize ?? 0,
+            color: widget.color ?? Colors.transparent,
+          ),
         SizedBox(height: 10),
-        getTextField(name: widget.title),
+        getTextField(name: widget.formName),
       ],
     );
   }
@@ -77,29 +91,26 @@ extension _WidgetFactories on _CustomTextFieldState {
   Widget getTextField({required String name}) {
     return FormBuilderTextField(
       name: name,
+      obscureText: widget.isPassword ?? false,
+      maxLines: (widget.isPassword ?? false) ? 1 : widget.maxLines,
       onTap: widget.onTap,
       onChanged: widget.onChanged,
+      autovalidateMode: widget.autovalidateMode,
+      initialValue: widget.initialValue,
       keyboardType: widget.keyboardType ?? TextInputType.text,
       validator: widget.validator,
       inputFormatters: widget.inputFormatters,
       controller: widget.controller,
       readOnly: widget.readonly ?? false,
       decoration: InputDecoration(
+        labelText: widget.labelText,
+        labelStyle: _Styles.labelTextStyle,
         contentPadding: _Styles.contentPadding,
+        filled: true,
+        fillColor: ColorManager.lightGreyColor3,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ColorManager.greyColor,
-            width: _Styles.textFieldBorderWidth,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ColorManager.greyColor,
-            width: _Styles.textFieldBorderWidth,
-          ),
-        ),
+        border: OutlineInputBorder(borderSide: BorderSide.none),
         errorBorder: _Styles.outlineErrorInputBorder,
         focusedErrorBorder: _Styles.outlineErrorInputBorder,
       ),
@@ -111,8 +122,6 @@ extension _WidgetFactories on _CustomTextFieldState {
 // * ----------------------------- Styles -----------------------------
 class _Styles {
   _Styles._();
-
-  static const textFieldBorderWidth = 2.0;
 
   static const contentPadding = EdgeInsets.symmetric(
     horizontal: 10,
@@ -130,4 +139,9 @@ class _Styles {
   }) {
     return TextStyle(fontSize: fontSize, fontWeight: fontWeight, color: color);
   }
+
+  static const labelTextStyle = TextStyle(
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
 }

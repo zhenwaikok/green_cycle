@@ -1,0 +1,12 @@
+{
+    "hostUrl": "http://greencyclefypapi-dev.us-east-1.elasticbeanstalk.com/GreenCycleAPI",
+    "stripeHostUrl": "https://api.stripe.com/v1",
+    "googleApiKey": "AIzaSyBENljie1BW8RkJgR_bD-L3vApUIMYDs5Q",
+    "stripePublishableKey": "pk_test_51Rvx9zIstsoX9jkiIUrMUxXdbUlnrADLnYNDczgOm4wn741M7y5Dlyov6PrEqzGxWByMwMIQn7KIjPI9UFJBUaMi00POZarCbN",
+    "stripeSecretKey": "sk_test_51Rvx9zIstsoX9jkiGQa458lUkWgem9pKIGxvDPzAaM9l6qjObbAegQnIcet50w2df7NGufKZFwN2z7B7iPrXyXIb004l9eQoHN",
+    "googleSignInClientID": "931591092978-d3lhm8r50doq30kve9a506u2sc2vfokg.apps.googleusercontent.com",
+    "googleSignInServerClientID": "931591092978-the4v4pj35rl8khd28h29f2t2gvn5ljl.apps.googleusercontent.com",
+    "fcmScope": "https://www.googleapis.com/auth/firebase.messaging",
+    "projectID": "greencyclefyp",
+    "fcmHostUrl": "https://fcm.googleapis.com/v1"
+}

@@ -1,32 +1,50 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:green_cycle_fyp/constant/color_manager.dart';
+import 'package:green_cycle_fyp/constant/constants.dart';
 import 'package:green_cycle_fyp/constant/enums/form_type.dart';
 import 'package:green_cycle_fyp/constant/font_manager.dart';
 import 'package:green_cycle_fyp/router/router.gr.dart';
-import 'package:green_cycle_fyp/widget/card.dart';
+import 'package:green_cycle_fyp/view/base_stateful_page.dart';
+import 'package:green_cycle_fyp/viewmodel/user_view_model.dart';
 import 'package:green_cycle_fyp/widget/custom_button.dart';
 import 'package:green_cycle_fyp/widget/custom_dropdown.dart';
 import 'package:green_cycle_fyp/widget/custom_text_field.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:provider/provider.dart';
 
 @RoutePage()
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  Widget build(BuildContext context) {
+    return _SignUpScreen();
+  }
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  final List<String> roles = ['Customer', 'Collector'];
-  final List<String> genders = ['Male', 'Female'];
+class _SignUpScreen extends BaseStatefulPage {
+  @override
+  State<_SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends BaseStatefulState<_SignUpScreen> {
+  final roles = DropDownItems.roles;
+  final genders = DropDownItems.genders;
   String? selectedRole;
+  String? selectedGender;
+  String? _phoneNumber;
+  final _formKey = GlobalKey<FormBuilderState>();
+  bool isPasswordObscure = true;
+  bool isConfirmPasswordObscure = true;
 
   @override
   void initState() {
     selectedRole = roles.first;
+    selectedGender = genders.first;
     super.initState();
   }
 
@@ -37,28 +55,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: _Styles.screenPadding,
-            child: Center(
-              child: Column(
-                children: [
-                  getLogo(),
-                  SizedBox(height: 15),
-                  getTitle(),
-                  SizedBox(height: 30),
-                  getCard(),
-                ],
-              ),
-            ),
+  EdgeInsets bottomNavigationBarPadding() {
+    return EdgeInsets.zero;
+  }
+
+  @override
+  Widget body() {
+    return Center(
+      child: SingleChildScrollView(
+        child: FormBuilder(
+          key: _formKey,
+          child: Column(
+            children: [
+              getLogo(),
+              SizedBox(height: 15),
+              getTitle(),
+              SizedBox(height: 30),
+              getSignUpForms(),
+            ],
           ),
         ),
       ),
     );
   }
+}
+
+// * ---------------------------- Helper ----------------------------
+extension _Helper on _SignUpScreenState {
+  String get userRole => selectedRole ?? '';
+
+  String get fullName =>
+      _formKey
+          .currentState
+          ?.fields[SignUpFormFieldsEnum.fullName.name]
+          ?.value ??
+      '';
+
+  String get firstName =>
+      _formKey
+          .currentState
+          ?.fields[SignUpFormFieldsEnum.firstName.name]
+          ?.value ??
+      '';
+
+  String get lastName =>
+      _formKey
+          .currentState
+          ?.fields[SignUpFormFieldsEnum.lastName.name]
+          ?.value ??
+      '';
+
+  String get email =>
+      _formKey.currentState?.fields[SignUpFormFieldsEnum.email.name]?.value ??
+      '';
+
+  String get gender => selectedGender ?? '';
+
+  String get phoneNumber => _phoneNumber ?? '';
+
+  String get password =>
+      _formKey
+          .currentState
+          ?.fields[SignUpFormFieldsEnum.password.name]
+          ?.value ??
+      '';
 }
 
 // * ---------------------------- Actions ----------------------------
@@ -69,12 +129,56 @@ extension _Actions on _SignUpScreenState {
     });
   }
 
-  void onSignInButtonPressed() {
-    context.router.push(LoginRoute());
+  void onGenderChanged(String? value) {
+    _setState(() {
+      selectedGender = value;
+    });
   }
 
-  void onSignUpButtonPressed() {
-    context.router.push(CollectorAdditionalSignupRoute());
+  void onSignInButtonPressed() async {
+    context.router.pushAndPopUntil(LoginRoute(), predicate: (route) => false);
+  }
+
+  void onSignUpButtonPressed() async {
+    final formValid = _formKey.currentState?.saveAndValidate() ?? false;
+
+    if (selectedRole == roles[1] && formValid) {
+      context.router.push(
+        CollectorAdditionalSignupRoute(
+          userRole: userRole,
+          fullName: fullName,
+          emailAddress: email,
+          gender: gender,
+          phoneNumber: phoneNumber,
+          password: password,
+        ),
+      );
+    } else {
+      if (formValid) {
+        await tryLoad(
+          context,
+          () => context.read<UserViewModel>().signUpWithEmailPassword(
+            userRole: userRole,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            gender: gender,
+            phoneNumber: phoneNumber,
+            password: password,
+          ),
+        );
+      }
+    }
+  }
+
+  void togglePasswordVisibility({required bool passwordField}) {
+    _setState(() {
+      if (passwordField) {
+        isPasswordObscure = !isPasswordObscure;
+      } else {
+        isConfirmPasswordObscure = !isConfirmPasswordObscure;
+      }
+    });
   }
 }
 
@@ -96,8 +200,9 @@ extension _WidgetFactories on _SignUpScreenState {
     );
   }
 
-  Widget getCard() {
-    return CustomCard(
+  Widget getSignUpForms() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getCardTitleDescription(),
         SizedBox(height: 20),
@@ -128,6 +233,7 @@ extension _WidgetFactories on _SignUpScreenState {
         CustomDropdown(
           formName: SignUpFormFieldsEnum.role.name,
           items: roles,
+          validator: FormBuilderValidators.required(),
           title: 'Role',
           fontSize: _Styles.signUpFormFieldFontSize,
           color: _Styles.signUpFormFieldColor,
@@ -164,6 +270,10 @@ extension _WidgetFactories on _SignUpScreenState {
       title: 'Gender',
       fontSize: _Styles.signUpFormFieldFontSize,
       color: _Styles.signUpFormFieldColor,
+      validator: FormBuilderValidators.required(),
+      onChanged: (value) {
+        onGenderChanged(value);
+      },
     );
   }
 
@@ -172,8 +282,12 @@ extension _WidgetFactories on _SignUpScreenState {
       fontSize: _Styles.signUpFormFieldFontSize,
       color: _Styles.signUpFormFieldColor,
       title: 'Email Address',
-      prefixIcon: Icon(Icons.email_outlined, color: ColorManager.greyColor),
+      prefixIcon: Icon(Icons.email_outlined, color: ColorManager.blackColor),
       formName: SignUpFormFieldsEnum.email.name,
+      validator: FormBuilderValidators.compose([
+        FormBuilderValidators.required(),
+        FormBuilderValidators.email(),
+      ]),
     );
   }
 
@@ -183,7 +297,8 @@ extension _WidgetFactories on _SignUpScreenState {
         fontSize: _Styles.signUpFormFieldFontSize,
         color: _Styles.signUpFormFieldColor,
         title: 'Full Name',
-        formName: SignUpFormFieldsEnum.name.name,
+        formName: SignUpFormFieldsEnum.fullName.name,
+        validator: FormBuilderValidators.required(),
       );
     } else {
       return Row(
@@ -193,7 +308,8 @@ extension _WidgetFactories on _SignUpScreenState {
               fontSize: _Styles.signUpFormFieldFontSize,
               color: _Styles.signUpFormFieldColor,
               title: 'First Name',
-              formName: SignUpFormFieldsEnum.name.name,
+              formName: SignUpFormFieldsEnum.firstName.name,
+              validator: FormBuilderValidators.required(),
             ),
           ),
           SizedBox(width: 25),
@@ -202,7 +318,8 @@ extension _WidgetFactories on _SignUpScreenState {
               fontSize: _Styles.signUpFormFieldFontSize,
               color: _Styles.signUpFormFieldColor,
               title: 'Last Name',
-              formName: SignUpFormFieldsEnum.name.name,
+              formName: SignUpFormFieldsEnum.lastName.name,
+              validator: FormBuilderValidators.required(),
             ),
           ),
         ],
@@ -211,37 +328,57 @@ extension _WidgetFactories on _SignUpScreenState {
   }
 
   Widget getPhoneTextField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Phone Number', style: _Styles.phoneNumTextStyle),
-        SizedBox(height: 10),
-        IntlPhoneField(
-          keyboardType: TextInputType.phone,
-          decoration: InputDecoration(
-            contentPadding: _Styles.contentPadding,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: ColorManager.greyColor,
-                width: _Styles.textFieldBorderWidth,
+    return FormBuilderField<String>(
+      name: SignUpFormFieldsEnum.phoneNum.name,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: FormBuilderValidators.compose([
+        FormBuilderValidators.required(),
+        (value) {
+          if (!RegexConstants.malaysianPhoneRegex.hasMatch(value ?? '')) {
+            return 'Invalid phone number, only 10 or 11 digits allowed';
+          }
+          return null;
+        },
+      ]),
+      builder: (FormFieldState<String> field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Phone Number', style: _Styles.phoneNumTextStyle),
+            const SizedBox(height: 10),
+            IntlPhoneField(
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                contentPadding: _Styles.contentPadding,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: ColorManager.greyColor,
+                    width: _Styles.textFieldBorderWidth,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: ColorManager.greyColor,
+                    width: _Styles.textFieldBorderWidth,
+                  ),
+                ),
+                errorBorder: _Styles.outlineErrorInputBorder,
+                focusedErrorBorder: _Styles.outlineErrorInputBorder,
+                errorText: field.errorText,
               ),
+              disableLengthCheck: true,
+              countries: [countries.firstWhere((c) => c.code == 'MY')],
+              cursorColor: ColorManager.blackColor,
+              onChanged: (phone) {
+                _setState(() {
+                  _phoneNumber = phone.completeNumber.trim();
+                  field.didChange(_phoneNumber);
+                });
+              },
             ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: ColorManager.greyColor,
-                width: _Styles.textFieldBorderWidth,
-              ),
-            ),
-            errorBorder: _Styles.outlineErrorInputBorder,
-            focusedErrorBorder: _Styles.outlineErrorInputBorder,
-          ),
-          initialCountryCode: 'MY',
-          cursorColor: ColorManager.blackColor,
-          onChanged: (phone) {
-            //TODO: Handle phone number change
-          },
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -252,16 +389,40 @@ extension _WidgetFactories on _SignUpScreenState {
           fontSize: _Styles.signUpFormFieldFontSize,
           color: _Styles.signUpFormFieldColor,
           title: 'Password',
-          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.blackColor),
+          suffixIcon: getTogglePasswordButton(passwordField: true),
+          isPassword: isPasswordObscure,
           formName: SignUpFormFieldsEnum.password.name,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(
+              6,
+              errorText: 'Password must be at least 6 characters long',
+            ),
+          ]),
         ),
         SizedBox(height: 20),
         CustomTextField(
           fontSize: _Styles.signUpFormFieldFontSize,
           color: _Styles.signUpFormFieldColor,
           title: 'Confirm Password',
-          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.greyColor),
+          prefixIcon: Icon(Icons.lock_outline, color: ColorManager.blackColor),
+          suffixIcon: getTogglePasswordButton(passwordField: false),
+          isPassword: isConfirmPasswordObscure,
           formName: SignUpFormFieldsEnum.confirmPassword.name,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            (value) {
+              final password = _formKey
+                  .currentState
+                  ?.fields[SignUpFormFieldsEnum.password.name]
+                  ?.value;
+              if (password != value) {
+                return 'Password does not match';
+              }
+              return null;
+            },
+          ]),
         ),
       ],
     );
@@ -275,15 +436,33 @@ extension _WidgetFactories on _SignUpScreenState {
           textColor: ColorManager.whiteColor,
           onPressed: onSignUpButtonPressed,
         ),
-        SizedBox(height: 12),
-        CustomButton(
-          text: 'Already have an account? Sign In',
-          textColor: ColorManager.primary,
-          backgroundColor: ColorManager.whiteColor,
-          borderColor: ColorManager.primary,
+        TextButton(
+          style: _Styles.alreadyHaveAccButtonStyle,
           onPressed: onSignInButtonPressed,
+          child: RichText(
+            text: const TextSpan(
+              text: "Already have an account? ",
+              style: _Styles.alreadyHaveAccTextStyle,
+              children: [
+                TextSpan(text: "Sign In", style: _Styles.signInTextStyle),
+              ],
+            ),
+          ),
         ),
       ],
+    );
+  }
+
+  IconButton getTogglePasswordButton({required bool passwordField}) {
+    return IconButton(
+      onPressed: () => togglePasswordVisibility(passwordField: passwordField),
+      icon: passwordField
+          ? (isPasswordObscure
+                ? Icon(Icons.visibility)
+                : Icon(Icons.visibility_off))
+          : (isConfirmPasswordObscure
+                ? Icon(Icons.visibility)
+                : Icon(Icons.visibility_off)),
     );
   }
 }
@@ -292,7 +471,7 @@ extension _WidgetFactories on _SignUpScreenState {
 class _Styles {
   _Styles._();
 
-  static const logoSize = 100.0;
+  static const logoSize = 200.0;
   static const signUpFormFieldFontSize = 16.0;
   static const signUpFormFieldColor = ColorManager.blackColor;
   static const textFieldBorderWidth = 2.0;
@@ -330,8 +509,20 @@ class _Styles {
     color: signUpFormFieldColor,
   );
 
-  static const screenPadding = EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 20,
+  static const alreadyHaveAccTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.regular,
+    color: ColorManager.blackColor,
+  );
+
+  static const signInTextStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeightManager.bold,
+    color: ColorManager.primary,
+    decoration: TextDecoration.underline,
+  );
+
+  static final alreadyHaveAccButtonStyle = ButtonStyle(
+    overlayColor: WidgetStateProperty.all(Colors.transparent),
   );
 }
