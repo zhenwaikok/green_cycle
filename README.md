@@ -1,5 +1,5 @@
 # 🪴Project Overview – GreenCycle
-GreenCycle is a Flutter-based mobile application developed using the MVVM (Model-View-ViewModel) architecture. It serves as a digital platform that streamlines e-waste disposal and promotes responsible recycling practices to minimize environmental and health risks.
+GreenCycle is a Flutter-based mobile application developed using the MVVM (Model-View-ViewModel) architecture. It is created as part of a Final Year Project (FYP) with the goal of streamlining e-waste disposal, promoting responsible recycling practices, and increasing public awareness to reduce environmental and health risks.
 
 The system aims to simplify the e-waste collection process, raise public awareness about proper disposal methods, and encourage active participation through an integrated rewarding system and second-hand marketplace.
 
