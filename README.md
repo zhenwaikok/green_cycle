@@ -28,6 +28,7 @@ GreenCycle supports three user roles — Customer, Collector, and Admin — each
 
 # Tech Stack
 - Firebase (authentication, storage & notification)
+- C# (API Development)
 - Google Maps API
 - Stripe API
 
